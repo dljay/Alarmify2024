@@ -4,10 +4,10 @@
     <item
         android:id="@+id/id_setTime"
         android:title="Set Alarm"
-        android:icon="@drawable/ic_time"/>
+        android:icon="@drawable/ic_time_holo_dark"/>
     <item
         android:id="@+id/id_RingTone"
         android:title="Ringtone"
-        android:icon="@drawable/ic_bell"/>
+        android:icon="@drawable/ic_bell_holo_dark"/>
 
 </menu>

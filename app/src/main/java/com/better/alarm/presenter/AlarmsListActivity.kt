@@ -43,7 +43,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.01a : 밑에 nav icon 깡통 심어놓았음.
+// v0.01b : 밑에 nav icon 깡통 심어놓았음. 색 변화 살짝.
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

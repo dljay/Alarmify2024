@@ -13,10 +13,12 @@ import android.transition.ChangeTransform
 import android.transition.Fade
 import android.transition.Slide
 import android.transition.TransitionSet
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.better.alarm.BuildConfig
 import com.better.alarm.NotificationSettings
 import com.better.alarm.R
@@ -27,12 +29,14 @@ import com.better.alarm.configuration.globalGet
 import com.better.alarm.configuration.globalInject
 import com.better.alarm.configuration.globalLogger
 import com.better.alarm.interfaces.IAlarmsManager
+import com.better.alarm.jjongadd.SecondFragment
 import com.better.alarm.logger.Logger
 import com.better.alarm.lollipop
 import com.better.alarm.model.AlarmValue
 import com.better.alarm.model.Alarmtone
 import com.better.alarm.model.DaysOfWeek
 import com.better.alarm.util.Optional
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -44,10 +48,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 // v0.01c : gradle ->  androidx. xx 넣었더니 됐음. androidTestImplementation <- 여기 줄 안 바껴서 에러났었나?
+// v0.01d : bottomFrag->ringtone 아이콘 클릭-> 2nd Frag 로넘어감!
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
+private const val TAG="AlarmsListActivity"
+
 class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
@@ -181,7 +188,32 @@ class AlarmsListActivity : AppCompatActivity() {
                 .subscribe { alarms ->
                     checkPermissions(this, alarms.map { it.alarmtone })
                 }.apply { }
+
+    // 추가 -->
+        val secondFrag = SecondFragment()
+        val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
+        btmNavView.setOnNavigationItemSelectedListener {
+            // 1) .setOnNav....Listener() 메써드는 onNavigationxxListener(인터페이스를 implement 한 인자를 람다로 받음)
+            //2) OnNavigationItemSelectedListener(인터페이스) 안에는 onNavItemSelected(boolean 리턴 메써드) 하나만 있음. 그래서 override 생략 가능sam..
+            // 밑에는 한마디로 Override fun onNavItemSelected: Boolean { 이 안에 들어가는 내용임.}
+            when(it.itemId) {
+                //R.id.id_setTime -> setCurrentFragment(firstFragment)
+                R.id.id_RingTone -> setCurrentFragment(secondFrag)
+                //R.id.id_Profile -> setCurrentFragment(thirdFragment)
+            }
+            Log.d(TAG, "onCreate: before hitting true!")
+            true
+            // we don't write return true in the lambda function, it will always return the last line of that function
+        }
+    // <--추가
     }
+    // 추가 -->
+    fun setCurrentFragment(receivedFragment: Fragment) =
+        supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
+            replace(R.id.main_fragment_container, receivedFragment)
+            commit()
+        }
+    // <--추가
 
     override fun onStart() {
         super.onStart()

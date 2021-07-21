@@ -43,7 +43,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.01b : 밑에 nav icon 깡통 심어놓았음. 색 변화 살짝.
+// v0.01c : gradle ->  androidx. xx 넣었더니 됐음. androidTestImplementation <- 여기 줄 안 바껴서 에러났었나?
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

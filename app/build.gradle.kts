@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
+    id("kotlin-android")
     jacoco
 }
 
@@ -62,13 +63,13 @@ val acraEmail = project.rootProject.file("local.properties")
     ?: ""
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     defaultConfig {
         versionCode = 30701
         versionName = "3.07.01"
         applicationId = "com.better.alarm"
-        minSdkVersion(15) //todo: 추후 변경 예정.
-        targetSdkVersion(29)
+        minSdkVersion(23)
+        targetSdkVersion(30)
         testApplicationId = "com.better.alarm.test"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
@@ -134,7 +135,11 @@ dependencies {
     implementation("org.koin:koin-core:2.1.5")
     implementation("androidx.fragment:fragment:1.2.5")
     implementation("androidx.preference:preference:1.1.1")
+    //jjong added
     implementation("com.google.android.material:material:1.3.0")
+    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.core:core-ktx:1.3.2")
+
 
 
 }
@@ -144,9 +149,11 @@ dependencies {
     testImplementation("junit:junit:4.13")
     testImplementation("org.mockito:mockito-core:2.23.4")
     testImplementation("io.mockk:mockk:1.10.0")
+
 }
 
 dependencies {
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
     androidTestImplementation("androidx.test:runner:1.3.0")

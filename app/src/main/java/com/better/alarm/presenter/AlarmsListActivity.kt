@@ -49,11 +49,12 @@ import java.util.Calendar
 
 // v0.01c : gradle ->  androidx. xx 넣었더니 됐음. androidTestImplementation <- 여기 줄 안 바껴서 에러났었나?
 // v0.01d : bottomFrag->ringtone 아이콘 클릭-> 2nd Frag 로넘어감!
+// v0.01e : 아직도 2nd frag 에서 1st frag(AlarmsListFrag) 로 넘어가는것 파악중..
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
-private const val TAG="AlarmsListActivity"
+private const val TAG="*AlarmsListActivity*"
 
 class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
@@ -70,10 +71,12 @@ class AlarmsListActivity : AppCompatActivity() {
 
     companion object {
         val uiStoreModule: Module = module {
+            Log.d(TAG, "uiStoreModule: jj-...")
             single<UiStore> { createStore(EditedAlarm(), get()) }
         }
 
         private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore {
+            Log.d(TAG, "createStore: jj- called")
             class UiStoreIR : UiStore {
                 var onBackPressed = PublishSubject.create<String>()
                 var editing: BehaviorSubject<EditedAlarm> = BehaviorSubject.createDefault(edited)
@@ -84,6 +87,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 }
 
                 override fun onBackPressed(): PublishSubject<String> {
+                    Log.d(TAG, "onBackPressed: no.1 jj-!!called!!")
                     return onBackPressed
                 }
 
@@ -197,9 +201,9 @@ class AlarmsListActivity : AppCompatActivity() {
             //2) OnNavigationItemSelectedListener(인터페이스) 안에는 onNavItemSelected(boolean 리턴 메써드) 하나만 있음. 그래서 override 생략 가능sam..
             // 밑에는 한마디로 Override fun onNavItemSelected: Boolean { 이 안에 들어가는 내용임.}
             when(it.itemId) {
-                //R.id.id_setTime -> setCurrentFragment(firstFragment)
-                R.id.id_RingTone -> setCurrentFragment(secondFrag)
-                //R.id.id_Profile -> setCurrentFragment(thirdFragment)
+                //R.id.id_setTime -> showList() // 사실상 뒤로가는 역할과 동일..
+                R.id.id_RingTone -> jjSetCurrentFragment(secondFrag)
+
             }
             Log.d(TAG, "onCreate: before hitting true!")
             true
@@ -208,7 +212,7 @@ class AlarmsListActivity : AppCompatActivity() {
     // <--추가
     }
     // 추가 -->
-    fun setCurrentFragment(receivedFragment: Fragment) =
+    fun jjSetCurrentFragment(receivedFragment: Fragment) =
         supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
             replace(R.id.main_fragment_container, receivedFragment)
             commit()
@@ -245,8 +249,9 @@ class AlarmsListActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return mActionBarHandler.onOptionsItemSelected(item)
     }
-
+// onBackPressed no.2
     override fun onBackPressed() {
+        Log.d(TAG, "onBackPressed: no.2 - onNext")
         uiStore.onBackPressed().onNext(AlarmsListActivity::class.java.simpleName)
     }
 
@@ -262,7 +267,11 @@ class AlarmsListActivity : AppCompatActivity() {
                 })
     }
 
+// 알람 리스트를 보여주는 !! fragment 전환!! 중요!!
     private fun showList(@NonNull edited: EditedAlarm) {
+    //추가->
+    Log.d(TAG, "showList: jj-called")
+    //<-추가
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
         if (currentFragment is AlarmsListFragment) {

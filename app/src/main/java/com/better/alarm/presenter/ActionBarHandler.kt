@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.text.method.LinkMovementMethod
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -29,6 +30,7 @@ import io.reactivex.disposables.Disposables
  *
  * @author Kate
  */
+private const val TAG="*ActionBarHandler*"
 class ActionBarHandler(
         private val mContext: Activity,
         private val store: UiStore,
@@ -46,6 +48,7 @@ class ActionBarHandler(
      * @return
      */
     fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater, actionBar: ActionBar): Boolean {
+        Log.d(TAG, "onCreateOptionsMenu: jj-called")
         inflater.inflate(R.menu.menu_action_bar, menu)
 
         val intent = Intent(Intent.ACTION_SEND).apply {
@@ -67,6 +70,7 @@ class ActionBarHandler(
         sp.setShareIntent(intent)
 
         sub = store.editing().subscribe { edited ->
+            Log.d(TAG, "onCreateOptionsMenu: jj-inside sub=store.editing().subscribe{}")
             val showDelete = edited.isEdited && !edited.isNew
 
             menu.findItem(R.id.set_alarm_menu_delete_alarm).isVisible = showDelete

@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.transition.Transition
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -64,6 +65,7 @@ import java.util.Calendar
 /**
  * Details activity allowing for fine-grained alarm modification
  */
+private const val TAG="*AlarmDetailsFragment*"
 class AlarmDetailsFragment : Fragment() {
     private val alarms: IAlarmsManager by globalInject()
     private val logger: Logger by globalLogger("AlarmDetailsFragment")
@@ -96,13 +98,14 @@ class AlarmDetailsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        Log.d(TAG, "onCreate: jj-called")
         lollipop {
             hackRippleAndAnimation()
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        Log.d(TAG, "onCreateView: jj-called")
         logger.debug { "$this with ${store.editing().value}" }
 
         val view = inflater.inflate(
@@ -146,10 +149,11 @@ class AlarmDetailsFragment : Fragment() {
         view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
         view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }
 
-        store.transitioningToNewAlarmDetails()
-                .firstOrError()
-                .subscribe { isNewAlarm ->
+    //!! 여기서 subscribe?? !!
+        store.transitioningToNewAlarmDetails().firstOrError().subscribe { isNewAlarm ->
+                    Log.d(TAG, "onCreateView: jj-!!inside .subscribe-1")
                     if (isNewAlarm) {
+                        Log.d(TAG, "onCreateView: jj-!!inside .subscribe-2")
                         store.transitioningToNewAlarmDetails().onNext(false)
                         disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager)
                                 .subscribe(pickerConsumer)
@@ -234,6 +238,7 @@ class AlarmDetailsFragment : Fragment() {
     }
 
     override fun onResume() {
+        Log.d(TAG, "onResume: *here we have backButtonSub")
         super.onResume()
         disposables = CompositeDisposable()
 
@@ -276,7 +281,9 @@ class AlarmDetailsFragment : Fragment() {
                     mPreAlarmRow.visibility = if (value.toInt() == -1) View.GONE else View.VISIBLE
                 })
 
-        backButtonSub = store.onBackPressed().subscribe { saveAlarm() }
+        backButtonSub = store.onBackPressed().subscribe {
+            Log.d(TAG, "onResume: backButtonSub=store.onBackPressed().subscribe{} .. ")
+            saveAlarm() }
         store.transitioningToNewAlarmDetails().onNext(false)
     }
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,11 @@ import io.reactivex.functions.Consumer;
 /**
  * @author Yuriy
  */
+
+
 public class InfoFragment extends Fragment implements ViewFactory {
+    private static final String TAG="*InfoFragment*";
+
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
 
@@ -88,6 +93,7 @@ public class InfoFragment extends Fragment implements ViewFactory {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: jj-called ");
         super.onCreate(savedInstanceState);
         mTickReceiver = new TickReceiver();
     }

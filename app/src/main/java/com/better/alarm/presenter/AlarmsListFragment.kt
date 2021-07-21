@@ -3,6 +3,7 @@ package com.better.alarm.presenter
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.LayoutInflater
@@ -39,6 +40,8 @@ import java.util.Calendar
  *
  * @author Yuriy
  */
+private const val TAG="*AlarmsListFragment*"
+
 class AlarmsListFragment : Fragment() {
     private val alarms: IAlarmsManager by globalInject()
     private val store: Store by globalInject()
@@ -77,6 +80,9 @@ class AlarmsListFragment : Fragment() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             // get the alarm which we have to display
+        //추가->
+            Log.d(TAG, "getView: jj-called")
+        //<-추가
             val alarm = values[position]
 
             val row = recycleView(convertView, parent, alarm.id)
@@ -203,6 +209,10 @@ class AlarmsListFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    //추가->
+        Log.d(TAG, "onCreateView: jj-created")
+    //<-추가
+
         logger.debug { "onCreateView $this" }
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
@@ -238,6 +248,7 @@ class AlarmsListFragment : Fragment() {
                         .switchMap { uiStore.transitioningToNewAlarmDetails() }
                         .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
                         .subscribe { alarms ->
+                            Log.d(TAG, "onCreateView: alarmsSub~!!")
                             val sorted = alarms
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())
@@ -251,7 +262,9 @@ class AlarmsListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        backSub = uiStore.onBackPressed().subscribe { requireActivity().finish() }
+        backSub = uiStore.onBackPressed().subscribe {
+            Log.d(TAG, "onResume: jj-backsub=uiStore.xxx.. requireActivity()")
+            requireActivity().finish() }
         listRowLayout = prefs.layout()
         listRowLayoutId = when (listRowLayout) {
             Layout.COMPACT -> R.layout.list_row_compact

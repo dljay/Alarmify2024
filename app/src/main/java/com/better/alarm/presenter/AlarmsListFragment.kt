@@ -210,7 +210,7 @@ class AlarmsListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
     //추가->
-        Log.d(TAG, "onCreateView: jj-created")
+        Log.d(TAG, "(Line213)onCreateView: jj-created")
     //<-추가
 
         logger.debug { "onCreateView $this" }
@@ -248,7 +248,7 @@ class AlarmsListFragment : Fragment() {
                         .switchMap { uiStore.transitioningToNewAlarmDetails() }
                         .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
                         .subscribe { alarms ->
-                            Log.d(TAG, "onCreateView: alarmsSub~!!")
+                            Log.d(TAG, "(Line 251) onCreateView: alarmsSub~!!")
                             val sorted = alarms
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())
@@ -263,7 +263,7 @@ class AlarmsListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         backSub = uiStore.onBackPressed().subscribe {
-            Log.d(TAG, "onResume: jj-backsub=uiStore.xxx.. requireActivity()")
+            Log.d(TAG, "(Line263) onResume: jj-backsub=uiStore.xxx.. requireActivity()")
             requireActivity().finish() }
         listRowLayout = prefs.layout()
         listRowLayoutId = when (listRowLayout) {

@@ -50,6 +50,7 @@ import java.util.Calendar
 // v0.01c : gradle ->  androidx. xx 넣었더니 됐음. androidTestImplementation <- 여기 줄 안 바껴서 에러났었나?
 // v0.01d : bottomFrag->ringtone 아이콘 클릭-> 2nd Frag 로넘어감!
 // v0.01e : 아직도 2nd frag 에서 1st frag(AlarmsListFrag) 로 넘어가는것 파악중..
+// v.0.01f : 2nd frag 에 AlarmDetailsFrag.kt 에 있는 revert() 버튼 심어보기 도전(직전).
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -68,14 +69,16 @@ class AlarmsListActivity : AppCompatActivity() {
 
     private val uiStore: UiStore by globalInject()
     private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
-
-    companion object {
+//Companion Object--->
+    companion object
+    {
         val uiStoreModule: Module = module {
             Log.d(TAG, "uiStoreModule: jj-...")
             single<UiStore> { createStore(EditedAlarm(), get()) }
         }
-
-        private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore {
+    //fun createStore -->>>>
+        private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore
+        {
             Log.d(TAG, "createStore: jj- called")
             class UiStoreIR : UiStore {
                 var onBackPressed = PublishSubject.create<String>()
@@ -87,11 +90,12 @@ class AlarmsListActivity : AppCompatActivity() {
                 }
 
                 override fun onBackPressed(): PublishSubject<String> {
-                    Log.d(TAG, "onBackPressed: no.1 jj-!!called!!")
+                    Log.d(TAG, "onBackPressed(Line93): no.1 jj-!!called!!")
                     return onBackPressed
                 }
 
                 override fun createNewAlarm() {
+                    Log.d(TAG, "(line97) createNewAlarm: jj- called")
                     transitioningToNewAlarmDetails.onNext(true)
                     val newAlarm = alarms.createNewAlarm()
                     editing.onNext(EditedAlarm(
@@ -140,8 +144,9 @@ class AlarmsListActivity : AppCompatActivity() {
 
             return UiStoreIR()
         }
+        //<---fun createStore
     }
-
+//<------ Companion Object
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         if (intent?.getStringExtra("reason") == SettingsFragment.themeChangeReason) {
@@ -201,7 +206,7 @@ class AlarmsListActivity : AppCompatActivity() {
             //2) OnNavigationItemSelectedListener(인터페이스) 안에는 onNavItemSelected(boolean 리턴 메써드) 하나만 있음. 그래서 override 생략 가능sam..
             // 밑에는 한마디로 Override fun onNavItemSelected: Boolean { 이 안에 들어가는 내용임.}
             when(it.itemId) {
-                //R.id.id_setTime -> showList() // 사실상 뒤로가는 역할과 동일..
+                //R.id.id_setTime -> onBackPressed() // 내가 추가.
                 R.id.id_RingTone -> jjSetCurrentFragment(secondFrag)
 
             }
@@ -251,18 +256,22 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 // onBackPressed no.2
     override fun onBackPressed() {
-        Log.d(TAG, "onBackPressed: no.2 - onNext")
+        Log.d(TAG, "onBackPressed: no.2 - onNext") // 이건 print 되지 않고 밑에 pSubject 만 자동반응 업뎃..?
         uiStore.onBackPressed().onNext(AlarmsListActivity::class.java.simpleName)
     }
-
+// ***** !!! 여기서 showList() 로 감!!!! *****
     private fun configureTransactions() {
+        Log.d(TAG, "(line263)configureTransactions: . Begins.")
         sub = uiStore.editing()
                 .distinctUntilChanged { edited -> edited.isEdited }
                 .subscribe(Consumer { edited ->
+                    Log.d(TAG, "(line267!)configureTransactions: jj- edited= $edited")
                     when {
                         lollipop() && isDestroyed -> return@Consumer
                         edited.isEdited -> showDetails(edited)
-                        else -> showList(edited)
+                        else -> {
+                            Log.d(TAG, "(line270)configureTransactions: else->showlist() 안!!")
+                            showList(edited)}
                     }
                 })
     }
@@ -270,7 +279,7 @@ class AlarmsListActivity : AppCompatActivity() {
 // 알람 리스트를 보여주는 !! fragment 전환!! 중요!!
     private fun showList(@NonNull edited: EditedAlarm) {
     //추가->
-    Log.d(TAG, "showList: jj-called")
+    Log.d(TAG, "(Line281)showList: jj-called")
     //<-추가
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 

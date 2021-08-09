@@ -104,7 +104,9 @@ class AlarmDetailsFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+//onCreateView ---------->>>
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
+    {
         Log.d(TAG, "onCreateView: jj-called")
         logger.debug { "$this with ${store.editing().value}" }
 
@@ -201,7 +203,7 @@ class AlarmDetailsFragment : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                editor.take(1)
+                editor.take(1) // take (RxJava) = take the number of elements you specified (n 번째까지만 받고 나머지는 무시)
                         .filter { it.label != s.toString() }
                         .subscribe {
                             modify("Label") { prev -> prev.copy(label = s.toString(), isEnabled = true) }
@@ -214,6 +216,7 @@ class AlarmDetailsFragment : Fragment() {
 
         return view
     }
+// <<<<----------onCreateView
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == 42) {
@@ -243,7 +246,7 @@ class AlarmDetailsFragment : Fragment() {
         disposables = CompositeDisposable()
 
         disposables.add(editor
-                .distinctUntilChanged()
+                .distinctUntilChanged() // DistinctUntilChanged: 중복방 지 ex) Dog-Cat-Cat-Dog => Dog-Cat-Dog
                 .subscribe { editor ->
                     rowHolder.digitalClock.updateTime(Calendar.getInstance().apply {
                         set(Calendar.HOUR_OF_DAY, editor.hour)
@@ -282,8 +285,9 @@ class AlarmDetailsFragment : Fragment() {
                 })
 
         backButtonSub = store.onBackPressed().subscribe {
-            Log.d(TAG, "onResume: backButtonSub=store.onBackPressed().subscribe{} .. ")
+            Log.d(TAG, "onResume(Line288): backButtonSub=store.onBackPressed().subscribe{} .. ")
             saveAlarm() }
+
         store.transitioningToNewAlarmDetails().onNext(false)
     }
 
@@ -313,7 +317,9 @@ class AlarmDetailsFragment : Fragment() {
     }
 
     private fun revert() {
+
         store.editing().value?.let { edited ->
+            Log.d(TAG, "(line322)revert: jj- ") // // 알람List -> Detail(...) 클릭-> cancel 클릭-> 여기 log 뜸!!!
             // "Revert" on a newly created alarm should delete it.
             if (edited.isNew) {
                 alarms.getAlarm(edited.id)?.delete()

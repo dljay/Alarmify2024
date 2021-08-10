@@ -5,17 +5,12 @@
     android:layout_height="match_parent"
     tools:context=".jjongadd.SecondFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment" />
 
-    <Button
-        android:id="@+id/id_btn_backToListFrag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Back to List Fragment!"
-        android:layout_marginTop="50dp"/>
+
 
 </FrameLayout>

@@ -34,7 +34,7 @@ class SecondFragment : Fragment() {
         val view: View = inflater.inflate(R.layout.fragment_second, container, false)
 
     // List frag 로 돌아가는 버튼.
-        view.findViewById<Button>(R.id.id_btn_backToListFrag).setOnClickListener { onBackToListFragClicked() }
+        //view.findViewById<Button>(R.id.id_btn_backToListFrag).setOnClickListener { onBackToListFragClicked() }
         return view
     }
 
@@ -46,9 +46,9 @@ class SecondFragment : Fragment() {
     }
 
 // 추가
-    private fun onBackToListFragClicked() {
-        //
-    }
+//    private fun onBackToListFragClicked() {
+//        //
+//    }
 
 //    companion object {
 //        /**

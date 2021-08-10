@@ -15,7 +15,7 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_label" msgid="6674495003718166674">"시계"</string>
-    <string name="alarm_list_title" msgid="7589940465292950600">"알람"</string>
+    <string name="alarm_list_title" msgid="7589940465292950600">"Alarmify"</string>
     <string name="add_alarm" msgid="5976616107390962899">"알람 추가"</string>
     <string name="menu_desk_clock" msgid="3241995064554071588">"탁상 시계"</string>
     <string name="menu_edit_alarm" msgid="7204602994918829751">"알람 수정"</string>

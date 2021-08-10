@@ -45,7 +45,7 @@
                 android:text="Label"
                 android:textSize="18sp" />
 
-            <com.better.alarm.view.DigitalClock
+            <com.theglendales.alarm.view.DigitalClock
                 android:id="@+id/alert_digital_clock"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
@@ -67,7 +67,7 @@
                     android:gravity="bottom|center_horizontal"
                     android:textSize="20sp"
                     android:textStyle="bold" />
-            </com.better.alarm.view.DigitalClock>
+            </com.theglendales.alarm.view.DigitalClock>
 
             <TextView
                 android:id="@+id/alert_text_snooze"

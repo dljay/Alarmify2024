@@ -19,7 +19,7 @@
     android:baselineAligned="true"
     android:orientation="horizontal">
 
-    <com.better.alarm.view.DontPressWithParentLayout
+    <com.theglendales.alarm.view.DontPressWithParentLayout
         android:id="@+id/list_row_on_off_checkbox_container"
         style="@style/alarm_list_left_column"
         android:gravity="center">
@@ -33,7 +33,7 @@
             android:duplicateParentState="true"
             android:focusable="false" />
 
-    </com.better.alarm.view.DontPressWithParentLayout>
+    </com.theglendales.alarm.view.DontPressWithParentLayout>
 
     <LinearLayout
         android:id="@+id/list_row_digital_clock_container"
@@ -43,7 +43,7 @@
         android:longClickable="false"
         android:orientation="vertical">
 
-        <com.better.alarm.view.DigitalClock
+        <com.theglendales.alarm.view.DigitalClock
             android:id="@+id/list_row_digital_clock"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom" />
-        </com.better.alarm.view.DigitalClock>
+        </com.theglendales.alarm.view.DigitalClock>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,7 +89,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <com.better.alarm.view.DontPressWithParentLayout
+    <com.theglendales.alarm.view.DontPressWithParentLayout
         android:id="@+id/details_button_container"
         style="@style/alarm_list_left_column"
         android:gravity="center">
@@ -102,6 +102,6 @@
             android:text="···"
             android:textSize="40dp"
             android:textStyle="normal" />
-    </com.better.alarm.view.DontPressWithParentLayout>
+    </com.theglendales.alarm.view.DontPressWithParentLayout>
 
 </LinearLayout>

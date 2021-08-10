@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:gravity="center">
 
-        <com.better.alarm.view.TimerView
+        <com.theglendales.alarm.view.TimerView
             android:id="@+id/timer_time_text"
             android:layout_width="0dip"
             android:layout_weight="2"
@@ -85,7 +85,7 @@
                 android:gravity="top"
                 android:text="@string/time_picker_ampm_label" />
 
-        </com.better.alarm.view.TimerView>
+        </com.theglendales.alarm.view.TimerView>
 
         <ImageButton
             android:id="@+id/delete"

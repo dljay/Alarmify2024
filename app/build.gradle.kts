@@ -67,10 +67,10 @@ android {
     defaultConfig {
         versionCode = 30701
         versionName = "3.07.01"
-        applicationId = "com.better.alarm"
+        applicationId = "com.theglendales.alarm"
         minSdkVersion(23)
         targetSdkVersion(30)
-        testApplicationId = "com.better.alarm.test"
+        testApplicationId = "com.theglendales.alarm.test"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
     }
@@ -89,7 +89,7 @@ android {
     flavorDimensions("default")
     productFlavors {
         create("develop") {
-            applicationId = "com.better.alarm"
+            applicationId = "com.theglendales.alarm"
         }
         create("premium") {
             applicationId = "com.premium.alarm"

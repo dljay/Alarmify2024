@@ -72,7 +72,7 @@ jobs:
         continue-on-error: true
         with:
           serviceAccountJsonPlainText: ${{ secrets.SERVICE_ACCOUNT_JSON_PLAIN_TEXT }}
-          packageName: com.better.alarm
+          packageName: com.theglendales.alarm
           releaseFiles: ${{steps.sign_develop_app.outputs.signedReleaseFile}}
           track: alpha
           inAppUpdatePriority: 2

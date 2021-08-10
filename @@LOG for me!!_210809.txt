@@ -1,0 +1,10 @@
+8/9
+AlarmDetailsFragment.kt Line:320. 
+revert() "store.editing()" 이 들어가는 항목 주목! // 알람List -> Detail(...) 클릭-> cancel 클릭-> 여기 log 뜸!!!
+
+->  revert() 를 따라해서 configureTransAction() 으로 흘러가는 것 따라해보기. 
+
+1) Ringtone 프래그먼트(SecondFragment.kt) 에서 버튼을 만들어서 SetAlarm 으로 가는것 따라해보기
+-> configureTransAction() 을 어떻게든 이해 -> 이것을 이제 BtmSheet아이콘에 심어보기!
+
+

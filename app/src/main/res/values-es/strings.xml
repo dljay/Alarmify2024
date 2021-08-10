@@ -73,7 +73,7 @@
         <item>Normal</item>
         <item>Clásico</item>
     </string-array>
-    <string name="simple_alarm_clock">Despertador simple</string>
+    <string name="app_name_jjong">The Glendales Alarmify</string>
     <string-array name="snooze_duration_with_off_entries">
         <item>"está apagada"</item>
         <item>"5 minutos"</item>

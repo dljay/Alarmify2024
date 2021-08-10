@@ -43,7 +43,7 @@ class BugReporter(
                 setReportAsFile(true)
                 setReportFileName("application-logs.txt")
                 setEnabled(true)
-                setSubject("${context.getString(R.string.simple_alarm_clock)} Bug Report")
+                setSubject("${context.getString(R.string.app_name_jjong)} Bug Report")
                 setBody(context.getString(R.string.dialog_bugreport_hint))
             }
         })

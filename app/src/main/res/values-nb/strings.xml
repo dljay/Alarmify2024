@@ -110,7 +110,7 @@
         <item>klassisk</item>
     </string-array>
 
-    <string name="simple_alarm_clock">Simple Alarm Clock</string>
+    <string name="app_name_jjong">The Glendales Alarmify</string>
     <!--
      Entries listed in the ListPreference when invoking the snooze duration
      preference.

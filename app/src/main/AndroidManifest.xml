@@ -20,7 +20,7 @@
         android:name="com.theglendales.alarm.configuration.AlarmApplication"
         android:icon="@mipmap/ic_main2"
         android:installLocation="internalOnly"
-        android:label="@string/simple_alarm_clock"
+        android:label="@string/app_name_jjong"
         android:allowBackup="true">
 
         <!-- Activity to set a new or modify existing alarm -->

@@ -51,7 +51,7 @@ import java.util.Calendar
 // v0.01d : bottomFrag->ringtone 아이콘 클릭-> 2nd Frag 로넘어감!
 // v0.01e : 아직도 2nd frag 에서 1st frag(AlarmsListFrag) 로 넘어가는것 파악중..
 // v.0.01f : 2nd frag 에 AlarmDetailsFrag.kt 에 있는 revert() 버튼 심어보기 도전(직전).
-
+// v.0.01g : 1<->2 frag 왔다갔다 성공.
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
@@ -65,7 +65,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private val alarms: IAlarmsManager by globalInject()
     private val store: Store by globalInject()
 
-    private var sub = Disposables.disposed()
+    private var subscriptions = Disposables.disposed()
 
     private val uiStore: UiStore by globalInject()
     private val dynamicThemeHandler: DynamicThemeHandler by globalInject()
@@ -74,7 +74,7 @@ class AlarmsListActivity : AppCompatActivity() {
     {
         val uiStoreModule: Module = module {
             Log.d(TAG, "uiStoreModule: jj-...")
-            single<UiStore> { createStore(EditedAlarm(), get()) }
+            single<UiStore> { createStore(EditedAlarm(), get()) } //koin single!!
         }
     //fun createStore -->>>>
         private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore
@@ -198,7 +198,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     checkPermissions(this, alarms.map { it.alarmtone })
                 }.apply { }
 
-    // 추가 -->
+// 추가 -->
         val secondFrag = SecondFragment()
         val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
         btmNavView.setOnNavigationItemSelectedListener {
@@ -206,7 +206,7 @@ class AlarmsListActivity : AppCompatActivity() {
             //2) OnNavigationItemSelectedListener(인터페이스) 안에는 onNavItemSelected(boolean 리턴 메써드) 하나만 있음. 그래서 override 생략 가능sam..
             // 밑에는 한마디로 Override fun onNavItemSelected: Boolean { 이 안에 들어가는 내용임.}
             when(it.itemId) {
-                //R.id.id_setTime -> onBackPressed() // 내가 추가.
+                R.id.id_setTime -> configureTransactions()
                 R.id.id_RingTone -> jjSetCurrentFragment(secondFrag)
 
             }
@@ -214,15 +214,16 @@ class AlarmsListActivity : AppCompatActivity() {
             true
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
-    // <--추가
+// <--추가
     }
-    // 추가 -->
+// 추가 -->
     fun jjSetCurrentFragment(receivedFragment: Fragment) =
         supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
             replace(R.id.main_fragment_container, receivedFragment)
             commit()
         }
-    // <--추가
+
+// <--추가
 
     override fun onStart() {
         super.onStart()
@@ -237,7 +238,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
     override fun onStop() {
         super.onStop()
-        this.sub.dispose()
+        this.subscriptions.dispose()
     }
 
     override fun onDestroy() {
@@ -261,11 +262,11 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 // ***** !!! 여기서 showList() 로 감!!!! *****
     private fun configureTransactions() {
-        Log.d(TAG, "(line263)configureTransactions: . Begins.")
-        sub = uiStore.editing()
+        Log.d(TAG, "(line264)configureTransactions: . Begins.")
+        subscriptions = uiStore.editing()
                 .distinctUntilChanged { edited -> edited.isEdited }
                 .subscribe(Consumer { edited ->
-                    Log.d(TAG, "(line267!)configureTransactions: jj- edited= $edited")
+                    Log.d(TAG, "(line268!)configureTransactions: jj- edited= $edited")
                     when {
                         lollipop() && isDestroyed -> return@Consumer
                         edited.isEdited -> showDetails(edited)

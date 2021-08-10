@@ -323,6 +323,7 @@ class AlarmDetailsFragment : Fragment() {
             // "Revert" on a newly created alarm should delete it.
             if (edited.isNew) {
                 alarms.getAlarm(edited.id)?.delete()
+                Log.d(TAG, "(line326)revert: jj- edited.isNew")
             }
             // else do not save changes
             store.hideDetails(rowHolder)

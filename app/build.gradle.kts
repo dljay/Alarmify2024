@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     id("kotlin-android")
+    id ("kotlin-kapt")
     jacoco
 }
 
@@ -135,10 +136,16 @@ dependencies {
     implementation("org.koin:koin-core:2.1.5")
     implementation("androidx.fragment:fragment:1.2.5")
     implementation("androidx.preference:preference:1.1.1")
-    //jjong added
+//jjong added
     implementation("com.google.android.material:material:1.3.0")
     implementation("androidx.appcompat:appcompat:1.2.0")
     implementation("androidx.core:core-ktx:1.3.2")
+    //VuMeter
+    implementation ("io.gresse.hugo.vumeterlibrary:vumeterlibrary:1.0.17")
+    //Glide
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    kapt ("android.arch.lifecycle:compiler:1.1.1")
+    kapt ("com.github.bumptech.glide:compiler:4.12.0")
 
 
 

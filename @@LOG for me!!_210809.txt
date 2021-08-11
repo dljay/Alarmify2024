@@ -8,3 +8,4 @@ revert() "store.editing()" 이 들어가는 항목 주목! // 알람List -> Deta
 -> configureTransAction() 을 어떻게든 이해 -> 이것을 이제 BtmSheet아이콘에 심어보기!
 
 
+

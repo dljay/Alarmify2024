@@ -53,10 +53,10 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         rcView?.adapter = rcvAdapterInstance
         rcView?.setHasFixedSize(true)
         // Fake FullrtClassList
-        val rtOneFake = RingtoneClass("titleYo","tags","descriptionYo","imageURL","mp3Url",0,"iapName")
-        fullRtClassList.add(rtOneFake)
-
-        rcvAdapterInstance?.updateRecyclerView(fullRtClassList)
+//        val rtOneFake = RingtoneClass("titleYo","tags","descriptionYo","imageURL","mp3Url",0,"iapName")
+//        fullRtClassList.add(rtOneFake)
+//
+//        rcvAdapterInstance?.updateRecyclerView(fullRtClassList)
     //RcView <--
         loadFromFireBase()
 

@@ -221,6 +221,7 @@ class AlarmsListActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
             replace(R.id.main_fragment_container, receivedFragment)
             commit()
+            Log.d(TAG, "jjSetCurrentFragment: .... ")
         }
 
 // <--추가

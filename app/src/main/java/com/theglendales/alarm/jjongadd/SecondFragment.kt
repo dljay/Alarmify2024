@@ -1,16 +1,20 @@
 package com.theglendales.alarm.jjongadd
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.theglendales.alarm.R
+import com.theglendales.alarm.jjadapters.MyOnItemClickListener
 import com.theglendales.alarm.jjadapters.RcViewAdapter
+import com.theglendales.alarm.jjdata.RingtoneClass
 
 
 /**
@@ -18,52 +22,48 @@ import com.theglendales.alarm.jjadapters.RcViewAdapter
  * Use the [SecondFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class SecondFragment : Fragment() {
+private const val TAG="SecondFragment"
+class SecondFragment : Fragment(), MyOnItemClickListener  {
 
-//JJ- RcView related ->
-    lateinit var rcView: RecyclerView
-    val rcvAdapterInstance = RcViewAdapter(ArrayList(), this, this.activity) // 공갈리스트 넣어서 instance 만듬
-    val layoutManager = LinearLayoutManager(this.context)
-//JJ- RcView related <-
+    var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View? {
+
+
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
-        val view: View = inflater.inflate(R.layout.fragment_second, container, false)
+        Log.d(TAG, "onCreateView: jj- .. ")
 
-    // List frag 로 돌아가는 버튼.
-        //view.findViewById<Button>(R.id.id_btn_backToListFrag).setOnClickListener { onBackToListFragClicked() }
+        val view: View = inflater.inflate(R.layout.fragment_second, container, false)
         return view
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewCreated: jj- begins..")
         super.onViewCreated(view, savedInstanceState)
+    //RcView-->
+        val rcView = this.view?.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
+        rcView?.layoutManager = LinearLayoutManager(context)
+
+        val rcvAdapterInstance = activity?.let { RcViewAdapter(ArrayList(), this, it) } // 공갈리스트 넣어서 instance 만듬
+        rcView?.adapter = rcvAdapterInstance
+        rcView?.setHasFixedSize(true)
+        // Fake FullrtClassList
+        val rtOneFake = RingtoneClass("titleYo","tags","descriptionYo","imageURL","mp3Url",0,"iapName")
+        fullRtClassList.add(rtOneFake)
+
+        rcvAdapterInstance?.updateRecyclerView(fullRtClassList)
+    //RcView <--
+
+
 
     }
 
-// 추가
-//    private fun onBackToListFragClicked() {
-//        //
-//    }
 
-//    companion object {
-//        /**
-//         * Use this factory method to create a new instance of
-//         * this fragment using the provided parameters.
-//         *
-//         * @param param1 Parameter 1.
-//         * @param param2 Parameter 2.
-//         * @return A new instance of fragment SecondFragment.
-//         */
-//        // TODO: Rename and change types and number of parameters
-//        @JvmStatic
-//        fun newInstance(param1: String, param2: String) =
-//            SecondFragment().apply {
-//                arguments = Bundle().apply {
-//                    putString(ARG_PARAM1, param1)
-//                    putString(ARG_PARAM2, param2)
-//                }
-//            }
-//    }
+    override fun myOnItemClick(v: View, trackId: Int) {
+        Toast.makeText(this.context,"myOnItemClick",Toast.LENGTH_SHORT).show()
+    }
+
+
 }

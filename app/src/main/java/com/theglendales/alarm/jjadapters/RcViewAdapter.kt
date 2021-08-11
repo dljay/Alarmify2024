@@ -8,10 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.GenericTransitionOptions.with
-import com.bumptech.glide.Glide.with
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -29,7 +28,8 @@ interface MyOnItemClickListener {
     fun myOnItemClick(v: View, trackId: Int)
     //fun mySmoothScroll()
 }
-class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>, private val listenerContext: MyOnItemClickListener, private val receivedActivity: Activity)
+class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
+                     private val listenerFragment: MyOnItemClickListener, private val receivedActivity: FragmentActivity)
     : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>()
 {
 
@@ -42,16 +42,15 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>, private val 
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        Log.d(TAG, "(Line44)onCreateViewHolder: jj- RcV!")
         val myXmlToViewObject = LayoutInflater.from(parent.context).inflate(R.layout.jj_rc_single_slot, parent, false)
-
         return MyViewHolder(myXmlToViewObject)
 
     }
 
-
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
-
+        Log.d(TAG, "onBindViewHolder: jj- ")
         val currentItem = currentRtList[position]
         val currentTrId = currentRtList[position].id
         val currentTrIapName = currentRtList[position].iapName
@@ -332,7 +331,7 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>, private val 
             enableHighlightOnTrId(holderTrId)
 
             if(clickedPosition != RecyclerView.NO_POSITION && view!=null) { // To avoid possible mistake when we delete the item but click it
-                listenerContext.myOnItemClick(view, holderTrId) // then, call this function inside listener Activity = (MainActivity)
+                listenerFragment.myOnItemClick(view, holderTrId) // then, call this function inside listener Activity = (MainActivity)
             }
 
         }

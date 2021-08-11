@@ -33,6 +33,7 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
     : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>()
 {
 
+
     companion object {
         var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()
     }
@@ -42,7 +43,8 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        Log.d(TAG, "(Line44)onCreateViewHolder: jj- RcV!")
+
+        Log.d(TAG, "(Line44)onCreateViewHolder: jj- RcV! .")
         val myXmlToViewObject = LayoutInflater.from(parent.context).inflate(R.layout.jj_rc_single_slot, parent, false)
         return MyViewHolder(myXmlToViewObject)
 

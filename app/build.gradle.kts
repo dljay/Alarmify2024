@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     id("kotlin-android")
     id ("kotlin-kapt")
+    id("com.google.gms.google-services")
     jacoco
 }
 
@@ -146,6 +147,8 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     kapt ("android.arch.lifecycle:compiler:1.1.1")
     kapt ("com.github.bumptech.glide:compiler:4.12.0")
+    //Firebase
+    implementation("com.google.firebase:firebase-firestore:23.0.1")
 
 
 
@@ -160,7 +163,8 @@ dependencies {
 }
 
 dependencies {
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+
+//    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
     androidTestImplementation("androidx.test:runner:1.3.0")

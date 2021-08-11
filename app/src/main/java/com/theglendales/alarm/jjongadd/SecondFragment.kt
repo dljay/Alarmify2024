@@ -27,10 +27,6 @@ class SecondFragment : Fragment(), MyOnItemClickListener  {
 
     var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 
-
-
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         Log.d(TAG, "onCreateView: jj- .. ")

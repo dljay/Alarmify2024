@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "407761012217",
+    "project_id": "firestore-to-rcview-1",
+    "storage_bucket": "firestore-to-rcview-1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407761012217:android:6b265b91adb5e43ced2928",
+        "android_client_info": {
+          "package_name": "com.jjongflickerman.firestoretorcview1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "407761012217-502o5uinomjgdhpj2tpa95fehdjqt4d5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqVE4CjJuxOxBMiQdoVBbCRLgje3U0HlM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "407761012217-502o5uinomjgdhpj2tpa95fehdjqt4d5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407761012217:android:5f0125c916627a3eed2928",
+        "android_client_info": {
+          "package_name": "com.theglendales.alarm.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "407761012217-502o5uinomjgdhpj2tpa95fehdjqt4d5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqVE4CjJuxOxBMiQdoVBbCRLgje3U0HlM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "407761012217-502o5uinomjgdhpj2tpa95fehdjqt4d5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

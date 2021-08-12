@@ -47,11 +47,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.01c : gradle ->  androidx. xx 넣었더니 됐음. androidTestImplementation <- 여기 줄 안 바껴서 에러났었나?
-// v0.01d : bottomFrag->ringtone 아이콘 클릭-> 2nd Frag 로넘어감!
-// v0.01e : 아직도 2nd frag 에서 1st frag(AlarmsListFrag) 로 넘어가는것 파악중..
-// v.0.01f : 2nd frag 에 AlarmDetailsFrag.kt 에 있는 revert() 버튼 심어보기 도전(직전).
-// v.0.01g : 1<->2 frag 왔다갔다 성공.
+// v0.02f : MiniPlayer 설치 및 구동 확인. => Alarm Frag 로 갔다왔을 때 미니 Player 앨범 아이콘 변경되는것 Fix 필요!
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

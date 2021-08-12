@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".jjongadd.SecondFragment">
 
-    <androidx.slidingpanelayout.widget.SlidingPaneLayout
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:id="@+id/id_slidingUpPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +18,7 @@
 
         <!--1st child - Chips+ 리싸이클뷰임!  -->
 
-            <!--1st child-b) Swipe+RcView!  -->
+        <!--1st child-b) Swipe+RcView!  -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/id_rcV_2ndFrag"
             android:layout_width="match_parent"
@@ -32,15 +32,12 @@
             android:layout_width="match_parent"
             android:layout_height="300dp">
 
-            <include layout="@layout/slide_ui2" />
+            <include layout="@layout/jj_slide_ui2" />
 
         </RelativeLayout>
 
 
-    </androidx.slidingpanelayout.widget.SlidingPaneLayout>
-
-
-
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
 
 </FrameLayout>

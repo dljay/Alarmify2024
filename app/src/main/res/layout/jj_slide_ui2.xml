@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+
+        android:padding="0dp"
+        android:background="@drawable/roundstyle3_white">
+
+        <!-- upper part aka mini player 여기서부터>>> -->
+        <LinearLayout
+            android:id="@+id/id_upperUi_ll"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/roundstyle1_withcolor"
+            android:clickable="true"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <!-- 상단 seek bar-->
+            <SeekBar
+                android:id="@+id/id_upperUi_Seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="10dp">
+
+
+            </SeekBar>
+            <!--Thumbnail/Title/Play,Pause Button -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/id_upperUi_ConsLayout">
+
+                <!-- Click Arrow up(^)-->
+                <ImageView
+                    android:id="@+id/id_upperUi_iv_clickarrowUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:padding="5dp"
+                    android:src="@drawable/clickarrow"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                </ImageView>
+
+                <!-- RingTone Cover Image -->
+                <ImageView
+                    android:id="@+id/id_upperUi_iv_coverImage"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    android:layout_marginBottom="5dp"
+                    android:padding="5dp"
+                    android:src="@drawable/songs_cover"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/id_upperUi_iv_clickarrowUp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0">
+
+                </ImageView>
+
+                <!-- RingTone Title_Loop1 -->
+                <TextView
+                    android:id="@+id/id_upperUi_tv_title"
+
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:ellipsize="marquee"
+
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif-condensed-light"
+                    android:gravity="center_horizontal"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:padding="5dp"
+                    android:scrollHorizontally="true"
+
+                    android:singleLine="true"
+                    android:text="Always a long title for marquee fx but will be replaced from Firebase!"
+                    android:textColor="@color/white"
+
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/id_upperUi_iv_coverImage"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                </TextView>
+
+                <!-- Play/Stop Button From Here>>>>> -->
+                <LinearLayout
+                    android:id="@+id/id_upperUi_ll_playpause"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageButton
+                        android:id="@+id/id_imgbtn_upperUi_play"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/playbutton2" />
+                    <ImageButton
+                        android:id="@+id/id_imgbtn_upperUi_pause"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/pausebutton_2"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+                <!-- <<< Play/Stop Button Until Here <<<< -->
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+        <!-- bottom part 여기서부터>>> -->
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_margin="10dp"
+            android:id="@+id/id_lowerUI_entireConsLayout">
+
+            <ImageView
+                android:id="@+id/id_lowerUi_iv_bigThumbnail"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/songs_cover"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+            </ImageView>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:text="About the Ringtone"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/id_lowerUi_iv_bigThumbnail"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </TextView>
+
+            <!-- About the Ringtone-->
+            <TextView
+                android:id="@+id/id_lowerUi_tv_Description"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:text="This is a placeholder text."
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@+id/id_lowerUi_iv_bigThumbnail"
+                app:layout_constraintTop_toBottomOf="@+id/textView">
+
+
+            </TextView>
+
+            <!-- badges-->
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                android:text="Information"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/id_lowerUi_iv_bigThumbnail" />
+
+            <ImageView
+                android:id="@+id/id_badge_1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/design_default_color_secondary"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                app:srcCompat="@drawable/badge_nature" />
+
+            <ImageView
+                android:id="@+id/id_badge_2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/id_badge_1"
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                app:srcCompat="@drawable/badge_live" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

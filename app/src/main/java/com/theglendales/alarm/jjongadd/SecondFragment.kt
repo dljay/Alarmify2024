@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -112,7 +113,49 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 
 
     override fun myOnItemClick(v: View, trackId: Int) {
-        Toast.makeText(this.context,"myOnItemClick",Toast.LENGTH_SHORT).show()
+
+        val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(trackId)
+        val ivInside_Rc = v.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
+
+//        tv_upperUi_title.text = ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
+//        tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
+//
+//        // Lower UI
+//        tv_lowerUi_about.text = ringtoneClassFromtheList?.description
+//
+//        when(v.id) {
+//            //1) RcView > 왼쪽 큰 영역(album/title) 클릭했을때 처리.
+//            R.id.id_rL_including_title_description -> {
+//                //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
+//                if (ivInside_Rc != null) { // 사실 RcView 가 제대로 setup 되어있으면 무조건 null 이 아님! RcView 클릭한 부분에 View 가 로딩된 상태 (사진 로딩 상태 x)
+//                    //Log.d(TAG, "myOnItemClick: Now setting Images for lower/upper Uis")
+//                    iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
+//                    iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
+//                }
+//
+//                //2-1) Mp!! Show mini player & play music right away! + EQ meter fx
+//
+//                mpClassInstance.playMusic(this, trackId, v)//*************************************************** Media Player Related *************************
+//
+////                Log.d(TAG, "myOnItemClick: temp list !!@#!@#!$@@!$!$!@$ templist = $tempList")
+//
+//                // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
+//                if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
+//                    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
+//                }
+//
+//            }
+//            // 2) 우측 FREE, GET THIS 클릭했을 때 처리.
+//            R.id.id_cl_entire_Purchase ->
+//
+//            {
+//                Log.d(TAG, "myOnItemClick: You probably clicked FREE or GET This")
+//                // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
+//                iapInstance.myOnPurchaseClicked(trackId)
+//            }
+//
+//        }
+
     }
 
 

@@ -149,8 +149,8 @@ dependencies {
     kapt ("com.github.bumptech.glide:compiler:4.12.0")
     //Firebase
     implementation("com.google.firebase:firebase-firestore:23.0.1")
-
-
+    //SlidingUpPanel
+    implementation("com.sothree.slidinguppanel:library:3.4.0")
 
 }
 

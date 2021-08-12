@@ -33,7 +33,7 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
     lateinit var rcvAdapterInstance: RcViewAdapter
     private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 아래 줄 대체!! 성공!
-    //private val myNetworkCheckerInstance by lazy { context?.let { MyNetWorkChecker(it) } }
+    //(DEL) private val myNetworkCheckerInstance by lazy { context?.let { MyNetWorkChecker(it) } }
     private val firebaseRepoInstance: FirebaseRepoClass = FirebaseRepoClass()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View {
@@ -54,17 +54,11 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         rcvAdapterInstance = activity?.let { RcViewAdapter(ArrayList(), this, it) }!! // 공갈리스트 넣어서 instance 만듬
         rcView?.adapter = rcvAdapterInstance
         rcView?.setHasFixedSize(true)
-        // Fake FullrtClassList
-//        val rtOneFake = RingtoneClass("titleYo","tags","descriptionYo","imageURL","mp3Url",0,"iapName")
-//        fullRtClassList.add(rtOneFake)
-//
-//        rcvAdapterInstance?.updateRecyclerView(fullRtClassList)
     //RcView <--
         loadFromFireBase()
 
 
     }
-
     private fun loadFromFireBase() {
     //1. 인터넷 가능한지 체크
         //인터넷되는지 체크

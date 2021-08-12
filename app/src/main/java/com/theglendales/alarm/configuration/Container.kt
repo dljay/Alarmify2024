@@ -13,6 +13,7 @@ import com.theglendales.alarm.background.KlaxonPlugin
 import com.theglendales.alarm.background.PlayerWrapper
 import com.theglendales.alarm.bugreports.BugReporter
 import com.theglendales.alarm.interfaces.IAlarmsManager
+import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.logger.LogcatLogWriter
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.logger.LoggerFactory
@@ -119,6 +120,9 @@ fun startKoin(context: Context): Koin {
         factory { get<Context>().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
         factory { get<Context>().getSystemService(Context.AUDIO_SERVICE) as AudioManager }
         factory { get<Context>().resources }
+        // 내가 추가 -->
+        single<MyNetWorkChecker> { MyNetWorkChecker(context = context)}
+        // 내가 추가 <--
 
         factory(named("volumePreferenceDemo")) {
             KlaxonPlugin(

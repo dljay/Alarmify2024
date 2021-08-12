@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.theglendales.alarm.R
+import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjadapters.MyOnItemClickListener
 import com.theglendales.alarm.jjadapters.RcViewAdapter
@@ -31,7 +32,8 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
     lateinit var rcvAdapterInstance: RcViewAdapter
-    private val myNetworkCheckerInstance by lazy { context?.let { MyNetWorkChecker(it) } }
+    private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 아래 줄 대체!! 성공!
+    //private val myNetworkCheckerInstance by lazy { context?.let { MyNetWorkChecker(it) } }
     private val firebaseRepoInstance: FirebaseRepoClass = FirebaseRepoClass()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View {

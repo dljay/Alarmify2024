@@ -14,6 +14,7 @@ import com.theglendales.alarm.background.PlayerWrapper
 import com.theglendales.alarm.bugreports.BugReporter
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
+import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.logger.LogcatLogWriter
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.logger.LoggerFactory
@@ -122,6 +123,7 @@ fun startKoin(context: Context): Koin {
         factory { get<Context>().resources }
         // 내가 추가 -->
         single<MyNetWorkChecker> { MyNetWorkChecker(context = context)}
+        single<FirebaseRepoClass> { FirebaseRepoClass()}
         // 내가 추가 <--
 
         factory(named("volumePreferenceDemo")) {

@@ -2,6 +2,7 @@ package com.theglendales.alarm.jjongadd
 
 //import android.app.Fragment
 import android.annotation.SuppressLint
+import android.media.Ringtone
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -23,6 +24,8 @@ import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
+import com.theglendales.alarm.jjmvp.JJ_ITF
+import com.theglendales.alarm.jjmvp.JJ_Presenter
 
 /**
  * A simple [Fragment] subclass.
@@ -31,18 +34,19 @@ import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
  */
 
 private const val TAG="SecondFragment"
-class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  {
+class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener, JJ_ITF.ViewITF  {
 
-    var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
+    //var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
-
+//MVP related
+    lateinit var presenter: JJ_ITF.PresenterITF
 //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
 
     private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 아래 줄 대체!! 성공!
     //(DEL) private val myNetworkCheckerInstance by lazy { context?.let { MyNetWorkChecker(it) } }
-    private val firebaseRepoInstance: FirebaseRepoClass = FirebaseRepoClass()
+    //private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
 
 //Sliding Panel Related
 
@@ -86,8 +90,11 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         rcView.setHasFixedSize(true)
     //RcView <--
         setUpLateInitUis(view)
+    //MVP load from firebase.
+        presenter = JJ_Presenter(this)
+        Log.d(TAG, "onViewCreated: 1) loadFromFb()")
+        presenter.loadFromFb()
 
-        loadFromFireBase()
 
 
     }
@@ -196,54 +203,9 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     }
 
     private fun loadFromFireBase() {
-    //1. 인터넷 가능한지 체크
-        //인터넷되는지 체크
-
-        val isInternetAvailable: Boolean = myNetworkCheckerInstance!!.isNetWorkAvailable()
-        if(!isInternetAvailable) { // 인터넷 사용 불가!
-            Log.d(TAG, "loadFromFireBase: jj- isInternetAvailable= $isInternetAvailable")
-            //lottieAnimController(1)
-            return //더이상 firebase 로딩이고 나발이고 진행 안함!!
-        }
-        else {Log.d(TAG, "loadFromFireBase: jj- isInternetAvailable = $isInternetAvailable") }
+    // 여기 Frag -> Presenter(JJ_Presenter) -> Model -> 여기 Frag 의 showResult()
 
 
-    //2. If we have internet connectivity, then call FireStore!
-        firebaseRepoInstance.getPostList().addOnCompleteListener {
-            if(it.isSuccessful)
-            {
-                Log.d(TAG, "<<<<<<<<<loadPostData: successful")
-
-                // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
-//                mySmoothScroll()
-
-                fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
-                // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
-
-//                iapInstance = MyIAPHelper(this, rcvAdapterInstance, fullRtClassList) //reInitialize
-//                iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
-
-
-                // Update MediaPlayer.kt
-//                mpClassInstance.createMp3UrlMap(fullRtClassList)
-
-                // Update Recycler View
-                rcvAdapterInstance.updateRecyclerView(fullRtClassList) // todo: 추후 // comment 시킬것. MyIAPHelper.kt 에서 해주기로 함!
-                rcvAdapterInstance.updateRingToneMap(fullRtClassList)// todo: 이 map 안 쓰이는것 같은데 흐음.. (우리는 Map 기반이므로 list 정보를 -> 모두 Map 으로 업데이트!)
-
-                // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
-//                if(swipeRefreshLayout.isRefreshing) {
-//                    Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
-//                    swipeRefreshLayout.isRefreshing = false
-//                }
-                // 우선 lottie Loading animation-stop!!
-//                lottieAnimController(2) //stop!
-
-            } else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.
-                Log.d(TAG, "<<<<<<<loadPostData: ERROR!! Exception message: ${it.exception!!.message}")
-//                lottieAnimController(1) // this is useless at the moment..
-            }
-        }
     }
 
 
@@ -291,6 +253,34 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 
         }
 
+    }
+
+    override fun showResult(fullRtClassList: MutableList<RingtoneClass>) {
+        Log.d(TAG, "showResult: 5) called..Finally! ")
+        // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
+//                mySmoothScroll()
+
+
+        // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
+
+//                iapInstance = MyIAPHelper(this, rcvAdapterInstance, fullRtClassList) //reInitialize
+//                iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
+
+
+        // Update MediaPlayer.kt
+//                mpClassInstance.createMp3UrlMap(fullRtClassList)
+
+        // Update Recycler View
+        rcvAdapterInstance.updateRecyclerView(fullRtClassList) // todo: 추후 // comment 시킬것. MyIAPHelper.kt 에서 해주기로 함!
+        rcvAdapterInstance.updateRingToneMap(fullRtClassList)// todo: 이 map 안 쓰이는것 같은데 흐음.. (우리는 Map 기반이므로 list 정보를 -> 모두 Map 으로 업데이트!)
+
+        // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
+//                if(swipeRefreshLayout.isRefreshing) {
+//                    Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
+//                    swipeRefreshLayout.isRefreshing = false
+//                }
+        // 우선 lottie Loading animation-stop!!
+//                lottieAnimController(2) //stop!
     }
 
 

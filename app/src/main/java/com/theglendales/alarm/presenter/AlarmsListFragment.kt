@@ -261,9 +261,10 @@ class AlarmsListFragment : Fragment() {
     }
 
     override fun onResume() {
+        Log.d(TAG, "onResume: jj-OnResume() TOP line")
         super.onResume()
         backSub = uiStore.onBackPressed().subscribe {
-            Log.d(TAG, "(Line263) onResume: jj-backsub=uiStore.xxx.. requireActivity()")
+            Log.d(TAG, "(Line267) onResume: jj-backsub=uiStore.xxx.. requireActivity()")
             requireActivity().finish() }
         listRowLayout = prefs.layout()
         listRowLayoutId = when (listRowLayout) {
@@ -274,6 +275,7 @@ class AlarmsListFragment : Fragment() {
     }
 
     override fun onPause() {
+        Log.d(TAG, "(Line278)onPause: ..")
         super.onPause()
         backSub.dispose()
         //dismiss the time picker if it was showing. Otherwise we will have to uiStore the state and it is not nice for the user
@@ -281,6 +283,7 @@ class AlarmsListFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "(Line286)onDestroy: ,,,")
         super.onDestroy()
         alarmsSub.dispose()
     }

@@ -159,6 +159,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate: !!AlarmListActivitiy onCreate() !!! ")
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
 

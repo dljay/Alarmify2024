@@ -61,6 +61,10 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     lateinit var iv_lowerUi_bigThumbnail: ImageView // {findViewById<ImageView>(R.id.id_lowerUi_iv_bigThumbnail)}
     lateinit var tv_lowerUi_about: TextView // { findViewById<TextView>(R.id.id_lowerUi_tv_Description) }
 
+// Basic overridden functions -- >
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
@@ -88,6 +92,18 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        //Log.d(TAG, "onSaveInstanceState: save some shit here!")
+    }
+
+//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+//        super.onViewStateRestored(savedInstanceState)
+//        Log.d(TAG, "onViewStateRestored: called")
+//    }
+// <-- Basic Overridden functions
+
+// My Functions ==== >
     private fun setUpLateInitUis(v: View) {
         slidingUpPanelLayout = v.findViewById(R.id.id_slidingUpPanel)
         //a) Sliding Panel: Upper Ui

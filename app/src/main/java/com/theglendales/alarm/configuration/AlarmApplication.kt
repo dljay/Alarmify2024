@@ -16,6 +16,7 @@
 package com.theglendales.alarm.configuration
 
 import android.app.Application
+import android.util.Log
 import android.view.ViewConfiguration
 import androidx.preference.PreferenceManager
 import com.theglendales.alarm.R
@@ -28,8 +29,10 @@ import com.theglendales.alarm.model.AlarmsScheduler
 import com.theglendales.alarm.presenter.ScheduledReceiver
 import com.theglendales.alarm.presenter.ToastPresenter
 
+private const val TAG="AlarmApplication"
 class AlarmApplication : Application() {
     override fun onCreate() {
+        Log.d(TAG, "onCreate: !!AlarmApplication onCreate!!!")
         runCatching {
             ViewConfiguration::class.java
                     .getDeclaredField("sHasPermanentMenuKey")

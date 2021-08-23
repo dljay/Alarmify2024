@@ -94,7 +94,7 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     //RcView <--
         setUpLateInitUis(view)
 
-    //MVVM load from Firebase
+    //MVVM load from Firebase .. move inside a function?  SubscribeToXxx()
 
         val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
         Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
@@ -102,7 +102,9 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         jjViewModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
             Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
             showResultAndMore(it)
-        } )
+            
+                 })
+
 
 
 

@@ -97,16 +97,20 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     //MVVM load from Firebase .. move inside a function?  SubscribeToXxx()
 
         val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
-        Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
-        //jjViewModel.loadFromFireBase() <-- JjViewModel.kt 에서 init{} 안에 써줬으므로 필요없을듯.
+        //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
         jjViewModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
-            Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
-            showResultAndMore(it)
-            
+            //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
+            it.addOnCompleteListener {
+                if(it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
+                    val fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
+                    showResultAndMore(fullRtClassList)
+                } else { // 에러났을 때
+
+                    Toast.makeText(this.context,"Error Loading Data from Firebase. Error: ${it.exception.toString()}",Toast.LENGTH_SHORT).show()
+                }
+            }
+
                  })
-
-
-
 
     }
 

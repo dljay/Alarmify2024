@@ -98,7 +98,7 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 
         val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
         Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
-        jjViewModel.loadFromFireBase()
+        //jjViewModel.loadFromFireBase() <-- JjViewModel.kt 에서 init{} 안에 써줬으므로 필요없을듯.
         jjViewModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
             Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
             showResultAndMore(it)

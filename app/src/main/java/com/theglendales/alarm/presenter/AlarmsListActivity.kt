@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.04a : MVVM 아주 기초적인것만 삽입 FB Loading 성공.
+// v0.04c : MVVM -> FB 로딩 성공. JjViewModel.kt - init{} 에서 loadFromFirebase() 해주고 -> 결과를 LiveData 로 등록! (Test 필요)
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */
@@ -216,7 +216,7 @@ class AlarmsListActivity : AppCompatActivity() {
         }
 // <--추가1)
 // 추가2) ViewModel + FB 에서 로딩 observer..등록-- >
-        //MVVM load from Firebase
+        //MVVM load from Firebase (Activity 에서 시전)
 
         /*val jjViewModel = ViewModelProvider(this).get(JjViewModel::class.java)
         Log.d(TAG, "onCreate: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")

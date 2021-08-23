@@ -24,7 +24,6 @@ import com.theglendales.alarm.jjadapters.MyOnItemClickListener
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
-import com.theglendales.alarm.jjmvp.JJ_ITF
 import com.theglendales.alarm.jjmvvm.JjViewModel
 
 /**
@@ -34,12 +33,11 @@ import com.theglendales.alarm.jjmvvm.JjViewModel
  */
 
 private const val TAG="SecondFragment"
-class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener, JJ_ITF.ViewITF  {
+class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  {
 
     //var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
-//MVP related
-    lateinit var presenter: JJ_ITF.PresenterITF
+
 //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
@@ -90,10 +88,7 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener, 
         rcView.setHasFixedSize(true)
     //RcView <--
         setUpLateInitUis(view)
-//    //MVP load from firebase.
-//        presenter = JJ_Presenter(this)
-//        Log.d(TAG, "onViewCreated: 1) loadFromFb()")
-//        presenter.loadFromFb()
+
     //MVVM load from Firebase
 
         val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
@@ -101,7 +96,7 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener, 
         jjViewModel.loadFromFireBase()
         jjViewModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
             Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
-            showResult(it)
+            showResultAndMore(it)
         } )
 
 
@@ -260,7 +255,7 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener, 
 
     }
 
-    override fun showResult(fullRtClassList: MutableList<RingtoneClass>) {
+    private fun showResultAndMore(fullRtClassList: MutableList<RingtoneClass>) {
         Log.d(TAG, "showResult: 5) called..Finally! ")
         // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
 //                mySmoothScroll()

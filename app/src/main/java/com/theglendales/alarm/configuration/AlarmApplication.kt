@@ -15,7 +15,7 @@ import com.theglendales.alarm.presenter.ScheduledReceiver
 import com.theglendales.alarm.presenter.ToastPresenter
 
 
-// v0.03a MVP 로 테스트(완료)
+
 private const val TAG="AlarmApplication"
 class AlarmApplication : Application() {
     override fun onCreate() {

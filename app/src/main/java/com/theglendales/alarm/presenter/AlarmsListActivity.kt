@@ -19,6 +19,8 @@ import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.NotificationSettings
 import com.theglendales.alarm.R
@@ -37,6 +39,7 @@ import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.theglendales.alarm.jjmvvm.JjViewModel
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -195,7 +198,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     checkPermissions(this, alarms.map { it.alarmtone })
                 }.apply { }
 
-// 추가 -->
+// 추가1) -->
         val secondFrag = SecondFragment()
         val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
         btmNavView.setOnNavigationItemSelectedListener {
@@ -211,8 +214,20 @@ class AlarmsListActivity : AppCompatActivity() {
             true
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
-// <--추가
-    }
+// <--추가1)
+// 추가2) ViewModel + FB 에서 로딩 observer..등록-- >
+        //MVVM load from Firebase
+
+        /*val jjViewModel = ViewModelProvider(this).get(JjViewModel::class.java)
+        Log.d(TAG, "onCreate: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
+        jjViewModel.loadFromFireBase()
+        jjViewModel.getRtLiveDataObserver().observe(this, Observer {
+            Log.d(TAG, "onCreate: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
+            //showResultAndMore(it)
+        } )*/
+
+// <-- 추가2)
+    } // onCreate() 여기까지.
 // 추가 -->
     fun jjSetCurrentFragment(receivedFragment: Fragment) =
         supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class

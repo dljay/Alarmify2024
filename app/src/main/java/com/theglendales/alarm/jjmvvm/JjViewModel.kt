@@ -14,6 +14,7 @@ class JjViewModel : ViewModel() {
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
     var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 
+
     lateinit var liveRtList: MutableLiveData<MutableList<RingtoneClass>>
 
     init {

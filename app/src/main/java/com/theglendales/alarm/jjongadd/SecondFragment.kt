@@ -68,6 +68,11 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         super.onCreate(savedInstanceState)
     }
 
+//    override fun onActivityCreated(savedInstanceState: Bundle?) {
+//        super.onActivityCreated(savedInstanceState)
+//        Log.d(TAG, "onActivityCreated: jj-2ndFrag Activity!!Created!!")
+//    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
 
@@ -255,7 +260,7 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 
     }
 
-    private fun showResultAndMore(fullRtClassList: MutableList<RingtoneClass>) {
+    fun showResultAndMore(fullRtClassList: MutableList<RingtoneClass>) {
         Log.d(TAG, "showResult: 5) called..Finally! ")
         // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
 //                mySmoothScroll()

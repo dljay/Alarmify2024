@@ -26,7 +26,7 @@ class JjViewModel : ViewModel() {
         return liveRtList
     }
 // load from Fb! -
-    fun loadFromFireBase() // 1)JjFbRepository.kt 로 별도로 옮기기?
+    fun loadFromFireBase() // todo: 1)Task 를 return. 2)JjFbRepository.kt 로 별도로 옮기기?
      {
         firebaseRepoInstance.getPostList().addOnCompleteListener {
             if(it.isSuccessful)

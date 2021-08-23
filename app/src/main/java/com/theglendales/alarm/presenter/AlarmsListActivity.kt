@@ -47,7 +47,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.02f : MiniPlayer 설치 및 구동 확인. => Alarm Frag 로 갔다왔을 때 미니 Player 앨범 아이콘 변경되는것 Fix 필요!
+// v0.04a : MVVM 아주 기초적인것만 삽입 FB Loading 성공.
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

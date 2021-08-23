@@ -2,7 +2,6 @@ package com.theglendales.alarm.jjongadd
 
 //import android.app.Fragment
 import android.annotation.SuppressLint
-import android.media.Ringtone
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -13,6 +12,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -23,9 +24,8 @@ import com.theglendales.alarm.jjadapters.MyOnItemClickListener
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
-import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvp.JJ_ITF
-import com.theglendales.alarm.jjmvp.JJ_Presenter
+import com.theglendales.alarm.jjmvvm.JjViewModel
 
 /**
  * A simple [Fragment] subclass.
@@ -90,10 +90,19 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener, 
         rcView.setHasFixedSize(true)
     //RcView <--
         setUpLateInitUis(view)
-    //MVP load from firebase.
-        presenter = JJ_Presenter(this)
-        Log.d(TAG, "onViewCreated: 1) loadFromFb()")
-        presenter.loadFromFb()
+//    //MVP load from firebase.
+//        presenter = JJ_Presenter(this)
+//        Log.d(TAG, "onViewCreated: 1) loadFromFb()")
+//        presenter.loadFromFb()
+    //MVVM load from Firebase
+
+        val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
+        Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
+        jjViewModel.loadFromFireBase()
+        jjViewModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
+            Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
+            showResult(it)
+        } )
 
 
 

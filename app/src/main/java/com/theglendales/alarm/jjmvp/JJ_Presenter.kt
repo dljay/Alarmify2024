@@ -1,16 +1,13 @@
 package com.theglendales.alarm.jjmvp
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.theglendales.alarm.jjdata.RingtoneClass
 import io.reactivex.android.schedulers.AndroidSchedulers
 
 import io.reactivex.schedulers.Schedulers
 
 
 private const val TAG="JJ_Presenter"
-class JJ_Presenter(val viewFragment: JJ_ITF.ViewITF) : JJ_ITF.PresenterITF {
+class JJ_Presenter(val secondFragmentView: JJ_ITF.ViewITF) : JJ_ITF.PresenterITF {
 //    private val liveRtList = MutableLiveData<MutableList<RingtoneClass>>() // live data!
 //    private val disposables = CompositeDisposable()
 //    private val ringtonesSubject: BehaviorSubject<MutableList<RingtoneClass>> = BehaviorSubject.createDefault(mutableListOf())
@@ -25,7 +22,7 @@ class JJ_Presenter(val viewFragment: JJ_ITF.ViewITF) : JJ_ITF.PresenterITF {
         jjModel.loadFromFbModel()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { result -> viewFragment.showResult(result) }
+            .subscribe { result -> secondFragmentView.showResult(result) }
     }
 //    fun getLiveRtList(): LiveData<MutableList<RingtoneClass>> {
 //        return liveRtList

@@ -241,31 +241,32 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
                 if(it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
                     Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
 
-                    // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
+                // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
 //                    mySmoothScroll()
 
 
-                    // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
+                // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
 
 //                    iapInstance = MyIAPHelper(this, rcvAdapterInstance, fullRtClassList) //reInitialize
 //                    iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
 
 
-                    // Update MediaPlayer.kt
+                // Update MediaPlayer.kt
 //                    mpClassInstance.createMp3UrlMap(fullRtClassList)
 
-                    // Update Recycler View
 
 
-                    // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
+
+                // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
                     if(swipeRefreshLayout.isRefreshing) {
                         Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
                         swipeRefreshLayout.isRefreshing = false
                     }
-                    // 우선 lottie Loading animation-stop!!
+                // 우선 lottie Loading animation-stop!!
                     lottieAnimController(2) //stop!
 
                     val fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
+                // Update Recycler View
                     showResultAndMore(fullRtClassList)
                 } else { // 에러났을 때
                     lottieAnimController(1)

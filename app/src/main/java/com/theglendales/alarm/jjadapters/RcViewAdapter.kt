@@ -26,7 +26,7 @@ private const val TAG = "RcVAdapter"
 
 interface MyOnItemClickListener {
     fun myOnItemClick(v: View, trackId: Int)
-    //fun mySmoothScroll()
+
 }
 class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
                      private val listenerFragment: MyOnItemClickListener, private val receivedActivity: FragmentActivity)

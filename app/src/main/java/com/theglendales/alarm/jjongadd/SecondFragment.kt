@@ -91,7 +91,9 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 
 // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
+    //Log.d(TAG, "onCreate: jj-called..")
         super.onCreate(savedInstanceState)
+
     }
 
 //    override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -128,11 +130,17 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     //SwipeRefresh Listener 등록
         registerSwipeRefreshListener()
 
+    //기존 선택해놓은 track 있으면-> 1) Highlight, 2) BtmNavView(mini Player) ImageView 에 사진 로딩?(+트랙 재생 지점 확인?)
+        if(GlbVars.clickedTrId>0) { // default 값은 -1
+            rcvAdapterInstance.enableHighlightOnTrId(GlbVars.clickedTrId)
+        }
+
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(outState: Bundle) { // Activity 에서 call 해야 실행된다하네..
         super.onSaveInstanceState(outState)
-        //Log.d(TAG, "onSaveInstanceState: save some shit here!")
+        Log.d(TAG, "onSaveInstanceState: jj-called.")
+        //outState.putInt("trIdYo",33) // <- 이건 onCreateView 에서 쓰임.
     }
 
 //    override fun onViewStateRestored(savedInstanceState: Bundle?) {

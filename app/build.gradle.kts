@@ -153,6 +153,10 @@ dependencies {
     implementation("com.sothree.slidinguppanel:library:3.4.0")
     //Lottie
     implementation("com.airbnb.android:lottie:3.7.0")
+    //Coroutine
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1")
 
 
 }

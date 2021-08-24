@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.05a : Lottie 구현 확인/ 인터넷 안 되면 -> loading 으로 바뀜 (대신 Fragment 진입했을때만.)
+// v0.05c : Lottie 구현 확인/ setNetworkAvailabilityListener() -> 완성. 인터넷 연결 콜백
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

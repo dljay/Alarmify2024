@@ -2,7 +2,12 @@ package com.theglendales.alarm.jjongadd
 
 //import android.app.Fragment
 import android.annotation.SuppressLint
+import android.net.ConnectivityManager
+import android.net.Network
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import androidx.fragment.app.Fragment // todo: Keep an eye on this guy..
@@ -29,6 +34,11 @@ import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjViewModel
+//Coroutines
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * A simple [Fragment] subclass.
@@ -106,7 +116,8 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         setUpLateInitUis(view)
     //Chip
         initChip(view)
-
+    // 네트워크 체크-> Lottie 로 연결
+        setNetworkAvailabilityListener()
     //MVVM - Livedata Observe Firebase ..
         observeAndLoadFireBase()
 
@@ -125,6 +136,34 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 // <-- Basic Overridden functions
 
 // ===================================== My Functions ==== >
+private fun setNetworkAvailabilityListener() {
+    //1-b) API 24 이상이면 콜백까지 등록
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+    {
+        myNetworkCheckerInstance.connectivityManager.let {
+            it.registerDefaultNetworkCallback(object :
+                ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    //Connection is gained.
+                    Log.d(TAG, "onAvailable: Internet available: OOOOOOOOOOOOOOOOOOOOO ") //최초 앱 실행시에도 (인터넷이 되니깐) 여기 log 가 작동됨.
+
+                    Handler(Looper.getMainLooper()).post {observeAndLoadFireBase()} // MainThread 에서만 실행해야함. 이거 없으면 크래쉬! (Cannot invoke observe on a backgroudn thread)
+                    // 참고: Normally observe(..) and observeForever(..) should be called from the main thread because their
+                    // callbacks (Observer<T>.onChanged(T t)) often change the UI which is only possible in the main thread.
+                }
+
+                override fun onLost(network: Network) {
+                    //connection is lost // 그러나 인터넷 안되는 상태(ex.airplane mode)로 최초 실행시 일로 안 들어옴!!
+                    Log.d(TAG, "onLost: Internet available: XXXXXXXXXXXXXXXXXXXXX")
+                    lottieAnimController(1)
+                }
+            })
+        }
+
+    }
+    //그 외 API 23 이하거나 && 인터넷이 안되는 상태로 app 을 켜면 loadFromFireBase() 실행 (<- 여기서 현재 돌고있는 loading animation 을 인터넷 불가 animation 으로 바꿔줌)
+    //return
+}
     private fun initChip(v: View) {
     //Chip Related#1 (Init)
     chipGroup = v.findViewById(R.id.id_chipGroup)
@@ -326,11 +365,9 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 
     }
 
-    private fun loadFromFireBase() {
-    // 여기 Frag -> Presenter(JJ_Presenter) -> Model -> 여기 Frag 의 showResult()
-
-
-    }
+//    private fun loadFromFireBase() {
+//    // 여기 Frag -> Presenter(JJ_Presenter) -> Model -> 여기 Frag 의 showResult()
+//    }
 
 
     override fun myOnItemClick(v: View, trackId: Int) {

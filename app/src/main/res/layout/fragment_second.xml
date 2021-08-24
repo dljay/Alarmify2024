@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".jjongadd.SecondFragment">
+
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:id="@+id/id_slidingUpPanel"
@@ -17,14 +18,169 @@
         app:umanoShadowHeight="0dp">
 
         <!--1st child - Chips+ 리싸이클뷰임!  -->
-
-        <!--1st child-b) Swipe+RcView!  -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/id_rcV_2ndFrag"
+        <LinearLayout
+            android:id="@+id/id_mainLinearLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        </androidx.recyclerview.widget.RecyclerView>
+            <!--1st child-a) Chips  -->
+            <LinearLayout
+                android:id="@+id/id_ll_ChipGroupWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cardview_dark_background"
+                android:paddingTop="2dp"
+                android:scrollbars="none"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/id_chipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    app:chipSpacingHorizontal="2dp"
+                    app:chipSpacingVertical="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:singleLine="false">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/id_chip1_nature"
+                        style="@style/customChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:text="@string/chip1_nature"
+                        app:checkedIcon="@drawable/chip_check_empty_background"
+                        app:chipIcon="@drawable/chip1_nature"
+                        app:chipIconVisible="true">
+
+                    </com.google.android.material.chip.Chip>
+
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/id_chip2_city"
+                        style="@style/customChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:text="@string/chip2_city"
+                        app:checkedIcon="@drawable/chip_check_empty_background"
+                        app:chipIcon="@drawable/chip2_city"
+                        app:chipIconVisible="true">
+
+                    </com.google.android.material.chip.Chip>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/id_chip3_intense"
+                        style="@style/customChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:text="@string/chip3_intense"
+                        app:checkedIcon="@drawable/chip_check_empty_background"
+                        app:chipIcon="@drawable/chip3_intense"
+                        app:chipIconVisible="true">
+
+                    </com.google.android.material.chip.Chip>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/id_chip4_vintage"
+                        style="@style/customChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:text="@string/chip4_vintage"
+                        app:checkedIcon="@drawable/chip_check_empty_background"
+                        app:chipIcon="@drawable/chip4_vintage"
+                        app:chipIconVisible="true">
+
+                    </com.google.android.material.chip.Chip>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/id_chip5_weapons"
+                        style="@style/customChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:text="@string/chip5_weapons"
+                        app:checkedIcon="@drawable/chip_check_empty_background"
+                        app:chipIcon="@drawable/chip5_weapons"
+                        app:chipIconVisible="true">
+
+                    </com.google.android.material.chip.Chip>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/id_chip6_calm"
+                        style="@style/customChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:text="@string/chip6_calm"
+                        app:checkedIcon="@drawable/chip_check_empty_background"
+                        app:chipIcon="@drawable/chip6_peaceful2"
+                        app:chipIconVisible="true">
+
+                    </com.google.android.material.chip.Chip>
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+
+            <!--Lottie Animation-->
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/id_lottie_animView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_margin="50dp"
+                android:scaleType="centerInside"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/lottie_loading1"
+                app:lottie_scale="0.5">
+
+            </com.airbnb.lottie.LottieAnimationView>
+
+            <!--1st child-b) Swipe+RcView!  -->
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/id_swipeRefreshLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintTop_toBottomOf="@id/id_ll_ChipGroupWrapper">
+
+                <!--RecyclerView  -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/id_rcV_2ndFrag"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        </LinearLayout>
 
         <!--2nd child - Slider aka mini player  -->
         <RelativeLayout

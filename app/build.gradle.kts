@@ -151,6 +151,9 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore:23.0.1")
     //SlidingUpPanel
     implementation("com.sothree.slidinguppanel:library:3.4.0")
+    //Lottie
+    implementation("com.airbnb.android:lottie:3.7.0")
+
 
 }
 

@@ -16,6 +16,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
@@ -41,6 +43,10 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
+
+//Chip related
+    lateinit var chipGroup: ChipGroup
+    var myIsChipChecked = false
 
     private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 아래 줄 대체!! 성공!
     //(DEL) private val myNetworkCheckerInstance by lazy { context?.let { MyNetWorkChecker(it) } }
@@ -94,6 +100,26 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     //RcView <--
         setUpLateInitUis(view)
 
+    //Chip Related#1 (Init)
+        chipGroup = view.findViewById(R.id.id_chipGroup)
+        for(i in 0 until chipGroup.childCount) {
+            val chip: Chip = chipGroup.getChildAt(i) as Chip
+            chip.setOnCheckedChangeListener { buttonView, isChecked ->
+                //createStringListFromChips()
+                when(isChecked)
+                {
+                    true -> {
+                        chip.isChipIconVisible = false
+
+                    }
+                    false -> {
+                        chip.isChipIconVisible = true
+                        //backToFullRtList()
+                    }
+                }
+            }
+        }
+
     //MVVM load from Firebase .. move inside a function?  SubscribeToXxx()
 
         val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
@@ -102,10 +128,13 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
             //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
             it.addOnCompleteListener {
                 if(it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
+                    Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
+
+
                     val fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
                     showResultAndMore(fullRtClassList)
                 } else { // 에러났을 때
-
+                    //lottieAnimController(1)
                     Toast.makeText(this.context,"Error Loading Data from Firebase. Error: ${it.exception.toString()}",Toast.LENGTH_SHORT).show()
                 }
             }

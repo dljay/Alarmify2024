@@ -17,6 +17,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2" tools:ignore="MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation,MissingTranslation">
     <!--      Here come strings which are not contained in the AOSP -->
 
+    <!--Chip Strings.. Chip 표시되는 글자들에 대한 string variable-->
+    <string name="chip1_nature">Nature</string>
+    <string name="chip2_city">City</string>
+    <string name="chip3_intense">Intense</string>
+    <string name="chip4_vintage">Vintage</string>
+    <string name="chip5_weapons">Weapons</string>
+    <string name="chip6_calm">Calm</string>
+
     <string-array name="fade_in_time_sec_values" tools:ignore="MissingTranslation">
         <item>1</item>
         <item>10</item>

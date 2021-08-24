@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.04c : MVVM -> FB 로딩 성공. JjViewModel.kt - init{} 에서 loadFromFirebase() 해주고 -> 결과를 LiveData 로 등록! (Test 필요)
+// v0.04f : Chip 때문에 에러가 나서. Themes_Dark.xml -> AppCompat(SDK5 이상) -> MaterialComponents 로 변경
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

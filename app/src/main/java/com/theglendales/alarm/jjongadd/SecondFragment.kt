@@ -16,8 +16,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.snackbar.Snackbar
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
@@ -51,6 +53,9 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 아래 줄 대체!! 성공!
     //(DEL) private val myNetworkCheckerInstance by lazy { context?.let { MyNetWorkChecker(it) } }
     //private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
+
+    //Lottie Animation(Loading & Internet Error)
+    lateinit var lottieAnimationView: LottieAnimationView
 
 //Sliding Panel Related
 
@@ -99,47 +104,12 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         rcView.setHasFixedSize(true)
     //RcView <--
         setUpLateInitUis(view)
+    //Chip
+        initChip(view)
 
-    //Chip Related#1 (Init)
-        chipGroup = view.findViewById(R.id.id_chipGroup)
-        for(i in 0 until chipGroup.childCount) {
-            val chip: Chip = chipGroup.getChildAt(i) as Chip
-            chip.setOnCheckedChangeListener { buttonView, isChecked ->
-                //createStringListFromChips()
-                when(isChecked)
-                {
-                    true -> {
-                        chip.isChipIconVisible = false
+    //MVVM - Livedata Observe Firebase ..
+        observeAndLoadFireBase()
 
-                    }
-                    false -> {
-                        chip.isChipIconVisible = true
-                        //backToFullRtList()
-                    }
-                }
-            }
-        }
-
-    //MVVM load from Firebase .. move inside a function?  SubscribeToXxx()
-
-        val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
-        //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
-        jjViewModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
-            //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
-            it.addOnCompleteListener {
-                if(it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
-                    Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
-
-
-                    val fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
-                    showResultAndMore(fullRtClassList)
-                } else { // 에러났을 때
-                    //lottieAnimController(1)
-                    Toast.makeText(this.context,"Error Loading Data from Firebase. Error: ${it.exception.toString()}",Toast.LENGTH_SHORT).show()
-                }
-            }
-
-                 })
 
     }
 
@@ -154,8 +124,118 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 //    }
 // <-- Basic Overridden functions
 
-// My Functions ==== >
+// ===================================== My Functions ==== >
+    private fun initChip(v: View) {
+    //Chip Related#1 (Init)
+    chipGroup = v.findViewById(R.id.id_chipGroup)
+    for(i in 0 until chipGroup.childCount) {
+        val chip: Chip = chipGroup.getChildAt(i) as Chip
+        chip.setOnCheckedChangeListener { buttonView, isChecked ->
+            //createStringListFromChips()
+            when(isChecked)
+            {
+                true -> {
+                    chip.isChipIconVisible = false
+
+                }
+                false -> {
+                    chip.isChipIconVisible = true
+                    //backToFullRtList()
+                    }
+                }
+            }
+        }
+    }
+    //lottieAnimation Controller = 로딩:0 번, 인터넷에러:1번, 정상:2번(lottie 를 감춰!)
+    private fun lottieAnimController(status: Int) {
+        when(status) {
+            0 ->  { lottieAnimationView.setAnimation(R.raw.lottie_loading1)} //최초 app launch->read.. auto play 기 때문에
+            1 -> { activity?.runOnUiThread(Runnable
+            {
+                Log.d(TAG, "lottieAnimController: NO INTERNET ERROR!!")
+                lottieAnimationView.visibility = LottieAnimationView.VISIBLE
+                lottieAnimationView.setAnimation(R.raw.lottie_error1)
+                Snackbar.make(lottieAnimationView,"Please kindly check your network connection status",
+                    Snackbar.LENGTH_LONG).show()
+
+
+            })
+                // 만약 sync(multiple file downloads)/single file download 중였다면 btmSheet 없애기.
+                //1) 싱글 다운로드 instance & Multi(obj)
+//                MyDownloader.btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet()
+//                BtmSht_Sync.removeMultiDNLDBtmSheet()
+            }
+            2 -> {  activity?.runOnUiThread(Runnable
+            {
+                lottieAnimationView.cancelAnimation()
+                lottieAnimationView.visibility = LottieAnimationView.GONE
+            })
+            }
+
+        }
+    }
+
+    private fun observeAndLoadFireBase() {
+    //1. 인터넷 가능한지 체크
+    //인터넷되는지 체크
+
+        val isInternetAvailable: Boolean = myNetworkCheckerInstance.isNetWorkAvailable()
+        if(!isInternetAvailable) { // 인터넷 사용 불가!
+            Log.d(TAG, "loadFromFireBase: isInternetAvailable= $isInternetAvailable")
+            lottieAnimController(1)
+            return //더이상 firebase 로딩이고 나발이고 진행 안함!!
+        }
+
+    //2. If we have internet connectivity, then call FireStore!
+
+        val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
+        //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
+        jjViewModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
+            //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
+            it.addOnCompleteListener {
+                if(it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
+                    Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
+
+                    // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
+//                    mySmoothScroll()
+
+
+                    // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
+
+//                    iapInstance = MyIAPHelper(this, rcvAdapterInstance, fullRtClassList) //reInitialize
+//                    iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
+
+
+                    // Update MediaPlayer.kt
+//                    mpClassInstance.createMp3UrlMap(fullRtClassList)
+
+                    // Update Recycler View
+
+
+                    // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
+//                    if(swipeRefreshLayout.isRefreshing) {
+//                        Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
+//                        swipeRefreshLayout.isRefreshing = false
+//                    }
+                    // 우선 lottie Loading animation-stop!!
+                    lottieAnimController(2) //stop!
+
+                    val fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
+                    showResultAndMore(fullRtClassList)
+                } else { // 에러났을 때
+                    lottieAnimController(1)
+                    Toast.makeText(this.context,"Error Loading Data from Firebase. Error: ${it.exception.toString()}",Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        })
+    }
+
     private fun setUpLateInitUis(v: View) {
+    //Lottie
+        lottieAnimationView = v.findViewById(R.id.id_lottie_animView)
+
+    // SlidingUpPanel
         slidingUpPanelLayout = v.findViewById(R.id.id_slidingUpPanel)
         //a) Sliding Panel: Upper Ui
 

@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.04f : Chip 때문에 에러가 나서. Themes_Dark.xml -> AppCompat(SDK5 이상) -> MaterialComponents 로 변경
+// v0.05a : Lottie 구현 확인/ 인터넷 안 되면 -> loading 으로 바뀜 (대신 Fragment 진입했을때만.)
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

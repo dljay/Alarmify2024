@@ -11,12 +11,11 @@
 
     <LinearLayout
         android:id="@+id/id_singleSlot_ll"
-        android:background="@drawable/background_selector_1"
+        android:background="@drawable/background_selector_2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:weightSum="5"
-        android:backgroundTint="@color/alarm_whiteish">
+        android:weightSum="5">
 
         <!--thumbnail/title/description -->
         <RelativeLayout

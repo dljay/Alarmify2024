@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.05g : SetOnRefreshListener 구현(O)
+// v0.05g : SetOnRefreshListener 구현(O) / Highlight 정상화 (background_selector_2.xml)
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

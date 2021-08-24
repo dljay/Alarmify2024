@@ -324,7 +324,7 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
             val clickedPosition = adapterPosition // todo: 이것도. 위에 holderTrId 처럼 holderPosition 으로 설정후 onBindViewHolder 에서 제대로 position 값 입력 가능. -> smoothScrollToPos()과 연계 사용?
 
             isRVClicked = true // 이거 안쓰이는것 같음..  Recycle View 를 누른적이 있으면 true (혹시나 미리 누를수도 있으므로)
-            //clickedAdapterPosition = position
+
             GlbVars.clickedTrId = holderTrId
             Log.d(TAG, "*****************************onClick: Global.clTrId: ${GlbVars.clickedTrId}, holderTrId: $holderTrId ****************")
 

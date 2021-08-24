@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.05c : Lottie 구현 확인/ setNetworkAvailabilityListener() -> 완성. 인터넷 연결 콜백
+// v0.05g : SetOnRefreshListener 구현(O)
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

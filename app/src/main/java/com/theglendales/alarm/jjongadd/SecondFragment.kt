@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -55,6 +56,10 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
+
+//Swipe Refresh
+    lateinit var swipeRefreshLayout : SwipeRefreshLayout
+
 
 //Chip related
     lateinit var chipGroup: ChipGroup
@@ -120,7 +125,8 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         setNetworkAvailabilityListener()
     //MVVM - Livedata Observe Firebase ..
         observeAndLoadFireBase()
-
+    //SwipeRefresh Listener 등록
+        registerSwipeRefreshListener()
 
     }
 
@@ -136,7 +142,7 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 // <-- Basic Overridden functions
 
 // ===================================== My Functions ==== >
-private fun setNetworkAvailabilityListener() {
+    private fun setNetworkAvailabilityListener() {
     //1-b) API 24 이상이면 콜백까지 등록
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
     {
@@ -252,10 +258,10 @@ private fun setNetworkAvailabilityListener() {
 
 
                     // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
-//                    if(swipeRefreshLayout.isRefreshing) {
-//                        Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
-//                        swipeRefreshLayout.isRefreshing = false
-//                    }
+                    if(swipeRefreshLayout.isRefreshing) {
+                        Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
+                        swipeRefreshLayout.isRefreshing = false
+                    }
                     // 우선 lottie Loading animation-stop!!
                     lottieAnimController(2) //stop!
 
@@ -270,9 +276,32 @@ private fun setNetworkAvailabilityListener() {
         })
     }
 
+    private fun registerSwipeRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener { //setOnRefreshListener 는  function! (SwipeRefreshLayout.OnRefreshListener 인터페이스를 받는) .. 결국 아래는 이름없는 function..?
+            Log.d(TAG, "+++++++++++++ inside setOnRefreshListener+++++++++")
+            swipeRefreshLayout.isRefreshing = true
+
+            // Chip check 여부에 따라
+            if(myIsChipChecked)
+            { //하나라도 체크되어있으면
+                // Do nothing. Just stop the spinner
+                if(swipeRefreshLayout.isRefreshing) {
+                    Log.d(TAG, "Chip checked. Doing nothing but stopping the spinner.")
+                    swipeRefreshLayout.isRefreshing = false
+
+                }
+            }else if(!myIsChipChecked) {
+                Handler(Looper.getMainLooper()).post {observeAndLoadFireBase()}
+            }
+
+        }
+    }
     private fun setUpLateInitUis(v: View) {
     //Lottie
         lottieAnimationView = v.findViewById(R.id.id_lottie_animView)
+
+    //Swipe Refresh Layout Related
+        swipeRefreshLayout = v.findViewById(R.id.id_swipeRefreshLayout)
 
     // SlidingUpPanel
         slidingUpPanelLayout = v.findViewById(R.id.id_slidingUpPanel)

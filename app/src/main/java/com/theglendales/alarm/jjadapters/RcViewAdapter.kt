@@ -287,7 +287,7 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
     // MyViewHolder class
     inner class MyViewHolder(myXmlToViewObject: View) : RecyclerView.ViewHolder(myXmlToViewObject), View.OnClickListener
     {
-        // 1) 왼쪽 곡 클릭 영역
+        // 1) 왼쪽-중앙 곡 클릭 영역
         val ll_entire_singleSlot : LinearLayout = myXmlToViewObject.findViewById(R.id.id_singleSlot_ll)// HIGHLIGHT 위해 single slot 전체를 감싸는 linear layout 추가
         val tv1_Title: TextView = myXmlToViewObject.findViewById(R.id.id_tvTitle)
         val tv2_ShortDescription: TextView = myXmlToViewObject.findViewById(R.id.id_tvTags)

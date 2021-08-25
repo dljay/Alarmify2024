@@ -36,10 +36,6 @@ import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjViewModel
 //Coroutines
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * A simple [Fragment] subclass.
@@ -53,9 +49,13 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     //var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
 
+
+
+
 //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
+
 
 //Swipe Refresh
     lateinit var swipeRefreshLayout : SwipeRefreshLayout
@@ -115,12 +115,12 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     //RcView-->
         rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
         rcView.layoutManager = LinearLayoutManager(context)
-
         rcvAdapterInstance = activity?.let { RcViewAdapter(ArrayList(), this, it) }!! // 공갈리스트 넣어서 instance 만듬
+
         rcView.adapter = rcvAdapterInstance
         rcView.setHasFixedSize(true)
     //RcView <--
-        setUpLateInitUis(view)
+        setUpLateInitUis(view) // -> 이 안에서 setUpSlindingPanel() 도 해줌. todo: Coroutine 으로 착착. chain 하지 말고..
     //Chip
         initChip(view)
     // 네트워크 체크-> Lottie 로 연결
@@ -130,12 +130,14 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     //SwipeRefresh Listener 등록
         registerSwipeRefreshListener()
 
-    //기존 선택해놓은 track 있으면-> 1) Highlight, 2) BtmNavView(mini Player) ImageView 에 사진 로딩?(+트랙 재생 지점 확인?)
-        if(GlbVars.clickedTrId>0) { // default 값은 -1
-            rcvAdapterInstance.enableHighlightOnTrId(GlbVars.clickedTrId)
-        }
+    //기존 선택해놓은 track 있으면->
+        // 3) Activity 에서 onPause 로 갈때 (한번 나갔다오는 경우) onSaveInstanceState 활용해서 사용해도 괜춘할듯. 4) or  Local 에 저장? (ROOM.. 등)
+
+
+
 
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) { // Activity 에서 call 해야 실행된다하네..
         super.onSaveInstanceState(outState)
@@ -150,6 +152,25 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 // <-- Basic Overridden functions
 
 // ===================================== My Functions ==== >
+    private fun setSlidingPanelOnReturn(vHolder: RcViewAdapter.MyViewHolder?, trackId: Int) {
+        if(vHolder!=null) {
+            Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
+
+            val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(trackId)
+            val ivInside_Rc = vHolder.iv_Thumbnail
+            Log.d(TAG, "setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description} ")
+            //Sliding Panel - Upper UI
+            tv_upperUi_title.text = ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
+            tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
+
+            //Sliding Panel -  Lower UI
+            tv_lowerUi_about.text = ringtoneClassFromtheList?.description
+
+            iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
+            iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
+        }
+
+    }
     private fun setNetworkAvailabilityListener() {
     //1-b) API 24 이상이면 콜백까지 등록
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
@@ -276,6 +297,16 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
                     val fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
                 // Update Recycler View
                     showResultAndMore(fullRtClassList)
+
+                // 다른 frag 갔다가 돌아왔을 때 return 했을 때 slidingPanel(miniPlayer) 채워주기.
+                    if(GlbVars.clickedTrId>0)
+                    {
+                        // 1) Highlight the Track
+                        rcvAdapterInstance.enableHighlightOnTrId(GlbVars.clickedTrId) // default 값은 -1. 즉 -1 이 아니면 뭔가 선택된 상황..
+                        val prevSelectedVHolder = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]
+                        // 2) Fill in the rest of info
+                        setSlidingPanelOnReturn(prevSelectedVHolder,GlbVars.clickedTrId)
+                    }
                 } else { // 에러났을 때
                     lottieAnimController(1)
                     Toast.makeText(this.context,"Error Loading Data from Firebase. Error: ${it.exception.toString()}",Toast.LENGTH_SHORT).show()
@@ -330,7 +361,8 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         setUpSlidingPanel()
     }
 
-    private fun setUpSlidingPanel() {
+    private fun setUpSlidingPanel()
+    {
         //slidingUpPanelLayout.setDragView(iv_upperUi_ClickArrow) // 클릭 가능 영역을 화살표(^) 로 제한
         slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow)
         slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.HIDDEN // 일단 클릭전에는 감춰놓기!
@@ -412,11 +444,13 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 
         val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(trackId)
         val ivInside_Rc = v.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
+    // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
 
+    //Sliding Panel - Upper UI
         tv_upperUi_title.text = ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
         tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
 
-        // Lower UI
+    //Sliding Panel -  Lower UI
         tv_lowerUi_about.text = ringtoneClassFromtheList?.description
 
         when(v.id) {
@@ -424,7 +458,7 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
             R.id.id_rL_including_title_description -> {
                 //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
                 if (ivInside_Rc != null) { // 사실 RcView 가 제대로 setup 되어있으면 무조건 null 이 아님! RcView 클릭한 부분에 View 가 로딩된 상태 (사진 로딩 상태 x)
-                    //Log.d(TAG, "myOnItemClick: Now setting Images for lower/upper Uis")
+
                     iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
                     iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
                 }

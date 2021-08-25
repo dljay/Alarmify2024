@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.05g : SetOnRefreshListener 구현(O) / Highlight 정상화 (background_selector_2.xml)
+// v0.05k : 다른 frag 갔다 왔을 때 밑에 miniplayer 에 정보 갱신(O) (빨간색 사진 쓱 뜨는것 처리 필요!!)
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

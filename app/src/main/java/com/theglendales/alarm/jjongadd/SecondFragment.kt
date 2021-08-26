@@ -116,14 +116,15 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     //RcView-->
             rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
             rcView.layoutManager = LinearLayoutManager(context)
-        //1) *** JjRcvViewModel 을 RcView 에 주입. 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
+        //  LIVEDATA ->
+        //1)  *** JjRcvViewModel 을 RcView 에 주입. 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
             val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
             rcvAdapterInstance = activity?.let { RcViewAdapter(ArrayList(), this, it,jjRcvViewModel) }!! // it = activity. 공갈리스트 넣어서 instance 만듬
         //2) *** Observe - 여기서 View 와 TrackId 값을 받아서 UI 갱신
             jjRcvViewModel.selectedRow.observe(requireActivity(), { trackId ->
                 Log.d(TAG, "onViewCreated: !!! 옵저버!! 트랙ID= $trackId")
             })
-
+        //  < -- LIVEDATA
             rcView.adapter = rcvAdapterInstance
             rcView.setHasFixedSize(true)
     //RcView <--

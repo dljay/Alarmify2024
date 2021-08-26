@@ -139,10 +139,10 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
             {
                 //1) 우선 현재 trId 외의 모든 row 는 하이라이트 없앰! -> OnBind 할 때는 안 먹힘! Ex)trid 3번 ->7번으로 리싸이클 될 때 7번의 bindView 는 이후에 실행되며 새로운 값이 assign.
                 viewHolderMap.forEach { (key, value) -> if(key!=trId)
-                {
+                    {
                     value.ll_entire_singleSlot.isSelected = false
                     Log.d(TAG, "--highlight(X): trackID: $key, vHMap[$key]= ${value}, .isSelected: ${value.ll_entire_singleSlot.isSelected}")
-                }
+                    }
                 }
                 //2) 클릭한 trId 만 하이라이트.
                 viewHolderMap[trId]?.ll_entire_singleSlot?.isSelected = true
@@ -289,13 +289,16 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
     // MyViewHolder class
     inner class MyViewHolder(myXmlToViewObject: View) : RecyclerView.ViewHolder(myXmlToViewObject), View.OnClickListener
     {
-        // 1) 왼쪽-중앙 곡 클릭 영역
+        //1) 전체 Slot 을 감싸는 Linear Layout
         val ll_entire_singleSlot : LinearLayout = myXmlToViewObject.findViewById(R.id.id_singleSlot_ll)// HIGHLIGHT 위해 single slot 전체를 감싸는 linear layout 추가
+
+        //2) 왼쪽-중앙 곡 클릭 영역
+
         val tv1_Title: TextView = myXmlToViewObject.findViewById(R.id.id_tvTitle)
         val tv2_ShortDescription: TextView = myXmlToViewObject.findViewById(R.id.id_tvTags)
         val rl_Including_tv1_2 : RelativeLayout = myXmlToViewObject.findViewById(R.id.id_rL_including_title_description)
 
-        // 2) 오른쪽 FREE,GET THIS 칸
+        // 3) 오른쪽 FREE,GET THIS 칸
         val cl_entire_purchase: ConstraintLayout = myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
         val tv3_Price: TextView = myXmlToViewObject.findViewById(R.id.id_tvPrice)
         val iv_PurchasedFalse: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_False)
@@ -322,7 +325,7 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
 
         override fun onClick(v: View?) {
 
-            val view = v
+            val clickedView = v
             val clickedPosition = adapterPosition // todo: 이것도. 위에 holderTrId 처럼 holderPosition 으로 설정후 onBindViewHolder 에서 제대로 position 값 입력 가능. -> smoothScrollToPos()과 연계 사용?
 
             isRVClicked = true // 이거 안쓰이는것 같음..  Recycle View 를 누른적이 있으면 true (혹시나 미리 누를수도 있으므로)
@@ -334,11 +337,11 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
 
             enableHighlightOnTrId(holderTrId)
 
-            if(clickedPosition != RecyclerView.NO_POSITION && view!=null) { // To avoid possible mistake when we delete the item but click it
+            if(clickedPosition != RecyclerView.NO_POSITION && clickedView!=null) { // To avoid possible mistake when we delete the item but click it
             // (기존 코드)
                 //listenerFragment.myOnItemClick(view, holderTrId) // then, call this function inside listener Activity = (MainActivity)
             // (LiveData + ViewModel 로 변경)
-                val vAndTrId = ViewAndTrackIdClass(view, holderTrId)
+                val vAndTrId = ViewAndTrackIdClass(clickedView, holderTrId)
                 rcViewModel.updateLiveData(vAndTrId) // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
 
             }

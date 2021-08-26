@@ -173,8 +173,10 @@ class SecondFragment : androidx.fragment.app.Fragment()  {
 
 // ===================================== My Functions ==== >
     //위에 onCreatedView 에서 observe 하고 있는 LiveData 가 갱신되었을때 다음을 실행
+    // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)
     private fun myOnLiveDataReceived(viewAndTrId: ViewAndTrackIdClass)
     {
+
         Log.d(TAG, "myOnLiveDataReceived: called")
         val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
         val ivInside_Rc = viewAndTrId.view.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
@@ -216,7 +218,7 @@ class SecondFragment : androidx.fragment.app.Fragment()  {
 
         }
     }
-    private fun setSlidingPanelUiOnReturn(vHolder: RcViewAdapter.MyViewHolder?, trackId: Int) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
+    private fun setSlidingPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?, trackId: Int) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
         if(vHolder!=null) {
             Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
 
@@ -373,7 +375,7 @@ class SecondFragment : androidx.fragment.app.Fragment()  {
                         rcvAdapterInstance.enableHighlightOnTrId(GlbVars.clickedTrId) // default 값은 -1. 즉 -1 이 아니면 뭔가 선택된 상황..
                         val prevSelectedVHolder = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]
                         // 2) Fill in the rest of info
-                        setSlidingPanelUiOnReturn(prevSelectedVHolder,GlbVars.clickedTrId)
+                        setSlidingPanelTextOnReturn(prevSelectedVHolder,GlbVars.clickedTrId)
                     }
                 } else { // 에러났을 때
                     lottieAnimController(1)

@@ -178,6 +178,10 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 
             iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
             iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
+
+
+
+
         }
 
     }
@@ -360,12 +364,14 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         upperUiHolder = v.findViewById(R.id.id_upperUi_ll)   // 추후 이 부분이 fade out
         tv_upperUi_title= v.findViewById<TextView>(R.id.id_upperUi_tv_title)
         iv_upperUi_thumbNail= v.findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)
+            iv_upperUi_thumbNail.visibility = View.INVISIBLE // Frag 전환시 placeHolder (빨갱이사진) 보이는 것 방지 위해.
         iv_upperUi_ClickArrow= v.findViewById<ImageView>(R.id.id_upperUi_iv_clickarrowUp)
         cl_upperUi_entireWindow= v.findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)
 
         //b) lower Ui
         constLayout_entire= v.findViewById<ConstraintLayout>(R.id.id_lowerUI_entireConsLayout)
         iv_lowerUi_bigThumbnail= v.findViewById<ImageView>(R.id.id_lowerUi_iv_bigThumbnail)
+            iv_lowerUi_bigThumbnail.visibility = View.INVISIBLE // Frag 전환시 placeHolder (빨갱이사진) 보이는 것 방지 위해.
         tv_lowerUi_about= v.findViewById<TextView>(R.id.id_lowerUi_tv_Description)
 
         setUpSlidingPanel()

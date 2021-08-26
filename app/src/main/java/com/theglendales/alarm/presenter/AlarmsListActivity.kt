@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.06a : RcViewAdapter 에서 클릭-> JJRecyclerViewModel 을 통해 -> SecondFrag 에서 LiveData 로 받기! -> UI 갱신(준비중)
+// v0.06a : RcViewAdapter 에서 클릭-> JJRecyclerViewModel 을 통해 -> SecondFrag 에서 LiveData 로 받기! -> MiniPlayer UI 갱신(준비중)
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

@@ -301,13 +301,16 @@ class AlarmsListActivity : AppCompatActivity() {
     //<-추가
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
-        if (currentFragment is AlarmsListFragment) {
+
+        if (currentFragment is AlarmsListFragment || currentFragment is SecondFragment) {
             logger.debug { "skipping fragment transition, because already showing $currentFragment" }
-        } else if (currentFragment is SecondFragment) {
-            Log.d(TAG, "showList: jj-currentFragment is SecondFragment !!")
         }
+//        else if (currentFragment is SecondFragment) {
+//            Log.d(TAG, "showList: jj-currentFragment is SecondFragment !!")
+//        }
         else {
             logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
+            // 애니메이션
             supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
                 lollipop {
                     exitTransition = Fade()

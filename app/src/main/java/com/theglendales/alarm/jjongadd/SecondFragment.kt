@@ -133,9 +133,6 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     //기존 선택해놓은 track 있으면->
         // 3) Activity 에서 onPause 로 갈때 (한번 나갔다오는 경우) onSaveInstanceState 활용해서 사용해도 괜춘할듯. 4) or  Local 에 저장? (ROOM.. 등)
 
-
-
-
     }
 
 
@@ -149,11 +146,20 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
 //
 //    }
 
-//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-//        super.onViewStateRestored(savedInstanceState)
-//        Log.d(TAG, "onViewStateRestored: called")
-//    }
-// <-- Basic Overridden functions
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause: 2nd Frag!")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume: 2nd Frag!")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy: 2nd Frag!")
+    }
 
 // ===================================== My Functions ==== >
     private fun setSlidingPanelOnReturn(vHolder: RcViewAdapter.MyViewHolder?, trackId: Int) {

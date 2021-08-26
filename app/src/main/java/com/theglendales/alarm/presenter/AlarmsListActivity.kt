@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.05k : 다른 frag 갔다 왔을 때 밑에 miniplayer 에 정보 갱신(O) (빨간색 사진 쓱 뜨는것 처리 필요!!)
+// v0.05m : Frag 나갔다 왔을때도 2nd Frag 로 유지(O). 그 후 Frag 왔다갔다도 정상(O)
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

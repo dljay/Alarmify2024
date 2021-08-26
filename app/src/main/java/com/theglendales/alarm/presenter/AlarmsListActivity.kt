@@ -241,7 +241,16 @@ class AlarmsListActivity : AppCompatActivity() {
     override fun onStart() {
         Log.d(TAG, "onStart: jj-called")
         super.onStart()
-        configureTransactions() // <- This brings us to 1st Fragment (SetAlarm)
+// ** 추가 -->
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+
+        if (currentFragment is SecondFragment) {
+            Log.d(TAG, "onStart: 과거 머물러있던 fragment 는 SecondFragment 로 예상됨.")
+            return
+        } else {
+            configureTransactions() // <- 원래는 if, else 문 없이 이것만 있었음.
+        }
+// ** 추가 <--
     }
 
     override fun onResume() {
@@ -308,7 +317,7 @@ class AlarmsListActivity : AppCompatActivity() {
 //        else if (currentFragment is SecondFragment) {
 //            Log.d(TAG, "showList: jj-currentFragment is SecondFragment !!")
 //        }
-        else
+        else // 현재 fragment 가 AlarmsListFragment 가 아니면 AlarmsListFragment 로 이동. 문제는 나갔다오면 onStart 에서 일로 온다는것..
         {
             logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
             // 애니메이션

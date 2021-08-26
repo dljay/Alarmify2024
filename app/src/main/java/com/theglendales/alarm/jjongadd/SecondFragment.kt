@@ -121,7 +121,7 @@ class SecondFragment : androidx.fragment.app.Fragment()  {
         //1)  *** JjRcvViewModel 을 RcView 에 주입. 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
             val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
             rcvAdapterInstance = activity?.let { RcViewAdapter(ArrayList(), it,jjRcvViewModel) }!! // it = activity. 공갈리스트 넣어서 instance 만듬
-        //2) *** Observe - 여기서 View 와 TrackId 값을 받아서 UI 갱신
+        //2) *** 옵저버: RcView 에서 -> 여기로 View 와 TrackId 값을 전달-> UI 갱신
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
                 Log.d(TAG, "onViewCreated: !!! 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
                 myOnLiveDataReceived(viewAndTrIdClassInstance)
@@ -343,18 +343,12 @@ class SecondFragment : androidx.fragment.app.Fragment()  {
                 // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
 //                    mySmoothScroll()
 
-
                 // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
-
 //                    iapInstance = MyIAPHelper(this, rcvAdapterInstance, fullRtClassList) //reInitialize
 //                    iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
 
-
                 // Update MediaPlayer.kt
 //                    mpClassInstance.createMp3UrlMap(fullRtClassList)
-
-
-
 
                 // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
                     if(swipeRefreshLayout.isRefreshing) {
@@ -372,7 +366,8 @@ class SecondFragment : androidx.fragment.app.Fragment()  {
                     if(GlbVars.clickedTrId>0)
                     {
                         // 1) Highlight the Track
-                        rcvAdapterInstance.enableHighlightOnTrId(GlbVars.clickedTrId) // default 값은 -1. 즉 -1 이 아니면 뭔가 선택된 상황..
+                        Log.d(TAG, "observeAndLoadFireBase: highlight the track")
+                        //rcvAdapterInstance.enableHighlightOnTrId(GlbVars.clickedTrId) // default 값은 -1. 즉 -1 이 아니면 뭔가 선택된 상황..
                         val prevSelectedVHolder = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]
                         // 2) Fill in the rest of info
                         setSlidingPanelTextOnReturn(prevSelectedVHolder,GlbVars.clickedTrId)

@@ -132,7 +132,7 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
 
         else
         {
-            Log.d(TAG, "enableHighlightOnTrId: trId: $trId, vhMap.size: ${viewHolderMap.size} ")
+            //Log.d(TAG, "enableHighlightOnTrId: trId: $trId, vhMap.size: ${viewHolderMap.size} ")
 
             // method #1 (신규 방법) -- onBindView 가 유저의 ㅈㄴ 빠른 스크롤을 못따라가서 position 불일치가 생길때를 방지하기 위해. list->map 으로 변경
             if(viewHolderMap.isNotEmpty())
@@ -214,8 +214,8 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
 
         Log.d(TAG, "onViewAttachedToWindow: trId: ${holder.holderTrId},  holder name: $holder, vuMeter Name: ${holder.vuMeterView},")
 
-
-        if(holder.holderTrId == GlbVars.currentPlayingTrId && holder.holderTrId != GlbVars.errorTrackId) { //현재 추가시키는 holder 가 기존 click, 재생(혹은 재생 중 pause) 중인 트랙였다.
+    //현재 추가시키는 holder 가 기존 click, 재생(혹은 재생 중 pause) 중인 트랙였다.
+        if(holder.holderTrId == GlbVars.currentPlayingTrId && holder.holderTrId != GlbVars.errorTrackId) {
             enblVuMeterOnTrId(holder.holderTrId, holder)
             enableHighlightOnTrId(holder.holderTrId)
 

@@ -34,6 +34,7 @@ import com.theglendales.alarm.jjadapters.MyOnItemClickListener
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
 //Coroutines
 
@@ -113,12 +114,18 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
         Log.d(TAG, "onViewCreated: jj- begins..")
         super.onViewCreated(view, savedInstanceState)
     //RcView-->
-        rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
-        rcView.layoutManager = LinearLayoutManager(context)
-        rcvAdapterInstance = activity?.let { RcViewAdapter(ArrayList(), this, it) }!! // 공갈리스트 넣어서 instance 만듬
+            rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
+            rcView.layoutManager = LinearLayoutManager(context)
+        //1) *** JjRcvViewModel 을 RcView 에 주입. 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
+            val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
+            rcvAdapterInstance = activity?.let { RcViewAdapter(ArrayList(), this, it,jjRcvViewModel) }!! // it = activity. 공갈리스트 넣어서 instance 만듬
+        //2) *** Observe - 여기서 View 와 TrackId 값을 받아서 UI 갱신
+            jjRcvViewModel.selectedRow.observe(requireActivity(), { trackId ->
+                Log.d(TAG, "onViewCreated: !!! 옵저버!! 트랙ID= $trackId")
+            })
 
-        rcView.adapter = rcvAdapterInstance
-        rcView.setHasFixedSize(true)
+            rcView.adapter = rcvAdapterInstance
+            rcView.setHasFixedSize(true)
     //RcView <--
         setUpLateInitUis(view) // -> 이 안에서 setUpSlindingPanel() 도 해줌. todo: Coroutine 으로 착착. chain 하지 말고..
     //Chip

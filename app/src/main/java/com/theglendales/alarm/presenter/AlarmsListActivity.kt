@@ -50,7 +50,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.05m : Frag 나갔다 왔을때도 2nd Frag 로 유지(O). 그 후 Frag 왔다갔다도 정상(O)
+// v0.06a : RcViewAdapter 에서 클릭-> JJRecyclerViewModel 을 통해 -> SecondFrag 에서 LiveData 로 받기! -> UI 갱신(준비중)
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

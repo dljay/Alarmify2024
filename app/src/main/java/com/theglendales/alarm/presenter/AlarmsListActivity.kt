@@ -210,7 +210,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 R.id.id_RingTone -> jjSetCurrentFragment(secondFrag)
 
             }
-            Log.d(TAG, "onCreate: before hitting true!")
+            Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener -> before hitting true!")
             true
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
@@ -302,13 +302,14 @@ class AlarmsListActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
 
-        if (currentFragment is AlarmsListFragment || currentFragment is SecondFragment) {
+        if (currentFragment is AlarmsListFragment) {
             logger.debug { "skipping fragment transition, because already showing $currentFragment" }
         }
 //        else if (currentFragment is SecondFragment) {
 //            Log.d(TAG, "showList: jj-currentFragment is SecondFragment !!")
 //        }
-        else {
+        else
+        {
             logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
             // 애니메이션
             supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
@@ -316,7 +317,9 @@ class AlarmsListActivity : AppCompatActivity() {
                     exitTransition = Fade()
                 }
             }
-
+            //Below is equivalent to : val listFragment= AlarmsListFragment()
+        //                          listFragment.sharedElementEnter = moveTransition()
+        //                          listFragment.enterTransition = Fade() .. 기타 등등.
             val listFragment = AlarmsListFragment().apply {
                 lollipop {
                     sharedElementEnterTransition = moveTransition()

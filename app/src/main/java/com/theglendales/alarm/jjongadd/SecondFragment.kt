@@ -139,11 +139,15 @@ class SecondFragment : androidx.fragment.app.Fragment(), MyOnItemClickListener  
     }
 
 
-    override fun onSaveInstanceState(outState: Bundle) { // Activity 에서 call 해야 실행된다하네..
-        super.onSaveInstanceState(outState)
-        Log.d(TAG, "onSaveInstanceState: jj-called.")
-        //outState.putInt("trIdYo",33) // <- 이건 onCreateView 에서 쓰임.
-    }
+//    override fun onSaveInstanceState(outState: Bundle) { // Activity 에서 call 해야 실행된다하네..
+//        super.onSaveInstanceState(outState)
+//        Log.d(TAG, "onSaveInstanceState: jj-called.")
+//        // 폰에서 나갈 때 (가운데 버튼) 불림 (AlarmsListActivity 의 onPause() 도 불리지..)
+//        if(GlbVars.clickedTrId > 0) {
+//            outState.putInt("trIdYo",GlbVars.clickedTrId) // <- 이건 onCreateView 에서 쓰임.
+//        }
+//
+//    }
 
 //    override fun onViewStateRestored(savedInstanceState: Bundle?) {
 //        super.onViewStateRestored(savedInstanceState)

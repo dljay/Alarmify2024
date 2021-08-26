@@ -239,22 +239,26 @@ class AlarmsListActivity : AppCompatActivity() {
 // <--추가
 
     override fun onStart() {
+        Log.d(TAG, "onStart: jj-called")
         super.onStart()
-        configureTransactions()
+        configureTransactions() // <- This brings us to 1st Fragment (SetAlarm)
     }
 
     override fun onResume() {
+        Log.d(TAG, "onResume: jj-called")
         super.onResume()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         NotificationSettings().checkSettings(this)
     }
 
     override fun onStop() {
+        Log.d(TAG, "onStop: jj-called")
         super.onStop()
         this.subscriptions.dispose()
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "onDestroy: jj-called")
         logger.debug { "$this" }
         super.onDestroy()
         this.mActionBarHandler.onDestroy()
@@ -299,7 +303,10 @@ class AlarmsListActivity : AppCompatActivity() {
 
         if (currentFragment is AlarmsListFragment) {
             logger.debug { "skipping fragment transition, because already showing $currentFragment" }
-        } else {
+        } else if (currentFragment is SecondFragment) {
+            Log.d(TAG, "showList: jj-currentFragment is SecondFragment !!")
+        }
+        else {
             logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
             supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
                 lollipop {

@@ -1,6 +1,5 @@
 package com.theglendales.alarm.jjadapters
 
-import android.app.Activity
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +18,7 @@ import com.theglendales.alarm.R
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
+import com.theglendales.alarm.jjmvvm.data.ViewAndTrackIdClass
 //import com.theglendales.alarm.jjiap.MyIAPHelper
 import io.gresse.hugo.vumeterlibrary.VuMeterView
 //import javax.sql.DataSource
@@ -30,7 +30,6 @@ interface MyOnItemClickListener {
 
 }
 class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
-                     private val listenerFragment: MyOnItemClickListener,
                      private val receivedActivity: FragmentActivity,
                      private val rcViewModel: JjRecyclerViewModel)
     : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>()
@@ -337,9 +336,10 @@ class RcViewAdapter (var currentRtList: MutableList<RingtoneClass>,
 
             if(clickedPosition != RecyclerView.NO_POSITION && view!=null) { // To avoid possible mistake when we delete the item but click it
             // (기존 코드)
-                listenerFragment.myOnItemClick(view, holderTrId) // then, call this function inside listener Activity = (MainActivity)
+                //listenerFragment.myOnItemClick(view, holderTrId) // then, call this function inside listener Activity = (MainActivity)
             // (LiveData + ViewModel 로 변경)
-                rcViewModel.selectedRow.value = holderTrId // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
+                val vAndTrId = ViewAndTrackIdClass(view, holderTrId)
+                rcViewModel.updateLiveData(vAndTrId) // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
 
             }
 

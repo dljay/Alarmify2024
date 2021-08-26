@@ -50,7 +50,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.06a : RcViewAdapter 에서 클릭-> JJRecyclerViewModel 을 통해 -> SecondFrag 에서 LiveData 로 받기! -> MiniPlayer UI 갱신(준비중)
+// v0.06c :
+// -SlidingPanel 일단 frag 나갔다 오면 HIDDEN 상태로 (추후 확인 필요)
+// -Frag 나갔다 왔을 때 트랙 Highlight ISSUE (6번 이상~ 뒤에 있던 놈들)
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

@@ -50,9 +50,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.06c :
-// -SlidingPanel 일단 frag 나갔다 오면 HIDDEN 상태로 (추후 확인 필요)
-// -Frag 나갔다 왔을 때 트랙 Highlight ISSUE (6번 이상~ 뒤에 있던 놈들)
+// v0.07a :
+// - 하이라이트 기능 단순히 OnBindView 에서 해줌 -> nmatched pair of setIsRecyable() 이 경고 추후 해결 필요.
+
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

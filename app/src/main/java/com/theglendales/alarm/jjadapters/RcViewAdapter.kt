@@ -62,9 +62,7 @@ class RcViewAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
 
-        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, " +
-                "pos: $position // Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
-                "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
+
 
         val currentItem = currentRtList[position]
         val currentTrId = currentRtList[position].id
@@ -75,6 +73,9 @@ class RcViewAdapter(
         holder.tv2_ShortDescription.text = currentItem.tags
         holder.holderTrId = currentTrId
 
+        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, " +
+                "pos: $position // Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
+                "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
     //하이라이트: Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트
 
         if (currentTrId == GlbVars.clickedTrId) {

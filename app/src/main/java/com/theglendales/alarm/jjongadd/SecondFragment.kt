@@ -2,7 +2,6 @@ package com.theglendales.alarm.jjongadd
 
 //import android.app.Fragment
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
@@ -75,7 +74,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var lottieAnimationView: LottieAnimationView
 
 //Sliding Panel Related
-
+    var shouldPanelBeVisible = false
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout    //findViewById(R.id.id_slidingUpPanel)  }
 
     //a) Sliding Panel: Upper Ui
@@ -240,36 +239,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
     }
 
-    private fun setSlidingPanelTextOnReturn(
-        vHolder: RcViewAdapter.MyViewHolder?,
-        trackId: Int
-    ) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
-        if (vHolder != null) {
-            Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
 
-            val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(trackId)
-            //val ivInside_Rc = vHolder.iv_Thumbnail
-            Log.d(
-                TAG,
-                "setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description} "
-            )
-            //Sliding Panel - Upper UI
-            tv_upperUi_title.text =
-                ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
-            tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
-
-            //Sliding Panel -  Lower UI
-            tv_lowerUi_about.text = ringtoneClassFromtheList?.description
-
-            //ImageView 에 들어갈 사진은 LiveData 가 해결해주니. 상관없음.
-            //iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
-            //iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
-
-            setUpSlidingPanel()
-
-        }
-
-    }
 
     private fun setNetworkAvailabilityListener() {
         //1-b) API 24 이상이면 콜백까지 등록
@@ -468,15 +438,70 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //iv_lowerUi_bigThumbnail.visibility = View.INVISIBLE // Frag 전환시 placeHolder (빨갱이사진) 보이는 것 방지 위해.
         tv_lowerUi_about = v.findViewById<TextView>(R.id.id_lowerUi_tv_Description)
 
+        //Title Scroll horizontally. 흐르는 텍스트
+        tv_upperUi_title.apply {
+            isSingleLine = true
+            ellipsize = TextUtils.TruncateAt.MARQUEE
+            isSelected = true
+            //text ="Song Title                                           "
+            // text 제목이 일정 수준 이하면 여백을 추가, 추후 title.length < xx => 정확한 카운트 알고리즘.
+        }
+        
         setUpSlidingPanel()
     }
 
+// Sliding Panel
+    private fun setSlidingPanelTextOnReturn(
+        vHolder: RcViewAdapter.MyViewHolder?,
+        trackId: Int
+    ) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
+        if (vHolder != null) {
+            Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
+
+            val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(trackId)
+            //val ivInside_Rc = vHolder.iv_Thumbnail
+            Log.d(TAG,
+                "setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description} ")
+            //Sliding Panel - Upper UI
+            tv_upperUi_title.text =
+                ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
+            tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
+
+            //Sliding Panel -  Lower UI
+            tv_lowerUi_about.text = ringtoneClassFromtheList?.description
+
+            //ImageView 에 들어갈 사진은 LiveData 가 해결해주니. 상관없음.
+            //iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
+            //iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
+
+            setUpSlidingPanel()
+
+        }
+
+    }
     private fun setUpSlidingPanel() {
-        //slidingUpPanelLayout.setDragView(iv_upperUi_ClickArrow) // 클릭 가능 영역을 화살표(^) 로 제한
+
+        Log.d(TAG, "setUpSlidingPanel: slidingUpPanelLayout.isActivated=${slidingUpPanelLayout.isActivated}")
         slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow)
 
-        // 기존 클릭이 없어서 Panel 이 접혀있지도(COLLAPSED) 확장되지도(EXPANDED) 않은 경우에는 감춰놓기.
-        slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.HIDDEN // 일단 클릭전에는 감춰놓기!
+        // A. 기존에 클릭 후 다른 Frag 갔다 돌아온 경우. (Panel 은 Collapsed 아니면 Expanded 상태 유지중임.)
+            if(shouldPanelBeVisible) {
+                Log.d(TAG, "setUpSlidingPanel: isInitialPanelSetup=$shouldPanelBeVisible")
+
+            // 만약 확장된 상태였다면 초기화가 안되어있어서 모퉁이 허옇고 & arrow(↑)가 위로 가있음. 아래에서 해결.
+                if(slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                //모퉁이 흰색 없애주고 & 불투명으로
+                    slidingUpPanelLayout.isOverlayed =true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
+                    upperUiHolder.alpha = 0.5f // +0.3 은 살짝~ 보이게끔
+                    
+                //↓ arrow 전환 visibility
+                    iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)//
+                }
+            }
+        // B. 최초 로딩- 기존 클릭이 없어서 Panel 이 접혀있지도(COLLAPSED) 확장되지도(EXPANDED) 않은 경우에는 감춰놓기.
+            else if(!shouldPanelBeVisible) {
+                slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.HIDDEN // 일단 클릭전에는 감춰놓기!
+            }
 
 
         //slidingUpPanelLayout.anchorPoint = 0.6f //화면의 60% 만 올라오게.  그러나 2nd child 의 height 을 match_parent -> 300dp 로 설정해서 이걸 쓸 필요가 없어짐!
@@ -485,8 +510,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View?, slideOffset: Float) {
                 // Panel 이 열리고 닫힐때의 callback
+                shouldPanelBeVisible = true // 이제 Panel 이 열렸으니깐. todo: 이거 bool 값에 의존하는게 괜찮을지..
 
-                upperUiHolder.alpha = 1 - slideOffset + 0.3f // +0.3 은 살짝~ 보이게끔
+                upperUiHolder.alpha = 1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
 
                 // 트랙 클릭-> 미니플레이어가 등장! (그 이전에는 offset = -xxx 값임.)
                 //Log.d(TAG, "onPanelSlide: slideOffset= $slideOffset, rcvAdapterInstance.itemCount=${rcvAdapterInstance.itemCount}")
@@ -504,8 +530,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 // 완전히 펼쳐질 때
                 if (!slidingUpPanelLayout.isOverlayed && slideOffset > 0.2f) { //안겹치게 설정된 상태에서 panel 이 열리는 중 (20%만 열리면 바로 모퉁이 감추기!)
                     //Log.d(TAG, "onPanelSlide: Hiding 모퉁이! yo! ")
-                    slidingUpPanelLayout.isOverlayed =
-                        true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
+                    slidingUpPanelLayout.isOverlayed =true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
                 }
 
             }
@@ -519,16 +544,16 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                 when (newState) {
                     SlidingUpPanelLayout.PanelState.EXPANDED -> {
-                        //Log.d(TAG, "onPanelStateChanged: Sliding Panel Expanded")
-                        iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)// ^ arrow 전환 visibility }
+                    //Log.d(TAG, "onPanelStateChanged: Sliding Panel Expanded")
+                        iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)// ↓ arrow 전환 visibility }
 
-                        // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
-                        constLayout_entire.setOnTouchListener { v, event -> true }
+                    // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
+                        constLayout_entire.setOnTouchListener { _, _ -> true }
 
                     }
                     SlidingUpPanelLayout.PanelState.COLLAPSED -> {
                         //Log.d(TAG, "onPanelStateChanged: Sliding Panel Collapsed")
-                        iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ^ arrow 전환 visibility }
+                        iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
                         slidingUpPanelLayout.isOverlayed =
                             false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
                     }
@@ -536,14 +561,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
         })
 
-        //Title Scroll horizontally. 흐르는 텍스트
-        tv_upperUi_title.apply {
-            isSingleLine = true
-            ellipsize = TextUtils.TruncateAt.MARQUEE
-            isSelected = true
-            //text ="Song Title                                           "
-            // text 제목이 일정 수준 이하면 여백을 추가, 추후 title.length < xx => 정확한 카운트 알고리즘.
-        }
+
+
     }
 
 

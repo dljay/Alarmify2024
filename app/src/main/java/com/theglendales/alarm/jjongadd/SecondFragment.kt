@@ -156,29 +156,23 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
 
-//    override fun onSaveInstanceState(outState: Bundle) { // Activity 에서 call 해야 실행된다하네..
-//        super.onSaveInstanceState(outState)
-//        Log.d(TAG, "onSaveInstanceState: jj-called.")
-//        // 폰에서 나갈 때 (가운데 버튼) 불림 (AlarmsListActivity 의 onPause() 도 불리지..)
-//        if(GlbVars.clickedTrId > 0) {
-//            outState.putInt("trIdYo",GlbVars.clickedTrId) // <- 이건 onCreateView 에서 쓰임.
-//        }
-//
-//    }
 
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause: 2nd Frag!")
+
     }
 
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: 2nd Frag!")
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: 2nd Frag!")
+
     }
 
     // ===================================== My Functions ==== >
@@ -451,12 +445,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
 // Sliding Panel
-    private fun setSlidingPanelTextOnReturn(
-        vHolder: RcViewAdapter.MyViewHolder?,
-        trackId: Int
-    ) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
+    private fun setSlidingPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?,trackId: Int) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
         if (vHolder != null) {
             Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
+
 
             val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(trackId)
             //val ivInside_Rc = vHolder.iv_Thumbnail
@@ -489,13 +481,16 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG, "setUpSlidingPanel: isInitialPanelSetup=$shouldPanelBeVisible")
 
             // 만약 확장된 상태였다면 초기화가 안되어있어서 모퉁이 허옇고 & arrow(↑)가 위로 가있음. 아래에서 해결.
-                if(slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                if(slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.EXPANDED)
+                {
                 //모퉁이 흰색 없애주고 & 불투명으로
                     slidingUpPanelLayout.isOverlayed =true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
                     upperUiHolder.alpha = 0.5f // +0.3 은 살짝~ 보이게끔
-                    
+
                 //↓ arrow 전환 visibility
-                    iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)//
+                    iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)
+                // 다 필요없고 그냥 Collapse 시켜버리려할때는 위에 지우고 이걸로 사용.
+                    //slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
                 }
             }
         // B. 최초 로딩- 기존 클릭이 없어서 Panel 이 접혀있지도(COLLAPSED) 확장되지도(EXPANDED) 않은 경우에는 감춰놓기.

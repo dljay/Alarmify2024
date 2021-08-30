@@ -50,8 +50,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.07a :
-// - 하이라이트 기능 단순히 OnBindView 에서 해줌 -> nmatched pair of setIsRecyable() 이 경고 추후 해결 필요.
+// v0.09a :
+// - Frag show/hide 는 AlarmDetailsFragment 때문에 안쓰기로!!
+// - SlidingUpPanelLayout -> fragment_second.xml 가서 overLay= true 로 박아버림. 이거 내가 default 값 FALSE 로 한 이유가 있을텐데..흐음..
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

@@ -56,6 +56,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
+    lateinit var layoutManager: LinearLayoutManager
 
 
     //Swipe Refresh
@@ -119,7 +120,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         super.onViewCreated(view, savedInstanceState)
         //RcView-->
         rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
-        rcView.layoutManager = LinearLayoutManager(context)
+        layoutManager = LinearLayoutManager(context)
+        rcView.layoutManager = layoutManager
         //  LIVEDATA ->
         //1)  *** JjRcvViewModel 을 RcView 에 주입. 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
         val jjRcvViewModel =
@@ -344,8 +346,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 if (it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
                     Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
 
-                    // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
-//                    mySmoothScroll()
+
 
                     // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
 //                    iapInstance = MyIAPHelper(this, rcvAdapterInstance, fullRtClassList) //reInitialize
@@ -364,15 +365,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                     val fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
                     // Update Recycler View
-                    showResultAndMore(fullRtClassList)
+                    updateResultOnRcView(fullRtClassList)
 
                     // 다른 frag 갔다가 돌아왔을 때 return 했을 때 slidingPanel(miniPlayer) 채워주기.
                     if (GlbVars.clickedTrId > 0) {
-                        // 1) Highlight the Track
-                        Log.d(TAG, "observeAndLoadFireBase: highlight the track")
-                        //rcvAdapterInstance.enableHighlightOnTrId(GlbVars.clickedTrId) // default 값은 -1. 즉 -1 이 아니면 뭔가 선택된 상황..
+                        // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
+                        mySmoothScroll()
+                        // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.
                         val prevSelectedVHolder = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]
-                        // 2) Fill in the rest of info !!!
+                        // 3) Fill in the previous selected track info to MINIPlayer!!!
                         setSlidingPanelTextOnReturn(prevSelectedVHolder, GlbVars.clickedTrId)
                     }
                 } else { // 에러났을 때
@@ -387,7 +388,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         })
     }
-
+    private fun mySmoothScroll() {
+        layoutManager.scrollToPositionWithOffset(GlbVars.clickedTrId-1, 60)
+    }
     private fun registerSwipeRefreshListener() {
         swipeRefreshLayout.setOnRefreshListener { //setOnRefreshListener 는  function! (SwipeRefreshLayout.OnRefreshListener 인터페이스를 받는) .. 결국 아래는 이름없는 function..?
             Log.d(TAG, "+++++++++++++ inside setOnRefreshListener+++++++++")
@@ -496,7 +499,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //↓ arrow 전환 visibility
                     iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)*/
                 // 다 필요없고 그냥 Collapse 시켜버리려할때는 위에 지우고 이걸로 사용.
-                    collapseSlidingPanel() // 그러나 이 조차도 onStop() 에서 해주므로
+                    collapseSlidingPanel() // onPause() 에서도 해주는데 안 먹히네?
 
                 }
             }
@@ -567,10 +570,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
 
-    fun showResultAndMore(fullRtClassList: MutableList<RingtoneClass>) {
+    fun updateResultOnRcView(fullRtClassList: MutableList<RingtoneClass>) {
         Log.d(TAG, "showResult: 5) called..Finally! ")
-        // 만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
-//                mySmoothScroll()
+
 
 
         // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
@@ -580,18 +582,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         // Update MediaPlayer.kt
 //                mpClassInstance.createMp3UrlMap(fullRtClassList)
-
         // Update Recycler View
         rcvAdapterInstance.updateRecyclerView(fullRtClassList) // todo: 추후 // comment 시킬것. MyIAPHelper.kt 에서 해주기로 함!
         rcvAdapterInstance.updateRingToneMap(fullRtClassList)// todo: 이 map 안 쓰이는것 같은데 흐음.. (우리는 Map 기반이므로 list 정보를 -> 모두 Map 으로 업데이트!)
 
-        // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
-//                if(swipeRefreshLayout.isRefreshing) {
-//                    Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
-//                    swipeRefreshLayout.isRefreshing = false
-//                }
-        // 우선 lottie Loading animation-stop!!
-//                lottieAnimController(2) //stop!
+
     }
 
 

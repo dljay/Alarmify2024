@@ -50,9 +50,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.09b :
-// - Frag show/hide 는 AlarmDetailsFragment 때문에 안쓰기로!!
-// animation f.o / push in 등 수정 시도했으나 뜻대로 안됨. 나중에 당근처럼 Slide 도 괜찮을듯.
+// v0.09c :
+// mySmoothScroll() 구현 완료.
 
 
 /**

@@ -372,7 +372,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         Log.d(TAG, "observeAndLoadFireBase: highlight the track")
                         //rcvAdapterInstance.enableHighlightOnTrId(GlbVars.clickedTrId) // default 값은 -1. 즉 -1 이 아니면 뭔가 선택된 상황..
                         val prevSelectedVHolder = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]
-                        // 2) Fill in the rest of info
+                        // 2) Fill in the rest of info !!!
                         setSlidingPanelTextOnReturn(prevSelectedVHolder, GlbVars.clickedTrId)
                     }
                 } else { // 에러났을 때

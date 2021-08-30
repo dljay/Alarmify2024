@@ -52,6 +52,7 @@ import java.util.Calendar
 
 // v0.09c :
 // mySmoothScroll() 구현 완료.
+// MediaPlayer 구현 전.
 
 
 /**

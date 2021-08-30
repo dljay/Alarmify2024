@@ -33,9 +33,11 @@ import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 
 //Coroutines
 
@@ -67,12 +69,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var chipGroup: ChipGroup
     var myIsChipChecked = false
 
-    private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 아래 줄 대체!! 성공!
-    //(DEL) private val myNetworkCheckerInstance by lazy { context?.let { MyNetWorkChecker(it) } }
-    //private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
+    private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 대체!! 성공!
 
     //Lottie Animation(Loading & Internet Error)
     lateinit var lottieAnimationView: LottieAnimationView
+
+    //Media Player Related
+    private val mpClassInstance: MyMediaPlayer by globalInject()
 
 //Sliding Panel Related
     var shouldPanelBeVisible = false
@@ -103,11 +106,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //        Log.d(TAG, "onActivityCreated: jj-2ndFrag Activity!!Created!!")
 //    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
 
         Log.d(TAG, "onCreateView: jj- lineNumberTest.. ")
@@ -122,23 +121,22 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
         layoutManager = LinearLayoutManager(context)
         rcView.layoutManager = layoutManager
-        //  LIVEDATA ->
-        //1)  *** JjRcvViewModel 을 RcView 에 주입. 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
-        val jjRcvViewModel =
-            ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
-        rcvAdapterInstance = activity?.let {
-            RcViewAdapter(
-                ArrayList(),
-                it,
-                jjRcvViewModel
-            )
-        }!! // it = activity. 공갈리스트 넣어서 instance 만듬
-        //2) *** 옵저버: RcView 에서 -> 여기로 View 와 TrackId 값을 전달-> UI 갱신
-        jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
-            Log.d(TAG, "onViewCreated: !!! 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
-            myOnLiveDataReceived(viewAndTrIdClassInstance)
-        })
-        //  < -- LIVEDATA
+    //  LIVEDATA ->
+        //1) JjRcvViewModel 을 Observe
+            //1-A)  *** JjRcvViewModel 을 RcView 에 주입. 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
+            val jjRcvViewModel =ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
+            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
+            //1-B) *** 옵저버: RcView 에서 -> 여기로 View 와 TrackId 값을 전달-> UI 갱신
+            jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
+                Log.d(TAG, "onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
+                myOnLiveDataFromRCV(viewAndTrIdClassInstance)
+            })
+        //2) JjMpViewModel 을 Observe
+            val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
+            jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { trIdAndStatus ->
+                Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $trIdAndStatus")
+            })
+    //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance
         rcView.setHasFixedSize(true)
         //RcView <--
@@ -180,7 +178,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // ===================================== My Functions ==== >
     //위에 onCreatedView 에서 observe 하고 있는 LiveData 가 갱신되었을때 다음을 실행
     // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)
-    private fun myOnLiveDataReceived(viewAndTrId: ViewAndTrIdClass) {
+
+// Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
+    private fun myOnLiveDataFromRCV(viewAndTrId: ViewAndTrIdClass) {
 
         Log.d(TAG, "myOnLiveDataReceived: called")
         val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
@@ -215,14 +215,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
                 }
                 //2-1) Mp!! Show mini player & play music right away! + EQ meter fx
+                mpClassInstance.playMusicTest()
 
                 //                mpClassInstance.playMusic(this, trackId, v)//*************************************************** Media Player Related *************************
                 //                Log.d(TAG, "myOnItemClick: temp list !!@#!@#!$@@!$!$!@$ templist = $tempList")
 
                 // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
                 if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
-                    slidingUpPanelLayout.panelState =
-                        SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
+                    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
                 }
             }
             // 2) 우측 FREE, GET THIS 클릭했을 때 처리.
@@ -234,7 +234,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         }
     }
-
+// Updates VuMeter via JjMpViewModel (구조: MyMediaPlayer<->JjMpViewModel<->SecondFrag)
+    private fun myOnLiveDataFromMediaPlayer() {} // input parameter -> status: StatusClass
 
 
     private fun setNetworkAvailabilityListener() {
@@ -324,7 +325,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         }
     }
+//MediaPlayerViewModel 을 Observe
 
+//Firebase ViewModel 을 Observe
     private fun observeAndLoadFireBase() {
         //1. 인터넷 가능한지 체크
         //인터넷되는지 체크

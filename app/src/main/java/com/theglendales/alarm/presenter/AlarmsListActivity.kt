@@ -50,9 +50,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.09c :
-// mySmoothScroll() 구현 완료.
-// MediaPlayer 구현 전.
+// v0.09d : MediaPlayer  의 ViewModel 테스트중. 아직 안되는데 아마 koin 으로 다른 ViewModel() 인스턴스가 주입되어 그런것 같음.
+// 그냥 SEcondFragment 에서 ViewModel() Instance 만들어서 테스트해보고. 어떻게 "KOIN 으로 MyMediaPlayer" 를 globalInject() 하여 사용할지 궁리해볼것..
 
 
 /**

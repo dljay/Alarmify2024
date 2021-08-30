@@ -15,6 +15,8 @@ import com.theglendales.alarm.bugreports.BugReporter
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
+import com.theglendales.alarm.jjmvvm.JjMpViewModel
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.logger.LogcatLogWriter
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.logger.LoggerFactory
@@ -123,6 +125,7 @@ fun startKoin(context: Context): Koin {
         factory { get<Context>().resources }
         // 내가 추가 -->
         single<MyNetWorkChecker> { MyNetWorkChecker(context = context)}
+        single<MyMediaPlayer> { MyMediaPlayer(receivedContext = context, mpViewModel= JjMpViewModel())} // mpViewModel 자리에 그냥 get()을 못 쓰는건 JjMpViewModel() 에 대한 정보가 여기에 적혀있지 않기 때문..
         single<FirebaseRepoClass> { FirebaseRepoClass()}
         // 내가 추가 <--
 

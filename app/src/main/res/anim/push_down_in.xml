@@ -17,9 +17,12 @@
     <translate
         android:fromYDelta="-100%p"
         android:toYDelta="0"
-        android:duration="@android:integer/config_longAnimTime" />
+        android:duration="200"/>
+        <!-- android:duration="@android:integer/config_longAnimTime" <-원래코드 -->
+
     <alpha
         android:fromAlpha="0.0"
         android:toAlpha="1.0"
-        android:duration="@android:integer/config_longAnimTime" />
+        android:duration="200" />
+    <!-- android:duration="@android:integer/config_longAnimTime" <-원래코드 -->
 </set>

@@ -50,9 +50,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.09a :
+// v0.09b :
 // - Frag show/hide 는 AlarmDetailsFragment 때문에 안쓰기로!!
-// - SlidingUpPanelLayout -> fragment_second.xml 가서 overLay= true 로 박아버림. 이거 내가 default 값 FALSE 로 한 이유가 있을텐데..흐음..
+// animation f.o / push in 등 수정 시도했으나 뜻대로 안됨. 나중에 당근처럼 Slide 도 괜찮을듯.
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -234,6 +235,7 @@ class AlarmsListActivity : AppCompatActivity() {
 // 추가 -->
     fun jjSetCurrentFragment(receivedFragment: Fragment) =
         supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
+
             replace(R.id.main_fragment_container, receivedFragment)
             commit()
             Log.d(TAG, "jjSetCurrentFragment: .... ")
@@ -342,13 +344,13 @@ class AlarmsListActivity : AppCompatActivity() {
 
             supportFragmentManager.beginTransaction()
                     .apply {
-                        lollipop {
+                        lollipop { // SDK 21 인듯
                             edited.holder.getOrNull()?.addSharedElementsToTransition(this)
                         }
                     }
                     .apply {
                         if (!lollipop()) {
-                            this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
+                            this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
                         }
                     }
                     .replace(R.id.main_fragment_container, listFragment)
@@ -381,8 +383,8 @@ class AlarmsListActivity : AppCompatActivity() {
 
             supportFragmentManager.beginTransaction()
                     .apply {
-                        if (!lollipop()) {
-                            this.setCustomAnimations(R.anim.push_down_in, android.R.anim.fade_out)
+                        if (!lollipop()) { //lollipop = SDK 21인듯..
+                            this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
                         }
                     }
                     .apply {

@@ -61,9 +61,6 @@ class RcViewAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
-
-
-
         val currentItem = currentRtList[position]
         val currentTrId = currentRtList[position].id
         viewHolderMap[currentTrId] = holder
@@ -157,7 +154,7 @@ class RcViewAdapter(
         holder.tv1_Title.setTextColor(Color.BLACK)
         holder.ll_entire_singleSlot.setBackgroundColor(Color.WHITE)
     }
-// 모든 row 의 Highlight 를 없앰.
+// 모든 row 의 Highlight 를 없앰. (어떤 row 를 클릭했을 때 우선적으로 실행되어 모든 하이라이트를 없앰.)
     private fun disableHLAll() {
         if(!viewHolderMap.isNullOrEmpty()) {
             viewHolderMap.forEach { (_, vHolder) -> disableHL(vHolder) }
@@ -205,13 +202,10 @@ class RcViewAdapter(
     override fun onViewDetachedFromWindow(holder: MyViewHolder) {
         super.onViewDetachedFromWindow(holder)
         Log.d(TAG, "!!onViewDETACHEDFromWindow: trId: ${holder.holderTrId}, holder: $holder")
-
-        if (holder == viewHolderMap[GlbVars.clickedTrId]) {
+        // vuMeter 때문에 여기 recyclable 설정을 할 수 밖에 없었지만. 이젠 vuMeter 를 liveData 로 실행해줄 예정여서 없어도 될듯함.
+        /*if (holder == viewHolderMap[GlbVars.clickedTrId]) {
             holder.setIsRecyclable(false)
-            Log.d(
-                TAG,
-                "onViewDetached: _X_X_X__X_X_X__X_X_X__X_X_X_ Disable setIsRecyclable(XX) for holder_TRID=${holder.holderTrId}"
-            )
+            Log.d(TAG,"onViewDetached: _X_X_X__X_X_X__X_X_X__X_X_X_ Disable setIsRecyclable(XX) for holder_TRID=${holder.holderTrId}")
 
         } else {
             holder.setIsRecyclable(true)
@@ -220,7 +214,7 @@ class RcViewAdapter(
                 "onViewDetached: _O_O_O_O_O_O_O_O_O_O_O_O_O_O_O_O Enable setIsRecyclable(OO) for holder_TRID=${holder.holderTrId}"
             )
 
-        }
+        }*/
 
     }
 
@@ -229,10 +223,7 @@ class RcViewAdapter(
         super.onViewAttachedToWindow(holder)
 
 
-        Log.d(
-            TAG,
-            "onViewAttachedToWindow: trId: ${holder.holderTrId},  holder name: $holder, vuMeter Name: ${holder.vuMeterView},"
-        )
+        Log.d(TAG,"onViewAttachedToWindow: trId: ${holder.holderTrId},  holder name: $holder, vuMeter Name: ${holder.vuMeterView},")
 
         //현재 추가시키는 holder 가 기존 click, 재생(혹은 재생 중 pause) 중인 트랙였다. -> !!! 이거 그냥 BindView 에서 대체?
         /*    if(holder.holderTrId == GlbVars.currentPlayingTrId && holder.holderTrId != GlbVars.errorTrackId) {

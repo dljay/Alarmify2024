@@ -15,12 +15,9 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
 
 
 // Called From SecondFragment>myOnLiveDataFromRCV()
-    fun playMusicTest() {
-        //prepare playing
-        // ......(success)
-        //when music is played
-        Log.d(TAG, "playMusic: called..")
-        mpViewModel.updateStatusMpLiveData(StatusMp.PLAY)
-    }
+    fun onMusicLoading() = mpViewModel.updateStatusMpLiveData(StatusMp.LOADING)
+    fun onMusicPlay() = mpViewModel.updateStatusMpLiveData(StatusMp.PLAY)
+    fun onMusicPaused() = mpViewModel.updateStatusMpLiveData(StatusMp.PAUSE)
+
 
 }

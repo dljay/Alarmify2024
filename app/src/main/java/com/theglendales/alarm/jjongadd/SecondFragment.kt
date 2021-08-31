@@ -39,8 +39,6 @@ import com.theglendales.alarm.jjmvvm.JjViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 
-import org.koin.core.context.KoinContextHandler.get
-
 //Coroutines
 
 /**
@@ -225,7 +223,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
                 }
                 //2-1) Mp!! Show mini player & play music right away! + EQ meter fx
-                mpClassInstance.playMusicTest()
+                mpClassInstance.onMusicPlay()
 
                 //                mpClassInstance.playMusic(this, trackId, v)//*************************************************** Media Player Related *************************
                 //                Log.d(TAG, "myOnItemClick: temp list !!@#!@#!$@@!$!$!@$ templist = $tempList")

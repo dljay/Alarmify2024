@@ -51,8 +51,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.10d : vuMeter/LoadingCircle 일단은 MyMediaPlayer 에서 제공하는 StatusENUM.xx 에 따라 작동하는것만 확인.
-// 그 다음엔 BindView 로 제대로 표시하는 것 하자..
+// v0.10d :
+//- miniPlayer 로 play/pause fake 테스트 필요. (miniPlayerHandler.kt 만들어보기..)
+//- RcView BindView disable/enableVM() 할 때서 vuMeterHandler 로 직접 연결해보기.
+//- 마지막으로 진짜 ExoPlayer 구현..
+
 
 
 

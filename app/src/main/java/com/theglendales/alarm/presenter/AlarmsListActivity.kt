@@ -51,7 +51,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.10c : vuMeter/LoadingCircle 일단은 MyMediaPlayer 에서 제공하는 StatusENUM.xx 에 따라 작동하는것만 확인.
+// v0.10d : vuMeter/LoadingCircle 일단은 MyMediaPlayer 에서 제공하는 StatusENUM.xx 에 따라 작동하는것만 확인.
 // 그 다음엔 BindView 로 제대로 표시하는 것 하자..
 
 

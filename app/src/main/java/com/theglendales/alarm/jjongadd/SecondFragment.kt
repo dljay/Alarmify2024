@@ -143,6 +143,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
                 when(StatusEnum) {
                     StatusMp.LOADING -> {vuMeterHandler.activateLC()}
+                    StatusMp.PLAY -> {vuMeterHandler.vumeterPlay()}
+                    StatusMp.PAUSE -> {vuMeterHandler.vumeterPause()}
+
                 }
 
             })

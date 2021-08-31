@@ -167,8 +167,8 @@ class RcViewAdapter(
         }
     // 2) VuMeter and Loading Circle => todo: VuMeterHandler 가 현재 Koin 덕분에 SingleTon 이니까. 그쪽으로 전달하자!!!!
         private fun enableVM(holder: MyViewHolder) {
+        // 여기에다 if(VuMeterHandler.StatusMp == StatusMp.PLAYING) ..... {}
         holder.iv_Thumbnail.alpha = 0.3f // 어둡게
-
         holder.vuMeterView.visibility = VuMeterView.VISIBLE
         }
         private fun disableVMnLC(holder: MyViewHolder) {

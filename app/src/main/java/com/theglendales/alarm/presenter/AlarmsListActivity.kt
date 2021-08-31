@@ -39,6 +39,7 @@ import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
@@ -50,8 +51,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.09d : MediaPlayer  의 ViewModel 테스트중. 아직 안되는데 아마 koin 으로 다른 ViewModel() 인스턴스가 주입되어 그런것 같음.
-// 그냥 SEcondFragment 에서 ViewModel() Instance 만들어서 테스트해보고. 어떻게 "KOIN 으로 MyMediaPlayer" 를 globalInject() 하여 사용할지 궁리해볼것..
+// v0.10a : MediaPlayer  의 ViewModel 테스트중 - > koin 으로 MediaPlayer, mpViewModel 두개 다 등록하는데 실패.
+// MediaPlayer 에 mpViewModel 이 constructor 로 들어가야 하는데 다른 객체가 들어갔던것으로 보이고, 그것때문에 실패한 듯.
+// 일단은 mediaPlayer, mpViewModel둘다 내가 아는 방식으로 객체 생성해서 사용.
 
 
 /**
@@ -61,6 +63,7 @@ private const val TAG="*AlarmsListActivity*"
 
 class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
+
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
     private val logger: Logger by globalLogger("AlarmsListActivity")

@@ -46,6 +46,8 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+
+
 import org.koin.core.Koin
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -65,6 +67,8 @@ fun Koin.logger(tag: String): Logger {
 
 fun startKoin(context: Context): Koin {
     // The following line triggers the initialization of ACRA
+
+
 
     val module = module {
         single<DynamicThemeHandler> { DynamicThemeHandler(get()) }
@@ -123,9 +127,9 @@ fun startKoin(context: Context): Koin {
         factory { get<Context>().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager }
         factory { get<Context>().getSystemService(Context.AUDIO_SERVICE) as AudioManager }
         factory { get<Context>().resources }
+
         // 내가 추가 -->
         single<MyNetWorkChecker> { MyNetWorkChecker(context = context)}
-        single<MyMediaPlayer> { MyMediaPlayer(receivedContext = context, mpViewModel= JjMpViewModel())} // mpViewModel 자리에 그냥 get()을 못 쓰는건 JjMpViewModel() 에 대한 정보가 여기에 적혀있지 않기 때문..
         single<FirebaseRepoClass> { FirebaseRepoClass()}
         // 내가 추가 <--
 
@@ -140,6 +144,7 @@ fun startKoin(context: Context): Koin {
             )
         }
     }
+
 
     return startKoin {
         modules(module)

@@ -134,7 +134,15 @@ dependencies {
     implementation("com.melnykov:floatingactionbutton:1.2.0")
     implementation("io.reactivex.rxjava2:rxjava:2.2.19")
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
-    implementation("org.koin:koin-core:2.1.5")
+    implementation("org.koin:koin-core:2.1.5") //koin for Kotlin 1
+//koin 관련 내가 추가 -> 현재는 viewModel 을 Koin 으로 자동 등록하지 않을 예정여서 필요 없음.
+   /* implementation("org.koin:koin-core-ext:2.1.5")// koin for kotlin 2
+    implementation("org.koin:koin-android:2.1.5") //koin for android. !!! 여기서 android or androidx 라고 써도 됨. 정확히는 모르겠으나 일단은 android 로 써서 사용했음.
+    implementation("org.koin:koin-android-viewmodel:2.1.5") // koin Android ViewModel Features // !!! 여기서 android or androidx 라고 써도 됨. 정확히는 모르겠으나 일단은 android 로 써서 사용했음.
+    implementation("org.koin:koin-android-scope:2.1.5")*/
+    //implementation("org.koin:koin-android-architecture:2.1.5") // sharedViewModel 쓰기 위해서 이거..?
+// <--
+
     implementation("androidx.fragment:fragment:1.2.5")
     implementation("androidx.preference:preference:1.1.1")
 //jjong added

@@ -377,11 +377,12 @@ class RcViewAdapter(
             )
             disableHLAll() // 모든 하이라이트를 끄고
             enableHL(this) // 선택된 viewHolder 만 하이라이트!
-
+        //Ui Update 용 LiveData Feed
             if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null) { // To avoid possible mistake when we delete the item but click it
                 val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
                 rcViewModel.updateLiveData(vHolderAndTrId) // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
             }
+        //MediaPlayer 용 LiveData Feed
 
         }
     }

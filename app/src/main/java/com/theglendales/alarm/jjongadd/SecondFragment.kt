@@ -39,6 +39,8 @@ import com.theglendales.alarm.jjmvvm.JjViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 
+import org.koin.core.context.KoinContextHandler.get
+
 //Coroutines
 
 /**
@@ -54,16 +56,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
 
-
     //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
     lateinit var layoutManager: LinearLayoutManager
 
-
     //Swipe Refresh
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
-
 
     //Chip related
     lateinit var chipGroup: ChipGroup
@@ -75,9 +74,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var lottieAnimationView: LottieAnimationView
 
     //Media Player Related
-    private val mpClassInstance: MyMediaPlayer by globalInject()
+    lateinit var mpClassInstance: MyMediaPlayer
 
-//Sliding Panel Related
+    //Sliding Panel Related
     var shouldPanelBeVisible = false
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout    //findViewById(R.id.id_slidingUpPanel)  }
 
@@ -106,7 +105,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //        Log.d(TAG, "onActivityCreated: jj-2ndFrag Activity!!Created!!")
 //    }
 
-    override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
 
         Log.d(TAG, "onCreateView: jj- lineNumberTest.. ")
@@ -124,18 +127,25 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //  LIVEDATA ->
         //1) JjRcvViewModel 을 Observe
             //1-A)  *** JjRcvViewModel 을 RcView 에 주입. 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
-            val jjRcvViewModel =ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
+            val jjRcvViewModel =
+                ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
+
             //1-B) *** 옵저버: RcView 에서 -> 여기로 View 와 TrackId 값을 전달-> UI 갱신
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
-                Log.d(TAG, "onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
+                Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
                 myOnLiveDataFromRCV(viewAndTrIdClassInstance)
             })
         //2) JjMpViewModel 을 Observe
+
+            //2-A) jjMpViewModel 생성
             val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { trIdAndStatus ->
                 Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $trIdAndStatus")
             })
+            //2-B) 우선 mpClassInstance 를 initialize (lateinit 되었으니)
+            mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
+
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance
         rcView.setHasFixedSize(true)
@@ -154,7 +164,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         // 3) Activity 에서 onPause 로 갈때 (한번 나갔다오는 경우) onSaveInstanceState 활용해서 사용해도 괜춘할듯. 4) or  Local 에 저장? (ROOM.. 등)
 
     }
-
 
 
     override fun onPause() {
@@ -179,7 +188,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //위에 onCreatedView 에서 observe 하고 있는 LiveData 가 갱신되었을때 다음을 실행
     // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)
 
-// Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
+    // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
     private fun myOnLiveDataFromRCV(viewAndTrId: ViewAndTrIdClass) {
 
         Log.d(TAG, "myOnLiveDataReceived: called")
@@ -189,7 +198,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
 
         //Sliding Panel - Upper UI
-        tv_upperUi_title.text = ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
+        tv_upperUi_title.text =
+            ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
         tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
 
         //Sliding Panel -  Lower UI
@@ -222,7 +232,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                 // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
                 if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
-                    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
+                    slidingUpPanelLayout.panelState =
+                        SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
                 }
             }
             // 2) 우측 FREE, GET THIS 클릭했을 때 처리.
@@ -234,7 +245,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         }
     }
-// Updates VuMeter via JjMpViewModel (구조: MyMediaPlayer<->JjMpViewModel<->SecondFrag)
+
+    // Updates VuMeter via JjMpViewModel (구조: MyMediaPlayer<->JjMpViewModel<->SecondFrag)
     private fun myOnLiveDataFromMediaPlayer() {} // input parameter -> status: StatusClass
 
 
@@ -327,7 +339,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 //MediaPlayerViewModel 을 Observe
 
-//Firebase ViewModel 을 Observe
+    //Firebase ViewModel 을 Observe
     private fun observeAndLoadFireBase() {
         //1. 인터넷 가능한지 체크
         //인터넷되는지 체크
@@ -348,7 +360,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             it.addOnCompleteListener {
                 if (it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
                     Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
-
 
 
                     // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
@@ -391,9 +402,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         })
     }
+
     private fun mySmoothScroll() {
-        layoutManager.scrollToPositionWithOffset(GlbVars.clickedTrId-1, 60)
+        layoutManager.scrollToPositionWithOffset(GlbVars.clickedTrId - 1, 60)
     }
+
     private fun registerSwipeRefreshListener() {
         swipeRefreshLayout.setOnRefreshListener { //setOnRefreshListener 는  function! (SwipeRefreshLayout.OnRefreshListener 인터페이스를 받는) .. 결국 아래는 이름없는 function..?
             Log.d(TAG, "+++++++++++++ inside setOnRefreshListener+++++++++")
@@ -446,26 +459,32 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //text ="Song Title                                           "
             // text 제목이 일정 수준 이하면 여백을 추가, 추후 title.length < xx => 정확한 카운트 알고리즘.
         }
-        
+
         setUpSlidingPanel()
     }
 
-// Sliding Panel
+    // Sliding Panel
     private fun collapseSlidingPanel() {
-    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
-    iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
-    slidingUpPanelLayout.isOverlayed = false //
+        slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+        iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
+        slidingUpPanelLayout.isOverlayed = false //
 
     }
-    private fun setSlidingPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?,trackId: Int) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
+
+    private fun setSlidingPanelTextOnReturn(
+        vHolder: RcViewAdapter.MyViewHolder?,
+        trackId: Int
+    ) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
         if (vHolder != null) {
             Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
 
 
             val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(trackId)
             //val ivInside_Rc = vHolder.iv_Thumbnail
-            Log.d(TAG,
-                "setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description} ")
+            Log.d(
+                TAG,
+                "setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description} "
+            )
             //Sliding Panel - Upper UI
             tv_upperUi_title.text =
                 ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
@@ -483,18 +502,21 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
 
     }
+
     private fun setUpSlidingPanel() {
 
-        Log.d(TAG, "setUpSlidingPanel: slidingUpPanelLayout.isActivated=${slidingUpPanelLayout.isActivated}")
+        Log.d(
+            TAG,
+            "setUpSlidingPanel: slidingUpPanelLayout.isActivated=${slidingUpPanelLayout.isActivated}"
+        )
         slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow)
 
         // A. 기존에 클릭 후 다른 Frag 갔다 돌아온 경우. (Panel 은 Collapsed 아니면 Expanded 상태 유지중임.)
-            if(shouldPanelBeVisible) {
-                Log.d(TAG, "setUpSlidingPanel: isInitialPanelSetup=$shouldPanelBeVisible")
+        if (shouldPanelBeVisible) {
+            Log.d(TAG, "setUpSlidingPanel: isInitialPanelSetup=$shouldPanelBeVisible")
 
-                // 만약 확장된 상태였다면 초기화가 안되어있어서 모퉁이 허옇고 & arrow(↑)가 위로 가있음. 아래에서 해결.
-                if(slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.EXPANDED)
-                {
+            // 만약 확장된 상태였다면 초기화가 안되어있어서 모퉁이 허옇고 & arrow(↑)가 위로 가있음. 아래에서 해결.
+            if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
                 /*//모퉁이 흰색 없애주고 & 불투명으로
                     slidingUpPanelLayout.isOverlayed =true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
                     upperUiHolder.alpha = 0.5f // +0.3 은 살짝~ 보이게끔
@@ -502,14 +524,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //↓ arrow 전환 visibility
                     iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)*/
                 // 다 필요없고 그냥 Collapse 시켜버리려할때는 위에 지우고 이걸로 사용.
-                    collapseSlidingPanel() // onPause() 에서도 해주는데 안 먹히네?
+                collapseSlidingPanel() // onPause() 에서도 해주는데 안 먹히네?
 
-                }
             }
+        }
         // B. 최초 로딩- 기존 클릭이 없어서 Panel 이 접혀있지도(COLLAPSED) 확장되지도(EXPANDED) 않은 경우에는 감춰놓기.
-            else if(!shouldPanelBeVisible) {
-                slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.HIDDEN // 일단 클릭전에는 감춰놓기!
-            }
+        else if (!shouldPanelBeVisible) {
+            slidingUpPanelLayout.panelState =
+                SlidingUpPanelLayout.PanelState.HIDDEN // 일단 클릭전에는 감춰놓기!
+        }
 
 
         //slidingUpPanelLayout.anchorPoint = 0.6f //화면의 60% 만 올라오게.  그러나 2nd child 의 height 을 match_parent -> 300dp 로 설정해서 이걸 쓸 필요가 없어짐!
@@ -520,7 +543,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 // Panel 이 열리고 닫힐때의 callback
                 shouldPanelBeVisible = true // 이제 Panel 이 열렸으니깐. todo: 이거 bool 값에 의존하는게 괜찮을지..
 
-                upperUiHolder.alpha = 1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
+                upperUiHolder.alpha =
+                    1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
 
                 // 트랙 클릭-> 미니플레이어가 등장! (그 이전에는 offset = -xxx 값임.)
                 //Log.d(TAG, "onPanelSlide: slideOffset= $slideOffset, rcvAdapterInstance.itemCount=${rcvAdapterInstance.itemCount}")
@@ -538,7 +562,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 // 완전히 펼쳐질 때
                 if (!slidingUpPanelLayout.isOverlayed && slideOffset > 0.2f) { //안겹치게 설정된 상태에서 panel 이 열리는 중 (20%만 열리면 바로 모퉁이 감추기!)
                     //Log.d(TAG, "onPanelSlide: Hiding 모퉁이! yo! ")
-                    slidingUpPanelLayout.isOverlayed =true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
+                    slidingUpPanelLayout.isOverlayed =
+                        true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
                 }
 
             }
@@ -552,22 +577,22 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                 when (newState) {
                     SlidingUpPanelLayout.PanelState.EXPANDED -> {
-                    //Log.d(TAG, "onPanelStateChanged: Sliding Panel Expanded")
+                        //Log.d(TAG, "onPanelStateChanged: Sliding Panel Expanded")
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)// ↓ arrow 전환 visibility }
 
-                    // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
+                        // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
                         constLayout_entire.setOnTouchListener { _, _ -> true }
 
                     }
                     SlidingUpPanelLayout.PanelState.COLLAPSED -> {
                         //Log.d(TAG, "onPanelStateChanged: Sliding Panel Collapsed")
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
-                        slidingUpPanelLayout.isOverlayed = false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
+                        slidingUpPanelLayout.isOverlayed =
+                            false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
                     }
                 }
             }
         })
-
 
 
     }
@@ -575,7 +600,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     fun updateResultOnRcView(fullRtClassList: MutableList<RingtoneClass>) {
         Log.d(TAG, "showResult: 5) called..Finally! ")
-
 
 
         // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.

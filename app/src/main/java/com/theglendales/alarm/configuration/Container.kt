@@ -16,6 +16,7 @@ import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
+import com.theglendales.alarm.jjmvvm.helper.VuMeterHandler
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.logger.LogcatLogWriter
 import com.theglendales.alarm.logger.Logger
@@ -130,6 +131,7 @@ fun startKoin(context: Context): Koin {
 
         // 내가 추가 -->
         single<MyNetWorkChecker> { MyNetWorkChecker(context = context)}
+        single<VuMeterHandler> { VuMeterHandler()}
         single<FirebaseRepoClass> { FirebaseRepoClass()}
         // 내가 추가 <--
 

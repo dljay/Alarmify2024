@@ -51,9 +51,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.10a : MediaPlayer  의 ViewModel 테스트중 - > koin 으로 MediaPlayer, mpViewModel 두개 다 등록하는데 실패.
-// MediaPlayer 에 mpViewModel 이 constructor 로 들어가야 하는데 다른 객체가 들어갔던것으로 보이고, 그것때문에 실패한 듯.
-// 일단은 mediaPlayer, mpViewModel둘다 내가 아는 방식으로 객체 생성해서 사용.
+// v0.10c : vuMeter/LoadingCircle 일단은 MyMediaPlayer 에서 제공하는 StatusENUM.xx 에 따라 작동하는것만 확인.
+// 그 다음엔 BindView 로 제대로 표시하는 것 하자..
+
+
 
 
 /**

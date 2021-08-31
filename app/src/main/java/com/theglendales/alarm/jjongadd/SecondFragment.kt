@@ -37,7 +37,9 @@ import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
+import com.theglendales.alarm.jjmvvm.helper.VuMeterHandler
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
+import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 
 //Coroutines
 
@@ -67,6 +69,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     var myIsChipChecked = false
 
     private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 대체!! 성공!
+    // VumeterHandler
+    private val vuMeterHandler: VuMeterHandler by globalInject() // Koin Inject
 
     //Lottie Animation(Loading & Internet Error)
     lateinit var lottieAnimationView: LottieAnimationView
@@ -135,8 +139,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 myOnLiveDataFromRCV(viewAndTrIdClassInstance)
             })
 
-            jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { trIdAndStatus ->
-                Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $trIdAndStatus")})
+            jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
+                Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
+                when(StatusEnum) {
+                    StatusMp.LOADING -> {vuMeterHandler.activateLC()}
+                }
+
+            })
 
         //3) RcvAdapter & MediaPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!

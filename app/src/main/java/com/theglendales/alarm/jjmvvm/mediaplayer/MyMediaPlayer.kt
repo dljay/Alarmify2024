@@ -8,7 +8,7 @@ import com.theglendales.alarm.jjmvvm.JjMpViewModel
 private const val TAG="MyMediaPlayer"
 
 
-enum class StatusMp { IDLE, LOADING, PLAY, PAUSE, STOP}
+enum class StatusMp { LOADING, PLAY, PAUSE, STOP} // LOADING: activateLC(),
 
 class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel) {
 
@@ -17,9 +17,10 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
 // Called From SecondFragment>myOnLiveDataFromRCV()
     fun prepareMusicPlay() {
         //first set to Idle state.
-        mpViewModel.updateStatusMpLiveData(StatusMp.IDLE) // SecondFrag 로 전달.
+        mpViewModel.updateStatusMpLiveData(StatusMp.LOADING) // SecondFrag 로 전달.
         //when ready we hit play
-
+//        onMusicLoading()
+//        onMusicPlay()
     }
 
     fun onMusicLoading() = mpViewModel.updateStatusMpLiveData(StatusMp.LOADING)

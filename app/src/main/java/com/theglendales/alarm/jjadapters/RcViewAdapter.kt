@@ -19,7 +19,6 @@ import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
-import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
@@ -75,17 +74,19 @@ class RcViewAdapter(
         Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, " +
                 "pos: $position // Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
                 "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
-    //하이라이트: Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트
-
+    //트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
+        // 1) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트&VuMeter 생성
         if (currentTrId == GlbVars.clickedTrId) {
             enableHL(holder)
+            enableVM(holder)
         }
         if (currentTrId != GlbVars.clickedTrId) {
             disableHL(holder)
+            disableVMnLC(holder)
         }
-    // <--하이라이트: Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트
+    // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
 
-    //IAP 관련
+        //IAP 관련
 
 //        holder.tv3_Price.text = MyIAPHelper.itemPricesMap[currentTrIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
 
@@ -145,25 +146,36 @@ class RcViewAdapter(
             }).into(holder.iv_Thumbnail)
     }
 
-
-    fun enableHL(holder: MyViewHolder) {
-        Log.d(TAG, "enableHighlightOnTrId: YES")
-        //holder.tv1_Title?.setTextColor(Color.MAGENTA)
-        holder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
-    }
-
-    private fun disableHL(holder: MyViewHolder) {
-        holder.tv1_Title.setTextColor(Color.BLACK)
-        holder.ll_entire_singleSlot.setBackgroundColor(Color.WHITE)
-    }
-// 모든 row 의 Highlight 를 없앰. (어떤 row 를 클릭했을 때 우선적으로 실행되어 모든 하이라이트를 없앰.)
-    private fun disableHLAll() {
-        if(!viewHolderMap.isNullOrEmpty()) {
-            viewHolderMap.forEach { (_, vHolder) -> disableHL(vHolder) }
+// Highlight & VuMeter 작동 관련    --------->
+    //1)Highlight
+        fun enableHL(holder: MyViewHolder) {
+            Log.d(TAG, "enableHighlightOnTrId: YES")
+            //holder.tv1_Title?.setTextColor(Color.MAGENTA)
+            holder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
         }
 
-    }
-// <---------- 색 highlight function. onBindViewHolder() 와 아래 onClick 두군데서 불림. <------------------------
+        private fun disableHL(holder: MyViewHolder) {
+            holder.tv1_Title.setTextColor(Color.BLACK)
+            holder.ll_entire_singleSlot.setBackgroundColor(Color.WHITE)
+        }
+        // 모든 row 의 Highlight 를 없앰. (어떤 row 를 클릭했을 때 우선적으로 실행되어 모든 하이라이트를 없앰.)
+        private fun disableHLAll() {
+            if(!viewHolderMap.isNullOrEmpty()) {
+                viewHolderMap.forEach { (_, vHolder) -> disableHL(vHolder) }
+            }
+
+        }
+    // 2) VuMeter and Loading Circle
+        private fun enableVM(holder: MyViewHolder) {
+        holder.iv_Thumbnail.alpha = 0.3f // 어둡게
+        holder.vuMeterView.visibility = VuMeterView.VISIBLE
+        }
+        private fun disableVMnLC(holder: MyViewHolder) {
+            holder.loadingCircle.visibility = View.INVISIBLE // 일단 loadingCircle 없애기.
+            holder.iv_Thumbnail.alpha = 1.0f // 밝기 원복
+            holder.vuMeterView.visibility = VuMeterView.GONE // VuMeter 감추기
+        }
+// <---------- // Highlight & VuMeter 작동 관련    --------->
 
 // ---------> VuMeter 관련 ------------------------>
 

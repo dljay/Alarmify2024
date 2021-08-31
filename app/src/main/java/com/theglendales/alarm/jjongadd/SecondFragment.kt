@@ -192,10 +192,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     }
 
-    // ===================================== My Functions ==== >
+// ===================================== My Functions ==== >
+
+    private fun setClickListenerForMiniPlayer() {
+
+    }
     //위에 onCreatedView 에서 observe 하고 있는 LiveData 가 갱신되었을때 다음을 실행
     // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)
-
     // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
     private fun myOnLiveDataFromRCV(viewAndTrId: ViewAndTrIdClass) {
 

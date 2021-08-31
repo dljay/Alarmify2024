@@ -19,8 +19,10 @@ import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 //import com.theglendales.alarm.jjiap.MyIAPHelper
 import io.gresse.hugo.vumeterlibrary.VuMeterView
 
@@ -36,8 +38,8 @@ interface MyOnItemClickListener {
 class RcViewAdapter(
     var currentRtList: MutableList<RingtoneClass>,
     private val receivedActivity: FragmentActivity,
-    private val rcViewModel: JjRecyclerViewModel
-) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
+    private val rcViewModel: JjRecyclerViewModel,
+    private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
 
 
     companion object {
@@ -368,12 +370,17 @@ class RcViewAdapter(
             )
             disableHLAll() // 모든 하이라이트를 끄고
             enableHL(this) // 선택된 viewHolder 만 하이라이트!
-        //Ui Update 용 LiveData Feed
+
             if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null) { // To avoid possible mistake when we delete the item but click it
                 val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
+            //1)Ui Update 용 LiveData Feed
                 rcViewModel.updateLiveData(vHolderAndTrId) // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
+            //2) 만약 클릭 영역이 구매쪽 제외한 전체 영역일 때(Rl_including_tv1_2 영역) => MediaPlayer 에 Play 전달!
+                if(v.id == R.id.id_rL_including_title_description) {
+                    mediaPlayer.prepareMusicPlay() // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+                }
             }
-        //MediaPlayer 용 LiveData Feed
+
 
         }
     }

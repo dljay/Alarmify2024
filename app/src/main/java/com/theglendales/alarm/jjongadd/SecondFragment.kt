@@ -123,26 +123,24 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         layoutManager = LinearLayoutManager(context)
         rcView.layoutManager = layoutManager
     //  LIVEDATA ->
-        //1) JjRcvViewModel 을 Observe
-            //1-A)  *** JjRcvViewModel 을 RcView 에 주입. 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
-            val jjRcvViewModel =
-                ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
-            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
+        //1) ViewModel 2종 생성(RcvVModel/MediaPlayerVModel)
+            //1-A)  *** JjRcvViewModel 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
+            val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
+            //1-B) jjMpViewModel 생성
+            val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
 
-            //1-B) *** 옵저버: RcView 에서 -> 여기로 View 와 TrackId 값을 전달-> UI 갱신
+        //2) LiveData Observe
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
                 Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
                 myOnLiveDataFromRCV(viewAndTrIdClassInstance)
             })
-        //2) JjMpViewModel 을 Observe
 
-            //2-A) jjMpViewModel 생성
-            val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { trIdAndStatus ->
-                Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $trIdAndStatus")
-            })
-            //2-B) 우선 mpClassInstance 를 initialize (lateinit 되었으니)
+                Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $trIdAndStatus")})
+
+        //3) RcvAdapter & MediaPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
+            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
 
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance
@@ -222,11 +220,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
                     iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
                 }
-                //2-1) Mp!! Show mini player & play music right away! + EQ meter fx
-                mpClassInstance.onMusicPlay()
-
-                //                mpClassInstance.playMusic(this, trackId, v)//*************************************************** Media Player Related *************************
-                //                Log.d(TAG, "myOnItemClick: temp list !!@#!@#!$@@!$!$!@$ templist = $tempList")
 
                 // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
                 if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
@@ -469,10 +462,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     }
 
-    private fun setSlidingPanelTextOnReturn(
-        vHolder: RcViewAdapter.MyViewHolder?,
-        trackId: Int
-    ) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
+    private fun setSlidingPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?,trackId: Int) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
         if (vHolder != null) {
             Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
 
@@ -503,10 +493,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     private fun setUpSlidingPanel() {
 
-        Log.d(
-            TAG,
-            "setUpSlidingPanel: slidingUpPanelLayout.isActivated=${slidingUpPanelLayout.isActivated}"
-        )
+        Log.d(TAG,"setUpSlidingPanel: slidingUpPanelLayout.isActivated=${slidingUpPanelLayout.isActivated}")
         slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow)
 
         // A. 기존에 클릭 후 다른 Frag 갔다 돌아온 경우. (Panel 은 Collapsed 아니면 Expanded 상태 유지중임.)

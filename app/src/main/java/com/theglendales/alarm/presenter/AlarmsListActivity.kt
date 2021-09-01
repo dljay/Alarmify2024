@@ -51,10 +51,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.10d :
-//- miniPlayer 로 play/pause fake 테스트 필요. (miniPlayerHandler.kt 만들어보기..)
-//- RcView BindView disable/enableVM() 할 때서 vuMeterHandler 로 직접 연결해보기.
-//- 마지막으로 진짜 ExoPlayer 구현..
+// v0.11a :
+//- 일단 ExoPlayer 로 음악 재생은 된다!!!
+//- 첫 issue: seekbar 업데이트 안되는 것(MyMediaPlayer.kt 에서 runnable 작동하는지부터 확인..)
+//- 그 후 이제 vumeter..play/pause .. bindView 할 때 vm 컨트롤 하는것. => rcvAdapterLine:168. VuMeterHandler 싱글톤인것 이용!
 
 
 

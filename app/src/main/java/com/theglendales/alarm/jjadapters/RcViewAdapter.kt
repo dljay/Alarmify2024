@@ -167,7 +167,7 @@ class RcViewAdapter(
         }
     // 2) VuMeter and Loading Circle => todo: VuMeterHandler 가 현재 Koin 덕분에 SingleTon 이니까. 그쪽으로 전달하자!!!!
         private fun enableVM(holder: MyViewHolder) {
-        // 여기에다 if(VuMeterHandler.StatusMp == StatusMp.PLAYING) ..... {}
+        // 여기에다 if(VuMeterHandler.currentStatusMp == StatusMp.PLAYING) ..... {}
         holder.iv_Thumbnail.alpha = 0.3f // 어둡게
         holder.vuMeterView.visibility = VuMeterView.VISIBLE
         }
@@ -390,7 +390,7 @@ class RcViewAdapter(
                 rcViewModel.updateLiveData(vHolderAndTrId) // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
             //2) 만약 클릭 영역이 구매쪽 제외한 전체 영역일 때(Rl_including_tv1_2 영역) => MediaPlayer 에 Play 전달!
                 if(v.id == R.id.id_rL_including_title_description) {
-                    mediaPlayer.prepareMusicPlay() // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+                    mediaPlayer.prepareMusicPlay(holderTrId) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
                 }
             }
 

@@ -38,8 +38,10 @@ import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VuMeterHandler
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
+import java.lang.Exception
 
 //Coroutines
 
@@ -92,6 +94,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var cl_upperUi_entireWindow: ConstraintLayout //  {findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)}
     lateinit var imgbtn_Play: ImageButton
     lateinit var imgbtn_Pause: ImageButton
+    lateinit var seekBar: SeekBar
 
 
     //b) lower Ui
@@ -124,6 +127,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         Log.d(TAG, "onViewCreated: jj- begins..")
         super.onViewCreated(view, savedInstanceState)
         //RcView-->
@@ -138,21 +142,31 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
 
         //2) LiveData Observe
+            //2-a) rcV 에서 클릭-> rcvViewModel -> 여기로 전달.
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
                 Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
                 myOnLiveDataFromRCV(viewAndTrIdClassInstance)
             })
-
+            //2-b) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
                 Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
                 when(StatusEnum) {
                     StatusMp.LOADING -> {vuMeterHandler.activateLC()}
                     StatusMp.PLAY -> {vuMeterHandler.vumeterPlay()}
                     StatusMp.PAUSE -> {vuMeterHandler.vumeterPause()}
-
                 }
-
             })
+            //2-c) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+            jjMpViewModel.songDuration.observe(viewLifecycleOwner, { dur ->
+                Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
+                seekBar.max = dur.toInt()
+            })
+            //2-d) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+            jjMpViewModel.currentPosition.observe(viewLifecycleOwner, { playbackPos ->
+                Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
+                    seekBar.progress = playbackPos.toInt() +200
+                })
+
 
         //3) RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
@@ -172,8 +186,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //SwipeRefresh Listener 등록
         registerSwipeRefreshListener()
 
-        //기존 선택해놓은 track 있으면->
-        // 3) Activity 에서 onPause 로 갈때 (한번 나갔다오는 경우) onSaveInstanceState 활용해서 사용해도 괜춘할듯. 4) or  Local 에 저장? (ROOM.. 등)
+    // MyCacher Init()
+        val myCacherInstance = context?.let { MyCacher(it, it.cacheDir, mpClassInstance) }
+        if (myCacherInstance != null) {
+            myCacherInstance.initCacheVariables()
+        }
 
     }
 
@@ -193,6 +210,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: 2nd Frag!")
+        // mpClassInstance.releaseExoPlayer()? 여기 아니면 AlarmsListActivity 에다가?
 
     }
 
@@ -386,9 +404,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //                    iapInstance = MyIAPHelper(this, rcvAdapterInstance, fullRtClassList) //reInitialize
 //                    iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
 
-                    // Update MediaPlayer.kt
-//                    mpClassInstance.createMp3UrlMap(fullRtClassList)
-
                     // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
                     if (swipeRefreshLayout.isRefreshing) {
                         Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
@@ -400,6 +415,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     val fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
                     // Update Recycler View
                     updateResultOnRcView(fullRtClassList)
+                    // Update MediaPlayer.kt
+                    mpClassInstance.createMp3UrlMap(fullRtClassList)
 
                     // 다른 frag 갔다가 돌아왔을 때 return 했을 때 slidingPanel(miniPlayer) 채워주기.
                     if (GlbVars.clickedTrId > 0) {
@@ -465,6 +482,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         cl_upperUi_entireWindow = v.findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)
         imgbtn_Play = v.findViewById(R.id.id_imgbtn_upperUi_play)
         imgbtn_Pause = v.findViewById(R.id.id_imgbtn_upperUi_pause)
+        seekBar = v.findViewById(R.id.id_upperUi_Seekbar)
           // mini player 에 장착된 play/pause 버튼 listener 등록
             imgbtn_Play.setOnClickListener {
                 onMiniPlayerPlayClicked()

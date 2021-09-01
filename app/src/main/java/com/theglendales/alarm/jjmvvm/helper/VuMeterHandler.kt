@@ -13,7 +13,7 @@ import io.gresse.hugo.vumeterlibrary.VuMeterView
 class VuMeterHandler {
 
     companion object {
-        var currentStatus: StatusMp = StatusMp.IDLE
+        var currentStatusMp: StatusMp = StatusMp.IDLE
     }
     private var loadingCircle: ProgressBar? = null // 현재 혹은 이전에 activate 된 loadingCircle 을 여기에 저장.
     private var vuMeter: VuMeterView? = null

@@ -75,8 +75,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Lottie Animation(Loading & Internet Error)
     lateinit var lottieAnimationView: LottieAnimationView
 
-    //Media Player Related
+    //Media Player & MiniPlayer Related
     lateinit var mpClassInstance: MyMediaPlayer
+
 
     //Sliding Panel Related
     var shouldPanelBeVisible = false
@@ -89,6 +90,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var iv_upperUi_thumbNail: ImageView //  { findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)  }
     lateinit var iv_upperUi_ClickArrow: ImageView //  { findViewById<ImageView>(R.id.id_upperUi_iv_clickarrowUp) }
     lateinit var cl_upperUi_entireWindow: ConstraintLayout //  {findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)}
+    lateinit var imgbtn_Play: ImageButton
+    lateinit var imgbtn_Pause: ImageButton
+
 
     //b) lower Ui
     lateinit var constLayout_entire: ConstraintLayout // {findViewById<ConstraintLayout>(R.id.id_lowerUI_entireConsLayout)}
@@ -150,7 +154,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             })
 
-        //3) RcvAdapter & MediaPlayer Instance 생성.
+        //3) RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
 
@@ -194,8 +198,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 // ===================================== My Functions ==== >
 
-    private fun setClickListenerForMiniPlayer() {
+    //MiniPlayer Play/Pause btn UI Update
+    private fun onMiniPlayerPlayClicked() {
+    imgbtn_Play.visibility = View.GONE
+    imgbtn_Pause.visibility = View.VISIBLE // Show Pause Btn
 
+     mpClassInstance.continueMusic()
+    }
+    private fun onMiniPlayerPauseClicked() {
+        imgbtn_Play.visibility = View.VISIBLE
+        imgbtn_Pause.visibility = View.GONE // Show Play btn
+
+        mpClassInstance.pauseMusic()
     }
     //위에 onCreatedView 에서 observe 하고 있는 LiveData 가 갱신되었을때 다음을 실행
     // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)
@@ -434,22 +448,30 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun setUpLateInitUis(v: View) {
-        //Lottie
+    //Lottie
         lottieAnimationView = v.findViewById(R.id.id_lottie_animView)
 
-        //Swipe Refresh Layout Related
+    //Swipe Refresh Layout Related
         swipeRefreshLayout = v.findViewById(R.id.id_swipeRefreshLayout)
 
-        // SlidingUpPanel
+    // SlidingUpPanel
         slidingUpPanelLayout = v.findViewById(R.id.id_slidingUpPanel)
         //a) Sliding Panel: Upper Ui
 
         upperUiHolder = v.findViewById(R.id.id_upperUi_ll)   // 추후 이 부분이 fade out
         tv_upperUi_title = v.findViewById<TextView>(R.id.id_upperUi_tv_title)
         iv_upperUi_thumbNail = v.findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)
-        //iv_upperUi_thumbNail.visibility = View.INVISIBLE // Frag 전환시 placeHolder (빨갱이사진) 보이는 것 방지 위해.
         iv_upperUi_ClickArrow = v.findViewById<ImageView>(R.id.id_upperUi_iv_clickarrowUp)
         cl_upperUi_entireWindow = v.findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)
+        imgbtn_Play = v.findViewById(R.id.id_imgbtn_upperUi_play)
+        imgbtn_Pause = v.findViewById(R.id.id_imgbtn_upperUi_pause)
+          // mini player 에 장착된 play/pause 버튼 listener 등록
+            imgbtn_Play.setOnClickListener {
+                onMiniPlayerPlayClicked()
+            }
+            imgbtn_Pause.setOnClickListener {
+                onMiniPlayerPauseClicked()
+            }
 
         //b) lower Ui
         constLayout_entire = v.findViewById<ConstraintLayout>(R.id.id_lowerUI_entireConsLayout)
@@ -457,7 +479,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //iv_lowerUi_bigThumbnail.visibility = View.INVISIBLE // Frag 전환시 placeHolder (빨갱이사진) 보이는 것 방지 위해.
         tv_lowerUi_about = v.findViewById<TextView>(R.id.id_lowerUi_tv_Description)
 
-        //Title Scroll horizontally. 흐르는 텍스트
+    //Title Scroll horizontally. 흐르는 텍스트
         tv_upperUi_title.apply {
             isSingleLine = true
             ellipsize = TextUtils.TruncateAt.MARQUEE

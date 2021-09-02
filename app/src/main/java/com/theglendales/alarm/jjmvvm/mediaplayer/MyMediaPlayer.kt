@@ -46,7 +46,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     private val handler = android.os.Handler(Looper.getMainLooper())
     private var runnable = kotlinx.coroutines.Runnable {}// null 되지 않기 위해서 여기서 빈값으로 initialize 해줌.
 
-// 기존 코드들 <1> ExoPlayer Related ---------->
+// <1>기존 코드들 ExoPlayer Related ---------->
     private fun loadControlSetUp(): LoadControl {
     //Minimum Video you want to buffer while Playing
     val MIN_BUFFER_MS = 1000 // (1)originally: 2000 // The default minimum duration of media that the player will attempt to ensure is buffered at all times= 최소한으로 늘 확보하고 있을 버퍼
@@ -174,17 +174,17 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     }
 
 
-// <----------기존 코드들 <1> ExoPlayer Related
-// ---------->기존 코드들 <2> Utility
+// <----------<1>기존 코드들 ExoPlayer Related
+// ----------><2>기존 코드들 Utility
     fun createMp3UrlMap(receivedRingtoneClassList: List<RingtoneClass>) {
         for (i in receivedRingtoneClassList.indices) {
             mp3UrlMap[receivedRingtoneClassList[i].id] = receivedRingtoneClassList[i].mp3URL
     }
 
-// <----------기존 코드들 <2> Utility
+// <----------<2>기존 코드들 Utility
 }
 
-// Methods Later Added--LiveData/Ui 관련?-------------- >>>>>>>>>
+// <3> 추가된 코드들--LiveData/Ui 외-------------- >>>>>>>>>
 
 // Called From RcVAdapter> 클릭 ->
     fun prepareMusicPlay(receivedTrId: Int) {
@@ -248,18 +248,22 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     private fun feedLiveDataCurrentPosition() {
         runnable = kotlinx.coroutines.Runnable {
             try {
+                Log.d(TAG, "feedLiveDataCurrentPosition: runnable working")
                 mpViewModel.updateCurrentPosition(exoPlayer.currentPosition) //livedata 로 feed 를 보냄
                 handler.postDelayed(runnable,1000) // 1초에 한번씩
             }catch (e: Exception) {
                 mpViewModel.updateCurrentPosition(0) // 문제 생기면 그냥 '0' 전달.
             }
         }
+        handler.postDelayed(runnable, 1000) // 최초 실행? 무조건 한번은 실행해줘야함.
     }
     private fun feedLiveDataSongDuration() {
         if(exoPlayer.duration > 0) {
             mpViewModel.updateSongDuration(exoPlayer.duration)
         }
     }
+    // SecondFrag.kt 에서 SeekBar 를 user 가 만졌을 때 exoPlayer 에게전달
+    fun onSeekBarTouchedYo(progress: Long) = exoPlayer.seekTo(progress)
 
 // called from MiniPlayer button (play/pause)
     fun continueMusic() {

@@ -51,9 +51,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.11a :
-//- 일단 ExoPlayer 로 음악 재생은 된다!!!
-//- 첫 issue: seekbar 업데이트 안되는 것(MyMediaPlayer.kt 에서 runnable 작동하는지부터 확인..)
+// v0.11b :
+//- ExoPlayer 로 음악 재생(O) /Seekbar (O)
+// IvThumbNail 밝기 원복(X)
 //- 그 후 이제 vumeter..play/pause .. bindView 할 때 vm 컨트롤 하는것. => rcvAdapterLine:168. VuMeterHandler 싱글톤인것 이용!
 
 

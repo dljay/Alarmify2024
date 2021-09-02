@@ -463,7 +463,26 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         }
     }
+    //SeekBarListener (유저가 seekbar 를 만졌을 때 반응하는것.)
+    private fun seekbarListenerSetUp(){
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
+            {
+                var progressLong = progress.toLong()
+                if(fromUser) mpClassInstance.onSeekBarTouchedYo(progressLong)
+            }
 
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                //
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                //
+            }
+
+
+        })
+    }
     private fun setUpLateInitUis(v: View) {
     //Lottie
         lottieAnimationView = v.findViewById(R.id.id_lottie_animView)
@@ -480,16 +499,20 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         iv_upperUi_thumbNail = v.findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)
         iv_upperUi_ClickArrow = v.findViewById<ImageView>(R.id.id_upperUi_iv_clickarrowUp)
         cl_upperUi_entireWindow = v.findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)
-        imgbtn_Play = v.findViewById(R.id.id_imgbtn_upperUi_play)
-        imgbtn_Pause = v.findViewById(R.id.id_imgbtn_upperUi_pause)
-        seekBar = v.findViewById(R.id.id_upperUi_Seekbar)
-          // mini player 에 장착된 play/pause 버튼 listener 등록
-            imgbtn_Play.setOnClickListener {
-                onMiniPlayerPlayClicked()
-            }
-            imgbtn_Pause.setOnClickListener {
-                onMiniPlayerPauseClicked()
-            }
+
+        // mini player 에 장착된 play/pause 버튼 찾기 및 listener 등록
+            imgbtn_Play = v.findViewById(R.id.id_imgbtn_upperUi_play)
+            imgbtn_Pause = v.findViewById(R.id.id_imgbtn_upperUi_pause)
+
+                imgbtn_Play.setOnClickListener {
+                    onMiniPlayerPlayClicked()
+                }
+                imgbtn_Pause.setOnClickListener {
+                    onMiniPlayerPauseClicked()
+                }
+        //Seekbar Related
+            seekBar = v.findViewById(R.id.id_upperUi_Seekbar)
+            seekbarListenerSetUp()
 
         //b) lower Ui
         constLayout_entire = v.findViewById<ConstraintLayout>(R.id.id_lowerUI_entireConsLayout)

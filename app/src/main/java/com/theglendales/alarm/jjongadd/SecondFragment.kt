@@ -460,7 +460,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             } else if (!myIsChipChecked) {
                 Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() }
             }
-
         }
     }
     //SeekBarListener (유저가 seekbar 를 만졌을 때 반응하는것.)
@@ -471,16 +470,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 var progressLong = progress.toLong()
                 if(fromUser) mpClassInstance.onSeekBarTouchedYo(progressLong)
             }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                //
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                //
-            }
-
-
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
     }
     private fun setUpLateInitUis(v: View) {

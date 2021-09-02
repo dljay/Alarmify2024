@@ -51,14 +51,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.11b :
+// v0.11c :
 //- ExoPlayer 로 음악 재생(O) /Seekbar (O)
-// IvThumbNail 밝기 원복(X)
+// IvThumbNail 밝기 원복(X) ->  ** 코루틴 + Status 를 input parameter 로 받아서 진행필요. **
 //- 그 후 이제 vumeter..play/pause .. bindView 할 때 vm 컨트롤 하는것. => rcvAdapterLine:168. VuMeterHandler 싱글톤인것 이용!
-
-
-
-
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

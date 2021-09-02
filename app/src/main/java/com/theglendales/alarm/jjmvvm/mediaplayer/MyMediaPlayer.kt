@@ -144,16 +144,15 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
             if(playWhenReady) { // PLAYING! (or resume playing)
                 Log.d(TAG, "onPlayerStateChanged: Playback state=Player.STATE_READY. PlayWhenReady=$playWhenReady")
         // 신규추가!
-                onExoPlaying()
+
                 //GlbVars.isSongPaused = false
                 //GlbVars.isSongPlaying = true
 
-                //initializeSeekBar()
-                //seekbarListenerSetUp()
                 feedLiveDataSongDuration()
                 feedLiveDataCurrentPosition()
 
                 Log.d(TAG, "Finally Playing! Global.currentPlayingTrNo: ${GlbVars.currentPlayingTrId}")
+                onExoPlaying()
                 //UI 변경: -> 아래 모든 것 LiveData 로 해결 가능할듯.
                 // A) play/pause 버튼
 //                imgbtn_Play?.visibility = View.GONE       // Play button to Pause button
@@ -188,23 +187,6 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 
 // Called From RcVAdapter> 클릭 ->
     fun prepareMusicPlay(receivedTrId: Int) {
-    // 다른 트랙 재생중 (=play 버튼이 ||(pause) 상태) 일경우 => Play(>)  상태로 바꿈.
-//    if(imgbtn_Pause?.visibility == View.VISIBLE) {
-//        imgbtn_Play?.visibility = View.VISIBLE       // Play button to Pause button
-//        imgbtn_Pause?.visibility = View.GONE
-//    }
-//
-//    //Initialize
-//    GlbVars.currentPlayingTrId = receivedTrId
-//    GlbVars.errorTrackId = -44
-//
-//
-//    assignVTL(receivedTrId)
-//    deactivatePrevVMandCircle()
-//
-//    //Show Progress Circle
-//    showLoadingCircle()
-
     // 불량 URL 확인, ErrorOccurred!
     val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlMap[receivedTrId])
 

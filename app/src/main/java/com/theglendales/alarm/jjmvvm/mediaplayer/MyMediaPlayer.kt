@@ -22,7 +22,7 @@ import java.util.*
 private const val TAG="MyMediaPlayer"
 
 
-enum class StatusMp { IDLE, LOADING, PLAY, PAUSED, ERROR} // LOADING: activateLC(),
+enum class StatusMp { IDLE, BUFFERING, READY, PLAY, PAUSED, ERROR} // BUFFERING: activateLC(),
 
 class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpViewModel) : Player.Listener {
 
@@ -133,25 +133,28 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
         }
 
     }
+    // 여기서 playbackState 에 따라 onExoXXX() 로 전달 -> JjMpViewModel.kt 로 LiveData 전달-> SecondFrag -> VHolderUiHandler 에서 Ui 업데이트.
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         if (playbackState == Player.STATE_BUFFERING) {
 
             Log.d(TAG, "onPlayerStateChanged: Playback state=Player.STATE_BUFFERING. PlayWhenReady=$playWhenReady")
         // 신규추가!
-            onExoLoading()
+            onExoBuffering()
 
         }
         else if (playbackState == Player.STATE_READY) {  // 준비 완료! 기존 mp 의 setOnPreparedListener{} 내용이 여기로 왔음.
-            if(playWhenReady) { // PLAYING! (or resume playing)
-                Log.d(TAG, "onPlayerStateChanged: Playback state=Player.STATE_READY. PlayWhenReady=$playWhenReady")
+            Log.d(TAG, "onPlayerStateChanged: Playback state=Player.STATE_READY. PlayWhenReady=$playWhenReady")
+            onExoReady()
 
+            if(playWhenReady) { // PLAYING! (or resume playing)
                 feedLiveDataSongDuration()
                 feedLiveDataCurrentPosition()
 
                 Log.d(TAG, "Finally Playing! Global.currentPlayingTrNo: ${GlbVars.currentPlayingTrId}")
                 onExoPlaying()
 
-            } else { // PAUSED!
+            }
+            else { // PAUSED! (playWhenReady=False 상태)
                 Log.d(TAG, "onPlayerStateChanged: PAUSED.. Playback state=Player.STATE_READY. PlayWhenReady=$playWhenReady")
                 onExoPaused()
             }
@@ -256,9 +259,12 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 
     }
 
-    private fun onExoLoading() {
-        currentPlayStatus = StatusMp.LOADING
-        mpViewModel.updateStatusMpLiveData(StatusMp.LOADING)}
+    private fun onExoBuffering() {
+        currentPlayStatus = StatusMp.BUFFERING
+        mpViewModel.updateStatusMpLiveData(StatusMp.BUFFERING)}
+    private fun onExoReady() {
+        currentPlayStatus = StatusMp.READY
+        mpViewModel.updateStatusMpLiveData(StatusMp.READY)}
     private fun onExoPlaying() {
         currentPlayStatus = StatusMp.PLAY
         mpViewModel.updateStatusMpLiveData(StatusMp.PLAY)}

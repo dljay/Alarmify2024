@@ -6,7 +6,6 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import io.gresse.hugo.vumeterlibrary.VuMeterView
 
@@ -22,11 +21,17 @@ class VHolderUiHandler {
     private var vuMeter: VuMeterView? = null
     private var ivThumbNail: ImageView? = null
 
-    fun LcVmIvUiCtrl(playStatus: StatusMp) {
-        Log.d(TAG, "newController: playStatus= $playStatus")
+    fun LcVmIvController(playStatus: StatusMp) {
+        Log.d(TAG, "LcVmIvController: playStatus= $playStatus")
     // 1) 단순히 현재 재생중인 트랙을 Pause 시킨거였다면 VuMeter 만 Pause 시킬것.
         if(playStatus == StatusMp.PAUSED) {
             if(vuMeter!=null) {vuMeter!!.pause()}
+            return
+        }
+        if(playStatus == StatusMp.READY) { // 음악 재생중->Pause 후 -> Seek Bar 아무데나 클릭했을 때. Loading Circle 없애주기
+            loadingCircle!!.visibility = View.INVISIBLE
+            vuMeter!!.visibility = VuMeterView.VISIBLE
+            vuMeter!!.pause()
             return
         }
     // 2) 그 외 신규 트랙 클릭했을 때는 아래의 과정이 실행.
@@ -37,7 +42,7 @@ class VHolderUiHandler {
             vuMeter!!.visibility = VuMeterView.GONE // VuMeter 도 안보이게 (b)
             ivThumbNail!!.alpha = 1.0f // (c) 썸네일 밝기 원복
         }
-        // 2-B) 새로 선택된 trakId 정보를 바탕으로 새로운 view assign)
+        // 2-B) 새로 선택된 trakId 정보를 바탕으로 새로운 view 들을 assign
             loadingCircle = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.loadingCircle // (a)
             vuMeter = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.vuMeterView // (b)
             ivThumbNail = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.iv_Thumbnail // (c)
@@ -45,7 +50,7 @@ class VHolderUiHandler {
 
         // 2-C) UI 업뎃 (Play & Loading)
         when(playStatus) {
-            StatusMp.LOADING -> {
+            StatusMp.BUFFERING -> {
                 loadingCircle!!.visibility = View.VISIBLE
                 ivThumbNail!!.alpha = 0.3f
                 vuMeter!!.visibility = VuMeterView.GONE

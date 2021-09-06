@@ -51,9 +51,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.11g :
-//- 재생 -> Pause 시키고 -> SeekBar 뒤로 이동-> LoadingCircle 계속 도네 (내가 강제로 꺼주기 Play 다시 누르기 전까지)
-//- 스크롤해도 Vm/Lc 가 다른 ViewHolder 에서 나타나지 않네.. Holder 가 리싸이클 되어도 Vm/Lc 등이 새로 assign 되지 않았기에 활성화된 Vm/Lc, 어두운 Iv가 안보이는거였구만!!!
+// v0.11h :
+//- 재생 -> Pause 시키고 -> SeekBar 뒤로 이동-> LoadingCircle 계속 도는것 해결.
+//- todo: 구매 쪽 버튼 눌렀을 때 트랙 하이라이트 됨. 일단 토스트 메시지 표시로 해놓을까?
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

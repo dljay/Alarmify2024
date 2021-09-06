@@ -152,11 +152,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
                 when(StatusEnum) {
                     StatusMp.PLAY -> {showMiniPlayerPauseBtn()}
-                    StatusMp.LOADING -> {showMiniPlayerPlayBtn()}
+                    StatusMp.BUFFERING -> {showMiniPlayerPlayBtn()}
                     StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
                 }
                 // b) VuMeter/Loading Circle 등 UI 컨트롤
-                VHolderUiHandler.LcVmIvUiCtrl(StatusEnum) })
+                VHolderUiHandler.LcVmIvController(StatusEnum) })
             //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.songDuration.observe(viewLifecycleOwner, { dur ->
                 Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")

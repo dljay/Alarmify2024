@@ -34,7 +34,7 @@ class JjMpViewModel: ViewModel() {
     }
     //2-B) 재생중인 포지션 업데이트 (exoPlayer.currentPosition(Long))
     fun updateCurrentPosition(positionReceived: Long) {
-        Log.d(TAG, "updatedCurrentPosition: called")
+        //Log.d(TAG, "updatedCurrentPosition: called")
         _currentPosition.value = positionReceived
     }
 }

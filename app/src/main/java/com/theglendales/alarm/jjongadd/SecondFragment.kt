@@ -150,11 +150,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //2-b) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
                 Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
-                when(StatusEnum) {
-                    StatusMp.LOADING -> {vuMeterHandler.activateLC()}
-                    StatusMp.PLAY -> {vuMeterHandler.vumeterPlay()}
-                    StatusMp.PAUSE -> {vuMeterHandler.vumeterPause()}
-                }
+                vuMeterHandler.LcVmIcController(StatusEnum)
+//                when(StatusEnum) {
+//                    StatusMp.LOADING -> {vuMeterHandler.LcVmIcController(StatusEnum)}
+//                    StatusMp.PLAY -> {vuMeterHandler.vumeterPlay()}
+//                    StatusMp.PAUSE -> {vuMeterHandler.vumeterPause()}
+//                }
             })
             //2-c) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.songDuration.observe(viewLifecycleOwner, { dur ->
@@ -163,7 +164,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             })
             //2-d) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.currentPosition.observe(viewLifecycleOwner, { playbackPos ->
-                Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
+                //Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
                     seekBar.progress = playbackPos.toInt() +200
                 })
 

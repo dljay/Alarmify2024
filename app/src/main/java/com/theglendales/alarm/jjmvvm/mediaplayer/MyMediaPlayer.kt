@@ -27,9 +27,9 @@ enum class StatusMp { IDLE, LOADING, PLAY, PAUSED, ERROR} // LOADING: activateLC
 class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpViewModel) : Player.Listener {
 
     companion object {
-        //var currentClickTrId: Int = -1
-        //var prevClickedTrId: Int = -1
         val mp3UrlMap: HashMap<Int, String> = HashMap()
+    //Current Status 모니터링
+        var currentPlayStatus: StatusMp = StatusMp.IDLE
     }
 //A) ExoPlayer
     //1-a) Exo Player Related
@@ -45,6 +45,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 //B) SeekBar Related
     private val handler = android.os.Handler(Looper.getMainLooper())
     private var runnable = kotlinx.coroutines.Runnable {}// null 되지 않기 위해서 여기서 빈값으로 initialize 해줌.
+
 
 // <1>기존 코드들 ExoPlayer Related ---------->
     private fun loadControlSetUp(): LoadControl {
@@ -255,10 +256,18 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 
     }
 
-    private fun onExoLoading() = mpViewModel.updateStatusMpLiveData(StatusMp.LOADING)
-    private fun onExoPlaying() = mpViewModel.updateStatusMpLiveData(StatusMp.PLAY)
-    private fun onExoPaused() = mpViewModel.updateStatusMpLiveData(StatusMp.PAUSED)
-    private fun onExoError() =  mpViewModel.updateStatusMpLiveData(StatusMp.ERROR)
+    private fun onExoLoading() {
+        currentPlayStatus = StatusMp.LOADING
+        mpViewModel.updateStatusMpLiveData(StatusMp.LOADING)}
+    private fun onExoPlaying() {
+        currentPlayStatus = StatusMp.PLAY
+        mpViewModel.updateStatusMpLiveData(StatusMp.PLAY)}
+    private fun onExoPaused() {
+        currentPlayStatus = StatusMp.PAUSED
+        mpViewModel.updateStatusMpLiveData(StatusMp.PAUSED)}
+    private fun onExoError() {
+        currentPlayStatus = StatusMp.ERROR
+        mpViewModel.updateStatusMpLiveData(StatusMp.ERROR)}
 
 
 }

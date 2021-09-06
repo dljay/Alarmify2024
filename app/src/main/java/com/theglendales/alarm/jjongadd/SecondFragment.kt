@@ -230,13 +230,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
         // Pause 상태에서 ▶  클릭했을 때
         private fun onMiniPlayerPlayClicked()  {
-            showMiniPlayerPauseBtn()
-            mpClassInstance.continueMusic() }
-
+            if(MyMediaPlayer.currentPlayStatus == StatusMp.PAUSED) {
+                mpClassInstance.continueMusic()
+                showMiniPlayerPauseBtn()
+                }
+            }
         //  Play 상태에서 ⏸ 클릭 했을 때 -> 음악 Pause 해야함.
         private fun onMiniPlayerPauseClicked() {
-            showMiniPlayerPlayBtn()
-            mpClassInstance.pauseMusic()}
+            if(MyMediaPlayer.currentPlayStatus == StatusMp.PLAY) {
+                mpClassInstance.pauseMusic()
+                showMiniPlayerPlayBtn()
+                }
+            }
 
     //위에 onCreatedView 에서 observe 하고 있는 LiveData 가 갱신되었을때 다음을 실행
     // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)

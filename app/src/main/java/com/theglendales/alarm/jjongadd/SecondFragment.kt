@@ -40,6 +40,7 @@ import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
+import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 
 //Coroutines
 
@@ -140,27 +141,28 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
 
         //2) LiveData Observe
-            //2-a) rcV 에서 클릭-> rcvViewModel -> 여기로 전달.
+            //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달.
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
                 Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
                 myOnLiveDataFromRCV(viewAndTrIdClassInstance)
             })
-            //2-b) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
+            //2-B) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
                 Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
-                VHolderUiHandler.LcVmIvUiCtrl(StatusEnum)
-//                when(StatusEnum) {
-//                    StatusMp.LOADING -> {VHolderUiHandler.LcVmIcController(StatusEnum)}
-//                    StatusMp.PLAY -> {VHolderUiHandler.vumeterPlay()}
-//                    StatusMp.PAUSE -> {VHolderUiHandler.vumeterPause()}
-//                }
-            })
-            //2-c) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+                // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
+                when(StatusEnum) {
+                    StatusMp.PLAY -> {showMiniPlayerPauseBtn()}
+                    StatusMp.LOADING -> {showMiniPlayerPlayBtn()}
+                    StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
+                }
+                // b) VuMeter/Loading Circle 등 UI 컨트롤
+                VHolderUiHandler.LcVmIvUiCtrl(StatusEnum) })
+            //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.songDuration.observe(viewLifecycleOwner, { dur ->
                 Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
                 seekBar.max = dur.toInt()
             })
-            //2-d) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+            //2-D) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.currentPosition.observe(viewLifecycleOwner, { playbackPos ->
                 //Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
                     seekBar.progress = playbackPos.toInt() +200
@@ -216,18 +218,26 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 // ===================================== My Functions ==== >
 
     //MiniPlayer Play/Pause btn UI Update
-    private fun onMiniPlayerPlayClicked() {
-    imgbtn_Play.visibility = View.GONE
-    imgbtn_Pause.visibility = View.VISIBLE // Show Pause Btn
+        // Show Pause Btn
+        private fun showMiniPlayerPauseBtn() {
+            imgbtn_Play.visibility = View.GONE
+            imgbtn_Pause.visibility = View.VISIBLE
+        }
+        // Show Play btn
+        private fun showMiniPlayerPlayBtn() {
+            imgbtn_Play.visibility = View.VISIBLE
+            imgbtn_Pause.visibility = View.GONE
+        }
+        // Pause 상태에서 ▶  클릭했을 때
+        private fun onMiniPlayerPlayClicked()  {
+            showMiniPlayerPauseBtn()
+            mpClassInstance.continueMusic() }
 
-     mpClassInstance.continueMusic()
-    }
-    private fun onMiniPlayerPauseClicked() {
-        imgbtn_Play.visibility = View.VISIBLE
-        imgbtn_Pause.visibility = View.GONE // Show Play btn
+        //  Play 상태에서 ⏸ 클릭 했을 때 -> 음악 Pause 해야함.
+        private fun onMiniPlayerPauseClicked() {
+            showMiniPlayerPlayBtn()
+            mpClassInstance.pauseMusic()}
 
-        mpClassInstance.pauseMusic()
-    }
     //위에 onCreatedView 에서 observe 하고 있는 LiveData 가 갱신되었을때 다음을 실행
     // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)
     // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer

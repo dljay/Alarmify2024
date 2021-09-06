@@ -22,7 +22,7 @@ import java.util.*
 private const val TAG="MyMediaPlayer"
 
 
-enum class StatusMp { IDLE, LOADING, PLAY, PAUSE} // LOADING: activateLC(),
+enum class StatusMp { IDLE, LOADING, PLAY, PAUSED, ERROR} // LOADING: activateLC(),
 
 class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpViewModel) : Player.Listener {
 
@@ -143,32 +143,21 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
         else if (playbackState == Player.STATE_READY) {  // 준비 완료! 기존 mp 의 setOnPreparedListener{} 내용이 여기로 왔음.
             if(playWhenReady) { // PLAYING! (or resume playing)
                 Log.d(TAG, "onPlayerStateChanged: Playback state=Player.STATE_READY. PlayWhenReady=$playWhenReady")
-        // 신규추가!
-
-                //GlbVars.isSongPaused = false
-                //GlbVars.isSongPlaying = true
 
                 feedLiveDataSongDuration()
                 feedLiveDataCurrentPosition()
 
                 Log.d(TAG, "Finally Playing! Global.currentPlayingTrNo: ${GlbVars.currentPlayingTrId}")
                 onExoPlaying()
-                //UI 변경: -> 아래 모든 것 LiveData 로 해결 가능할듯.
-                // A) play/pause 버튼
-//                imgbtn_Play?.visibility = View.GONE       // Play button to Pause button
-//                imgbtn_Pause?.visibility = View.VISIBLE
-//                assignVTL(GlbVars.currentPlayingTrId) // 그냥 clickedTrID 바로 전달해주고 싶은데. 여기 onPlayerStateChanged 에 clickTrId 를 전달할 방법이 없음 (.. )
-//                deactivatePrevVMandCircle()
-//                stopLoadingCircle()
-//                activateCurrentVuMeter(GlbVars.currentPlayingTrId)
 
             } else { // PAUSED!
                 Log.d(TAG, "onPlayerStateChanged: PAUSED.. Playback state=Player.STATE_READY. PlayWhenReady=$playWhenReady")
+                onExoPaused()
             }
         }else if (playbackState == Player.STATE_ENDED) {Log.d(TAG, "onPlayerStateChanged: Playback state=Player.STATE_ENDED(4).  Int=$playbackState")}
         else {
             Log.d(TAG, "onPlayerStateChanged: State=IDLE? int= $playbackState")
-                onExoIdle()
+                onExoError()
             }
     }
 
@@ -249,19 +238,27 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 
 // called from MiniPlayer button (play/pause)
     fun continueMusic() {
-        // exoplayer.play()
-        onExoPlaying()
+        if(!exoPlayer.isPlaying) {
+            exoPlayer.play()
+            exoPlayer.playWhenReady = true
+        }
+
 
     }
     fun pauseMusic() {
         // exoplayer.pause()
-        onExoPaused()
+        if(exoPlayer.isPlaying) {
+            exoPlayer.pause()
+            exoPlayer.playWhenReady = false
+            // onExoPaused() < - 이건 자동으로 ExoPlayStatusListener 에서 SecondFrag 로 livedata 로 전달해줌.
+        }
+
     }
 
-    private fun onExoIdle() =  mpViewModel.updateStatusMpLiveData(StatusMp.IDLE)
     private fun onExoLoading() = mpViewModel.updateStatusMpLiveData(StatusMp.LOADING)
     private fun onExoPlaying() = mpViewModel.updateStatusMpLiveData(StatusMp.PLAY)
-    private fun onExoPaused() = mpViewModel.updateStatusMpLiveData(StatusMp.PAUSE)
+    private fun onExoPaused() = mpViewModel.updateStatusMpLiveData(StatusMp.PAUSED)
+    private fun onExoError() =  mpViewModel.updateStatusMpLiveData(StatusMp.ERROR)
 
 
 }

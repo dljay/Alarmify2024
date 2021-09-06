@@ -8,11 +8,6 @@ import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import io.gresse.hugo.vumeterlibrary.VuMeterView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 private const val TAG="VHolderUiHandler"
 // 이 클래스는 SecondFragment 에서 해결해야 될 Vumeter/Loading Circle/IV Thumbnail UI 관련 일들을 대신 해 줌. SecondFragment.kt 에 적기에는 너무 방대하여 이 클래스를 만듬.
@@ -46,11 +41,18 @@ class VHolderUiHandler {
                 loadingCircle!!.visibility = View.VISIBLE
                 ivThumbNail!!.alpha = 0.3f
                 vuMeter!!.visibility = VuMeterView.GONE
-            }
+                }
             StatusMp.PLAY -> {
                 vuMeter!!.visibility = VuMeterView.VISIBLE
                 vuMeter!!.resume(true)
                 ivThumbNail!!.alpha = 0.3f
+                }
+            StatusMp.PAUSED -> {
+                //Music is paused (by force)
+                if(vuMeter!=null) {vuMeter!!.pause()}
+
+
+
             }
         }
     }

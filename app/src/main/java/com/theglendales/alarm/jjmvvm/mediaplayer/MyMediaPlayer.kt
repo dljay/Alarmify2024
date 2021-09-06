@@ -230,7 +230,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     private fun feedLiveDataCurrentPosition() {
         runnable = kotlinx.coroutines.Runnable {
             try {
-                Log.d(TAG, "feedLiveDataCurrentPosition: runnable working")
+                //Log.d(TAG, "feedLiveDataCurrentPosition: runnable working")
                 mpViewModel.updateCurrentPosition(exoPlayer.currentPosition) //livedata 로 feed 를 보냄
                 handler.postDelayed(runnable,1000) // 1초에 한번씩
             }catch (e: Exception) {

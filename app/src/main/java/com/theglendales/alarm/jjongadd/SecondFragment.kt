@@ -37,11 +37,9 @@ import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
-import com.theglendales.alarm.jjmvvm.helper.VuMeterHandler
+import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
-import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
-import java.lang.Exception
 
 //Coroutines
 
@@ -72,7 +70,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 대체!! 성공!
     // VumeterHandler
-    private val vuMeterHandler: VuMeterHandler by globalInject() // Koin Inject
+    private val VHolderUiHandler: VHolderUiHandler by globalInject() // Koin Inject
 
     //Lottie Animation(Loading & Internet Error)
     lateinit var lottieAnimationView: LottieAnimationView
@@ -150,11 +148,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //2-b) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
                 Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
-                vuMeterHandler.LcVmIcController(StatusEnum)
+                VHolderUiHandler.LcVmIvUiCtrl(StatusEnum)
 //                when(StatusEnum) {
-//                    StatusMp.LOADING -> {vuMeterHandler.LcVmIcController(StatusEnum)}
-//                    StatusMp.PLAY -> {vuMeterHandler.vumeterPlay()}
-//                    StatusMp.PAUSE -> {vuMeterHandler.vumeterPause()}
+//                    StatusMp.LOADING -> {VHolderUiHandler.LcVmIcController(StatusEnum)}
+//                    StatusMp.PLAY -> {VHolderUiHandler.vumeterPlay()}
+//                    StatusMp.PAUSE -> {VHolderUiHandler.vumeterPause()}
 //                }
             })
             //2-c) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)

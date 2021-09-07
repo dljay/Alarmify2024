@@ -51,10 +51,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.11h :
-//- 재생 -> Pause 시키고 -> SeekBar 뒤로 이동-> LoadingCircle 계속 도는것 해결.
-//- todo: 구매 쪽 버튼 눌렀을 때 트랙 하이라이트 됨. 일단 토스트 메시지 표시로 해놓을까?
-
+// v0.11j :
+// 구매쪽 클릭 -> 하이라이트 안되고 Toast 메시지만 나옴.
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

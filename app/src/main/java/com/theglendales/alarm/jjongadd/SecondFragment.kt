@@ -262,13 +262,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //Sliding Panel -  Lower UI
         tv_lowerUi_about.text = ringtoneClassFromtheList?.description
 
-        //하이라이트 기능을 Text 색 바꾸는걸로 테스트 - 잘됨 지금은 꺼둠. -> 이 기능을 추후 vuMeter 로 변경하여 사용 필요.
-        // var tvIdTvTitle = viewAndTrId.view.findViewById<TextView>(R.id.id_tvTitle)
-        // tvIdTvTitle.setTextColor(Color.MAGENTA)
-
-        //rcvAdapterInstance.disable다른Row의TextColor() 요런거 만들던가..
-        //Log.d(TAG, "myOnLiveDataReceived: COLOR TEST. ${tvIdTvTitle.hashCode()}")
-
         //
 
         when (viewAndTrId.view.id) {
@@ -291,6 +284,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             // 2) 우측 FREE, GET THIS 클릭했을 때 처리.
             R.id.id_cl_entire_Purchase -> {
                 Log.d(TAG, "myOnItemClick: You probably clicked FREE or GET This")
+                Toast.makeText(this.context, "Clicked Purchase Button for ${viewAndTrId.trId}",Toast.LENGTH_SHORT).show()
                 // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
                 //                iapInstance.myOnPurchaseClicked(trackId)
             }

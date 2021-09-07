@@ -199,20 +199,12 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 
             handler.removeCallbacks(runnable)
             mpViewModel.updateCurrentPosition(0) // => 결국 seekbar.progress = 0 과 같은 기능.
-
-//            imgbtn_Play?.visibility = View.VISIBLE  // Play button 을 보이게함.
-//            imgbtn_Pause?.visibility = View.GONE
-//
-//            deactivatePrevVMandCircle()
         }
         return // 그리고 그냥 더 이상 진행하지 않음!
     }
     try{
-
         // Play 전에 (가능하면) Caching 하기.
         prepPlayerWithCache(mp3UrlMap[receivedTrId])
-
-
     }catch(e: IOException) {
         Toast.makeText(receivedFragActivity, "Unknown error occurred: $e", Toast.LENGTH_LONG).show()
         GlbVars.errorTrackId = receivedTrId
@@ -246,8 +238,6 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
             exoPlayer.play()
             exoPlayer.playWhenReady = true
         }
-
-
     }
     fun pauseMusic() {
         // exoplayer.pause()

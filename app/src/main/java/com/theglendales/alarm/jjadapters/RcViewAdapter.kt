@@ -178,59 +178,13 @@ class RcViewAdapter(
         }
 // <---------- // Highlight & VuMeter 작동 관련    --------->
 
-// ---------> VuMeter 관련 ------------------------>
 
-    private fun enblVuMeterOnTrId(trId: Int, holder: MyViewHolder) {
-
-        // 1) rt 가 pause 가 아니고 재생중일 경우
-        if (!GlbVars.isSongPaused && GlbVars.isSongPlaying) { // 그러나 곡이 재생전에는 이게 =true 로 되어있으므로 일로 안 들어감.
-            Log.d(TAG, "++EnblVuMeterOn(O) trId: $trId, vuMeterView: ${holder.vuMeterView}}")
-            holder.vuMeterView.visibility = VuMeterView.VISIBLE
-            holder.vuMeterView.resume(true)
-            holder.iv_Thumbnail.alpha = 0.3f
-
-
-        } // 2) a.노래가 Pause 된 상태 or b.prepare() 대기 상태인 경우
-        else if (GlbVars.isSongPaused || !GlbVars.isSongPlaying) {
-            // a)pause 상태일 때
-            Log.d(TAG, "△△EnblVuMeter Pause(△) on trId: $trId, vuMeterView: ${holder.vuMeterView}}")
-            holder.vuMeterView.visibility = VuMeterView.VISIBLE
-            holder.vuMeterView.pause()
-            holder.iv_Thumbnail.alpha = 0.3f
-            // b)대기 상태 -> todo: loading circle
-        }
-    }
-
-    private fun disableVuMeterOnTrId(holder: MyViewHolder) {
-
-        holder.vuMeterView.visibility = VuMeterView.INVISIBLE
-        holder.iv_Thumbnail.alpha = 1.0f
-        //holder.vuMeterView.stop(false)
-        Log.d(TAG, "disableVuMeterOnTrId(X): trId: ${holder.holderTrId}, holder=$holder ")
-
-    }
-
-// <---------- VuMeter 관련 <<<------------------------
 
     // 스크롤 화면 떨어져나갔다 들어오는거 관련 (EQ Animation 때문에 넣었음!)---------------->
     // a) 스크롤해서 해당 view 가 화면에서 안 보일때
     override fun onViewDetachedFromWindow(holder: MyViewHolder) {
         super.onViewDetachedFromWindow(holder)
         Log.d(TAG, "!!onViewDETACHEDFromWindow: trId: ${holder.holderTrId}, holder: $holder")
-        // vuMeter 때문에 여기 recyclable 설정을 할 수 밖에 없었지만. 이젠 vuMeter 를 liveData 로 실행해줄 예정여서 없어도 될듯함.
-        /*if (holder == viewHolderMap[GlbVars.clickedTrId]) {
-            holder.setIsRecyclable(false)
-            Log.d(TAG,"onViewDetached: _X_X_X__X_X_X__X_X_X__X_X_X_ Disable setIsRecyclable(XX) for holder_TRID=${holder.holderTrId}")
-
-        } else {
-            holder.setIsRecyclable(true)
-            Log.d(
-                TAG,
-                "onViewDetached: _O_O_O_O_O_O_O_O_O_O_O_O_O_O_O_O Enable setIsRecyclable(OO) for holder_TRID=${holder.holderTrId}"
-            )
-
-        }*/
-
     }
 
     // b) 다시 스크롤해서 해당 view 가 화면에서 보일때..//스크롤하고 화면 사라졌다 다시 오면 view 번호가 계속 바뀌는 문제.

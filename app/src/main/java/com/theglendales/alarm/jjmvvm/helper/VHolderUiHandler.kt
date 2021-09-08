@@ -25,6 +25,8 @@ class VHolderUiHandler {
         Log.d(TAG, "LcVmIvController: playStatus= $playStatus")
     // 1) 단순히 현재 재생중인 트랙을 Pause 시킨거였다면 VuMeter 만 Pause 시킬것.
         if(playStatus == StatusMp.PAUSED) {
+            if(vuMeter==null) {
+                Log.d(TAG, "LcVmIvController: vuMeter Null.")}
             if(vuMeter!=null) {vuMeter!!.pause()}
             return
         }

@@ -546,16 +546,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(trackId)
             //val ivInside_Rc = vHolder.iv_Thumbnail
-            Log.d(
-                TAG,
-                "setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description} "
-            )
-            //Sliding Panel - Upper UI
+            Log.d(TAG,"setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description}")
+        //Sliding Panel - Upper UI
             tv_upperUi_title.text =
                 ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
             tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
 
-            //Sliding Panel -  Lower UI
+        //Sliding Panel -  Lower UI
             tv_lowerUi_about.text = ringtoneClassFromtheList?.description
 
             //ImageView 에 들어갈 사진은 LiveData 가 해결해주니. 상관없음.

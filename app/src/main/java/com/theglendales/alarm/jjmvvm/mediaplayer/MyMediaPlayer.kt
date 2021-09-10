@@ -30,6 +30,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
         val mp3UrlMap: HashMap<Int, String> = HashMap()
     //Current Status 모니터링
         var currentPlayStatus: StatusMp = StatusMp.IDLE
+    // 다른 fragment 갔다 왔을 떄 대비해서 currentSongPosition(INT), clickedTrackID(INT) 등이 필요함.
     }
 //A) ExoPlayer
     //1-a) Exo Player Related
@@ -160,7 +161,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
             }
         }else if (playbackState == Player.STATE_ENDED) {Log.d(TAG, "onPlayerStateChanged: Playback state=Player.STATE_ENDED(4).  Int=$playbackState")}
         else {
-            Log.d(TAG, "onPlayerStateChanged: State=IDLE? int= $playbackState")
+            Log.d(TAG, "onPlayerStateChanged: State=IDLE(1번)-> 재생할 Media 없음 int= $playbackState")
                 onExoError()
             }
     }

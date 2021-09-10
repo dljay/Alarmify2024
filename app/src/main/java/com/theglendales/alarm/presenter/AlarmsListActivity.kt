@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.gms.common.util.SharedPreferencesUtils
 import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.NotificationSettings
 import com.theglendales.alarm.R
@@ -41,6 +42,7 @@ import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -51,8 +53,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.11j :
-// 구매쪽 클릭 -> 하이라이트 안되고 Toast 메시지만 나옴.
+// v0.13a : SharedPref 테스트중
+
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -62,6 +65,9 @@ private const val TAG="*AlarmsListActivity*"
 class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
+    //SharedPref 내가 추가->
+    val myPrefManager: MySharedPrefManager by globalInject()
+    //SharedPref 내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
     private val logger: Logger by globalLogger("AlarmsListActivity")
@@ -75,6 +81,7 @@ class AlarmsListActivity : AppCompatActivity() {
 //Companion Object--->
     companion object
     {
+
         val uiStoreModule: Module = module {
             Log.d(TAG, "uiStoreModule: jj-...")
             single<UiStore> { createStore(EditedAlarm(), get()) } //koin single!!
@@ -267,15 +274,23 @@ class AlarmsListActivity : AppCompatActivity() {
 
     override fun onStop() {
         Log.d(TAG, "onStop: jj-called")
+    //SharedPref 에 저장되어 있는 현재 second Frag 의 재생정보를 삭제! -> todo: 이거 onDestroy () 로 옮겨야됨.
+        myPrefManager.calledFromActivity()
+
         super.onStop()
         this.subscriptions.dispose()
     }
 
     override fun onDestroy() {
+
+
+    //
         Log.d(TAG, "onDestroy: jj-called")
         logger.debug { "$this" }
         super.onDestroy()
         this.mActionBarHandler.onDestroy()
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

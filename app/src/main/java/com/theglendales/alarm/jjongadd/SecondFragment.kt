@@ -2,6 +2,7 @@ package com.theglendales.alarm.jjongadd
 
 //import android.app.Fragment
 import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
@@ -37,6 +38,7 @@ import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
@@ -56,6 +58,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     //var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
+
+    //SharedPreference (Koin  으로 대체!)
+    val myPrefManager: MySharedPrefManager by globalInject()
 
     //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
@@ -194,19 +199,23 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
 
     }
+    override fun onResume() {
+        super.onResume()
+        Log.d(TAG, "onResume: 2nd Frag!")
+        myPrefManager.getTest()
 
+    }
 
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause: 2nd Frag!")
         collapseSlidingPanel()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume: 2nd Frag!")
+        //save current play data to SharedPref using gson.
+        myPrefManager.saveTest()
 
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()

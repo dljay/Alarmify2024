@@ -120,14 +120,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
     kotlinOptions {
         jvmTarget = "1.8"
         useIR = true
     }
-
 }
-
 
 
 dependencies {
@@ -170,6 +167,8 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1")
     //ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.14.0")
+    //GSON (SharedPref 에 Object 저장용)
+    implementation("com.google.code.gson:gson:2.8.8")
 
 
 }

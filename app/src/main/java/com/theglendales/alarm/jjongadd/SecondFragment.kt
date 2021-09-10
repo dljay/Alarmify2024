@@ -2,7 +2,6 @@ package com.theglendales.alarm.jjongadd
 
 //import android.app.Fragment
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
@@ -37,6 +36,7 @@ import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
+import com.theglendales.alarm.jjmvvm.data.PlayInfoContainer
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
@@ -59,9 +59,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
 
-    //SharedPreference (Koin  으로 대체!)
+    //SharedPreference 저장 관련 (Koin  으로 대체!)
     val myPrefManager: MySharedPrefManager by globalInject()
-
+    private val playInfo: PlayInfoContainer = PlayInfoContainer(-10,-10,-10, StatusMp.IDLE)
     //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
@@ -150,6 +150,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
                 Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
                 myOnLiveDataFromRCV(viewAndTrIdClassInstance)
+            //**SHARED PREF 저장용 **
+                playInfo.trackID = viewAndTrIdClassInstance.trId
             })
             //2-B) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
@@ -159,18 +161,26 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     StatusMp.PLAY -> {showMiniPlayerPauseBtn()}
                     StatusMp.BUFFERING -> {showMiniPlayerPlayBtn()}
                     StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
-                }
+                    }
                 // b) VuMeter/Loading Circle 등 UI 컨트롤
-                VHolderUiHandler.LcVmIvController(StatusEnum) })
+                VHolderUiHandler.LcVmIvController(StatusEnum)
+                // c) **SHARED PREF 저장용 **
+                playInfo.songStatusMp = StatusEnum
+                })
+
             //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.songDuration.observe(viewLifecycleOwner, { dur ->
                 Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
                 seekBar.max = dur.toInt()
+                // c) **SHARED PREF 저장용 **
+                playInfo.seekBarMax = dur.toInt()
             })
             //2-D) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.currentPosition.observe(viewLifecycleOwner, { playbackPos ->
                 //Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
                     seekBar.progress = playbackPos.toInt() +200
+                // c) **SHARED PREF 저장용 ** 현재 재생중인 seekbar 위치
+                playInfo.seekbarProgress = playbackPos.toInt() +200
                 })
 
 

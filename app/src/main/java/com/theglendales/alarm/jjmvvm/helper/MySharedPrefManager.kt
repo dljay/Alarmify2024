@@ -11,11 +11,11 @@ import java.lang.Exception
 private const val TAG="MySharedPrefManager"
 
 class MySharedPrefManager(context: Context) {
-    val prefs: SharedPreferences = context.getSharedPreferences("SecondFrag_Info", Context.MODE_PRIVATE)
+    val prefs: SharedPreferences = context.getSharedPreferences("TrackPlayInfo", Context.MODE_PRIVATE) //TrackPlayInfo = xml 파일 이름!!
     private val gson: Gson = Gson()
 
     fun savePlayInfo(playInfoObject: PlayInfoContainer) {
-        //prefs.edit().putString("ONE","TEST ONE").apply()
+        Log.d(TAG, "savePlayInfo: savePlayInfo. trId=${playInfoObject.trackID}")
         val jsonStrSave = gson.toJson(playInfoObject)
         prefs.edit().putString("CurrentPlayInfo", jsonStrSave).apply()
 

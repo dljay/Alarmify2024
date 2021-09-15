@@ -212,18 +212,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: 2nd Frag!")
+
         val prevPlayInfo = mySharedPrefManager.getPlayInfo()
-        if(prevPlayInfo.trackID == -10) {
-            Log.d(TAG, "onResume: no prevPlayInfo!! prevPlayInfo's trId = ${prevPlayInfo.trackID}")
-            return
-        }
-        else { // 재생 정보가 있을때는.
-            Log.d(TAG, "onResume: prevPlayInfo: trID=${prevPlayInfo.trackID}, Status=${prevPlayInfo.songStatusMp}")
-        }
-        
-
+        reConstructTrUisOnReturn(prevPlayInfo)
     }
-
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause: 2nd Frag!")
@@ -232,9 +224,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         mySharedPrefManager.savePlayInfo(playInfo)
 
     }
-
-
-
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: 2nd Frag!")
@@ -277,20 +266,16 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         Log.d(TAG, "myOnLiveDataReceived: called")
         val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
-        val ivInside_Rc =
-            viewAndTrId.view.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
+        val ivInside_Rc = viewAndTrId.view.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
 
         //Sliding Panel - Upper UI
-        tv_upperUi_title.text =
-            ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
+        tv_upperUi_title.text = ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
         tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
 
         //Sliding Panel -  Lower UI
         tv_lowerUi_about.text = ringtoneClassFromtheList?.description
-
         //
-
         when (viewAndTrId.view.id) {
             //1) RcView > 왼쪽 큰 영역(album/title) 클릭했을때 처리.
             R.id.id_rL_including_title_description -> {
@@ -460,7 +445,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.
                         val prevSelectedVHolder = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]
                         // 3) Fill in the previous selected track info to MINIPlayer!!!
-                        setSlidingPanelTextOnReturn(prevSelectedVHolder, GlbVars.clickedTrId)
+                        reConstructSLPanelTextOnReturn(prevSelectedVHolder, GlbVars.clickedTrId)
                     }
                 } else { // 에러났을 때
                     lottieAnimController(1)
@@ -566,7 +551,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     }
 
-    private fun setSlidingPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?,trackId: Int) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
+// 이것은 SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 UI 를 재구성하는 반면,
+    private fun reConstructTrUisOnReturn(prevPlay: PlayInfoContainer) {
+        if(prevPlay.trackID == -10) { // 저장된 기존 play 된 트랙 값이 없음
+            Log.d(TAG, "onResume: no prevPlayInfo!! prevPlayInfo's trId = ${prevPlay.trackID}")
+            return
+        }
+        else { // 기존에 재생되던 track 정보가 있을때는 UI 업데이트.
+            Log.d(TAG, "onResume: prevPlayInfo: trID=${prevPlay.trackID}, Status=${prevPlay.songStatusMp}")
+
+        }
+    }
+// 이것은 GlbVars.ClickedTrId 를 기반으로 reCreate,. 바람직하지는 않지만 firebase 로딩이 끝나야 -> ringtoneClass 정보를 받을 수 있기에 이렇게 해놓음.
+    private fun reConstructSLPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?, trackId: Int) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
         if (vHolder != null) {
             Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
 
@@ -585,7 +582,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //ImageView 에 들어갈 사진은 LiveData 가 해결해주니. 상관없음.
             //iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
             //iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
-
             setUpSlidingPanel()
 
         }

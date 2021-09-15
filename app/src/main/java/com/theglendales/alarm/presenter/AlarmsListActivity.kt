@@ -57,7 +57,8 @@ import java.util.Calendar
 
 // v0.13g:
 // 재생중 다른 frag 가면 무조건 pause + seekbar 위치는 '0' 으로. 다시 돌아오면 '0'부터 재생가능. Seekbar UI 잡아주기 (O)
-// todo: URL 에러인 트랙 재생 시도-> Error- > 다른 frag 갔다오면 ->  vuMeter 활성화됨.
+// todo: URL 에러인 트랙 재생 시도-> Error- > 다른 frag 갔다오면 ->  LoadingCircle 활성화 됨. 괜찮을듯?
+// todo: 기타 등등 플레이 관련 UI harsh test..
 
 
 /**

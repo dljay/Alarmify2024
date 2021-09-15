@@ -199,15 +199,14 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
         //isErrorOccurred = true
 
         GlbVars.errorTrackId = receivedTrId
-
+        mpViewModel.updateSongDuration(0)
+        setSeekbarToZero()
         //1-a) 그런데 그전에 클릭한 다른 트랙을 play OR buffering 중일경우에는 play/buffering 중인 previous 트랙을 멈춤.
         if(exoPlayer.isPlaying||exoPlayer.playbackState == Player.STATE_BUFFERING) {
             Log.d(TAG, "URL-ERROR 1-a): Invalid Url && 그 전 트랙 playing/buffering 상태였어 .. error at id: $receivedTrId. Cannot Play Ringtone")
             exoPlayer.stop() // stop
-
-            setSeekbarToZero()
         }
-        return // 그리고 그냥 더 이상 진행하지 않음!
+
     }
     try{
         // Play 전에 (가능하면) Caching 하기.

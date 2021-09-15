@@ -31,8 +31,12 @@ class VHolderUiHandler {
             if(vuMeter!=null && vuMeter == RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.vuMeterView) {vuMeter!!.pause()}
         // 1-b) 다른 fragment 갔다와서 메모리의 vuMeter 가 변경된 상태(rcv-viewHolderMap 가 새로 업뎃되었으니깐) 에서 PAUSE animation 이 필요한 상태라면
             if(vuMeter!=null && vuMeter != RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.vuMeterView) {
-                vuMeter = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.vuMeterView // (a) 새로운 vuMeter 를 assign
-                vuMeter!!.pause()// (b)
+                //1-b-1) 새로운 view 를 assign
+                loadingCircle = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.loadingCircle // (a)
+                vuMeter = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.vuMeterView // (b) 새로운 vuMeter 를 assign
+                ivThumbNail = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.iv_Thumbnail // (c)
+                // 1-b-2) vuMeter pause 시켜줌.
+                vuMeter!!.pause()//
             }
             return
         }

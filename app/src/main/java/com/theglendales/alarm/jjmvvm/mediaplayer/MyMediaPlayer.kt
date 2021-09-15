@@ -12,11 +12,9 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
-import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import java.io.IOException
 import java.lang.Exception
 import java.util.*
@@ -188,6 +186,8 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 // Called From RcVAdapter> 클릭 ->
     fun prepareMusicPlay(receivedTrId: Int, playWhenReady: Boolean) {
 
+    setSeekbarToZero()
+
     // 불량 URL 확인, ErrorOccurred!
     val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlMap[receivedTrId])
 
@@ -205,8 +205,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
             Log.d(TAG, "URL-ERROR 1-a): Invalid Url && 그 전 트랙 playing/buffering 상태였어 .. error at id: $receivedTrId. Cannot Play Ringtone")
             exoPlayer.stop() // stop
 
-            handler.removeCallbacks(runnable)
-            mpViewModel.updateCurrentPosition(0) // => 결국 seekbar.progress = 0 과 같은 기능.
+            setSeekbarToZero()
         }
         return // 그리고 그냥 더 이상 진행하지 않음!
     }
@@ -220,7 +219,18 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     }
     // 3) 실제 Play >>>>>>>>>>>>>>>>>>>>>>>>>>>>> !! 는 위에 onPlayerStateChanged 에서 핸들링함.
 }
+// Seekbar related-- >
+    fun setSeekbarToZero() { // a)새로운 트랙 클릭했을 때 prepareMusicPlay() 에서 실행. b) 2ndFrag 에서 onPause() 에서도 실행됨.
+    // 기존 진행되던 seekbar reset 하기-->
+    handler.removeCallbacks(runnable) // 그전에 있던 runnable 을 없애고 (이거 없으면 계속 그전 runnable 이 1초에 한번씩 진행됨.)
+    mpViewModel.updateCurrentPosition(0) // 기존 song position 의 위치가 있었을테니 0 으로 reset
+    // 기존 진행되던 seekbar reset 하기<--
+    }
+    fun setSeekbarToPrevPosition(prevPlaybackPos: Long) {
+        mpViewModel.updateCurrentPosition(prevPlaybackPos)
+    }
     private fun feedLiveDataCurrentPosition() {
+
         runnable = kotlinx.coroutines.Runnable {
             try {
                 //Log.d(TAG, "feedLiveDataCurrentPosition: runnable working")
@@ -231,6 +241,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
             }
         }
         handler.postDelayed(runnable, 1000) // 최초 실행? 무조건 한번은 실행해줘야함.
+
     }
     private fun feedLiveDataSongDuration() {
         if(exoPlayer.duration > 0) {

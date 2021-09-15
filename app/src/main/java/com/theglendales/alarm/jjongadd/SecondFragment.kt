@@ -219,10 +219,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         super.onPause()
         Log.d(TAG, "onPause: 2nd Frag!")
         collapseSlidingPanel()
-        //1) 현재 음악이 재생중이라면 일단 PAUSE 때리자!
-        if(playInfo.songStatusMp == StatusMp.PLAY) {
-            mpClassInstance.pauseMusic()
-        }
+        //1) 현재 음악이 재생중이든 아니든
+            mpClassInstance.pauseMusic() // a)일단 PAUSE 때리고
+            mpClassInstance.setSeekbarToZero() // b)Seekbar 초기화 (기존 진행되던 handler 없애기)
+
         //2) 그리고 나서 save current play data to SharedPref using gson.
         mySharedPrefManager.savePlayInfo(playInfo)
 
@@ -569,6 +569,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 // 1)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 UI 를 재구성하는 반면,
     private fun reConstructTrUisOnReturn(prevPlay: PlayInfoContainer) {
+
         mpClassInstance.prepareMusicPlay(prevPlay.trackID, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
         //VHolderUiHandler.LcVmIvController(StatusMp.PAUSED) -> Doesn't do a shit.
     }

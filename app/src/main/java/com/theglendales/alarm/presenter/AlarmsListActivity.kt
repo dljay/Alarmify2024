@@ -42,7 +42,9 @@ import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
+import com.theglendales.alarm.jjmvvm.data.PlayInfoContainer
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
+import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -53,17 +55,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.13b :
-// 9/10 (금): SecondFragment.kt Line 183 까지 했음. gson 으로 PlayInfoContainer class 저장하는것 해보기.
-//SharedPref 테스트중
-//- Koin 으로 Singleton 만들어서 SecondFrag / AlarmsListActivity 의 onStop() 에서 호출 성공.
-
-//- PlayInfoContainer Class 만들어줬음. => SecondFrag 에서 LiveData 로 variable 업뎃해주다 onPause() 나 종료시 SharedPref 에 저장.
-//-> LiveData -> playInfo 에 전달해주는것까지 했음. 이제 onPause() 할 때 gson 으로 save/load 테스트 필요함.
-//-> App 종료나 재실행시 추후 AlarmsListsActivity 에서 기존 SharedPref 정보 삭제해주는것까지 테스트 필요.
-//-> 이거 성공적으로 잘 되면 setUpUiOnReturn (or something like this.,.) 이것도 수정해줘야함..
-
-
+// v0.13d:
+// Gson 으로 PlayInfo 현재 재생중 상황을 SharedPref 에 저장.
+// AlarmsListActivity 에서 SharedPref 값 초기화 진행. (즉 APP 재 시작시 무조건 default 값.. trId=-10, etc..)
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -74,7 +68,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
     //SharedPref 내가 추가->
-    val myPrefManager: MySharedPrefManager by globalInject()
+    val mySharedPrefManager: MySharedPrefManager by globalInject()
     //SharedPref 내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -218,6 +212,10 @@ class AlarmsListActivity : AppCompatActivity() {
                 }.apply { }
 
 // 추가1) -->
+    // 2nd Frag 시작과 동시에 일단 SharedPref 파일 자체를 생성해줌.
+        val defaultPlayInfo = PlayInfoContainer(-10,-10,-10,StatusMp.IDLE)
+        mySharedPrefManager.savePlayInfo(defaultPlayInfo)  // default 값은 -10, -10, -10, IDLE
+
         val secondFrag = SecondFragment()
         val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
         btmNavView.setOnNavigationItemSelectedListener {
@@ -283,7 +281,7 @@ class AlarmsListActivity : AppCompatActivity() {
     override fun onStop() {
         Log.d(TAG, "onStop: jj-called")
     //SharedPref 에 저장되어 있는 현재 second Frag 의 재생정보를 삭제! -> todo: 이거 onDestroy () 로 옮겨야됨.
-        myPrefManager.calledFromActivity()
+        mySharedPrefManager.calledFromActivity()
 
         super.onStop()
         this.subscriptions.dispose()

@@ -60,7 +60,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
 
     //SharedPreference 저장 관련 (Koin  으로 대체!)
-    val myPrefManager: MySharedPrefManager by globalInject()
+    val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val playInfo: PlayInfoContainer = PlayInfoContainer(-10,-10,-10, StatusMp.IDLE)
     //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
@@ -212,7 +212,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: 2nd Frag!")
-        myPrefManager.getTest()
+        val prevPlayInfo = mySharedPrefManager.getPlayInfo()
+        if(prevPlayInfo.trackID == -10) {
+            Log.d(TAG, "onResume: no prevPlayInfo!! prevPlayInfo's trId = ${prevPlayInfo.trackID}")
+            return
+        }
+        else { // 재생 정보가 있을때는.
+            Log.d(TAG, "onResume: prevPlayInfo: trID=${prevPlayInfo.trackID}, Status=${prevPlayInfo.songStatusMp}")
+        }
+        
 
     }
 
@@ -221,7 +229,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "onPause: 2nd Frag!")
         collapseSlidingPanel()
         //save current play data to SharedPref using gson.
-        myPrefManager.saveTest()
+        mySharedPrefManager.savePlayInfo(playInfo)
 
     }
 

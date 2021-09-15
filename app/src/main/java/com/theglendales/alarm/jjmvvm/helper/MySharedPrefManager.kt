@@ -3,19 +3,34 @@ package com.theglendales.alarm.jjmvvm.helper
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.google.gson.Gson
+import com.theglendales.alarm.jjmvvm.data.PlayInfoContainer
+import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
+import java.lang.Exception
 
 private const val TAG="MySharedPrefManager"
 
 class MySharedPrefManager(context: Context) {
     val prefs: SharedPreferences = context.getSharedPreferences("SecondFrag_Info", Context.MODE_PRIVATE)
+    private val gson: Gson = Gson()
 
-    fun saveTest() {
-        prefs.edit().putString("ONE","TEST ONE").apply()
-        Log.d(TAG, "saveTest: saved. I guess..")
+    fun savePlayInfo(playInfoObject: PlayInfoContainer) {
+        //prefs.edit().putString("ONE","TEST ONE").apply()
+        val jsonStrSave = gson.toJson(playInfoObject)
+        prefs.edit().putString("CurrentPlayInfo", jsonStrSave).apply()
+
     }
-    fun getTest() {
-        val result = prefs.getString("ONE","Default").toString()
-        Log.d(TAG, "getTest: $result")
+    fun getPlayInfo(): PlayInfoContainer {
+        return try{
+            val jsonStrGet = prefs.getString("CurrentPlayInfo","No Data")
+            val playInfo = gson.fromJson(jsonStrGet, PlayInfoContainer::class.java)
+            //Log.d(TAG, "getPlayInfo: trId= ${playInfo.trackID}, songStatusMp= ${playInfo.songStatusMp}")
+            playInfo
+        }catch (e: Exception) {
+            Log.d(TAG, "getPlayInfo: Possibly no saved data yet..error message=$e")
+            PlayInfoContainer(-10,-10,-10,StatusMp.IDLE) // 에러 발생시 default 값 PlayInfo 를 return
+        }
+
     }
     fun calledFromActivity() {
         Log.d(TAG, "calledFromActivity: called from AlarmsListActivity.")

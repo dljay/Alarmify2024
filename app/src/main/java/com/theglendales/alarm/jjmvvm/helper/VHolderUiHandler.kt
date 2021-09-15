@@ -23,11 +23,17 @@ class VHolderUiHandler {
 
     fun LcVmIvController(playStatus: StatusMp) {
         Log.d(TAG, "LcVmIvController: playStatus= $playStatus")
-    // 1) 단순히 현재 재생중인 트랙을 Pause 시킨거였다면 VuMeter 만 Pause 시킬것.
+    // 1) Pause
         if(playStatus == StatusMp.PAUSED) {
             if(vuMeter==null) {
                 Log.d(TAG, "LcVmIvController: vuMeter Null.")}
-            if(vuMeter!=null) {vuMeter!!.pause()}
+        // 1-a) 단순히 현재 재생중인 트랙을 재생중 Pause 시킨거였다면 VuMeter 만 Pause 시킬것.
+            if(vuMeter!=null && vuMeter == RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.vuMeterView) {vuMeter!!.pause()}
+        // 1-b) 다른 fragment 갔다와서 메모리의 vuMeter 가 변경된 상태(rcv-viewHolderMap 가 새로 업뎃되었으니깐) 에서 PAUSE animation 이 필요한 상태라면
+            if(vuMeter!=null && vuMeter != RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.vuMeterView) {
+                vuMeter = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]?.vuMeterView // (a) 새로운 vuMeter 를 assign
+                vuMeter!!.pause()// (b)
+            }
             return
         }
         if(playStatus == StatusMp.READY) { // 음악 재생중->Pause 후 -> Seek Bar 아무데나 클릭했을 때. Loading Circle 없애주기

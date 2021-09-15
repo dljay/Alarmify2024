@@ -158,7 +158,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
                 // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
                 when(StatusEnum) {
-                    StatusMp.PLAY -> {showMiniPlayerPauseBtn()}
+                    StatusMp.PLAY -> {showMiniPlayerPauseBtn()} // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
                     StatusMp.BUFFERING -> {showMiniPlayerPlayBtn()}
                     StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
                     }
@@ -212,9 +212,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: 2nd Frag!")
-        // 아래 onPause() 에서 save 한 '기존 재생 정보'는 observeAndLoadFirebase() 에서 로딩하기로.
-        // /        val prevPlayInfo = mySharedPrefManager.getPlayInfo()
-    //        reConstructTrUisOnReturn(prevPlayInfo)
+        // 아래 onPause() 에서 save 한 '기존 재생 정보' 는 observeAndLoadFirebase() 에서 로딩하기로.
+
     }
     override fun onPause() {
         super.onPause()

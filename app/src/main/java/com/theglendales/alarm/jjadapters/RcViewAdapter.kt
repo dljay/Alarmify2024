@@ -71,6 +71,8 @@ class RcViewAdapter(
         holder.tv2_ShortDescription.text = currentItem.tags
         holder.holderTrId = currentTrId
 
+
+
         Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, " +
                 "pos: $position // Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
                 "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
@@ -117,22 +119,13 @@ class RcViewAdapter(
                     isFirstResource: Boolean
                 ): Boolean {
                     Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
-
                     return false
                 }
 
                 // (여러 ViewHolder 를 로딩중인데) 현재 로딩한 View 에 Glide 가 이미지를 성공적으로 넣었다면.
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    Log.d(
-                        TAG,
-                        "onResourceReady: Glide loading success! trId: $currentTrId, Position: $position"
-                    ) // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                override fun onResourceReady(resource: Drawable?,model: Any?,target: Target<Drawable>?
+                    ,dataSource: DataSource?,isFirstResource: Boolean): Boolean {
+                    Log.d(TAG,"onResourceReady: Glide loading success! trId: $currentTrId, Position: $position") // debug 결과 절대 순.차.적으로 진행되지는 않음!
 
                     // rcView 의 이미지 로딩전에 일찍 click 했을 때 -> 열려있는 miniPlayer의 thumbnail에 필요한 사진과 현재 glide로 로딩된 사진의 동일한지 trId로 확인 후
                     if (currentTrId == GlbVars.clickedTrId) {
@@ -344,7 +337,7 @@ class RcViewAdapter(
                     enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
                     //1-c 음악 플레이
-                    mediaPlayer.prepareMusicPlay(holderTrId) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+                    mediaPlayer.prepareMusicPlay(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
                 }
             //2) 음악쪽 클릭이든 구매쪽 클릭이든 일단 SecondFrag.kt 에 전달-> 거기서 알아서 판단.
                 //LiveData Feed

@@ -212,15 +212,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: 2nd Frag!")
-
-        val prevPlayInfo = mySharedPrefManager.getPlayInfo()
-        reConstructTrUisOnReturn(prevPlayInfo)
+        // 아래 onPause() 에서 save 한 '기존 재생 정보'는 observeAndLoadFirebase() 에서 로딩하기로.
+        // /        val prevPlayInfo = mySharedPrefManager.getPlayInfo()
+    //        reConstructTrUisOnReturn(prevPlayInfo)
     }
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause: 2nd Frag!")
         collapseSlidingPanel()
-        //save current play data to SharedPref using gson.
+        //1) 현재 음악이 재생중이라면 일단 PAUSE 때리자!
+        if(playInfo.songStatusMp == StatusMp.PLAY) {
+            mpClassInstance.pauseMusic()
+        }
+        //2) 그리고 나서 save current play data to SharedPref using gson.
         mySharedPrefManager.savePlayInfo(playInfo)
 
     }
@@ -283,8 +287,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
                 if (ivInside_Rc != null) { // 사실 RcView 가 제대로 setup 되어있으면 무조건 null 이 아님! RcView 클릭한 부분에 View 가 로딩된 상태 (사진 로딩 상태 x)
 
-                    iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
-                    iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
+                    iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
+                    iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
                 }
 
                 // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
@@ -438,15 +442,28 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     // Update MediaPlayer.kt
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
 
-                    // 다른 frag 갔다가 돌아왔을 때 return 했을 때 slidingPanel(miniPlayer) 채워주기.
-                    if (GlbVars.clickedTrId > 0) {
+                // 다른 frag 갔다가 돌아왔을 때 return 했을 때 slidingPanel(miniPlayer) 채워주기.
+                    val prevPlayInfo = mySharedPrefManager.getPlayInfo()
+                    // A) 재생중인 트랙이 있었음
+                    if(prevPlayInfo.trackID >0) {
+                        // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
+                        mySmoothScroll()
+                        // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.
+                        val prevSelectedVHolder = RcViewAdapter.viewHolderMap[prevPlayInfo.trackID]
+                        // 3) Fill in the previous selected track info to MINIPlayer!!!
+                        reConstructSLPanelTextOnReturn(prevSelectedVHolder, prevPlayInfo.trackID)
+                        // 4) Update RcV UI! (VuMeter 등)
+                        reConstructTrUisOnReturn(prevPlayInfo)
+                    }
+                // 위에 mySharedPrefManager.getPlayInfo() 로 대체 되었음.
+/*                    if (GlbVars.clickedTrId > 0) {
                         // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
                         mySmoothScroll()
                         // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.
                         val prevSelectedVHolder = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]
                         // 3) Fill in the previous selected track info to MINIPlayer!!!
                         reConstructSLPanelTextOnReturn(prevSelectedVHolder, GlbVars.clickedTrId)
-                    }
+                    }*/
                 } else { // 에러났을 때
                     lottieAnimController(1)
                     Toast.makeText(
@@ -551,19 +568,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     }
 
-// 이것은 SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 UI 를 재구성하는 반면,
+// 1)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 UI 를 재구성하는 반면,
     private fun reConstructTrUisOnReturn(prevPlay: PlayInfoContainer) {
-        if(prevPlay.trackID == -10) { // 저장된 기존 play 된 트랙 값이 없음
-            Log.d(TAG, "onResume: no prevPlayInfo!! prevPlayInfo's trId = ${prevPlay.trackID}")
-            return
-        }
-        else { // 기존에 재생되던 track 정보가 있을때는 UI 업데이트.
-            Log.d(TAG, "onResume: prevPlayInfo: trID=${prevPlay.trackID}, Status=${prevPlay.songStatusMp}")
-
-        }
+        mpClassInstance.prepareMusicPlay(prevPlay.trackID, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
+        //VHolderUiHandler.LcVmIvController(StatusMp.PAUSED) -> Doesn't do a shit.
     }
-// 이것은 GlbVars.ClickedTrId 를 기반으로 reCreate,. 바람직하지는 않지만 firebase 로딩이 끝나야 -> ringtoneClass 정보를 받을 수 있기에 이렇게 해놓음.
-    private fun reConstructSLPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?, trackId: Int) { // observeAndLoadFireBase() 여기서 불림. 지금은  comment 처리
+// 2)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 SlidingPanel UI 를 재구성.
+    private fun reConstructSLPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?, trackId: Int) { // observeAndLoadFireBase() 여기서 불림
         if (vHolder != null) {
             Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
 
@@ -572,14 +583,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //val ivInside_Rc = vHolder.iv_Thumbnail
             Log.d(TAG,"setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description}")
         //Sliding Panel - Upper UI
-            tv_upperUi_title.text =
-                ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
+            tv_upperUi_title.text = ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
             tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
 
         //Sliding Panel -  Lower UI
             tv_lowerUi_about.text = ringtoneClassFromtheList?.description
 
-            //ImageView 에 들어갈 사진은 LiveData 가 해결해주니. 상관없음.
+            //ImageView 에 들어갈 사진은 LiveData 가 해결해주니? 상관없음.
             //iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
             //iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
             setUpSlidingPanel()

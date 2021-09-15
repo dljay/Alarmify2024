@@ -55,9 +55,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.13d:
+// v0.13e:
 // Gson 으로 PlayInfo 현재 재생중 상황을 SharedPref 에 저장.
 // AlarmsListActivity 에서 SharedPref 값 초기화 진행. (즉 APP 재 시작시 무조건 default 값.. trId=-10, etc..)
+// todo: 2nd frag 에서 다른 frag 가면 -> 음악 pause 됨. 돌아왔을 때 Vumeter pause 상태로 만들어야함.
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

@@ -12,9 +12,11 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import java.io.IOException
 import java.lang.Exception
 import java.util.*
@@ -31,6 +33,8 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     //Current Status 모니터링
         var currentPlayStatus: StatusMp = StatusMp.IDLE
     // 다른 fragment 갔다 왔을 떄 대비해서 currentSongPosition(INT), clickedTrackID(INT) 등이 필요함.
+
+
     }
 //A) ExoPlayer
     //1-a) Exo Player Related
@@ -46,7 +50,8 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 //B) SeekBar Related
     private val handler = android.os.Handler(Looper.getMainLooper())
     private var runnable = kotlinx.coroutines.Runnable {}// null 되지 않기 위해서 여기서 빈값으로 initialize 해줌.
-
+////C) SharedPreference 저장 관련 (Koin  으로 대체!) -> 알람 fragment 갔다 왔을 때-> prepareMusicPlay() 에서 mySharedPref 를 통해 Pause 상태였던것을 확인함.
+//    val mySharedPrefManager: MySharedPrefManager by globalInject()
 
 // <1>기존 코드들 ExoPlayer Related ---------->
     private fun loadControlSetUp(): LoadControl {
@@ -103,8 +108,8 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     exoPlayer.addListener(this)
     Log.d(TAG, "initExoPlayerWithCache: ends......")
     }
-
-    private fun prepPlayerWithCache(url:String?) { // Caching 위해 <TYPE:2>
+// ***** 실제 재생!
+    private fun prepPlayerWithCache(url:String?, playWhenReady: Boolean) { // Caching 위해 <TYPE:2>
         //1) to play a single song
         val mp3Uri = Uri.parse(url)
         val mediaItem = MediaItem.fromUri(mp3Uri)
@@ -115,7 +120,8 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
         //playerView.player = simpleExoPlayer
         exoPlayer.setMediaSource(mediaSource, true)
         exoPlayer.prepare()
-        exoPlayer.playWhenReady = true
+
+        exoPlayer.playWhenReady = playWhenReady
 
     }
     fun releaseExoPlayer() { //todo: 후에 activity ? fragment? onDestroy 에 넣어야 할듯..
@@ -180,7 +186,8 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 // <3> 추가된 코드들--LiveData/Ui 외-------------- >>>>>>>>>
 
 // Called From RcVAdapter> 클릭 ->
-    fun prepareMusicPlay(receivedTrId: Int) {
+    fun prepareMusicPlay(receivedTrId: Int, playWhenReady: Boolean) {
+
     // 불량 URL 확인, ErrorOccurred!
     val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlMap[receivedTrId])
 
@@ -205,7 +212,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     }
     try{
         // Play 전에 (가능하면) Caching 하기.
-        prepPlayerWithCache(mp3UrlMap[receivedTrId])
+        prepPlayerWithCache(mp3UrlMap[receivedTrId], playWhenReady) // -> 여기서 playWhenReady = true 가 됨.
     }catch(e: IOException) {
         Toast.makeText(receivedFragActivity, "Unknown error occurred: $e", Toast.LENGTH_LONG).show()
         GlbVars.errorTrackId = receivedTrId

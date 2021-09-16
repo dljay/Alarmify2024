@@ -175,10 +175,11 @@ class AlarmDetailsFragment : Fragment() {
                         modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
                     }
         }
-
+// Alarm 링톤 리스트 쭈~욱 뜨는 곳. -> 여기서 뭔가를 선택하면-> startActivityForResult 이므로-> 아래 Line 222 onActivityResult 로 감.
         mRingtoneRow.setOnClickListener {
             editor.firstOrError().subscribe { editor ->
                 try {
+                    Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener.. ")
                     startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                         putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, editor.alarmtone.ringtoneManagerString())
 
@@ -262,15 +263,17 @@ class AlarmDetailsFragment : Fragment() {
                         mLabel.setText(editor.label)
                     }
                 })
+        // 경로 변경 테스트-->
 
+        // 경로 변경 테스트 <--
         disposables.add(editor
                 .distinctUntilChanged()
                 .observeOn(Schedulers.computation())
                 .map { editor ->
                     when (editor.alarmtone) {
-                        is Alarmtone.Silent -> requireContext().getText(R.string.silent_alarm_summary)
-                        is Alarmtone.Default -> RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()
-                        is Alarmtone.Sound -> RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()
+                        is Alarmtone.Silent -> {requireContext().getText(R.string.silent_alarm_summary)}
+                        is Alarmtone.Default -> {RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()}
+                        is Alarmtone.Sound -> {RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()}
                     }
                 }.observeOn(AndroidSchedulers.mainThread())
                 .subscribe {

@@ -55,9 +55,14 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.14a:
-// 재생중 다른 frag 가면 무조건 pause + seekbar 위치는 '0' 으로. 다시 돌아오면 '0'부터 재생가능.
-
+// v0.15a:
+//이제 ringtone 설정 관련 공부.
+//// 폰 자체 Default 폴더 말고 "내가지정한 폴더에 있는 file을 리스트로 보여주기가 첫번째 목표!!!"
+//- AlarmDetailsFragment.kt : Line178 (알람 링톤 리스트 쭈욱 뜨고->여기서 뭔가를 선택-> Line 222 로 감.) // Line 275?
+//현재 뜨는 알람은 "폰이 Default 로 갖고 있는 값" -> System/Media/Audio/Alarms 에 있음.
+//
+//참고링크: https://stackoverflow.com/questions/34764394/set-as-default-ringtone-from-raw-folder-programmatically-in-android
+// SecondFra|MyShared|VH|MyMedia|JjMp|RcV
 
 
 

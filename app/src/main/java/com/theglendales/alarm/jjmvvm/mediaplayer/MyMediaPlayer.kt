@@ -186,7 +186,9 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 // Called From RcVAdapter> 클릭 ->
     fun prepareMusicPlay(receivedTrId: Int, playWhenReady: Boolean) {
 
-    setSeekbarToZero()
+        removeHandler()
+        setSeekbarToZero()
+
 
     // 불량 URL 확인, ErrorOccurred!
     val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlMap[receivedTrId])
@@ -196,11 +198,10 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     {
         Toast.makeText(receivedFragActivity,"Invalid Url error at id: $receivedTrId. Cannot Play Ringtone", Toast.LENGTH_SHORT).show()
         Log.d(TAG, "URL-ERROR 1): Invalid Url error at id: $receivedTrId. Cannot Play Ringtone")
-        //isErrorOccurred = true
 
         GlbVars.errorTrackId = receivedTrId
         mpViewModel.updateSongDuration(0)
-        setSeekbarToZero()
+        //setSeekbarToZero()
         //1-a) 그런데 그전에 클릭한 다른 트랙을 play OR buffering 중일경우에는 play/buffering 중인 previous 트랙을 멈춤.
         if(exoPlayer.isPlaying||exoPlayer.playbackState == Player.STATE_BUFFERING) {
             Log.d(TAG, "URL-ERROR 1-a): Invalid Url && 그 전 트랙 playing/buffering 상태였어 .. error at id: $receivedTrId. Cannot Play Ringtone")
@@ -210,7 +211,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     }
     try{
         // Play 전에 (가능하면) Caching 하기.
-        prepPlayerWithCache(mp3UrlMap[receivedTrId], playWhenReady) // -> 여기서 playWhenReady = true 가 됨.
+        prepPlayerWithCache(mp3UrlMap[receivedTrId], playWhenReady) // ->  신규클릭의 경우 playWhenReady = true, 재생 중 frag 왔다 다시왔을때는 false
     }catch(e: IOException) {
         Toast.makeText(receivedFragActivity, "Unknown error occurred: $e", Toast.LENGTH_LONG).show()
         GlbVars.errorTrackId = receivedTrId
@@ -219,13 +220,14 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     // 3) 실제 Play >>>>>>>>>>>>>>>>>>>>>>>>>>>>> !! 는 위에 onPlayerStateChanged 에서 핸들링함.
 }
 // Seekbar related-- >
+    fun removeHandler() = handler.removeCallbacks(runnable)
     fun setSeekbarToZero() { // a)새로운 트랙 클릭했을 때 prepareMusicPlay() 에서 실행. b) 2ndFrag 에서 onPause() 에서도 실행됨.
     // 기존 진행되던 seekbar reset 하기-->
-    handler.removeCallbacks(runnable) // 그전에 있던 runnable 을 없애고 (이거 없으면 계속 그전 runnable 이 1초에 한번씩 진행됨.)
     mpViewModel.updateCurrentPosition(0) // 기존 song position 의 위치가 있었을테니 0 으로 reset
     // 기존 진행되던 seekbar reset 하기<--
     }
     fun setSeekbarToPrevPosition(prevPlaybackPos: Long) {
+
         mpViewModel.updateCurrentPosition(prevPlaybackPos)
     }
     private fun feedLiveDataCurrentPosition() {
@@ -252,14 +254,16 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 
 // called from MiniPlayer button (play/pause)
     fun continueMusic() {
-        if(!exoPlayer.isPlaying) {
+
+        if(!exoPlayer.isPlaying) { // 트랙 재생중 pause 했다 continue 할 때
             exoPlayer.play()
             exoPlayer.playWhenReady = true
         }
     }
     fun pauseMusic() {
-        // exoplayer.pause()
+
         if(exoPlayer.isPlaying) {
+            removeHandler()
             exoPlayer.pause()
             exoPlayer.playWhenReady = false
             // onExoPaused() < - 이건 자동으로 ExoPlayStatusListener 에서 SecondFrag 로 livedata 로 전달해줌.

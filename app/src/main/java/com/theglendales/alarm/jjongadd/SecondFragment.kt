@@ -59,9 +59,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
 
-    //SharedPreference 저장 관련 (Koin  으로 대체!)
-    val mySharedPrefManager: MySharedPrefManager by globalInject()
-    private val playInfo: PlayInfoContainer = PlayInfoContainer(-10,-10,-10, StatusMp.IDLE)
+    //SharedPreference 저장 관련 (Koin  으로 대체!) ==> 일단 사용 안함.
+    //val mySharedPrefManager: MySharedPrefManager by globalInject()
+    //private val playInfo: PlayInfoContainer = PlayInfoContainer(-10,-10,-10, StatusMp.IDLE)
+
     //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
@@ -151,7 +152,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
                 myOnLiveDataFromRCV(viewAndTrIdClassInstance)
             //**SHARED PREF 저장용 **
-                playInfo.trackID = viewAndTrIdClassInstance.trId
+                //playInfo.trackID = viewAndTrIdClassInstance.trId
             })
             //2-B) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
@@ -165,22 +166,23 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 // b) VuMeter/Loading Circle 등 UI 컨트롤
                 VHolderUiHandler.LcVmIvController(StatusEnum)
                 // c) **SHARED PREF 저장용 **
-                playInfo.songStatusMp = StatusEnum
+                //playInfo.songStatusMp = StatusEnum
                 })
 
             //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.songDuration.observe(viewLifecycleOwner, { dur ->
                 Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
                 seekBar.max = dur.toInt()
-                // c) **SHARED PREF 저장용 **
-                playInfo.seekBarMax = dur.toInt()
+                // c) **GlbVar 저장용 **
+                //GlbVars.seekBarMax = dur.toInt()
             })
             //2-D) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.currentPosition.observe(viewLifecycleOwner, { playbackPos ->
                 //Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
                     seekBar.progress = playbackPos.toInt() +200
-                // c) **SHARED PREF 저장용 ** 현재 재생중인 seekbar 위치
-                playInfo.seekbarProgress = playbackPos.toInt() +200
+                // c) **GlbVars 저장용 ** 현재 재생중인 seekbar 위치
+                //GlbVars.seekbarProgress = playbackPos.toInt() +200
+                //GlbVars.playbackPos = playbackPos
                 })
 
 
@@ -221,10 +223,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         collapseSlidingPanel()
         //1) 현재 음악이 재생중이든 아니든
             mpClassInstance.pauseMusic() // a)일단 PAUSE 때리고
-            mpClassInstance.setSeekbarToZero() // b)Seekbar 초기화 (기존 진행되던 handler 없애기)
+            mpClassInstance.removeHandler() // b)handler 없애기
+        Log.d(TAG, "onPause: GlbVars 정보: CurrentTrId=${GlbVars.clickedTrId}")
 
         //2) 그리고 나서 save current play data to SharedPref using gson.
-        mySharedPrefManager.savePlayInfo(playInfo)
+        //mySharedPrefManager.savePlayInfo(playInfo)
 
     }
     override fun onDestroy() {
@@ -404,7 +407,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     private fun observeAndLoadFireBase() {
         //1. 인터넷 가능한지 체크
         //인터넷되는지 체크
-
         val isInternetAvailable: Boolean = myNetworkCheckerInstance.isNetWorkAvailable()
         if (!isInternetAvailable) { // 인터넷 사용 불가!
             Log.d(TAG, "loadFromFireBase: isInternetAvailable= $isInternetAvailable")
@@ -413,7 +415,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
 
         //2. If we have internet connectivity, then call FireStore!
-
         val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
         //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
         jjViewModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
@@ -441,28 +442,31 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     // Update MediaPlayer.kt
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
 
+
                 // 다른 frag 갔다가 돌아왔을 때 (or 새로고침) 했을 때
-                    val prevPlayInfo = mySharedPrefManager.getPlayInfo()
-                    // A) 재생중인 트랙이 있었음
-                    if(prevPlayInfo.trackID >0) {
-                        // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
-                        mySmoothScroll()
-                        // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.
-                        val prevSelectedVHolder = RcViewAdapter.viewHolderMap[prevPlayInfo.trackID]
-                        // 3) Fill in the previous selected track info to MINIPlayer!!!
-                        reConstructSLPanelTextOnReturn(prevSelectedVHolder, prevPlayInfo.trackID)
-                        // 4) Update RcV UI! (VuMeter 등)
-                        reConstructTrUisOnReturn(prevPlayInfo)
-                    }
-                // 위에 mySharedPrefManager.getPlayInfo() 로 대체 되었음.
-/*                    if (GlbVars.clickedTrId > 0) {
+                    if (GlbVars.clickedTrId > 0) {
                         // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
                         mySmoothScroll()
                         // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.
                         val prevSelectedVHolder = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]
                         // 3) Fill in the previous selected track info to MINIPlayer!!!
                         reConstructSLPanelTextOnReturn(prevSelectedVHolder, GlbVars.clickedTrId)
-                    }*/
+                         //4) Update RcV UI! (VuMeter 등)
+                        reConstructTrUisOnReturn(GlbVars.clickedTrId)
+                    }
+                    //  mySharedPrefManager.getPlayInfo() 사용했을 때 (사용 안 함)
+//                    val prevPlayInfo = mySharedPrefManager.getPlayInfo()
+//                    // A) 재생중인 트랙이 있었음
+//                    if(prevPlayInfo.trackID >0) {
+//                        // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
+//                        mySmoothScroll()
+//                        // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.
+//                        val prevSelectedVHolder = RcViewAdapter.viewHolderMap[prevPlayInfo.trackID]
+//                        // 3) Fill in the previous selected track info to MINIPlayer!!!
+//                        reConstructSLPanelTextOnReturn(prevSelectedVHolder, prevPlayInfo.trackID)
+//                        // 4) Update RcV UI! (VuMeter 등)
+//                        reConstructTrUisOnReturn(prevPlayInfo)
+//                    }
                 } else { // 에러났을 때
                     lottieAnimController(1)
                     Toast.makeText(
@@ -503,8 +507,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
             {
+                mpClassInstance.removeHandler() // 새로 추가함.
                 var progressLong = progress.toLong()
                 if(fromUser) mpClassInstance.onSeekBarTouchedYo(progressLong)
+
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -568,9 +574,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
 // 1)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 UI 를 재구성하는 반면,
-    private fun reConstructTrUisOnReturn(prevPlay: PlayInfoContainer) {
+    private fun reConstructTrUisOnReturn(prevTrId: Int) {
 
-        mpClassInstance.prepareMusicPlay(prevPlay.trackID, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
+        mpClassInstance.prepareMusicPlay(prevTrId, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
         //VHolderUiHandler.LcVmIvController(StatusMp.PAUSED) -> Doesn't do a shit.
     }
 // 2)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 SlidingPanel UI 를 재구성.

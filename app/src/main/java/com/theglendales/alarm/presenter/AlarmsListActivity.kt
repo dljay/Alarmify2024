@@ -55,10 +55,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.13g:
-// 재생중 다른 frag 가면 무조건 pause + seekbar 위치는 '0' 으로. 다시 돌아오면 '0'부터 재생가능. Seekbar UI 잡아주기 (O)
-// todo: URL 에러인 트랙 재생 시도-> Error- > 다른 frag 갔다오면 ->  LoadingCircle 활성화 됨. 괜찮을듯?
-// todo: 기타 등등 플레이 관련 UI harsh test..
+// v0.14a:
+// 재생중 다른 frag 가면 무조건 pause + seekbar 위치는 '0' 으로. 다시 돌아오면 '0'부터 재생가능.
+
+
 
 
 /**
@@ -69,8 +69,8 @@ private const val TAG="*AlarmsListActivity*"
 class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
-    //SharedPref 내가 추가->
-    val mySharedPrefManager: MySharedPrefManager by globalInject()
+    //SharedPref 내가 추가-> 일단 사용 안함.
+    //val mySharedPrefManager: MySharedPrefManager by globalInject()
     //SharedPref 내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -214,9 +214,9 @@ class AlarmsListActivity : AppCompatActivity() {
                 }.apply { }
 
 // 추가1) -->
-    // 2nd Frag 시작과 동시에 일단 SharedPref 파일 자체를 생성해줌.
-        val defaultPlayInfo = PlayInfoContainer(-10,-10,-10,StatusMp.IDLE)
-        mySharedPrefManager.savePlayInfo(defaultPlayInfo)  // default 값은 -10, -10, -10, IDLE
+    // 2nd Frag 시작과 동시에 일단 SharedPref 파일 자체를 생성해줌. => 일단 사용 안함.
+//        val defaultPlayInfo = PlayInfoContainer(-10,-10,-10,StatusMp.IDLE)
+//        mySharedPrefManager.savePlayInfo(defaultPlayInfo)  // default 값은 -10, -10, -10, IDLE
 
         val secondFrag = SecondFragment()
         val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
@@ -282,8 +282,8 @@ class AlarmsListActivity : AppCompatActivity() {
 
     override fun onStop() {
         Log.d(TAG, "onStop: jj-called")
-    //SharedPref 에 저장되어 있는 현재 second Frag 의 재생정보를 삭제! -> todo: 이거 onDestroy () 로 옮겨야됨.
-        mySharedPrefManager.calledFromActivity()
+    //SharedPref 에 저장되어 있는 현재 second Frag 의 재생정보를 삭제!
+        //mySharedPrefManager.calledFromActivity()
 
         super.onStop()
         this.subscriptions.dispose()

@@ -441,7 +441,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     // Update MediaPlayer.kt
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
 
-                // 다른 frag 갔다가 돌아왔을 때 return 했을 때 slidingPanel(miniPlayer) 채워주기.
+                // 다른 frag 갔다가 돌아왔을 때 (or 새로고침) 했을 때
                     val prevPlayInfo = mySharedPrefManager.getPlayInfo()
                     // A) 재생중인 트랙이 있었음
                     if(prevPlayInfo.trackID >0) {

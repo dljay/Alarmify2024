@@ -55,13 +55,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.15a:
-//이제 ringtone 설정 관련 공부.
-//// 폰 자체 Default 폴더 말고 "내가지정한 폴더에 있는 file을 리스트로 보여주기가 첫번째 목표!!!"
-//- AlarmDetailsFragment.kt : Line178 (알람 링톤 리스트 쭈욱 뜨고->여기서 뭔가를 선택-> Line 222 로 감.) // Line 275?
-//현재 뜨는 알람은 "폰이 Default 로 갖고 있는 값" -> System/Media/Audio/Alarms 에 있음.
+// v0.15b:
+//"9/17:
+//1( CUSTOMIZE RINGTONE PICKER ->
+//현재 AlarmDetailsFragment.kt / Line 179 에서
+//클릭했을때 시덥잖은 list  대신 iimage 섞인 멋진
+//custom 된 Picker 를 보여줘야함! 그리고 동일하게
+//onActivityResult 처럼 그 결과를 전달해주면 됨!!
 //
-//참고링크: https://stackoverflow.com/questions/34764394/set-as-default-ringtone-from-raw-folder-programmatically-in-android
+//https://stackoverflow.com/questions/6672066/fragment-inside-fragment
+//
+//2) UI 앨범 보이게끔.."
 // SecondFra|MyShared|VH|MyMedia|JjMp|RcV
 
 

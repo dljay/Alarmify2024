@@ -180,6 +180,7 @@ class AlarmDetailsFragment : Fragment() {
             editor.firstOrError().subscribe { editor ->
                 try {
                     Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener.. ")
+                    //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
                     startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                         putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, editor.alarmtone.ringtoneManagerString())
 

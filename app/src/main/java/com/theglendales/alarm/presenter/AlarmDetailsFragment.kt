@@ -179,10 +179,11 @@ class AlarmDetailsFragment : Fragment() {
         mRingtoneRow.setOnClickListener {
             editor.firstOrError().subscribe { editor ->
                 try {
+
                     Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener.. ")
                     //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
                     startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, editor.alarmtone.ringtoneManagerString())
+                        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, editor.alarmtone.ringtoneManagerString()) // hmm. not sure what this does..
 
                         putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
                         putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
@@ -219,7 +220,7 @@ class AlarmDetailsFragment : Fragment() {
         return view
     }
 // <<<<----------onCreateView
-
+    // Line 179 에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌 ->
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == 42) {
             val alert: String? = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()

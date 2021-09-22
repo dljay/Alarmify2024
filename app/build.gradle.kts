@@ -183,7 +183,7 @@ dependencies {
 
 dependencies {
 
-//    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+implementation("androidx.legacy:legacy-support-v4:1.0.0")//    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
     androidTestImplementation("androidx.test:runner:1.3.0")

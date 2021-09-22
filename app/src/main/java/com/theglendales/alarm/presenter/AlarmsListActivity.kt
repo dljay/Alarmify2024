@@ -48,6 +48,7 @@ import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
+
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
@@ -55,18 +56,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.15b:
-//"9/17:
-//1( CUSTOMIZE RINGTONE PICKER ->
-//현재 AlarmDetailsFragment.kt / Line 179 에서
-//클릭했을때 시덥잖은 list  대신 iimage 섞인 멋진
-//custom 된 Picker 를 보여줘야함! 그리고 동일하게
-//onActivityResult 처럼 그 결과를 전달해주면 됨!!
-//
-//https://stackoverflow.com/questions/6672066/fragment-inside-fragment
-//
-//2) UI 앨범 보이게끔.."
-// SecondFra|MyShared|VH|MyMedia|JjMp|RcV
+// v0.15c:
+//9/17:
+// Spinner 이용 -> 글자+Image
 
 
 

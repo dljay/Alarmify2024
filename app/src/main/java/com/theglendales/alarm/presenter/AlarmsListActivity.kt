@@ -56,10 +56,19 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.15c:
-//9/17:
-// Spinner 이용 -> 글자+Image
-
+// v0.16a:
+// AlarmDetailsFragment 에서 Spinner 준비 중.
+//AlarDetailsFragment.kt 라인 229 부터.. ->
+//
+//DiskSearcher.kt -> 음악 찾은 후 uri 리스트 전달 (O)
+//-.AlarmRingtones/ 폴더에 있는 음악 파일(ex: p2.rta) 알람으로 설정 성공!!!
+//- 현재는 아무 알람이나 선택하면 이 uri list 에서 [0] 에 있는게 설정되고 (ex: p2.rta)이 벨소리로 알람 울리는 것 잘됨!!!!
+//
+//Todo:
+//- 디스크 시작과 함께 DiskSearcher.kt -> readFilesOnDisk() 이런 function 추가해야함.
+//- 드랍다운 메뉴에 .AlarmRingtones/ 폴더에 있는 리스트 띄우기
+//- 앨범쟈켓 PNG 도 동명의 파일이름으로 넣어놓고 드랍다운 메뉴에서 뜨도록 설정!
+//- 추후. 이 png / ogg 쌍을 어떻게 좀 안보이게 하고싶긴 함..
 
 
 /**
@@ -235,16 +244,8 @@ class AlarmsListActivity : AppCompatActivity() {
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
 // <--추가1)
-// 추가2) ViewModel + FB 에서 로딩 observer..등록-- >
-        //MVVM load from Firebase (Activity 에서 시전)
+// 추가2) todo: 프로그램 시작과 동시에 ringtone/앨범쟈켓(png) 찾기, 확인
 
-        /*val jjViewModel = ViewModelProvider(this).get(JjViewModel::class.java)
-        Log.d(TAG, "onCreate: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
-        jjViewModel.loadFromFireBase()
-        jjViewModel.getRtLiveDataObserver().observe(this, Observer {
-            Log.d(TAG, "onCreate: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
-            //showResultAndMore(it)
-        } )*/
 
 // <-- 추가2)
     } // onCreate() 여기까지.

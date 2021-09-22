@@ -45,6 +45,7 @@ import com.theglendales.alarm.configuration.Prefs
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
+import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
@@ -67,6 +68,8 @@ import java.util.Calendar
  */
 private const val TAG="*AlarmDetailsFragment*"
 class AlarmDetailsFragment : Fragment() {
+    // 폰에 저장된 ringtone (mp3 or ogg?) 과 앨범쟈켓(png) 을 찾기위해
+    private val myDiskSearcher: DiskSearcher by globalInject()
     private val alarms: IAlarmsManager by globalInject()
     private val logger: Logger by globalLogger("AlarmDetailsFragment")
     private val prefs: Prefs by globalInject()
@@ -180,7 +183,9 @@ class AlarmDetailsFragment : Fragment() {
             editor.firstOrError().subscribe { editor ->
                 try {
 
-                    Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener.. ")
+                    Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener + Running my DISK Searcher!!! ")
+                    val uriList = myDiskSearcher.rtSearcher()
+                    Log.d(TAG, "onCreateView: uriList= $uriList")
                     //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
                     startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                         putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, editor.alarmtone.ringtoneManagerString()) // hmm. not sure what this does..
@@ -224,14 +229,19 @@ class AlarmDetailsFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == 42) {
             val alert: String? = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
+            // 테스트중->
+            val testAlertUriList = myDiskSearcher.rtSearcher()
+            val testAlertUriToString = testAlertUriList[0].toString()
 
             logger.debug { "Got ringtone: $alert" }
 
             val alarmtone = when (alert) {
                 null -> Alarmtone.Silent()
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default()
-                else -> Alarmtone.Sound(alert)
+                //else -> Alarmtone.Sound(alert)
+                else -> Alarmtone.Sound(testAlertUriToString) // 무조건 uriList[0] 을 알람톤으로 설정하는 테스트 진행중(O) 잘됨.
             }
+            // 테스트중 <-
 
             logger.debug { "onActivityResult $alert -> $alarmtone" }
 

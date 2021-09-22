@@ -17,6 +17,7 @@ import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
+import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.logger.LogcatLogWriter
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.logger.LoggerFactory
@@ -133,6 +134,7 @@ fun startKoin(context: Context): Koin {
         single<VHolderUiHandler> { VHolderUiHandler()}
         single<FirebaseRepoClass> { FirebaseRepoClass()}
         single<MySharedPrefManager> {MySharedPrefManager(context = context)}
+        single<DiskSearcher> { DiskSearcher(context = context)}
         // 내가 추가 <--
 
         factory(named("volumePreferenceDemo")) {

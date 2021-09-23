@@ -45,6 +45,8 @@ import com.theglendales.alarm.configuration.Prefs
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
+import com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner
+import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
@@ -68,8 +70,14 @@ import java.util.Calendar
  */
 private const val TAG="*AlarmDetailsFragment*"
 class AlarmDetailsFragment : Fragment() {
-    // 폰에 저장된 ringtone (mp3 or ogg?) 과 앨범쟈켓(png) 을 찾기위해
-    private val myDiskSearcher: DiskSearcher by globalInject()
+    // 내가 추가 ->
+        // 폰에 저장된 ringtone (mp3 or ogg?) 과 앨범쟈켓(png) 을 찾기위해
+        private val myDiskSearcher: DiskSearcher by globalInject()
+        // Spinner
+        private val spinnerAdapter: SpinnerAdapter by globalInject()
+        private val spinner: MyCustomSpinner by lazy { fragmentView.findViewById(R.id.id_spinner) as MyCustomSpinner}
+    // 내가 추가 <-
+
     private val alarms: IAlarmsManager by globalInject()
     private val logger: Logger by globalLogger("AlarmDetailsFragment")
     private val prefs: Prefs by globalInject()
@@ -83,7 +91,7 @@ class AlarmDetailsFragment : Fragment() {
     private val mLabel: EditText by lazy { fragmentView.findViewById(R.id.details_label) as EditText }
     private val rowHolder: RowHolder by lazy { RowHolder(fragmentView.findViewById(R.id.details_list_row_container), alarmId, prefs.layout()) }
     private val mRingtoneRow by lazy { fragmentView.findViewById(R.id.details_ringtone_row) as LinearLayout }
-    private val mRingtoneSummary by lazy { fragmentView.findViewById(R.id.details_ringtone_summary) as TextView }
+    //private val mRingtoneSummary by lazy { fragmentView.findViewById(R.id.details_ringtone_summary) as TextView }
     private val mRepeatRow by lazy { fragmentView.findViewById(R.id.details_repeat_row) as LinearLayout }
     private val mRepeatSummary by lazy { fragmentView.findViewById(R.id.details_repeat_summary) as TextView }
     private val mPreAlarmRow by lazy {
@@ -105,6 +113,7 @@ class AlarmDetailsFragment : Fragment() {
         lollipop {
             hackRippleAndAnimation()
         }
+
     }
 
 //onCreateView ---------->>>
@@ -113,6 +122,8 @@ class AlarmDetailsFragment : Fragment() {
         Log.d(TAG, "onCreateView: jj-called")
         logger.debug { "$this with ${store.editing().value}" }
 
+
+        //View Initializing ->
         val view = inflater.inflate(
                 when (prefs.layout()) {
                     Layout.CLASSIC -> R.layout.details_fragment_classic
@@ -123,6 +134,12 @@ class AlarmDetailsFragment : Fragment() {
                 false
         )
         this.fragmentView = view
+        //View Initializing <-
+
+        // Spinner ->
+        spinner.adapter = spinnerAdapter
+        //spinner.setSpinnerEventsListener(this)
+        // Spinner <-
 
         rowHolder.run {
             this.container.setOnClickListener {
@@ -186,8 +203,9 @@ class AlarmDetailsFragment : Fragment() {
                     Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener + Running my DISK Searcher!!! ")
                     val uriList = myDiskSearcher.rtSearcher()
                     Log.d(TAG, "onCreateView: uriList= $uriList")
+
                     //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
-                    startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                    /*startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                         putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, editor.alarmtone.ringtoneManagerString()) // hmm. not sure what this does..
 
                         putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
@@ -195,7 +213,7 @@ class AlarmDetailsFragment : Fragment() {
 
                         putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
                         putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-                    }, 42)
+                    }, 42)*/
                 } catch (e: Exception) {
                     Toast.makeText(context, requireContext().getString(R.string.details_no_ringtone_picker), Toast.LENGTH_LONG)
                             .show()
@@ -289,7 +307,7 @@ class AlarmDetailsFragment : Fragment() {
                     }
                 }.observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    mRingtoneSummary.text = it
+                    //mRingtoneSummary.text = it todo: 여기서 spinner 에 기존 설정되어있는 ringtone 보여줄것.
                 })
 
         //pre-alarm duration, if set to "none", remove the option

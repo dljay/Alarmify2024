@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -52,6 +54,7 @@
                 android:layout_height="1dip"
                 android:background="?android:attr/dividerHorizontal" />
 
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="68dip"
@@ -75,12 +78,17 @@
                         android:text="@string/alert"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                    <TextView
-                        android:id="@+id/details_ringtone_summary"
+                    <com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner
+                        android:id="@+id/id_spinner"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
+                        android:layout_height="20dp"
                         android:layout_weight="1"
-                        android:text="Super Mario" />
+                        android:dropDownVerticalOffset="0dp"
+                        android:layout_margin="2dp"
+                        android:background="@drawable/bg_spinner_fruit_down">
+
+                    </com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner>
+
                 </LinearLayout>
 
 

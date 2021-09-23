@@ -56,13 +56,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.16a:
-// AlarmDetailsFragment 에서 Spinner 준비 중.
-//AlarDetailsFragment.kt 라인 229 부터.. ->
-//
-//DiskSearcher.kt -> 음악 찾은 후 uri 리스트 전달 (O)
-//-.AlarmRingtones/ 폴더에 있는 음악 파일(ex: p2.rta) 알람으로 설정 성공!!!
-//- 현재는 아무 알람이나 선택하면 이 uri list 에서 [0] 에 있는게 설정되고 (ex: p2.rta)이 벨소리로 알람 울리는 것 잘됨!!!!
+// v0.16b:
+// 일단 spinner UI 에 나오게 하는것 성공.
 //
 //Todo:
 //- 디스크 시작과 함께 DiskSearcher.kt -> readFilesOnDisk() 이런 function 추가해야함.

@@ -13,13 +13,11 @@ private const val TAG="DiskSearcher"
 
 class DiskSearcher(val context: Context)
 {
-    companion object {
-        val albumArtList = mutableListOf<Bitmap>()
-    }
-    val rtUris= mutableListOf<Uri>()
+    val emptyList = mutableListOf<OnDiskObj>()
+    val onDiskObjList = mutableListOf<OnDiskObj>()
 
 
-    fun rtAndArtSearcher(): List<Uri>
+    fun rtAndArtSearcher(): List<OnDiskObj>
     {
         val emptyUriList = listOf<Uri>()
 
@@ -33,7 +31,7 @@ class DiskSearcher(val context: Context)
         // 폴더는 있는데 파일이 없을때.. 그냥 return
         if(myDir.listFiles().isNullOrEmpty()) {
             Log.d(TAG, "rtAndArtSearcher: NO FILES INSIDE THE FOLDER!")
-            return emptyUriList
+            return emptyList
         }
         if(myDir.listFiles() != null)
         {
@@ -48,7 +46,7 @@ class DiskSearcher(val context: Context)
                 }catch (er:Exception) {
                     Log.d(TAG, "rtAndArtSearcher: unable to run mmr.setDataSource for the file=${f.name}. WE'LL DELETE THIS PIECE OF SHIT!")
                     f.delete()
-                    return emptyUriList
+                    return emptyList // todo: 여기서 에러났다고 무조건 이거 return 하면 안될듯..
                 }
 
                 //1) 파일이 제대로 된 mp3 인지 곡 길이(duration) return 하는것으로 확인. (Ex. p1=10초=10042(ms) 리턴)
@@ -70,10 +68,10 @@ class DiskSearcher(val context: Context)
                 }
                 //3) Album Art 찾기
                 val artBytes: ByteArray? = mmr.embeddedPicture
+                var albumArt: Bitmap? = null
                 if(artBytes!=null) {
                     try {
-                        val albumArt: Bitmap = BitmapFactory.decodeByteArray(artBytes,0, artBytes.size)
-                        albumArtList.add(albumArt)
+                        albumArt = BitmapFactory.decodeByteArray(artBytes,0, artBytes.size)
                         Log.d(TAG, "rtAndArtSearcher: successfully added bitmap. albumArt=$albumArt")
 
                     }catch (e: Exception) {
@@ -81,14 +79,17 @@ class DiskSearcher(val context: Context)
                     }
                 }
 
-                // 이 모든게 끝났으면 File Path 를 uri 로 변환해서 list 에 더하기
+                // 이 모든게 끝났으면
+                    // a)File Path 를 uri 로 변환해서 list 에 더하기
                 val fileUri = Uri.parse(f.path.toString())
-                rtUris.add(fileUri)
-                Log.d(TAG, "rtSearcher: [ADDING TO THE LIST] file.name=${f.name} // file.path= ${f.path} // uri=$fileUri")
+                    // b)OnDiskObj 로 만들어서 list 에 저장.
+                val onDiskObj = OnDiskObj(-20, albumArt,fileUri) // default 로 일단 trid 는 모두 -20 으로 설정
+                onDiskObjList.add(onDiskObj)
+                Log.d(TAG, "rtSearcher: [ADDING TO THE LIST] file.name=${f.name} // file.path= ${f.path} // uri=$fileUri \n bitmap=$albumArt")
             }
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
-        return rtUris
+        return onDiskObjList
     }
 
 }

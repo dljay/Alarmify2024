@@ -61,7 +61,9 @@ import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 /**
@@ -205,12 +207,6 @@ class AlarmDetailsFragment : Fragment() {
                         searchFileOnDisk()
                     }
                     Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener + Running my DISK Searcher!!! ")
-                    val uriList = myDiskSearcher.rtAndArtSearcher()
-                    Log.d(TAG, "onCreateView: uriList= $uriList")
-                    val testBitmap = DiskSearcher.albumArtList[2]
-                    Log.d(TAG, "onCreateView: testBitMap= $testBitmap")
-                    ivRtArt.setImageBitmap(testBitmap)
-
 
                     //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
                     /*startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
@@ -251,13 +247,21 @@ class AlarmDetailsFragment : Fragment() {
         return view
     }
 // <<<<----------onCreateView
-// ====> DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행) ===>
+
+    // ====> DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행) ===>
     private suspend fun searchFileOnDisk() {
-        val result = myDiskSearcher.rtAndArtSearcher()
-        Log.d(TAG, "searchFileRequst: result=$result")
+        val resultList = myDiskSearcher.rtAndArtSearcher()
+        Log.d(TAG, "searchFileRequst: result=$resultList")
+        setIvArtImgOnMainThread(resultList[2].bitmap)
         //UI 업데이트
     }
-    private fun setIvAlbumImage(bitmapReceived: Bitmap) {
+    private suspend fun setIvArtImgOnMainThread(bitmapReceived: Bitmap?) {
+        // UI 변경은 오직 MainThread 에서만 가능하므로 여기서 Coroutine 을 IO -> Main 으로 변경!
+        withContext(Main) {
+            setIvArtImage(bitmapReceived)
+        }
+    }
+    private fun setIvArtImage(bitmapReceived: Bitmap?) {
         ivRtArt.setImageBitmap(bitmapReceived)
     }
 

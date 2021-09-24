@@ -6,18 +6,17 @@ import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
-import com.theglendales.alarm.jjdata.RingtoneClass
 import java.io.File
 
 private const val TAG="DiskSearcher"
 
 class DiskSearcher(val context: Context)
 {
-    val emptyList = mutableListOf<OnDiskObj>()
-    val onDiskObjList = mutableListOf<OnDiskObj>()
+    val emptyList = mutableListOf<RtWithAlbumArt>()
+    val onDiskObjList = mutableListOf<RtWithAlbumArt>()
 
 
-    fun rtAndArtSearcher(): List<OnDiskObj>
+    fun rtAndArtSearcher(): List<RtWithAlbumArt>
     {
         val emptyUriList = listOf<Uri>()
 
@@ -82,8 +81,8 @@ class DiskSearcher(val context: Context)
                 // 이 모든게 끝났으면
                     // a)File Path 를 uri 로 변환해서 list 에 더하기
                 val fileUri = Uri.parse(f.path.toString())
-                    // b)OnDiskObj 로 만들어서 list 에 저장.
-                val onDiskObj = OnDiskObj(-20, albumArt,fileUri) // default 로 일단 trid 는 모두 -20 으로 설정
+                    // b)RtWithAlbumArt 로 만들어서 list 에 저장.
+                val onDiskObj = RtWithAlbumArt(-20, albumArt,fileUri) // default 로 일단 trid 는 모두 -20 으로 설정
                 onDiskObjList.add(onDiskObj)
                 Log.d(TAG, "rtSearcher: [ADDING TO THE LIST] file.name=${f.name} // file.path= ${f.path} // uri=$fileUri \n bitmap=$albumArt")
             }

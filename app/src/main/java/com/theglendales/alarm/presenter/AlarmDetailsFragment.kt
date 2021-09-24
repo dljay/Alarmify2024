@@ -139,10 +139,15 @@ class AlarmDetailsFragment : Fragment() {
         this.fragmentView = view
         //View Initializing <-
 
-        // Spinner ->
+        // Spinner --->
         spinner.adapter = spinnerAdapter
+
+        CoroutineScope(IO).launch {
+            refreshSpinnerUi()
+        }
         //spinner.setSpinnerEventsListener(this)
-        // Spinner <-
+
+        // Spinner <---
 
         rowHolder.run {
             this.container.setOnClickListener {
@@ -203,9 +208,9 @@ class AlarmDetailsFragment : Fragment() {
             editor.firstOrError().subscribe { editor ->
                 try {
 
-                    CoroutineScope(IO).launch {
-                        searchFileOnDisk()
-                    }
+//                    CoroutineScope(IO).launch {
+//                        refreshSpinnerUi()
+//                    }
                     Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener + Running my DISK Searcher!!! ")
 
                     //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
@@ -248,24 +253,31 @@ class AlarmDetailsFragment : Fragment() {
     }
 // <<<<----------onCreateView
 
-    // ====> DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행) ===>
-    private suspend fun searchFileOnDisk() {
+// ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
+    private suspend fun refreshSpinnerUi() {
         val resultList = myDiskSearcher.rtAndArtSearcher()
         Log.d(TAG, "searchFileRequst: result=$resultList")
-        setIvArtImgOnMainThread(resultList[2].bitmap)
+        spinnerAdapter.updateList(resultList)
+        setSpinnerAdapterOnMainThread()
+        //setIvArtImgOnMainThread(resultList[2].bitmap)
         //UI 업데이트
     }
-    private suspend fun setIvArtImgOnMainThread(bitmapReceived: Bitmap?) {
-        // UI 변경은 오직 MainThread 에서만 가능하므로 여기서 Coroutine 을 IO -> Main 으로 변경!
+    private suspend fun setSpinnerAdapterOnMainThread() {
         withContext(Main) {
-            setIvArtImage(bitmapReceived)
+            spinner.adapter = spinnerAdapter
         }
     }
-    private fun setIvArtImage(bitmapReceived: Bitmap?) {
-        ivRtArt.setImageBitmap(bitmapReceived)
-    }
+//    private suspend fun setIvArtImgOnMainThread(bitmapReceived: Bitmap?) {
+//        // UI 변경은 오직 MainThread 에서만 가능하므로 여기서 Coroutine 을 IO -> Main 으로 변경!
+//        withContext(Main) {
+//            setIvArtImage(bitmapReceived)
+//        }
+//    }
+//    private fun setIvArtImage(bitmapReceived: Bitmap?) {
+//        ivRtArt.setImageBitmap(bitmapReceived)
+//    }
 
-// <==== DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행)
+// ***** <==== DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행)
 
     // Line 179 에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌 ->
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

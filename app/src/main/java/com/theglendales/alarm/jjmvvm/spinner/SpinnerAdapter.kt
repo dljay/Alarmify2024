@@ -1,7 +1,6 @@
 package com.theglendales.alarm.jjmvvm.spinner
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +9,16 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import com.theglendales.alarm.R
+import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 
 private const val TAG="SpinnerAdapter"
 class SpinnerAdapter(val context: Context) : BaseAdapter() {
-    val rtOnDiskList= mutableListOf<Uri>()
+    var rtOnDiskList= listOf<RtWithAlbumArt>()
+
+
+    fun updateList(rtOnDiskListReceived: List<RtWithAlbumArt>) {
+        rtOnDiskList = rtOnDiskListReceived
+    }
 
     override fun getCount(): Int {
         Log.d(TAG, "getCount: ")

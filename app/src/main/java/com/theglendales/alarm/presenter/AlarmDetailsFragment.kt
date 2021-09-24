@@ -19,6 +19,7 @@ package com.theglendales.alarm.presenter
 
 import android.annotation.TargetApi
 import android.content.Intent
+import android.graphics.Bitmap
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -32,11 +33,7 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.theglendales.alarm.R
 import com.theglendales.alarm.checkPermissions
@@ -52,7 +49,6 @@ import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.model.Alarmtone
-import com.theglendales.alarm.model.ringtoneManagerString
 import com.theglendales.alarm.util.Optional
 import com.theglendales.alarm.util.modify
 import com.theglendales.alarm.view.showDialog
@@ -63,6 +59,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 /**
@@ -76,6 +75,8 @@ class AlarmDetailsFragment : Fragment() {
         // Spinner
         private val spinnerAdapter: SpinnerAdapter by globalInject()
         private val spinner: MyCustomSpinner by lazy { fragmentView.findViewById(R.id.id_spinner) as MyCustomSpinner}
+        // 링톤 옆에 표시되는 앨범 아트
+        private val ivRtArt: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArt) as ImageView}
     // 내가 추가 <-
 
     private val alarms: IAlarmsManager by globalInject()
@@ -200,9 +201,16 @@ class AlarmDetailsFragment : Fragment() {
             editor.firstOrError().subscribe { editor ->
                 try {
 
+                    CoroutineScope(IO).launch {
+                        searchFileOnDisk()
+                    }
                     Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener + Running my DISK Searcher!!! ")
-                    val uriList = myDiskSearcher.rtSearcher()
+                    val uriList = myDiskSearcher.rtAndArtSearcher()
                     Log.d(TAG, "onCreateView: uriList= $uriList")
+                    val testBitmap = DiskSearcher.albumArtList[2]
+                    Log.d(TAG, "onCreateView: testBitMap= $testBitmap")
+                    ivRtArt.setImageBitmap(testBitmap)
+
 
                     //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
                     /*startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
@@ -243,12 +251,24 @@ class AlarmDetailsFragment : Fragment() {
         return view
     }
 // <<<<----------onCreateView
+// ====> DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행) ===>
+    private suspend fun searchFileOnDisk() {
+        val result = myDiskSearcher.rtAndArtSearcher()
+        Log.d(TAG, "searchFileRequst: result=$result")
+        //UI 업데이트
+    }
+    private fun setIvAlbumImage(bitmapReceived: Bitmap) {
+        ivRtArt.setImageBitmap(bitmapReceived)
+    }
+
+// <==== DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행)
+
     // Line 179 에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌 ->
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == 42) {
             val alert: String? = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
             // 테스트중->
-            val testAlertUriList = myDiskSearcher.rtSearcher()
+            val testAlertUriList = myDiskSearcher.rtAndArtSearcher()
             val testAlertUriToString = testAlertUriList[0].toString()
 
             logger.debug { "Got ringtone: $alert" }

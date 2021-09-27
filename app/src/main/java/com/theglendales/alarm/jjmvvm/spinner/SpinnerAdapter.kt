@@ -26,9 +26,10 @@ import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 private const val TAG="SpinnerAdapter"
 class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
+    companion object{
+        var rtOnDiskList= listOf<RtWithAlbumArt>()
+    }
     private val myDiskSearcher: DiskSearcher by globalInject()
-    var rtOnDiskList= listOf<RtWithAlbumArt>()
-
 
     fun updateList(rtOnDiskListReceived: List<RtWithAlbumArt>) {
         rtOnDiskList = rtOnDiskListReceived

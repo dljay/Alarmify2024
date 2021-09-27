@@ -31,6 +31,7 @@ class JjMpViewModel: ViewModel() {
     fun updateSongDuration(durationReceived: Long) {
         Log.d(TAG, "updateSongDuration: called")
         _songDuration.value = durationReceived
+
     }
     //2-B) 재생중인 포지션 업데이트 (exoPlayer.currentPosition(Long))
     fun updateCurrentPosition(positionReceived: Long) {

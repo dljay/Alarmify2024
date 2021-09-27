@@ -45,6 +45,7 @@ import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
@@ -139,13 +140,13 @@ class AlarmDetailsFragment : Fragment() {
         this.fragmentView = view
         //View Initializing <-
 
-    // Spinner 관련 (1) ------------>
+    // Spinner 설정 ------------>
         spinner.adapter = spinnerAdapter
 
         CoroutineScope(IO).launch {
             refreshSpinnerUi()
         }
-        //spinner.setSpinnerEventsListener(this)
+        // 열리고 닫힐 때 화살표 방향 변경
         spinner.setSpinnerEventsListener(object: MyCustomSpinner.OnSpinnerEventsListener {
             override fun onPopupWindowOpened(spinner: Spinner?) {
                 spinner?.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_spinner_arrow_up, null)
@@ -156,8 +157,23 @@ class AlarmDetailsFragment : Fragment() {
             }
 
         })
+        // Spinner 에서 ringtone 을 골랐을 때 실행될 명령어들->
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?,view: View?,position: Int,id: Long) {
 
-    // Spinner 관련 (1) <------------
+                val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
+
+                Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
+                        "uri = ${rtSelected.uri}")
+                // 이제 ringtone 으로 설정 -> 현재 라인 309 에 있는것들 복붙!
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                Log.d(TAG, "onNothingSelected: ... ")
+            }
+        }
+    // Spinner 설정 <------------
 
         rowHolder.run {
             this.container.setOnClickListener {
@@ -217,11 +233,7 @@ class AlarmDetailsFragment : Fragment() {
         mRingtoneRow.setOnClickListener {
             editor.firstOrError().subscribe { editor ->
                 try {
-
-//                    CoroutineScope(IO).launch {
-//                        refreshSpinnerUi()
-//                    }
-                    Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener + Running my DISK Searcher!!! ")
+                    //Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener + Running my DISK Searcher!!! ")
 
                     //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
                     /*startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
@@ -292,7 +304,7 @@ class AlarmDetailsFragment : Fragment() {
     // Line 179 에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌 ->
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == 42) {
-            val alert: String? = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
+            /*val alert: String? = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
             // 테스트중->
             val testAlertUriList = myDiskSearcher.rtAndArtSearcher()
             val testAlertUriToString = testAlertUriList[0].toString()
@@ -313,7 +325,7 @@ class AlarmDetailsFragment : Fragment() {
 
             modify("Ringtone picker") { prev ->
                 prev.copy(alarmtone = alarmtone, isEnabled = true)
-            }
+            }*/
         }
     }
 

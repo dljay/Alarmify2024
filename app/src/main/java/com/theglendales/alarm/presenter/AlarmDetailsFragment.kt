@@ -19,7 +19,6 @@ package com.theglendales.alarm.presenter
 
 import android.annotation.TargetApi
 import android.content.Intent
-import android.graphics.Bitmap
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -34,6 +33,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.theglendales.alarm.R
 import com.theglendales.alarm.checkPermissions
@@ -78,7 +78,7 @@ class AlarmDetailsFragment : Fragment() {
         private val spinnerAdapter: SpinnerAdapter by globalInject()
         private val spinner: MyCustomSpinner by lazy { fragmentView.findViewById(R.id.id_spinner) as MyCustomSpinner}
         // 링톤 옆에 표시되는 앨범 아트
-        private val ivRtArt: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArt) as ImageView}
+        private val ivRtArt: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArtBig) as ImageView}
     // 내가 추가 <-
 
     private val alarms: IAlarmsManager by globalInject()
@@ -139,15 +139,25 @@ class AlarmDetailsFragment : Fragment() {
         this.fragmentView = view
         //View Initializing <-
 
-        // Spinner --->
+    // Spinner 관련 (1) ------------>
         spinner.adapter = spinnerAdapter
 
         CoroutineScope(IO).launch {
             refreshSpinnerUi()
         }
         //spinner.setSpinnerEventsListener(this)
+        spinner.setSpinnerEventsListener(object: MyCustomSpinner.OnSpinnerEventsListener {
+            override fun onPopupWindowOpened(spinner: Spinner?) {
+                spinner?.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_spinner_arrow_up, null)
+            }
 
-        // Spinner <---
+            override fun onPopupWindowClosed(spinner: Spinner?) {
+                spinner?.background = ResourcesCompat.getDrawable(resources, R.drawable.bg_spinner_arrow_down, null)
+            }
+
+        })
+
+    // Spinner 관련 (1) <------------
 
         rowHolder.run {
             this.container.setOnClickListener {
@@ -374,6 +384,7 @@ class AlarmDetailsFragment : Fragment() {
         disposableDialog.dispose()
         backButtonSub.dispose()
         disposables.dispose()
+        // 나갈 때  SpinnerAdapter 에 있는 Glide 없애기? 메모리 이슈? //
     }
 
     private fun saveAlarm() {

@@ -84,10 +84,10 @@
                         android:layout_height="30dp"
                         android:layout_weight="1"
 
-                        android:dropDownVerticalOffset="0dp"
+                        android:dropDownVerticalOffset="50dp"
                         android:layout_margin="2dp"
 
-                        android:background="@drawable/bg_spinner_fruit_down">
+                        android:background="@drawable/bg_spinner_arrow_down">
 
                     </com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner>
 
@@ -95,7 +95,7 @@
 
 
                 <ImageView
-                    android:id="@+id/iv_ringtoneArt"
+                    android:id="@+id/iv_ringtoneArtBig"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

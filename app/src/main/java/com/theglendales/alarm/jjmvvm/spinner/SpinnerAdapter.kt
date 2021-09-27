@@ -20,10 +20,8 @@ import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.GlideApp
-import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
-import java.io.File
 
 private const val TAG="SpinnerAdapter"
 class SpinnerAdapter(val context: Context) : BaseAdapter() {
@@ -56,13 +54,13 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
         val rootView: View = LayoutInflater.from(context).inflate(R.layout.item_rt_on_disk, parent, false)
 
         val tvName = rootView.findViewById<TextView>(R.id.item_name)
-        tvName.text = rtOnDiskList[position].rtTitle
-        val trackId= rtOnDiskList[position].trId
+        tvName.text = rtOnDiskList[position].rtTitle // 제목
+        val trackId= rtOnDiskList[position].trIdStr // 아쉽게도 스트링임.
         val mp3FileUri = rtOnDiskList[position].uri
 
         Log.d(TAG, "getView: rtTitle= ${rtOnDiskList[position].rtTitle}, trId= $trackId")
 
-        val ivImage = rootView.findViewById<ImageView>(R.id.item_image) // 우리가 앨범아트 넣을 imageView .. mp3 메타데이터에서 찾아서 넣음.
+        val spinnerIv = rootView.findViewById<ImageView>(R.id.item_image_small) // 우리가 앨범아트 넣을 imageView .. mp3 메타데이터에서 찾아서 넣음.
 
         //Glide 로 rt 앨범아트 보여주기
         GlideApp.with(context).load(albumArtLoader(mp3FileUri)).centerCrop()
@@ -80,7 +78,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
                     return false
                 }
-            }).into(ivImage)
+            }).into(spinnerIv)
 
 //        tvName.setText(rtOnDiskList.get(position).name)
 //        ivImage.setImageResource(rtOnDiskList.get(position).imageInt)
@@ -89,8 +87,8 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
     }
 
     // 디스크에 있는 ringtone File (mp3) 의 위치(uri) 를 통해 AlbumArt 를 추출 !
-    // todo: 여기서 다루는 BitMap 들이 제법 memory 를 차지할 수 있을텐데..
-    fun albumArtLoader(fileUri: Uri): Bitmap? {
+    // todo: 여기서 다루는 BitMap 들이 제법 memory 를 차지할 수 있을텐데..TEST 필요..? details Frag 나갈때 Glide 제거?
+    private fun albumArtLoader(fileUri: Uri): Bitmap? {
         val mmr =  MediaMetadataRetriever()
 
         try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
@@ -108,6 +106,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
                 albumArt = BitmapFactory.decodeByteArray(artBytes,0, artBytes.size)
                 Log.d(TAG, "rtAndArtSearcher: successfully added bitmap. albumArt=$albumArt")
                 return albumArt
+                // todo : Clean from memory
 
             }catch (e: Exception) {
                 Log.d(TAG, "rtAndArtSearcher: error trying to retrieve Image. Error=$e")

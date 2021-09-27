@@ -66,20 +66,20 @@ class DiskSearcher(val context: Context)
 
 
                 }
-                //3) Album MetaData (앨범 아트, 제목, TrId) 찾기 4) 번에서 이걸 RingtoneClass 로 만들어줌.
-                // 3-a) Album Art
-                val artBytes: ByteArray? = mmr.embeddedPicture
-                var albumArt: Bitmap? = null
-
-                if(artBytes!=null) {
-                    try {
-                        albumArt = BitmapFactory.decodeByteArray(artBytes,0, artBytes.size)
-                        Log.d(TAG, "rtAndArtSearcher: successfully added bitmap. albumArt=$albumArt")
-
-                    }catch (e: Exception) {
-                        Log.d(TAG, "rtAndArtSearcher: error trying to retrieve Image. Error=$e")
-                    }
-                }
+//                //3) Album MetaData (앨범 아트, 제목, TrId) 찾기 4) 번에서 이걸 RingtoneClass 로 만들어줌.
+//                // 3-a) Album Art
+//                val artBytes: ByteArray? = mmr.embeddedPicture
+//                var albumArt: Bitmap? = null
+//
+//                if(artBytes!=null) {
+//                    try {
+//                        albumArt = BitmapFactory.decodeByteArray(artBytes,0, artBytes.size)
+//                        Log.d(TAG, "rtAndArtSearcher: successfully added bitmap. albumArt=$albumArt")
+//
+//                    }catch (e: Exception) {
+//                        Log.d(TAG, "rtAndArtSearcher: error trying to retrieve Image. Error=$e")
+//                    }
+//                }
                 // 3-b) 제목
                 val rtTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
 
@@ -93,11 +93,15 @@ class DiskSearcher(val context: Context)
                     // b)RtWithAlbumArt 로 만들어서 list 에 저장.
                 val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, uri = fileUri ) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
                 onDiskRtList.add(onDiskRingtone)
-                Log.d(TAG, "rtSearcher: [ADDING TO THE LIST] \n *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path} // uri=$fileUri \n bitmap=$albumArt")
+                Log.d(TAG, "rtSearcher: [ADDING TO THE LIST] \n *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path} // uri=$fileUri")
             }
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
         return onDiskRtList
+    }
+
+    fun metaInfoChooChool() {
+
     }
 
 }

@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -20,6 +21,7 @@ import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.GlideApp
+import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 
@@ -27,16 +29,22 @@ private const val TAG="SpinnerAdapter"
 class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
     companion object{
-        var rtOnDiskList= listOf<RtWithAlbumArt>()
+        val rtOnDiskList= mutableListOf<RtWithAlbumArt>()
     }
     private val myDiskSearcher: DiskSearcher by globalInject()
 
-    fun updateList(rtOnDiskListReceived: List<RtWithAlbumArt>) {
-        rtOnDiskList = rtOnDiskListReceived
+    fun updateList(rtOnDiskListReceived: MutableList<RtWithAlbumArt>) {
+        //Log.d(TAG, "updateList: called. rtOnDiskListReceived=$rtOnDiskListReceived")
+        rtOnDiskList.clear()
+        for(i in 0 until rtOnDiskListReceived.size) {
+            rtOnDiskList.add(rtOnDiskListReceived[i])
+        }
+        //Log.d(TAG, "updateList: done..!! rtOnDiskList=$rtOnDiskList")
+        
     }
 
     override fun getCount(): Int {
-        Log.d(TAG, "getCount: ")
+        Log.d(TAG, "getCount: ${rtOnDiskList.size}")
         return rtOnDiskList.size
     }
 
@@ -105,12 +113,12 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
         {
             try {
                 albumArt = BitmapFactory.decodeByteArray(artBytes,0, artBytes.size)
-                Log.d(TAG, "rtAndArtSearcher: successfully added bitmap. albumArt=$albumArt")
+                Log.d(TAG, "albumArtLoader: successfully added bitmap. albumArt=$albumArt")
                 return albumArt
                 // todo : Clean from memory
 
             }catch (e: Exception) {
-                Log.d(TAG, "rtAndArtSearcher: error trying to retrieve Image. Error=$e")
+                Log.d(TAG, "albumArtLoader: error trying to retrieve Image. Error=$e")
             }
         }
         return null

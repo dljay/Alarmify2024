@@ -218,8 +218,7 @@ class RcViewAdapter(
         //Log.d(TAG, "updateRecyclerView: @@@@@@@@ currentRtList.size (BEFORE): ${currentRtList.size}")
         val oldList = currentRtList
 
-        val diffResult: DiffUtil.DiffResult =
-            DiffUtil.calculateDiff(MyDiffCallbackClass(oldList, newList))
+        val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(MyDiffCallbackClass(oldList, newList))
         currentRtList = newList
         Log.d(TAG, "updateRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${currentRtList.size}")
         //updateRingToneMap(receivedList)//이건 내가 추가
@@ -242,10 +241,7 @@ class RcViewAdapter(
     }
 
     // DiffUtil Class
-    class MyDiffCallbackClass(
-        var oldRingToneList: MutableList<RingtoneClass>,
-        var newRingToneList: MutableList<RingtoneClass>
-    ) : DiffUtil.Callback() { // Extend by DiffUtil
+    class MyDiffCallbackClass(var oldRingToneList: MutableList<RingtoneClass>,var newRingToneList: MutableList<RingtoneClass>) : DiffUtil.Callback() { // Extend by DiffUtil
         override fun getOldListSize(): Int {
             return oldRingToneList.size
         }

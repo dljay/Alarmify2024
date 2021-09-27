@@ -16,8 +16,9 @@ class DiskSearcher(val context: Context)
     val onDiskRtList = mutableListOf<RtWithAlbumArt>()
 
 
-    fun rtAndArtSearcher(): List<RtWithAlbumArt>
+    fun rtAndArtSearcher(): MutableList<RtWithAlbumArt>
     {
+        onDiskRtList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.
         val emptyUriList = listOf<Uri>()
 
         val folder = context.getExternalFilesDir(null)!!.absolutePath

@@ -161,11 +161,14 @@ class AlarmDetailsFragment : Fragment() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?,view: View?,position: Int,id: Long) {
 
-                val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
-
-                Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
-                        "uri = ${rtSelected.uri}")
+                Log.d(TAG, "onItemSelected: position=$position")
+//                val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
+//
+//                Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
+//                        "uri = ${rtSelected.uri}")
                 // 이제 ringtone 으로 설정 -> 현재 라인 309 에 있는것들 복붙!
+
+
 
             }
 
@@ -277,16 +280,18 @@ class AlarmDetailsFragment : Fragment() {
 
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
     private suspend fun refreshSpinnerUi() {
+        Log.d(TAG, "refreshSpinnerUi: called")
         val resultList = myDiskSearcher.rtAndArtSearcher()
-        Log.d(TAG, "searchFileRequst: result=$resultList")
-        spinnerAdapter.updateList(resultList)
+        Log.d(TAG, "refreshSpinnerUi: result=$resultList")
+        spinnerAdapter.updateList(resultList) // todo: 이 라인을 밑에 withContext 윗줄에서 실행? or Livedata .. 어떻게든?
         setSpinnerAdapterOnMainThread()
         //setIvArtImgOnMainThread(resultList[2].bitmap)
         //UI 업데이트
     }
     private suspend fun setSpinnerAdapterOnMainThread() {
+        Log.d(TAG, "setSpinnerAdapterOnMainThread: called!!**")
         withContext(Main) {
-            spinner.adapter = spinnerAdapter
+            spinnerAdapter.notifyDataSetChanged()
         }
     }
 //    private suspend fun setIvArtImgOnMainThread(bitmapReceived: Bitmap?) {

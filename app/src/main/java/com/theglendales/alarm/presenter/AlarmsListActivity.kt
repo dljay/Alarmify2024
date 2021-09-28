@@ -56,26 +56,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.17a:
-//- MP3 에 앨범 아트를 metadata 로 넣기(O)
-//- 스피너 리스트에 일단 디스크에 있는 갯수(현재 3개) 만큼 뜨게해주는것 성공(이름,Image 표시 필요함)
-//
-//1. 디스크에 있는것을 Spinner List 에 표시해주기(일단 갯수 받아서 3개 뜨는건 성공..)
-//- AlarmDetailsFragment.kt (Line 146부터 코루틴으로 시작)
-//- 현재 사진/Name 설정 안되는 상태. Adapter 에서 선택 필요 (이것도 왠지 main thread 에서 해야할듯한데..)
-//
-//2. 현재 설정되어있는 링톤을 iv 에 표시해주기 ( live data 사용?)
-//3. 알람으로 설정해주는 기능
-//- - AlarmDetailsFragment.kt (Line 207..)
-//- mRingtoneRow.setOnClickListener -> 이걸 Spinner ClickListener 로 변경해주고, spinner 설정 완료시 이전과 같은 결과를 같도록 설정.
-//
-//Improvements Needed:
-//1) BitMap 을 list 에 저장하는게 메모리에 괜찮을지..? https://injunech.tistory.com/140
-//https://stackoverflow.com/questions/33388821/android-managing-bitmap-arraylist-efficiently-without-causing-outofmemory-excep
-//2) Coroutine (O)
-//3) 메타데이터에 trId 도 포함?
-//4) use Glide to show image? .. 여기서 cache 등 써서 memory save?
-//use RecyclerAdapter(or ArrayAdapter?) instead of just BaseAdapter?
+// v0.17f:
+//- ivBig 에도 기존 설정된 ringtone 이미지가 뜸.
+// About to remove preAlarmRow
+//- todo: 다시 조절 필요.. 동그란 원형 이미지로.. costraint layout 등 써서
+
 
 
 

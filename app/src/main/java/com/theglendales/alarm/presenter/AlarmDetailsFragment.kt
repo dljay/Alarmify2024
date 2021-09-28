@@ -98,18 +98,16 @@ class AlarmDetailsFragment : Fragment() {
 
     private val alarmsListActivity by lazy { activity as AlarmsListActivity }
     private val store: UiStore by globalInject()
-    private val mLabel: EditText by lazy { fragmentView.findViewById(R.id.details_label) as EditText }
+
     private val rowHolder: RowHolder by lazy { RowHolder(fragmentView.findViewById(R.id.details_list_row_container), alarmId, prefs.layout()) }
     private val mRingtoneRow by lazy { fragmentView.findViewById(R.id.details_ringtone_row) as LinearLayout }
     //private val mRingtoneSummary by lazy { fragmentView.findViewById(R.id.details_ringtone_summary) as TextView }
     private val mRepeatRow by lazy { fragmentView.findViewById(R.id.details_repeat_row) as LinearLayout }
     private val mRepeatSummary by lazy { fragmentView.findViewById(R.id.details_repeat_summary) as TextView }
-    private val mPreAlarmRow by lazy {
-        fragmentView.findViewById(R.id.details_prealarm_row) as LinearLayout
-    }
-    private val mPreAlarmCheckBox by lazy {
-        fragmentView.findViewById(R.id.details_prealarm_checkbox) as CheckBox
-    }
+// PreAlarm & Label 관련. 내가 없앰.
+    //private val mPreAlarmRow by lazy {fragmentView.findViewById(R.id.details_prealarm_row) as LinearLayout}
+    //private val mPreAlarmCheckBox by lazy {fragmentView.findViewById(R.id.details_prealarm_checkbox) as CheckBox}
+    //private val mLabel: EditText by lazy { fragmentView.findViewById(R.id.details_label) as EditText }
 
     private val editor: Observable<AlarmValue> by lazy { store.editing().filter { it.value.isPresent() }.map { it.value.get() } }
 
@@ -249,9 +247,9 @@ class AlarmDetailsFragment : Fragment() {
                 .addToDisposables()
 
         //pre-alarm
-        mPreAlarmRow.setOnClickListener {
-            modify("Pre-alarm") { editor -> editor.copy(isPrealarm = !editor.isPrealarm, isEnabled = true) }
-        }
+//        mPreAlarmRow.setOnClickListener {
+//            modify("Pre-alarm") { editor -> editor.copy(isPrealarm = !editor.isPrealarm, isEnabled = true) }
+//        }
 
         mRepeatRow.setOnClickListener {
             editor.firstOrError()
@@ -261,13 +259,13 @@ class AlarmDetailsFragment : Fragment() {
                     }
         }
 // Alarm 링톤 리스트 쭈~욱 뜨는 곳. -> 여기서 뭔가를 선택하면-> startActivityForResult 이므로-> 아래 Line 222 onActivityResult 로 감.
-        mRingtoneRow.setOnClickListener {
+        /*mRingtoneRow.setOnClickListener {
             editor.firstOrError().subscribe { editor ->
                 try {
                     //Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener + Running my DISK Searcher!!! ")
 
                     //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
-                    /*startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                    *//*startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                         putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, editor.alarmtone.ringtoneManagerString()) // hmm. not sure what this does..
 
                         putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
@@ -275,13 +273,13 @@ class AlarmDetailsFragment : Fragment() {
 
                         putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
                         putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-                    }, 42)*/
+                    }, 42)*//*
                 } catch (e: Exception) {
                     Toast.makeText(context, requireContext().getString(R.string.details_no_ringtone_picker), Toast.LENGTH_LONG)
                             .show()
                 }
             }
-        }
+        }*/
 
         class TextWatcherIR : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -300,7 +298,7 @@ class AlarmDetailsFragment : Fragment() {
             }
         }
 
-        mLabel.addTextChangedListener(TextWatcherIR())
+        //mLabel.addTextChangedListener(TextWatcherIR())
 
         return view
     }
@@ -352,13 +350,13 @@ class AlarmDetailsFragment : Fragment() {
                     })
 
                     rowHolder.onOff.isChecked = editor.isEnabled
-                    mPreAlarmCheckBox.isChecked = editor.isPrealarm
+                    //mPreAlarmCheckBox.isChecked = editor.isPrealarm
 
                     mRepeatSummary.text = editor.daysOfWeek.summary(requireContext())
 
-                    if (editor.label != mLabel.text.toString()) {
-                        mLabel.setText(editor.label)
-                    }
+//                    if (editor.label != mLabel.text.toString()) {
+//                        mLabel.setText(editor.label)
+//                    }
                 })
 
         disposables.add(editor
@@ -403,7 +401,7 @@ class AlarmDetailsFragment : Fragment() {
         disposables.add(prefs.preAlarmDuration
                 .observe()
                 .subscribe { value ->
-                    mPreAlarmRow.visibility = if (value.toInt() == -1) View.GONE else View.VISIBLE
+                    //mPreAlarmRow.visibility = if (value.toInt() == -1) View.GONE else View.VISIBLE
                 })
 
         backButtonSub = store.onBackPressed().subscribe {

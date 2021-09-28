@@ -56,10 +56,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.17f:
-//- ivBig 에도 기존 설정된 ringtone 이미지가 뜸.
-// About to remove preAlarmRow
-//- todo: 다시 조절 필요.. 동그란 원형 이미지로.. costraint layout 등 써서
+// v0.18a:
+// Removed preAlarmRow/label
+// /SpinnerAdapter: onResourceReady: Glide loading success! trId: 01, Position: 2 <- 이거 너무 떠서 DetailsFrag 느림! 반드시 해결 필요!!!!!
 
 
 

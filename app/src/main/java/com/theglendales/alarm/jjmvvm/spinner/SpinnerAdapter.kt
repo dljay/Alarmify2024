@@ -60,6 +60,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         //Log.d(TAG, "getView: called.")
+
         val rootView: View = LayoutInflater.from(context).inflate(R.layout.item_rt_on_disk, parent, false)
 
         val tvName = rootView.findViewById<TextView>(R.id.item_name)

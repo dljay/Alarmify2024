@@ -58,6 +58,7 @@ import java.util.Calendar
 
 // v0.18a:
 // Removed preAlarmRow/label
+// 메모리 미친듯이 올라감. BitMap 추출하고 로딩하는동안 메모리에 쌓이는듯? 차라리 그냥 BMP 로컬에 추출->저장이 나을수도..
 // /SpinnerAdapter: onResourceReady: Glide loading success! trId: 01, Position: 2 <- 이거 너무 떠서 DetailsFrag 느림! 반드시 해결 필요!!!!!
 
 

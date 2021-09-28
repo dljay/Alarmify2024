@@ -5,6 +5,8 @@
 
     <ImageView
         android:id="@+id/item_image_small"
+        android:layout_margin="3dp"
+        android:layout_marginTop="4dp"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:src="@drawable/avocado"

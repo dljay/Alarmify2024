@@ -91,8 +91,8 @@ class DiskSearcher(val context: Context)
         return onDiskRtList
     }
 
-    fun metaInfoChooChool() {
-
-    }
+//    fun metaInfoChooChool() {
+//
+//    }
 
 }

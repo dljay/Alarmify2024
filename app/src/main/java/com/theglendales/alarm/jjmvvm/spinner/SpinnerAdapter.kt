@@ -97,7 +97,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
     // 디스크에 있는 ringtone File (mp3) 의 위치(uri) 를 통해 AlbumArt 를 추출 !
     // todo: 여기서 다루는 BitMap 들이 제법 memory 를 차지할 수 있을텐데..TEST 필요..? details Frag 나갈때 Glide 제거?
-    private fun albumArtLoader(fileUri: Uri): Bitmap? {
+    fun albumArtLoader(fileUri: Uri): Bitmap? {
         val mmr =  MediaMetadataRetriever()
 
         try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.

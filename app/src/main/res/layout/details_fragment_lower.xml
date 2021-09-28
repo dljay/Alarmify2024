@@ -101,7 +101,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
                     android:src="@drawable/purchased_false_1"
-                    android:scaleType="fitCenter">
+                    android:scaleType="centerCrop">
 
                 </ImageView>
 

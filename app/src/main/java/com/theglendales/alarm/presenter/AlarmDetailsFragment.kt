@@ -19,6 +19,7 @@ package com.theglendales.alarm.presenter
 
 import android.annotation.TargetApi
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
@@ -35,6 +36,10 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.checkPermissions
 import com.theglendales.alarm.configuration.Layout
@@ -42,6 +47,7 @@ import com.theglendales.alarm.configuration.Prefs
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
+import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -79,7 +85,7 @@ class AlarmDetailsFragment : Fragment() {
         private val spinnerAdapter: SpinnerAdapter by globalInject()
         private val spinner: MyCustomSpinner by lazy { fragmentView.findViewById(R.id.id_spinner) as MyCustomSpinner}
         // 링톤 옆에 표시되는 앨범 아트
-        private val ivRtArt: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArtBig) as ImageView}
+        private val ivRtArtBig: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArtBig) as ImageView}
     // 내가 추가 <-
 
     private val alarms: IAlarmsManager by globalInject()
@@ -306,7 +312,7 @@ class AlarmDetailsFragment : Fragment() {
         Log.d(TAG, "refreshSpinnerUi: called")
         val resultList = myDiskSearcher.rtAndArtSearcher()
         Log.d(TAG, "refreshSpinnerUi: result=$resultList")
-        spinnerAdapter.updateList(resultList) // todo: 이 라인을 밑에 withContext 윗줄에서 실행? or Livedata .. 어떻게든?
+        spinnerAdapter.updateList(resultList) // 이 라인을 밑에 withContext 윗줄에서 실행? or Livedata?  <- 일단 현재는 잘 됨.
         setSpinnerAdapterOnMainThread()
         //setIvArtImgOnMainThread(resultList[2].bitmap)
         //UI 업데이트
@@ -366,13 +372,31 @@ class AlarmDetailsFragment : Fragment() {
                     }
                 }.observeOn(AndroidSchedulers.mainThread())
                 .subscribe { prevRtFileName ->
-                    //mRingtoneSummary.text = it .. 여기서 spinner 에 기존 설정되어있는 ringtone 보여줄것.
+//***DetailsFrag 에서 기존에 설정된 rt을 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: 기설정된 알람톤 파일이름=$prevRtFileName")
-                    // 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
-                    // .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환)
-                    val indexPrevChosenRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName }
-                    spinner.setSelection(indexPrevChosenRt)
-                    // Update ImageView(Big) - 스피너 옆에 있는 큰 앨범아트 ImageView
+
+//***           // 1) 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
+//***                // .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환)
+                    val indexOfPrevSelectedRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName }
+                    spinner.setSelection(indexOfPrevSelectedRt)
+                    val prevSelectedRt: RtWithAlbumArt = SpinnerAdapter.rtOnDiskList[indexOfPrevSelectedRt]
+
+                // 2) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
+                    context?.let {
+                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.uri)).centerCrop()
+                            .error(R.drawable.errordisplay)
+                            .placeholder(R.drawable.placeholder).listener(object :
+                                RequestListener<Drawable> {
+                                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                                    Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
+                                    return false
+                                }
+                                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                                    Log.d(TAG,"onResourceReady: Glide loading success! Title=${prevSelectedRt.rtTitle}, trId: ${prevSelectedRt.trIdStr}") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                                    return false
+                                }
+                            }).into(ivRtArtBig)
+                    }
                 })
 
         //pre-alarm duration, if set to "none", remove the option

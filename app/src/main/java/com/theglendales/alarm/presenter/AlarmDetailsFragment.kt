@@ -369,7 +369,8 @@ class AlarmDetailsFragment : Fragment() {
                     //mRingtoneSummary.text = it .. 여기서 spinner 에 기존 설정되어있는 ringtone 보여줄것.
                     Log.d(TAG, "onResume: 기설정된 알람톤 파일이름=$prevRtFileName")
                     // 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
-                    val indexPrevChosenRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName } // 동일한 "파일명" 을 가진 RtWithAlbumArt 를 반환!
+                    // .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환)
+                    val indexPrevChosenRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName }
                     spinner.setSelection(indexPrevChosenRt)
                     // Update ImageView(Big) - 스피너 옆에 있는 큰 앨범아트 ImageView
                 })

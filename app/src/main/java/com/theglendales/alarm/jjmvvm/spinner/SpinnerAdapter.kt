@@ -44,17 +44,17 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
     }
 
     override fun getCount(): Int {
-        Log.d(TAG, "getCount: ${rtOnDiskList.size}")
+        //Log.d(TAG, "getCount: ${rtOnDiskList.size}")
         return rtOnDiskList.size
     }
 
     override fun getItem(position: Int): Any {
-        Log.d(TAG, "getItem: position=$position")
+        //Log.d(TAG, "getItem: position=$position")
         return position
     }
 
     override fun getItemId(position: Int): Long {
-        Log.d(TAG, "getItemId: position.toLong= ${position.toLong()}")
+        //Log.d(TAG, "getItemId: position.toLong= ${position.toLong()}")
         return position.toLong()
     }
 

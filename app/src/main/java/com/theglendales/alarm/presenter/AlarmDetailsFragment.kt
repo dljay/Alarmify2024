@@ -142,6 +142,8 @@ class AlarmDetailsFragment : Fragment() {
 
     // Spinner 설정 ------------>
         spinner.adapter = spinnerAdapter
+        spinner.isSelected = false // 이것과
+        spinner.setSelection(0,true) // 요것을 통해서 frag 열리자마자 자동으로 ItemSelect 하는것 막음.
 
         CoroutineScope(IO).launch {
             refreshSpinnerUi()
@@ -158,22 +160,42 @@ class AlarmDetailsFragment : Fragment() {
 
         })
         // Spinner 에서 ringtone 을 골랐을 때 실행될 명령어들->
+
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?,view: View?,position: Int,id: Long) {
 
+
                 Log.d(TAG, "onItemSelected: position=$position")
-//                val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
-//
-//                Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
-//                        "uri = ${rtSelected.uri}")
-                // 이제 ringtone 으로 설정 -> 현재 라인 309 에 있는것들 복붙!
+                val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
+
+                Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
+                        "uri = ${rtSelected.uri}")
+
+                // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! -->
+                val alert: String? = rtSelected.uri.toString()
 
 
+               logger.debug { "Got ringtone: $alert" }
 
+               val alarmtone = when (alert) {
+                   null -> Alarmtone.Silent() // 선택한 alarm 톤이 a)어떤 오류등으로 null 값일때 -> .Silent()
+                   RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default() // b)Default 일때
+                   else -> Alarmtone.Sound(alert) // 내가 선택한 놈.
+               }
+               // 테스트중 <-
+
+               logger.debug { "Spinner- onItemSelected! $alert -> $alarmtone" }
+
+               checkPermissions(requireActivity(), listOf(alarmtone))
+
+               modify("Ringtone picker") { prev ->
+                   prev.copy(alarmtone = alarmtone, isEnabled = true)
+                }
+                // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! <----
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                Log.d(TAG, "onNothingSelected: ... ")
+                Log.d(TAG, "Spinner - onNothingSelected: ... ")
             }
         }
     // Spinner 설정 <------------
@@ -278,6 +300,7 @@ class AlarmDetailsFragment : Fragment() {
     }
 // <<<<----------onCreateView
 
+
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
     private suspend fun refreshSpinnerUi() {
         Log.d(TAG, "refreshSpinnerUi: called")
@@ -306,33 +329,8 @@ class AlarmDetailsFragment : Fragment() {
 
 // ***** <==== DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행)
 
-    // Line 179 에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌 ->
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data != null && requestCode == 42) {
-            /*val alert: String? = data.getParcelableExtra<Uri>(RingtoneManager.EXTRA_RINGTONE_PICKED_URI)?.toString()
-            // 테스트중->
-            val testAlertUriList = myDiskSearcher.rtAndArtSearcher()
-            val testAlertUriToString = testAlertUriList[0].toString()
-
-            logger.debug { "Got ringtone: $alert" }
-
-            val alarmtone = when (alert) {
-                null -> Alarmtone.Silent()
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default()
-                //else -> Alarmtone.Sound(alert)
-                else -> Alarmtone.Sound(testAlertUriToString) // 무조건 uriList[0] 을 알람톤으로 설정하는 테스트 진행중(O) 잘됨.
-            }
-            // 테스트중 <-
-
-            logger.debug { "onActivityResult $alert -> $alarmtone" }
-
-            checkPermissions(requireActivity(), listOf(alarmtone))
-
-            modify("Ringtone picker") { prev ->
-                prev.copy(alarmtone = alarmtone, isEnabled = true)
-            }*/
-        }
-    }
+    // Line 179 에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌 -> 이제는 빈 깡통.. 안 씀.
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {if (data != null && requestCode == 42) {}}
 
     override fun onResume() {
         Log.d(TAG, "onResume: *here we have backButtonSub")
@@ -356,9 +354,7 @@ class AlarmDetailsFragment : Fragment() {
                         mLabel.setText(editor.label)
                     }
                 })
-        // 경로 변경 테스트-->
 
-        // 경로 변경 테스트 <--
         disposables.add(editor
                 .distinctUntilChanged()
                 .observeOn(Schedulers.computation())
@@ -369,8 +365,13 @@ class AlarmDetailsFragment : Fragment() {
                         is Alarmtone.Sound -> {RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()}
                     }
                 }.observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    //mRingtoneSummary.text = it todo: 여기서 spinner 에 기존 설정되어있는 ringtone 보여줄것.
+                .subscribe { prevRtFileName ->
+                    //mRingtoneSummary.text = it .. 여기서 spinner 에 기존 설정되어있는 ringtone 보여줄것.
+                    Log.d(TAG, "onResume: 기설정된 알람톤 파일이름=$prevRtFileName")
+                    // 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
+                    val indexPrevChosenRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName } // 동일한 "파일명" 을 가진 RtWithAlbumArt 를 반환!
+                    spinner.setSelection(indexPrevChosenRt)
+                    // Update ImageView(Big) - 스피너 옆에 있는 큰 앨범아트 ImageView
                 })
 
         //pre-alarm duration, if set to "none", remove the option

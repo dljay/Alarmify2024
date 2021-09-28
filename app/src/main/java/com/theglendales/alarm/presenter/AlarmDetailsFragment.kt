@@ -381,7 +381,7 @@ class AlarmDetailsFragment : Fragment() {
 
                 // 2) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
                     context?.let {
-                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.uri)).centerCrop()
+                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.uri)).circleCrop()
                             .error(R.drawable.errordisplay)
                             .placeholder(R.drawable.placeholder).listener(object :
                                 RequestListener<Drawable> {

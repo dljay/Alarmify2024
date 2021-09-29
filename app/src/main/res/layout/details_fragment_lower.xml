@@ -60,41 +60,59 @@
                 android:layout_height="100dp">
                 <!-- A) Ringtone Text + Spinner-->
 
-                <LinearLayout
-                    android:id="@+id/details_ringtone_row"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:weightSum="5"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/guideline2">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:layout_gravity="center|left"
-                        android:layout_weight="1"
-                        android:text="@string/alert"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|left"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/alert"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    app:layout_constraintBottom_toTopOf="@+id/id_ll_Wrapping_Spinner"
+                    app:layout_constraintEnd_toEndOf="@+id/guideline2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <LinearLayout
+
+                    android:id="@+id/id_ll_Wrapping_Spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center|left"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/guideline2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textView3">
 
                     <com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner
                         android:id="@+id/id_spinner"
                         android:layout_width="match_parent"
-                        android:layout_gravity="center|left"
-                        android:layout_height="15dp"
-                        android:layout_marginEnd="5dp"
-                        android:layout_weight="3"
-                        android:background="@drawable/bg_spinner_arrow_down"
+                        android:layout_height="match_parent"
 
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
+
+                        android:background="@drawable/bg_spinner_arrow_down"
                         android:dropDownVerticalOffset="50dp">
 
                     </com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner>
 
 
                 </LinearLayout>
+
+
+
+
+
+
+
+
 
                 <!-- B) Vertical GuideLine-->
                 <androidx.constraintlayout.widget.Guideline
@@ -106,6 +124,7 @@
 
                 <!-- C) AlbumArt Big-->
                 <LinearLayout
+                    android:id="@+id/linearLayout"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"
@@ -115,8 +134,6 @@
                     android:layout_marginBottom="5dp"
                     android:layout_weight="1"
                     android:padding="10dp"
-
-
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/guideline2"
@@ -146,6 +163,7 @@
                 android:layout_height="1dip"
                 android:layout_marginTop="3dp"
                 android:background="?android:attr/dividerHorizontal" />
+
 
         </LinearLayout>
     </ScrollView>

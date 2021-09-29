@@ -3,7 +3,6 @@ package com.theglendales.alarm.jjmvvm.spinner
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.Drawable
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
@@ -13,15 +12,8 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
-import com.theglendales.alarm.jjadapters.GlideApp
-import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 
@@ -60,40 +52,54 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         //Log.d(TAG, "getView: called.")
+         // ** !! 자원을 재사용할때는 convertView 가 null 이 아닌 값으로 들어옴!!! !! **
+        val view: View
+        val spinnerVH: SpnViewHolder
 
-        val rootView: View = LayoutInflater.from(context).inflate(R.layout.item_rt_on_disk, parent, false)
+        if(convertView == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.item_rt_on_disk, parent, false)
+            spinnerVH = SpnViewHolder()
+            spinnerVH.tvName = view.findViewById<TextView>(R.id.item_name)
+            spinnerVH.ivArtSmall = view.findViewById<ImageView>(R.id.item_image_small) // 우리가 앨범아트 넣을 imageView .. mp3 메타데이터에서 찾아서 넣음.
 
-        val tvName = rootView.findViewById<TextView>(R.id.item_name)
-        tvName.text = rtOnDiskList[position].rtTitle // 제목
+            view.tag = spinnerVH // view 의 tag 를 viewHolder 로 설정
+        } else { // 이미 만들어진 view 가 있으므로, tag 를 통해 불러와서 대체한다.
+            spinnerVH = convertView.tag as SpnViewHolder
+            view = convertView
+        }
+
+
+        spinnerVH.tvName!!.text = rtOnDiskList[position].rtTitle // 제목
         val trackId= rtOnDiskList[position].trIdStr // 아쉽게도 스트링임.
         val mp3FileUri = rtOnDiskList[position].uri
 
         Log.d(TAG, "getView: rtTitle= ${rtOnDiskList[position].rtTitle}, trId= $trackId")
 
-        val spinnerIv = rootView.findViewById<ImageView>(R.id.item_image_small) // 우리가 앨범아트 넣을 imageView .. mp3 메타데이터에서 찾아서 넣음.
+
 
         //Glide 로 rt 앨범아트 보여주기
-        GlideApp.with(context).load(albumArtLoader(mp3FileUri)).centerCrop()
-            .error(R.drawable.errordisplay)
-            .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
-                    Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
-                    return false
-                }
-
-                // (여러 ViewHolder 를 로딩중인데) 현재 로딩한 View 에 Glide 가 이미지를 성공적으로 넣었다면.
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?
-                                             , dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    Log.d(TAG,"onResourceReady: Glide loading success! trId: $trackId, Position: $position") // debug 결과 절대 순.차.적으로 진행되지는 않음!
-
-                    return false
-                }
-            }).into(spinnerIv)
+//        GlideApp.with(context).load(albumArtLoader(mp3FileUri)).centerCrop()
+//            .error(R.drawable.errordisplay)
+//            .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
+//                override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
+//                    Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
+//                    return false
+//                }
+//
+//                // (여러 ViewHolder 를 로딩중인데) 현재 로딩한 View 에 Glide 가 이미지를 성공적으로 넣었다면.
+//                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?
+//                                             , dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+//                    Log.d(TAG,"onResourceReady: Glide loading success! trId: $trackId, Position: $position") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+//
+//                    return false
+//                }
+//            }).into(spinnerIv)
 
 //        tvName.setText(rtOnDiskList.get(position).name)
 //        ivImage.setImageResource(rtOnDiskList.get(position).imageInt)
 
-        return rootView
+
+        return view
     }
 
     // 디스크에 있는 ringtone File (mp3) 의 위치(uri) 를 통해 AlbumArt 를 추출 !
@@ -123,5 +129,11 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
             }
         }
         return null
+    }
+
+    private class SpnViewHolder {
+        var tvName: TextView? = null
+        var ivArtSmall: ImageView? = null
+
     }
 }

@@ -56,10 +56,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.18a:
-// Removed preAlarmRow/label
-// 메모리 미친듯이 올라감. BitMap 추출하고 로딩하는동안 메모리에 쌓이는듯? 차라리 그냥 BMP 로컬에 추출->저장이 나을수도..
-// /SpinnerAdapter: onResourceReady: Glide loading success! trId: 01, Position: 2 <- 이거 너무 떠서 DetailsFrag 느림! 반드시 해결 필요!!!!!
+// v0.19a:
+// AlarmDetailsFrag: getView() => viewHolder 방식으로 변경
+// getView() 가 너무 자주 불리는 현상 (복잡한 Layout 안에 listview/spinner 등이 있을 때 발생) => match_parent 가능하게끔 레이아웃 바꿔줌 (details_frag_lower.xml)
+// 일단 Glide 빼준 상태.
+// check!! : 그럼에도 Details Frag <-> AlarmListFrag 왔다갔다 하면 메모리가 계속 올라감!~!!!
+
 
 
 

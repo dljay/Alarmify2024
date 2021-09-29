@@ -59,8 +59,11 @@ import java.util.Calendar
 // v0.19a:
 // AlarmDetailsFrag: getView() => viewHolder 방식으로 변경
 // getView() 가 너무 자주 불리는 현상 (복잡한 Layout 안에 listview/spinner 등이 있을 때 발생) => match_parent 가능하게끔 레이아웃 바꿔줌 (details_frag_lower.xml)
-// 일단 Glide 빼준 상태.
-// check!! : 그럼에도 Details Frag <-> AlarmListFrag 왔다갔다 하면 메모리가 계속 올라감!~!!!
+// 일단 Glide 두군데 다 빼준 상태.
+// check!! : 그럼에도 Details Frag <-> AlarmListFrag 왔다갔다 하면 메모리가 계속 올라감
+// <- 그러나. 원래 앱(AlarmDevelop)에서도 Details Frag 왔다갔다 했을때 50~60MB 로 메모리 올라가는 게 확인됨. (8 Foldable 에뮬레이터 기준)
+// <- 현재 내 앱은 DetailsFrag 왔다리갔다리 했을 때 대략 35~40MB 로 우려할만한 수준은 아닌것으로 파악됨. Bmp Conversion <-> Glide 만 잘 처리해주면 됨
+
 
 
 

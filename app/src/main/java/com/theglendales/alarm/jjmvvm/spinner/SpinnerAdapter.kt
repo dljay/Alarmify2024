@@ -97,8 +97,6 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
 //        tvName.setText(rtOnDiskList.get(position).name)
 //        ivImage.setImageResource(rtOnDiskList.get(position).imageInt)
-
-
         return view
     }
 

@@ -45,6 +45,8 @@ import com.theglendales.alarm.jjmvvm.JjViewModel
 import com.theglendales.alarm.jjmvvm.data.PlayInfoContainer
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
+import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
+import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -52,6 +54,9 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
@@ -79,6 +84,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
     //SharedPref 내가 추가-> 일단 사용 안함.
     //val mySharedPrefManager: MySharedPrefManager by globalInject()
+
     //SharedPref 내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -242,12 +248,13 @@ class AlarmsListActivity : AppCompatActivity() {
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
 // <--추가1)
-// 추가2) todo: 프로그램 시작과 동시에 ringtone/앨범쟈켓(png) 찾기, 확인
+// 추가2) 프로그램 시작과 동시에 디스크에 저장된 ringtone/앨범쟈켓(png) 찾아서 -> SpinnerAdapter.kt > albumArtBmpMap (hasMap) 에 등록해놓기.
 
 
 // <-- 추가2)
     } // onCreate() 여기까지.
 // 추가 -->
+
     fun jjSetCurrentFragment(receivedFragment: Fragment) =
         supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
 
@@ -287,6 +294,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
         super.onStop()
         this.subscriptions.dispose()
+
     }
 
     override fun onDestroy() {

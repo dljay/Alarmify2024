@@ -311,12 +311,12 @@ class AlarmDetailsFragment : Fragment() {
         val resultList = myDiskSearcher.rtAndArtSearcher()
         Log.d(TAG, "refreshSpinnerUi: result=$resultList")
         spinnerAdapter.updateList(resultList) // 이 라인을 밑에 withContext 윗줄에서 실행? or Livedata?  <- 일단 현재는 잘 됨.
-        setSpinnerAdapterOnMainThread()
-        //setIvArtImgOnMainThread(resultList[2].bitmap)
-        //UI 업데이트
+        notifySpinnerAdapterOnMainThread()
+
+
     }
-    private suspend fun setSpinnerAdapterOnMainThread() {
-        Log.d(TAG, "setSpinnerAdapterOnMainThread: called!!**")
+    private suspend fun notifySpinnerAdapterOnMainThread() {
+        Log.d(TAG, "notifySpinnerAdapterOnMainThread: called!!**")
         withContext(Main) {
             spinnerAdapter.notifyDataSetChanged()
         }
@@ -380,21 +380,21 @@ class AlarmDetailsFragment : Fragment() {
                     val prevSelectedRt: RtWithAlbumArt = SpinnerAdapter.rtOnDiskList[indexOfPrevSelectedRt]
 
                 // 2) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
-//                    context?.let {
-//                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.uri)).circleCrop()
-//                            .error(R.drawable.errordisplay)
-//                            .placeholder(R.drawable.placeholder).listener(object :
-//                                RequestListener<Drawable> {
-//                                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-//                                    Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
-//                                    return false
-//                                }
-//                                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-//                                    Log.d(TAG,"onResourceReady: Glide loading success! Title=${prevSelectedRt.rtTitle}, trId: ${prevSelectedRt.trIdStr}") // debug 결과 절대 순.차.적으로 진행되지는 않음!
-//                                    return false
-//                                }
-//                            }).into(ivRtArtBig)
-//                    }
+                    context?.let {
+                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.uri)).circleCrop()
+                            .error(R.drawable.errordisplay)
+                            .placeholder(R.drawable.placeholder).listener(object :
+                                RequestListener<Drawable> {
+                                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                                    Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
+                                    return false
+                                }
+                                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                                    Log.d(TAG,"onResourceReady: Glide loading success! Title=${prevSelectedRt.rtTitle}, trId: ${prevSelectedRt.trIdStr}") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                                    return false
+                                }
+                            }).into(ivRtArtBig)
+                    }
                 })
 
         //pre-alarm duration, if set to "none", remove the option
@@ -421,6 +421,7 @@ class AlarmDetailsFragment : Fragment() {
     }
 
     override fun onPause() {
+        Log.d(TAG, "onPause: called...")
         super.onPause()
         disposableDialog.dispose()
         backButtonSub.dispose()

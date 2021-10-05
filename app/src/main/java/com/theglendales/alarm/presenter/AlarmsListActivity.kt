@@ -19,9 +19,6 @@ import android.view.MenuItem
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.google.android.gms.common.util.SharedPreferencesUtils
 import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.NotificationSettings
 import com.theglendales.alarm.R
@@ -40,12 +37,6 @@ import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.theglendales.alarm.jjmvvm.JjMpViewModel
-import com.theglendales.alarm.jjmvvm.JjViewModel
-import com.theglendales.alarm.jjmvvm.data.PlayInfoContainer
-import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
-import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
@@ -54,21 +45,12 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.19a:
-// AlarmDetailsFrag: getView() => viewHolder 방식으로 변경
-// getView() 가 너무 자주 불리는 현상 (복잡한 Layout 안에 listview/spinner 등이 있을 때 발생) => match_parent 가능하게끔 레이아웃 바꿔줌 (details_frag_lower.xml)
-// 일단 Glide 두군데 다 빼준 상태.
-// check!! : 그럼에도 Details Frag <-> AlarmListFrag 왔다갔다 하면 메모리가 계속 올라감
-// <- 그러나. 원래 앱(AlarmDevelop)에서도 Details Frag 왔다갔다 했을때 50~60MB 로 메모리 올라가는 게 확인됨. (8 Foldable 에뮬레이터 기준)
-// <- 현재 내 앱은 DetailsFrag 왔다리갔다리 했을 때 대략 35~40MB 로 우려할만한 수준은 아닌것으로 파악됨. Bmp Conversion <-> Glide 만 잘 처리해주면 됨
-
+// v0.19b:
+// AlbumArt 디스크에 저장하는 방식으로 변경중. EXIF (JPEG 메타데이터) 사용하여 trId 로 ringtone 매칭?
 
 
 
@@ -82,10 +64,10 @@ private const val TAG="*AlarmsListActivity*"
 class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
-    //SharedPref 내가 추가-> 일단 사용 안함.
+    //내가 추가-->
     //val mySharedPrefManager: MySharedPrefManager by globalInject()
-
-    //SharedPref 내가 추가<-
+    private val myDiskSearcher: DiskSearcher by globalInject()
+    //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
     private val logger: Logger by globalLogger("AlarmsListActivity")
@@ -227,7 +209,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     checkPermissions(this, alarms.map { it.alarmtone })
                 }.apply { }
 
-// 추가1) -->
+// 추가1) Second Fragment 관련 -->
     // 2nd Frag 시작과 동시에 일단 SharedPref 파일 자체를 생성해줌. => 일단 사용 안함.
 //        val defaultPlayInfo = PlayInfoContainer(-10,-10,-10,StatusMp.IDLE)
 //        mySharedPrefManager.savePlayInfo(defaultPlayInfo)  // default 값은 -10, -10, -10, IDLE
@@ -247,8 +229,16 @@ class AlarmsListActivity : AppCompatActivity() {
             true
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
-// <--추가1)
-// 추가2) 프로그램 시작과 동시에 디스크에 저장된 ringtone/앨범쟈켓(png) 찾아서 -> SpinnerAdapter.kt > albumArtBmpMap (hasMap) 에 등록해놓기.
+// <--추가1) Second Fragment 관련
+
+// 추가2) --> A) 구매된 링톤 mp3 Disk 에 잘 있는지 확인 B) 디스크에 현 저장된 mp3 의 ringtone/앨범쟈켓(png) 잘 있는지 확인.
+
+
+    // B) 현재 저장된 rta(혹은 mp3) 의 앨범아트 확인.
+        // B-1) 일단 /.AlarmRingtones 폴더에 저장된 ringtone 을 RtWithAlbumArt Class 로 object 화 시킨 리스트 받음 -> todo: 코루틴 사용
+//        val rtOnDiskList = myDiskSearcher.rtOnDiskSearcher()
+//        // B-2) B-1에서 받은 리스트로 albumArt 확인.
+//        myDiskSearcher.artCheckOrCreate(rtOnDiskList)
 
 
 // <-- 추가2)

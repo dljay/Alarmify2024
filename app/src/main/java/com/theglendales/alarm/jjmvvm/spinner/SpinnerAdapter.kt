@@ -20,7 +20,6 @@ import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.GlideApp
-import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 
@@ -79,7 +78,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
         spinnerVH.tvName!!.text = rtOnDiskList[position].rtTitle // 제목
         val trackId= rtOnDiskList[position].trIdStr // 아쉽게도 스트링임.
-        val mp3FileUri = rtOnDiskList[position].uri
+        val mp3FileUri = rtOnDiskList[position].audioFileuri
 
         Log.d(TAG, "getView: rtTitle= ${rtOnDiskList[position].rtTitle}, trId= $trackId")
 

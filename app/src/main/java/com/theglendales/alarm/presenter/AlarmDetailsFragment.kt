@@ -173,10 +173,10 @@ class AlarmDetailsFragment : Fragment() {
                 val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
 
                 Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
-                        "uri = ${rtSelected.uri}")
+                        "uri = ${rtSelected.audioFileuri}")
 
                 // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! -->
-                val alert: String? = rtSelected.uri.toString()
+                val alert: String? = rtSelected.audioFileuri.toString()
 
 
                logger.debug { "Got ringtone: $alert" }
@@ -308,7 +308,7 @@ class AlarmDetailsFragment : Fragment() {
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
     private suspend fun refreshSpinnerUi() {
         Log.d(TAG, "refreshSpinnerUi: called")
-        val resultList = myDiskSearcher.rtAndArtSearcher()
+        val resultList = myDiskSearcher.rtOnDiskSearcher()
         Log.d(TAG, "refreshSpinnerUi: result=$resultList")
         spinnerAdapter.updateList(resultList) // 이 라인을 밑에 withContext 윗줄에서 실행? or Livedata?  <- 일단 현재는 잘 됨.
         notifySpinnerAdapterOnMainThread()
@@ -381,7 +381,7 @@ class AlarmDetailsFragment : Fragment() {
 
                 // 2) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
                     context?.let {
-                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.uri)).circleCrop()
+                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.audioFileuri)).circleCrop()
                             .error(R.drawable.errordisplay)
                             .placeholder(R.drawable.placeholder).listener(object :
                                 RequestListener<Drawable> {

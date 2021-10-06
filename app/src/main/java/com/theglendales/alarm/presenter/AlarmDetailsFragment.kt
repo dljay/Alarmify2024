@@ -174,10 +174,10 @@ class AlarmDetailsFragment : Fragment() {
                 val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
 
                 Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
-                        "uri = ${rtSelected.audioFileuri}")
+                        "uri = ${rtSelected.audioFileUri}")
 
                 // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! -->
-                val alert: String? = rtSelected.audioFileuri.toString()
+                val alert: String? = rtSelected.audioFileUri.toString()
 
 
                logger.debug { "Got ringtone: $alert" }
@@ -379,10 +379,12 @@ class AlarmDetailsFragment : Fragment() {
                     val indexOfPrevSelectedRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName }
                     spinner.setSelection(indexOfPrevSelectedRt)
                     val prevSelectedRt: RtWithAlbumArt = SpinnerAdapter.rtOnDiskList[indexOfPrevSelectedRt]
+                    val albumArtPath = myDiskSearcher.getArtFilePath(prevSelectedRt.trIdStr)
+
 
                 // 2) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
                     context?.let {
-                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.trIdStr, prevSelectedRt.audioFileuri)).circleCrop()
+                        GlideApp.with(it).load(albumArtPath).circleCrop()
                             .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                             .placeholder(R.drawable.placeholder).listener(object :
                                 RequestListener<Drawable> {

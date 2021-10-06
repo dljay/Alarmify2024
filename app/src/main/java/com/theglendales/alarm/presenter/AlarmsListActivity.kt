@@ -49,28 +49,13 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.19c:
-// AlbumArt 우선 SpinnerAdapter.kt 의 albumArtMap 맵!!에 등록-> 메모리에 BMP 띄워놓는 방식(최소한 중복 BMP decodeByte Array 는 막았음)
-// 추후 albumArt 크기르 10kb 이하로 한다는 가정하에 100개의 ringtone 이라도 괜찮지 않을까 조심스레 예측. 계속 관찰 필요.
-// 가장 이상적인 것은 /AlbumArt 란 폴더를 만들고 여기에 앨범아트를 저장해놓는것-> trkId 매칭, 파일이름으로 매칭하려니 조금 어설프고..
-//-----------------------
-//(BEFORE) 10 회 반복 테스트
-//1차 68.1 (한개만 단독 왔다리갔다리)
-//2차 99.3MB (교차) - 새로운 AlarmDetailsFrag.kt 를 만드니깐. 메모리 두배로 먹음.
-//
-//BMP decode 안했을때. (Glide 는 null 값 받음)
-//교차-> 35.4MB!!!
-//-----------------------
-//(AFTER) 10 회 반복 테스트
-//
-//1차 37.2 (한개만 단독 왔다리갔다리)
-//2차 41MB (교차) - 새로운 AlarmDetailsFrag.kt 를 만드니깐. 메모리 두배로 먹음.
-
-// Glide 가 Caching 해 놓는것도 Device File Explorer > Cache>Image_manager 에서 찾음. 다운받아 .jpeg 로 변환해보니 사진 잘 보임.
-// 그럼에도 MAP 이 존재하는 한, 계속 Bitmap 을 메모리에 띄워놓을것임.
-
-
-
+// v0.19d:
+// 앨범Art 하드에 저장해놓고 찾는 방식.
+// 앨범 Art 는 /.AlbumArt 안에 trId.xxx 방식으로 저장되어 있음 (ex. 01.art)
+// a) 앱 시작(AlarmListActivity 시작) - DiskSearcher.kt>readAlbumArtOnDisk() 실행 ->
+// b) 디스크에 있는 앨범 아트를 확인-> onDiskArtMap[trkId] 맵에 저장해놓음! <trkIdStr, artPathString>
+// c) 추후 AlarmDetailsFrag.kt 가 열렸을 때 - refreshSpinnerUi() -> DiskSearcher.kt>rtOnDiskSearcher() 가 실행 ->
+// d) SpinnerAdapter.kt> updateList() 에 RtWithAlbumArt 클래스 오브젝트로 이루어진 리스트를 만들어서 AlbumArtPath 까지 전달.
 
 
 
@@ -252,12 +237,8 @@ class AlarmsListActivity : AppCompatActivity() {
 // 추가2) --> A) 구매된 링톤 mp3 Disk 에 잘 있는지 확인 B) 디스크에 현 저장된 mp3 의 ringtone/앨범쟈켓(png) 잘 있는지 확인.
 
 
-    // B) 현재 저장된 rta(혹은 mp3) 의 앨범아트 확인.
-        // B-1) 일단 /.AlarmRingtones 폴더에 저장된 ringtone 을 RtWithAlbumArt Class 로 object 화 시킨 리스트 받음 -> todo: 코루틴 사용
-//        val rtOnDiskList = myDiskSearcher.rtOnDiskSearcher()
-//        // B-2) B-1에서 받은 리스트로 albumArt 확인.
-//        myDiskSearcher.artCheckOrCreate(rtOnDiskList)
-
+    // B) 현재 /.AlbumArt 에 있는 albumArt 그래픽 파일들을 우선 READ->
+        myDiskSearcher.readAlbumArtOnDisk() // -> 완료되면 DiskSearcher.kt>  onDiskArtMap <trkId, Path> 가 완성됨. 완성되기 전에 DetailsFrag 에 들어갔을때는 myDiskSearcher.rtOnDiskSearch() 에서 보완!
 
 // <-- 추가2)
     } // onCreate() 여기까지.

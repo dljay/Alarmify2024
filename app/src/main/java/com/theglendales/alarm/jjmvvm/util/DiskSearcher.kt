@@ -15,6 +15,7 @@ class DiskSearcher(val context: Context)
 {
     val emptyList = mutableListOf<RtWithAlbumArt>()
     val onDiskRingtoneList = mutableListOf<RtWithAlbumArt>()
+    val onDiskArtMap: HashMap<String?, String?> = HashMap() // <trkId, 앨범아트 경로>
 
     val folder = context.getExternalFilesDir(null)!!.absolutePath
     val alarmRtDir = File(folder, RT_FOLDER)
@@ -68,27 +69,28 @@ class DiskSearcher(val context: Context)
                         Log.d(TAG, "rtAndArtSearcher: filesize prob 0? Filesize=${f.length()}")
                     }
                     f.delete()
-
-
                 }
                 //3) Album MetaData (제목, TrId) 찾기. 앨범 아트는 AlarDetailsFrag 에서 찾아줌. 4) 번에서 이걸 RingtoneClass 로 만들어줌.
-
-                    // 3-b) 제목
+                    // 3-a) 제목
                     val rtTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
 
-                    //3-c) TrId 찾기
+                    //3-b) TrId 찾기
                     val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
 
-
-                    // 3-d) mp3 File uri(경로) - **  ** -> 이걸 추후에 앨범아트 찾는 용도로 사용.
+                    //3-c) mp3 File uri(경로)
                         // a)File Path 를 uri 로 변환
                     val fileUri = Uri.parse(f.path.toString())
-                        // b)RtWithAlbumArt 로 만들어서 list 에 저장.
+                    //3-d) artFile Path(String) ** 아래 readArtOnDisk() 가 앱 시작과 동시에 실행됨. 다 되었다는 가정하에 여기서 찾지만. Path 가 아직 없는경우에 보완책
+                    val artFilePath = onDiskArtMap[trIDString]
+                    // 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우. (User 가 지웠거나 기타 등등..)
+                    if(artFilePath.isNullOrEmpty()) {
+                        // todo: 새로 BitMap 변환하여 artFile 생성
+                    }
 
                 // 4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
-                val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFileuri = fileUri, fileName = f.name) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
+                val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFileUri = fileUri, fileName = f.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
                 onDiskRingtoneList.add(onDiskRingtone)
-                Log.d(TAG, "rtSearcher: [ADDING TO THE LIST] \n *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path} // uri=$fileUri")
+                Log.d(TAG, "rtSearcher: [ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path} //\n artFilePath=$artFilePath,  uri=$fileUri")
             }// for loop 끝.
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
@@ -96,7 +98,7 @@ class DiskSearcher(val context: Context)
     }
 
     // 위의 rtOnDiskSearcher() 에서 받음 리스트로 a) album art 가 있는지 체크 -> 있는 놈 경로는 xx Uri List 에 저장 b) albumArt 가 없으면 -> 생성!-> 디스크에 저장.
-    fun artCheckOrCreate(rtWAlbumArtList: MutableList<RtWithAlbumArt>) {
+    fun readAlbumArtOnDisk() {
     // A) Disk 에 있는 ringTone 의 Album Art 가 디스크에 저장되어 있는지 체크 -> 있으면 xx Uri List 에 저장 (추후 Glide 로 그래픽 로딩 예정)
         // A-1) /.AlbumArt 폴더의 리스트 확인
 
@@ -117,22 +119,13 @@ class DiskSearcher(val context: Context)
             for(artFile in artDir.listFiles())
             {
                 val fullPathOfArtFile: String = folder+ ART_FOLDER+ File.separator + artFile.name
-                //1) !!! Check which RT this ART belongs to !!!!!
-                //2) update info to rtWAlbumArtList.object
+                //val artUri = Uri.parse(artFile.path.toString())
+                val trkId = artFile.nameWithoutExtension // 모든 앨범아트는 RT 의 TrkId 값.art 로 설정해야함! 파일명의 앞글자만 딴것. ex) 01
 
-                // 일단 OnDiskArtList 생성 -> 아래 A-2 에서 .filter 를 통해 해당 xx.art(JPEG 파일여야만 함!) 의 MetaData 확인..?
-
-
-
-
-                // 3-d) mp3 File uri(경로) - **  ** -> 이걸 추후에 앨범아트 찾는 용도로 사용.
-                // a)File Path 를 uri 로 변환
-                val fileUri = Uri.parse(artFile.path.toString())
-                // b)RtWithAlbumArt 로 만들어서 list 에 저장.
-
-
+                onDiskArtMap[trkId] = artFile.path // MAP 에 저장! <trkId, Uri>
+                Log.d(TAG, "artOnDiskSearch: added artFilePath(${artFile.path}) to onDiskArtMap=> $onDiskArtMap")
             }// for loop 끝.
-            //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
+
         }
         // A-2) onDiskRingToneList 와 onDiskArtList 를 대조
 //        for(i in 0 until rtWAlbumArtList.size) {
@@ -142,5 +135,8 @@ class DiskSearcher(val context: Context)
 
         // todo: 쓸데없는 파일 있으면 삭제..
     }
+
+    // AlarmDetailsFragment> Line 385 에서 호출 (Details Frag 열었을 때 동그란 Frame 안에 있는 Album Art 사진)
+    fun getArtFilePath(trkId: String?): String? = onDiskArtMap[trkId]
 
 }

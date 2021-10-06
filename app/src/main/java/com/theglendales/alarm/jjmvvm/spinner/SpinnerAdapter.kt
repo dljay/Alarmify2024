@@ -29,7 +29,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
     companion object{
         val rtOnDiskList= mutableListOf<RtWithAlbumArt>()
-        var albumArtMap: HashMap<String?, Bitmap?> = HashMap() // <trkId, BMP?>
+        //var albumArtMap: HashMap<String?, Bitmap?> = HashMap() // <trkId, BMP?>
 
     }
     private val myDiskSearcher: DiskSearcher by globalInject()
@@ -81,7 +81,9 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
         spinnerVH.tvName!!.text = rtOnDiskList[position].rtTitle // 제목
         val trackId= rtOnDiskList[position].trIdStr // 아쉽게도 스트링임.
-        val mp3FileUri = rtOnDiskList[position].audioFileuri
+        val mp3FileUri = rtOnDiskList[position].audioFileUri
+        val artFilePathStr = rtOnDiskList[position].artFilePathStr
+
 
         Log.d(TAG, "getView: rtTitle= ${rtOnDiskList[position].rtTitle}, trId= $trackId")
 
@@ -89,7 +91,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
         //(이미 변환 완료된 bmp 가 MAP 에 등록되어 있다면 -> Glide 로 rt 앨범아트 보여주기
 
-        GlideApp.with(context).load(albumArtLoader(trkId= trackId, fileUri = mp3FileUri)).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).centerCrop()
+        GlideApp.with(context).load(artFilePathStr).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).centerCrop()
             .error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -113,45 +115,45 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
 
     // 디스크에 있는 ringtone File (mp3) 의 위치(uri) 를 통해 AlbumArt 를 추출 !
-    // todo: 여기서 다루는 BitMap 들이 제법 memory 를 차지할 수 있을텐데..TEST 필요..? details Frag 나갈때 Glide 제거?
-    fun albumArtLoader(trkId: String?, fileUri: Uri): Bitmap? {
 
-        // 1) 이미 albumArtMap 에 Bitmap 이 등록이 되어있다면,
-        if(albumArtMap[trkId]!=null ) {
-            Log.d(TAG, "albumArtLoader: 이미 albumArtMap 에 등록되어있음. albumArtMap[trkId]= ${albumArtMap[trkId]}")
-            return albumArtMap[trkId] //Map 에 등록된 BitMap? 을 리턴하고 여기서 method 끝!
-        }
-
-        // 2) albumArtMap 에 BitMal 이 등록이 안되어있다면- mp3 에서 추출해서 Map 에 저장
-
-            val mmr =  MediaMetadataRetriever()
-
-            try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
-                mmr.setDataSource(context,fileUri)
-            }catch (er:Exception) {
-                Log.d(TAG, "error mmr.setDataSource")
-            }
-            // Album Art
-            val artBytes: ByteArray? = mmr.embeddedPicture // returns null if no such graphic is found.
-            var albumArtBMP: Bitmap? = null
-
-            if(artBytes!=null)
-            {
-                try {
-                    // Sol1) AlarmsListActivity 가 시작되었을때 진작에 여기 bitMap 들을 로딩->메모리에 띄워놓기.
-                    // Sol2) 만약 [trkId,Boolean] map 에서 이미 해당 trkId = true 로 등록되어있으면 -> decode 하지말고 그냥 여기서 멈춰!! => Memory 에 허튼 BMP decode 된 놈들 떠다니는걸 막기 위해.
-                    albumArtBMP = BitmapFactory.decodeByteArray(artBytes,0, artBytes.size)
-                    albumArtMap[trkId] = albumArtBMP
-                    Log.d(TAG, "albumArtLoader: successfully added bitmap to albumArtMap. 1)albumArtMap= ${albumArtMap}, \n 2)albumArt=$albumArtBMP")
-                    return albumArtMap[trkId]
-
-
-                }catch (e: Exception) {
-                    Log.d(TAG, "albumArtLoader: error trying to adding bitmap to albumArtMap.. Error=$e")
-                }
-            }
-            return null
-    }
+//    fun albumArtLoader(trkId: String?, fileUri: Uri): Bitmap? {
+//
+//        // 1) 이미 albumArtMap 에 Bitmap 이 등록이 되어있다면,
+//        if(albumArtMap[trkId]!=null ) {
+//            Log.d(TAG, "albumArtLoader: 이미 albumArtMap 에 등록되어있음. albumArtMap[trkId]= ${albumArtMap[trkId]}")
+//            return albumArtMap[trkId] //Map 에 등록된 BitMap? 을 리턴하고 여기서 method 끝!
+//        }
+//
+//        // 2) albumArtMap 에 BitMal 이 등록이 안되어있다면- mp3 에서 추출해서 Map 에 저장
+//
+//            val mmr =  MediaMetadataRetriever()
+//
+//            try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
+//                mmr.setDataSource(context,fileUri)
+//            }catch (er:Exception) {
+//                Log.d(TAG, "error mmr.setDataSource")
+//            }
+//            // Album Art
+//            val artBytes: ByteArray? = mmr.embeddedPicture // returns null if no such graphic is found.
+//            var albumArtBMP: Bitmap? = null
+//
+//            if(artBytes!=null)
+//            {
+//                try {
+//                    // Sol1) AlarmsListActivity 가 시작되었을때 진작에 여기 bitMap 들을 로딩->메모리에 띄워놓기.
+//                    // Sol2) 만약 [trkId,Boolean] map 에서 이미 해당 trkId = true 로 등록되어있으면 -> decode 하지말고 그냥 여기서 멈춰!! => Memory 에 허튼 BMP decode 된 놈들 떠다니는걸 막기 위해.
+//                    albumArtBMP = BitmapFactory.decodeByteArray(artBytes,0, artBytes.size)
+//                    albumArtMap[trkId] = albumArtBMP
+//                    Log.d(TAG, "albumArtLoader: successfully added bitmap to albumArtMap. 1)albumArtMap= ${albumArtMap}, \n 2)albumArt=$albumArtBMP")
+//                    return albumArtMap[trkId]
+//
+//
+//                }catch (e: Exception) {
+//                    Log.d(TAG, "albumArtLoader: error trying to adding bitmap to albumArtMap.. Error=$e")
+//                }
+//            }
+//            return null
+//    }
 
     private class SpnViewHolder {
         var tvName: TextView? = null

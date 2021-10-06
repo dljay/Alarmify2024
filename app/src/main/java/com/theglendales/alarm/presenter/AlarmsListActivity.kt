@@ -49,8 +49,26 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.19b:
-// AlbumArt 디스크에 저장하는 방식으로 변경중. EXIF (JPEG 메타데이터) 사용하여 trId 로 ringtone 매칭?
+// v0.19c:
+// AlbumArt 우선 SpinnerAdapter.kt 의 albumArtMap 맵!!에 등록-> 메모리에 BMP 띄워놓는 방식(최소한 중복 BMP decodeByte Array 는 막았음)
+// 추후 albumArt 크기르 10kb 이하로 한다는 가정하에 100개의 ringtone 이라도 괜찮지 않을까 조심스레 예측. 계속 관찰 필요.
+// 가장 이상적인 것은 /AlbumArt 란 폴더를 만들고 여기에 앨범아트를 저장해놓는것-> trkId 매칭, 파일이름으로 매칭하려니 조금 어설프고..
+//-----------------------
+//(BEFORE) 10 회 반복 테스트
+//1차 68.1 (한개만 단독 왔다리갔다리)
+//2차 99.3MB (교차) - 새로운 AlarmDetailsFrag.kt 를 만드니깐. 메모리 두배로 먹음.
+//
+//BMP decode 안했을때. (Glide 는 null 값 받음)
+//교차-> 35.4MB!!!
+//-----------------------
+//(AFTER) 10 회 반복 테스트
+//
+//1차 37.2 (한개만 단독 왔다리갔다리)
+//2차 41MB (교차) - 새로운 AlarmDetailsFrag.kt 를 만드니깐. 메모리 두배로 먹음.
+
+// Glide 가 Caching 해 놓는것도 Device File Explorer > Cache>Image_manager 에서 찾음. 다운받아 .jpeg 로 변환해보니 사진 잘 보임.
+// 그럼에도 MAP 이 존재하는 한, 계속 Bitmap 을 메모리에 띄워놓을것임.
+
 
 
 

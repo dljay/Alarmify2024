@@ -117,6 +117,8 @@ class DiskSearcher(val context: Context)
             for(artFile in artDir.listFiles())
             {
                 val fullPathOfArtFile: String = folder+ ART_FOLDER+ File.separator + artFile.name
+                //1) !!! Check which RT this ART belongs to !!!!!
+                //2) update info to rtWAlbumArtList.object
 
                 // 일단 OnDiskArtList 생성 -> 아래 A-2 에서 .filter 를 통해 해당 xx.art(JPEG 파일여야만 함!) 의 MetaData 확인..?
 
@@ -133,9 +135,9 @@ class DiskSearcher(val context: Context)
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
         // A-2) onDiskRingToneList 와 onDiskArtList 를 대조
-        for(i in 0 until rtWAlbumArtList.size) {
-            //rtWAlbumArtList[i].artFilePathStr =
-        }
+//        for(i in 0 until rtWAlbumArtList.size) {
+//            rtWAlbumArtList[i].artFilePathStr =
+//        }
         //rtWAlbumArtList.filter { rtObj -> rtObj.rtTitle  }
 
         // todo: 쓸데없는 파일 있으면 삭제..

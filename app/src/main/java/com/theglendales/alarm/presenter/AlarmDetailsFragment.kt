@@ -37,6 +37,7 @@ import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
@@ -381,8 +382,8 @@ class AlarmDetailsFragment : Fragment() {
 
                 // 2) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
                     context?.let {
-                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.audioFileuri)).circleCrop()
-                            .error(R.drawable.errordisplay)
+                        GlideApp.with(it).load(spinnerAdapter.albumArtLoader(prevSelectedRt.trIdStr, prevSelectedRt.audioFileuri)).circleCrop()
+                            .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                             .placeholder(R.drawable.placeholder).listener(object :
                                 RequestListener<Drawable> {
                                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
@@ -427,6 +428,18 @@ class AlarmDetailsFragment : Fragment() {
         backButtonSub.dispose()
         disposables.dispose()
         // 나갈 때  SpinnerAdapter 에 있는 Glide 없애기? 메모리 이슈? //
+    }
+
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy: called!!")
+        super.onDestroy()
+//        try {
+//            Runtime.getRuntime().gc() // Garbage collection . But 모든 variable 이 이미 null 값이 되어있어야 효과있음!!!
+//
+//        }catch (e: java.lang.Exception) {
+//            Log.d(TAG, "onDestroy: unable to run .gc() e=$e")
+//        }
+
     }
 
     private fun saveAlarm() {

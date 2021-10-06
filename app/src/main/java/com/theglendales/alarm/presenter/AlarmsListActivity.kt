@@ -49,13 +49,18 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.19d:
-// 앨범Art 하드에 저장해놓고 찾는 방식.
-// 앨범 Art 는 /.AlbumArt 안에 trId.xxx 방식으로 저장되어 있음 (ex. 01.art)
-// a) 앱 시작(AlarmListActivity 시작) - DiskSearcher.kt>readAlbumArtOnDisk() 실행 ->
-// b) 디스크에 있는 앨범 아트를 확인-> onDiskArtMap[trkId] 맵에 저장해놓음! <trkIdStr, artPathString>
-// c) 추후 AlarmDetailsFrag.kt 가 열렸을 때 - refreshSpinnerUi() -> DiskSearcher.kt>rtOnDiskSearcher() 가 실행 ->
-// d) SpinnerAdapter.kt> updateList() 에 RtWithAlbumArt 클래스 오브젝트로 이루어진 리스트를 만들어서 AlbumArtPath 까지 전달.
+// v0.19e:
+// 앨범Art 하드에 저장해놓고 찾는 방식. (없을때 BMP-> xx.art 로 저장까지 성공.)
+
+//albumArt 가 표시 안되는 문제 (5번에 1~2번 정도는 됨.) 분명 코딩 진행 순서에 따라서 무엇이 먼저 되느냐 문제인듯..
+//
+//- 안될때는 기설정된 알람톤 파일이름=p2.rta 가 나옴
+//- AlarmDetailsFragment.kt - Line381~382 에서 arrayOutofIndex (리스트에 없는 놈 요청했을때 나는 에러) 크래쉬나거나.
+//- getView 해서 분명 01 id albumart 경로가 업뎃된 리스트를 전달했으나 Spinner 에 안 뜸.
+//- 01.art 는 계속 잘 저장됨. 리스트 업데이트 속도가 관건인듯..
+//- Spinner onItemSelected 또 왜 지랄..
+//- Performing modification because of Ringtone picker
+
 
 
 

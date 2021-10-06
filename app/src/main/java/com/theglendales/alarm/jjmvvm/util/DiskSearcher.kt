@@ -1,10 +1,15 @@
 package com.theglendales.alarm.jjmvvm.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
 import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 
 private const val TAG="DiskSearcher"
 private const val RT_FOLDER="/.AlarmRingTones"
@@ -66,7 +71,7 @@ class DiskSearcher(val context: Context)
                 if(f.name.contains('-')||!f.name.contains('p')||f.length()==0L) {
                     Log.d(TAG, "!!! rtSearcher: ${f.name}")
                     if(f.length()==0L) {
-                        Log.d(TAG, "rtAndArtSearcher: filesize prob 0? Filesize=${f.length()}")
+                        Log.d(TAG, "rtAndArtSearcher: file size prob 0? Filesize=${f.length()}")
                     }
                     f.delete()
                 }
@@ -82,15 +87,17 @@ class DiskSearcher(val context: Context)
                     val fileUri = Uri.parse(f.path.toString())
                     //3-d) artFile Path(String) ** 아래 readArtOnDisk() 가 앱 시작과 동시에 실행됨. 다 되었다는 가정하에 여기서 찾지만. Path 가 아직 없는경우에 보완책
                     val artFilePath = onDiskArtMap[trIDString]
-                    // 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우. (User 가 지웠거나 기타 등등..)
-                    if(artFilePath.isNullOrEmpty()) {
-                        // todo: 새로 BitMap 변환하여 artFile 생성
-                    }
+
 
                 // 4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
                 val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFileUri = fileUri, fileName = f.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
                 onDiskRingtoneList.add(onDiskRingtone)
-                Log.d(TAG, "rtSearcher: [ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path} //\n artFilePath=$artFilePath,  uri=$fileUri")
+                Log.d(TAG, "\n rtSearcher: [ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path} //\n artFilePath=$artFilePath,  uri=$fileUri")
+
+                // 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우. (User 가 지웠거나 기타 등등..)
+                if(artFilePath.isNullOrEmpty()) {
+                    extractArtFromSingleRta(trIDString, fileUri)
+                }
             }// for loop 끝.
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
@@ -104,14 +111,16 @@ class DiskSearcher(val context: Context)
 
         // A-1-a)만약 /.AlbumArt 폴더가 없을때는 폴더를 생성
         if(!artDir.exists()) {
-            Log.d(TAG, "artCheckOrCreate: Hey! Folder $artDir doesn't exist. We'll create One!@~")
+            Log.d(TAG, "readAlbumArtOnDisk: Hey! Folder $artDir doesn't exist. We'll create One!@~")
             artDir.mkdir()
         }
-        // A-1-b)폴더는 있는데 그 안에 아무 파일이 없을때..
+
+        // A-1-b)폴더는 있는데 그 안에 아무 파일이 없을때..(** 앱 신규 설치시**)
         if(artDir.listFiles().isNullOrEmpty()) {
-            Log.d(TAG, "artCheckOrCreate: NO Album Art graphic FILES INSIDE THE FOLDER!")
-            // todo: 오디오 파일에서 추출하여 .art 파일 생성
+            Log.d(TAG, "readAlbumArtOnDisk: NO Album Art graphic FILES INSIDE THE FOLDER!. Probably the first time opening this app?")
+            rtOnDiskSearcher()
         }
+        // todo: 쓸데없는 파일 있으면 삭제..
         // A-1-c)폴더에 파일이 있을때..
         if(artDir.listFiles() != null)
         {
@@ -123,20 +132,88 @@ class DiskSearcher(val context: Context)
                 val trkId = artFile.nameWithoutExtension // 모든 앨범아트는 RT 의 TrkId 값.art 로 설정해야함! 파일명의 앞글자만 딴것. ex) 01
 
                 onDiskArtMap[trkId] = artFile.path // MAP 에 저장! <trkId, Uri>
-                Log.d(TAG, "artOnDiskSearch: added artFilePath(${artFile.path}) to onDiskArtMap=> $onDiskArtMap")
+                Log.d(TAG, "readAlbumArtOnDisk: added artFilePath(${artFile.path}) to onDiskArtMap=> $onDiskArtMap")
             }// for loop 끝.
 
         }
-        // A-2) onDiskRingToneList 와 onDiskArtList 를 대조
-//        for(i in 0 until rtWAlbumArtList.size) {
-//            rtWAlbumArtList[i].artFilePathStr =
-//        }
-        //rtWAlbumArtList.filter { rtObj -> rtObj.rtTitle  }
 
-        // todo: 쓸데없는 파일 있으면 삭제..
+
     }
 
-    // AlarmDetailsFragment> Line 385 에서 호출 (Details Frag 열었을 때 동그란 Frame 안에 있는 Album Art 사진)
+    // AlarmDetailsFragment> Line 385 에서 호출 (Details Frag 열었을 때 동그란 Frame 안에 있는 Album Art 사진에 현재 RT 의 경로를 전달)
     fun getArtFilePath(trkId: String?): String? = onDiskArtMap[trkId]
 
+    // 모든 링톤 파일(rta)은 albumArt 를 MetaData 로 갖고 있어야 하는데 어떤 이유에서든(User 삭제 등) 없을때
+    private fun extractArtFromSingleRta(trkId: String?, rtaUri: Uri) {
+        Log.d(TAG, "extractArtFromSingleRta: called for trkId=$trkId, rtaUri=$rtaUri")
+        val mmr =  MediaMetadataRetriever()
+
+        try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
+            mmr.setDataSource(context,rtaUri)
+        }catch (er:Exception) {
+            Log.d(TAG, "error mmr.setDataSource")
+        }
+        // Album Art
+        val artBytes: ByteArray? = mmr.embeddedPicture // returns null if no such graphic is found.
+        var albumArtBMP: Bitmap? = null
+
+        if(artBytes!=null) // embed 된 image 를 추출 가능하면=>
+        {
+            try {
+                // 1)ByteArryay 를 BitMap 으로 변환
+                albumArtBMP = BitmapFactory.decodeByteArray(artBytes,0, artBytes.size)
+                // 2) Disk 에 Save. 파일명은 trId.art ****
+                saveBmpToJpgOnDisk(trkId, albumArtBMP)
+                Log.d(TAG, "extractArtFromSingleRta: try done..")
+
+
+            }catch (e: Exception) {
+                Log.d(TAG, "extractArtFromSingleRta: error trying to add bitmap to albumArtMap.. Error=$e")
+            }
+        }
+    }
+
+    //Save to Disk
+    private fun saveBmpToJpgOnDisk(trkId: String?, bitmap: Bitmap?) {
+        if(trkId.isNullOrEmpty() || bitmap==null) {
+            Log.d(TAG, "saveBmpToJpgOnDisk: trkId & bitmap are EMPTY! NULL!! ZILCH")
+            return
+        }
+
+
+        // Initialize a new file instance to save bitmap object
+        val dir = artDir
+        if(!dir.exists()) {
+            dir.mkdirs()
+        }
+        val savedToDiskFile = File(dir,"${trkId}.art") // JPG 파일 포맷인데 우리는 그냥 .art 로 임의로 사용 (모바일에서 자동 검색되서 뜨는것 막는 용도도 있음..)
+
+        try{
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(savedToDiskFile)
+            bitmap?.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            stream.flush()
+            stream.close()
+            // 이제는 파일 추출했으니
+            onDiskArtMap[trkId] = savedToDiskFile.path // a) onDiskArtMap 에 artPath 를 기록
+            // b)onDiskRtList 에서 RtWithAlbumArt object 를 찾아서 albumArtPath 를 정리해줌 -> 그래야 Spinner 에 뜨지!!
+            val index: Int = onDiskRingtoneList.indexOfFirst { rt -> rt.trIdStr == trkId } // 동일한 rt.trId 를 갖는 놈의 인덱스를 onDiskRtList 에서 찾기
+            onDiskRingtoneList[index].artFilePathStr = savedToDiskFile.path
+
+
+            Log.d(TAG, "saveBmpToJpgOnDisk: Saved to disk. File Name= ${savedToDiskFile.name}, path=${savedToDiskFile.path}")
+        }catch (e: IOException){
+            Log.d(TAG, "saveBmpToJpgOnDisk: unable to save to disk because -> error=$e")
+        }
+
+//        // Return the saved bitmap uri
+//        return Uri.parse(file.absolutePath)
+    }
+
+//    /**
+//     * 프로그램 최초 설치시 아래 extractArtFromAllRta()
+//     */
+//    private fun extractAllArtsFromAllRta() {
+//
+//    }
 }

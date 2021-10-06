@@ -35,13 +35,14 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
     private val myDiskSearcher: DiskSearcher by globalInject()
 
     fun updateList(rtOnDiskListReceived: MutableList<RtWithAlbumArt>) {
-        //Log.d(TAG, "updateList: called. rtOnDiskListReceived=$rtOnDiskListReceived")
+        Log.d(TAG, "updateList: called. rtOnDiskListReceived=$rtOnDiskListReceived")
         rtOnDiskList.clear()
         for(i in 0 until rtOnDiskListReceived.size) {
             rtOnDiskList.add(rtOnDiskListReceived[i])
 
         }
-        //Log.d(TAG, "updateList: done..!! rtOnDiskList=$rtOnDiskList")
+
+        Log.d(TAG, "updateList: done..!! rtOnDiskList=$rtOnDiskList")
         
     }
 
@@ -85,7 +86,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
         val artFilePathStr = rtOnDiskList[position].artFilePathStr
 
 
-        Log.d(TAG, "getView: rtTitle= ${rtOnDiskList[position].rtTitle}, trId= $trackId")
+        Log.d(TAG, "getView: position=$position, rtTitle= ${rtOnDiskList[position].rtTitle}, trId= $trackId")
 
 
 

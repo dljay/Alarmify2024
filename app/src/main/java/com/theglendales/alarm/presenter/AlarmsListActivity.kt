@@ -49,10 +49,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.19e:
+// v0.19f:
 // 앨범Art 하드에 저장해놓고 찾는 방식. (없을때 BMP-> xx.art 로 저장까지 성공.)
-// AlarmDetailsFrag 시작 -> onResume() 에서 "기존에 설정되었던 rt 정보를 받은 후" -> refreshSpinner -> rtSearch(디스크에서 rt 찾고, art 없으면 생성 등) -> Spinner & Circle UI 업데이트!
-// 일단은 잘 됨.
+
+// AlarmDetailsFrag 시작 햇을 때 initSpinner() 해주는것이 현재 '기존 설정되었던 rt 정보를 받은 것' 에 의존.. bool 값으로 조졌는데. 더 좋은 방법 찾아볼것.
+
 
 
 

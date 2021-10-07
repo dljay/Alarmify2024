@@ -150,7 +150,7 @@ class AlarmDetailsFragment : Fragment() {
 //******************* Spinner 설정 ------------>
         spinner.adapter = spinnerAdapter
         spinner.isSelected = false // 이것과
-        spinner.setSelection(0,true) // 요것을 통해서 frag 열리자마자 자동으로 ItemSelect 하는것 막음.
+        spinner.setSelection(0,true) // 요것을 통해서 frag 열리자마자 자동으로 ItemSelect 하는것 막음. <== 트릭은 아래 spinner 에 selectedListener 를 등록하기 전에 미리 선택! -> 무반응!
 
 //        CoroutineScope(IO).launch {
 //            refreshSpinnerUi()
@@ -376,7 +376,7 @@ class AlarmDetailsFragment : Fragment() {
                 }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: 설정된 알람톤 파일이름=$selectedRtFileName")
-                    if(isRtListReady) { // 이미 리스트가 업뎃되었다면 DetailsFrag 최초 시행은 아닌 경우 -> Circle albumArt 사진만 업데이트!
+                    if(isRtListReady) { // 이미 리스트가 업뎃되었다면 -> DetailsFrag 최초 시행은 아닌 경우 -> Circle albumArt 사진만 업데이트!
                         updateCircleAlbumArt(selectedRtFileName.toString())
                     } else {
                         initSpinner(selectedRtFileName.toString())

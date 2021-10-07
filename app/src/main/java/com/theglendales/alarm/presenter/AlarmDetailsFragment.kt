@@ -246,8 +246,7 @@ class AlarmDetailsFragment : Fragment() {
                         disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager)
                                 .subscribe(pickerConsumer)
                     }
-                }
-                .addToDisposables()
+                }.addToDisposables()
 
         //pre-alarm
 //        mPreAlarmRow.setOnClickListener {
@@ -261,28 +260,6 @@ class AlarmDetailsFragment : Fragment() {
                         modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
                     }
         }
-// Alarm 링톤 리스트 쭈~욱 뜨는 곳. -> 여기서 뭔가를 선택하면-> startActivityForResult 이므로-> 아래 Line 222 onActivityResult 로 감.
-        /*mRingtoneRow.setOnClickListener {
-            editor.firstOrError().subscribe { editor ->
-                try {
-                    //Log.d(TAG, "onCreateView: jj- mRingtoneRow.setOnClickListener + Running my DISK Searcher!!! ")
-
-                    //To show a ringtone picker to the user, use the "ACTION_RINGTONE_PICKER" intent to launch the picker.
-                    *//*startActivityForResult(Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                        putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, editor.alarmtone.ringtoneManagerString()) // hmm. not sure what this does..
-
-                        putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
-                        putExtra(RingtoneManager.EXTRA_RINGTONE_DEFAULT_URI, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
-
-                        putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
-                        putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-                    }, 42)*//*
-                } catch (e: Exception) {
-                    Toast.makeText(context, requireContext().getString(R.string.details_no_ringtone_picker), Toast.LENGTH_LONG)
-                            .show()
-                }
-            }
-        }*/
 
         class TextWatcherIR : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -390,26 +367,20 @@ class AlarmDetailsFragment : Fragment() {
 //                    }
                 })
 
-        disposables.add(editor
-                .distinctUntilChanged()
-                .observeOn(Schedulers.computation())
-                .map { editor ->
+        disposables.add(editor.distinctUntilChanged().observeOn(Schedulers.computation()).map { editor ->
                     when (editor.alarmtone) {
                         is Alarmtone.Silent -> {requireContext().getText(R.string.silent_alarm_summary)}
                         is Alarmtone.Default -> {RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()}
                         is Alarmtone.Sound -> {RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()}
                     }
-                }.observeOn(AndroidSchedulers.mainThread())
-                .subscribe { selectedRtFileName ->
-//***DetailsFrag 에서 기존에 설정된 rt을 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
+                }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
+//***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: 설정된 알람톤 파일이름=$selectedRtFileName")
-                    if(isRtListReady) { // 이미 리스트가 업뎃되었다면 DetailsFrag 최초 시행은 아닌 경우 -> Circle albumArt 만 업데이트!
+                    if(isRtListReady) { // 이미 리스트가 업뎃되었다면 DetailsFrag 최초 시행은 아닌 경우 -> Circle albumArt 사진만 업데이트!
                         updateCircleAlbumArt(selectedRtFileName.toString())
                     } else {
                         initSpinner(selectedRtFileName.toString())
                     }
-
-//***
                 })
 
         //pre-alarm duration, if set to "none", remove the option

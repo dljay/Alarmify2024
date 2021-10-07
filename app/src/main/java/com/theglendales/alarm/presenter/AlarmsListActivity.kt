@@ -51,15 +51,8 @@ import java.util.Calendar
 
 // v0.19e:
 // 앨범Art 하드에 저장해놓고 찾는 방식. (없을때 BMP-> xx.art 로 저장까지 성공.)
-
-//albumArt 가 표시 안되는 문제 (5번에 1~2번 정도는 됨.) 분명 코딩 진행 순서에 따라서 무엇이 먼저 되느냐 문제인듯..
-//
-//- 안될때는 기설정된 알람톤 파일이름=p2.rta 가 나옴
-//- AlarmDetailsFragment.kt - Line381~382 에서 arrayOutofIndex (리스트에 없는 놈 요청했을때 나는 에러) 크래쉬나거나.
-//- getView 해서 분명 01 id albumart 경로가 업뎃된 리스트를 전달했으나 Spinner 에 안 뜸.
-//- 01.art 는 계속 잘 저장됨. 리스트 업데이트 속도가 관건인듯..
-//- Spinner onItemSelected 또 왜 지랄..
-//- Performing modification because of Ringtone picker
+// AlarmDetailsFrag 시작 -> onResume() 에서 "기존에 설정되었던 rt 정보를 받은 후" -> refreshSpinner -> rtSearch(디스크에서 rt 찾고, art 없으면 생성 등) -> Spinner & Circle UI 업데이트!
+// 일단은 잘 됨.
 
 
 

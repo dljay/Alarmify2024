@@ -145,14 +145,14 @@ class AlarmDetailsFragment : Fragment() {
         this.fragmentView = view
         //View Initializing <-
 
-    // Spinner 설정 ------------>
+//******************* Spinner 설정 ------------>
         spinner.adapter = spinnerAdapter
         spinner.isSelected = false // 이것과
         spinner.setSelection(0,true) // 요것을 통해서 frag 열리자마자 자동으로 ItemSelect 하는것 막음.
 
-        CoroutineScope(IO).launch {
-            refreshSpinnerUi()
-        }
+//        CoroutineScope(IO).launch {
+//            refreshSpinnerUi()
+//        }
         // 열리고 닫힐 때 화살표 방향 변경
         spinner.setSpinnerEventsListener(object: MyCustomSpinner.OnSpinnerEventsListener {
             override fun onPopupWindowOpened(spinner: Spinner?) {
@@ -203,7 +203,7 @@ class AlarmDetailsFragment : Fragment() {
                 Log.d(TAG, "Spinner - onNothingSelected: ... ")
             }
         }
-    // Spinner 설정 <------------
+//****** Spinner 설정 <------------ *************
 
         rowHolder.run {
             this.container.setOnClickListener {
@@ -307,30 +307,51 @@ class AlarmDetailsFragment : Fragment() {
 
 
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
-    private suspend fun refreshSpinnerUi() {
+    private fun onPrevRtNotified(prevRtFileName: String) { // 기존에 설정해놓은 알람을 (onResume> disposables.xx 에서) 통보 받으면 이제 refreshSpinner & Big Circle Album Art UI 업뎃을 하자!
+        CoroutineScope(IO).launch {refreshSpinnerUi(prevRtFileName)}
+    }
+    private suspend fun refreshSpinnerUi(prevRtFileName: String) {
         Log.d(TAG, "refreshSpinnerUi: called")
         val resultList = myDiskSearcher.rtOnDiskSearcher()
         Log.d(TAG, "refreshSpinnerUi: result=$resultList")
-        spinnerAdapter.updateList(resultList) // 이 라인을 밑에 withContext 윗줄에서 실행? or Livedata?  <- 일단 현재는 잘 됨.
-        notifySpinnerAdapterOnMainThread()
+        spinnerAdapter.updateList(resultList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
 
-
+        refreshSpinnerAndCircleArt(prevRtFileName)
     }
-    private suspend fun notifySpinnerAdapterOnMainThread() {
+    private suspend fun refreshSpinnerAndCircleArt(prevRtFileName: String) {
         Log.d(TAG, "notifySpinnerAdapterOnMainThread: called!!**")
+
         withContext(Main) {
+        // 1)Spinner Update
             spinnerAdapter.notifyDataSetChanged()
+        // 2)스피너 옆 큰 Circle Art 업데이트
+            // 2-a) 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
+//***                // .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환)
+            val indexOfSelectedRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName }
+            spinner.setSelection(indexOfSelectedRt)
+            val selectedRtForThisAlarm: RtWithAlbumArt = SpinnerAdapter.rtOnDiskList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
+            val albumArtPath = myDiskSearcher.getArtFilePath(selectedRtForThisAlarm.trIdStr)
+
+
+            // 2-b) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
+            context?.let {
+                GlideApp.with(it).load(albumArtPath).circleCrop()
+                    .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.placeholder).listener(object :
+                        RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
+                            return false
+                        }
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            Log.d(TAG,"onResourceReady: Glide loading success! Title=${selectedRtForThisAlarm.rtTitle}, trId: ${selectedRtForThisAlarm.trIdStr}") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                            return false
+                        }
+                    }).into(ivRtArtBig)
+            }
         }
     }
-//    private suspend fun setIvArtImgOnMainThread(bitmapReceived: Bitmap?) {
-//        // UI 변경은 오직 MainThread 에서만 가능하므로 여기서 Coroutine 을 IO -> Main 으로 변경!
-//        withContext(Main) {
-//            setIvArtImage(bitmapReceived)
-//        }
-//    }
-//    private fun setIvArtImage(bitmapReceived: Bitmap?) {
-//        ivRtArt.setImageBitmap(bitmapReceived)
-//    }
+
 
 // ***** <==== DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행)
 
@@ -373,31 +394,9 @@ class AlarmDetailsFragment : Fragment() {
                 .subscribe { prevRtFileName ->
 //***DetailsFrag 에서 기존에 설정된 rt을 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: 기설정된 알람톤 파일이름=$prevRtFileName")
+                    onPrevRtNotified(prevRtFileName.toString())
 
-//***           // 1) 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
-//***                // .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환)
-                    val indexOfPrevSelectedRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName }
-                    spinner.setSelection(indexOfPrevSelectedRt)
-                    val prevSelectedRt: RtWithAlbumArt = SpinnerAdapter.rtOnDiskList[indexOfPrevSelectedRt]
-                    val albumArtPath = myDiskSearcher.getArtFilePath(prevSelectedRt.trIdStr)
-
-
-                // 2) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
-                    context?.let {
-                        GlideApp.with(it).load(albumArtPath).circleCrop()
-                            .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                            .placeholder(R.drawable.placeholder).listener(object :
-                                RequestListener<Drawable> {
-                                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                                    Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
-                                    return false
-                                }
-                                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                                    Log.d(TAG,"onResourceReady: Glide loading success! Title=${prevSelectedRt.rtTitle}, trId: ${prevSelectedRt.trIdStr}") // debug 결과 절대 순.차.적으로 진행되지는 않음!
-                                    return false
-                                }
-                            }).into(ivRtArtBig)
-                    }
+//***
                 })
 
         //pre-alarm duration, if set to "none", remove the option

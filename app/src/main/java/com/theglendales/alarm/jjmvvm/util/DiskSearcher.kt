@@ -97,11 +97,14 @@ class DiskSearcher(val context: Context)
                 // 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우. (User 가 지웠거나 기타 등등..)
                 if(artFilePath.isNullOrEmpty()) {
                     extractArtFromSingleRta(trIDString, fileUri)
+                    //todo: 코루틴으로 이게 끝나면 밑에 업데이트된 리스트 전달하기.
                 }
             }// for loop 끝.
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
+        Log.d(TAG, "rtOnDiskSearcher: returning RT List!!")
         return onDiskRingtoneList
+
     }
 
     // 위의 rtOnDiskSearcher() 에서 받음 리스트로 a) album art 가 있는지 체크 -> 있는 놈 경로는 xx Uri List 에 저장 b) albumArt 가 없으면 -> 생성!-> 디스크에 저장.
@@ -198,6 +201,7 @@ class DiskSearcher(val context: Context)
             onDiskArtMap[trkId] = savedToDiskFile.path // a) onDiskArtMap 에 artPath 를 기록
             // b)onDiskRtList 에서 RtWithAlbumArt object 를 찾아서 albumArtPath 를 정리해줌 -> 그래야 Spinner 에 뜨지!!
             val index: Int = onDiskRingtoneList.indexOfFirst { rt -> rt.trIdStr == trkId } // 동일한 rt.trId 를 갖는 놈의 인덱스를 onDiskRtList 에서 찾기
+            Log.d(TAG, "saveBmpToJpgOnDisk: index of missing artPath ins onDiskRtList=$index")
             onDiskRingtoneList[index].artFilePathStr = savedToDiskFile.path
 
 

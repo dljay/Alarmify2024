@@ -49,11 +49,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.19f:
-// 앨범Art 하드에 저장해놓고 찾는 방식. (없을때 BMP-> xx.art 로 저장까지 성공.)
+// v0.20a
+//1. 엡 시작-> AlarmListActivity ->
+//a) 앱 최초실행 -> /.AlarmRingtones Folder 나 /.AlbumArt Folder 가 존재 안함 (or 폴더가 비어있는 상태)  -> install -> rta , art 폴더 생성 후 저장.
+//b) rta 파일 갯수와 art 파일 갯수를 비교-> rta 와 art 숫자가 안 맞는다 => diskSearcher>rtOnDiskSearcher 로 rebuild
+//b) Init 애니메이션 "Building Ringtone List".. -> art 추출 및 rt 리스트업-> SharedPref 에 List 자체를 저장!
+//
+//2.detailsFrag 에 들어갔을때 Sharedpref에 저장된 list 로 -> rtaUri, artUri 확인., Spinner 에 넘겨줌
+//a) sharedPref 가 없을때 contingency 플랜.
 
-// AlarmDetailsFrag 시작 햇을 때 initSpinner() 해주는것이 현재 '기존 설정되었던 rt 정보를 받은 것' 에 의존.. bool 값으로 조졌는데. 더 좋은 방법 찾아볼것.
-
+// 현재의 diskSearcher 로 rt, albumart 찾는 작업을 앱 시작과 동시에 하는 방법 check.
+// 다른 알람버튼 눌렀을때, fab 눌렀을 때 - crash
 
 
 
@@ -233,7 +239,14 @@ class AlarmsListActivity : AppCompatActivity() {
         }
 // <--추가1) Second Fragment 관련
 
-// 추가2) --> A) 구매된 링톤 mp3 Disk 에 잘 있는지 확인 B) 디스크에 현 저장된 mp3 의 ringtone/앨범쟈켓(png) 잘 있는지 확인.
+// 추가2) --> 앱 시작과 동시에
+        //a) 앱 최초 실행인지 확인 : /.AlarmRingtones Folder 나 /.AlbumArt Folder 가 존재 안함 (or 폴더가 비어있는 상태)  -> install -> rta , art 폴더 생성 후 저장.
+        if(myDiskSearcher.isInitialLaunch()) {
+            //todo: Package 에 있는 rta 파일 설치-> art 추출까지..
+        }
+        //b) rt (.rta) 와 art 가 매칭하는지 확인. (신규 다운로드 등으로 추가되엇을 때)
+
+        //c) b) 에서 disk Rescan 이 필요하다면 여기서..
 
 
     // B) 현재 /.AlbumArt 에 있는 albumArt 그래픽 파일들을 우선 READ->

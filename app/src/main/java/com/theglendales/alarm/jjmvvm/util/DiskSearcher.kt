@@ -26,6 +26,32 @@ class DiskSearcher(val context: Context)
     val alarmRtDir = File(folder, RT_FOLDER)
     val artDir = File(folder, ART_FOLDER)
 
+    // 앱 최초실행인지 확인하는 기능
+    fun isInitialLaunch(): Boolean {
+        var isInitialLaunch = false
+
+        // <A> /.AlarmRingTones 폴더가 존재하지 않는다. -> 폴더 생성 bool= true
+        if(!alarmRtDir.exists()) { alarmRtDir.mkdir()
+            isInitialLaunch = true }
+        // <B> /.AlbumArt 폴더가 존재하지 않는다.
+        if(!artDir.exists()) { artDir.mkdir()
+            isInitialLaunch = true}
+        // <C> 폴더는 있는데 파일이 없다
+        if(alarmRtDir.listFiles().isNullOrEmpty()) {isInitialLaunch = true }
+        // <D> 폴더는 있는데 파일이 없다
+        if(artDir.listFiles().isNullOrEmpty()) {isInitialLaunch = true }
+
+        return isInitialLaunch
+    }
+    // rta & art 파일이 매칭하는지 확인하는 기능 isRescanNeeded isRtListRebuildNeeded
+    fun isDiskRescanNeeded(): Boolean {
+        var isDiskRescanNeeded = false
+
+        // <A> OnDiskRtaArtUriList (SharedPref) 가 존재하는지 체크 -> 없으면 바로 return true
+
+        // <B> OnDiskRtaArtUriList 는 존재함 -> 그렇다면 각 rta 에 매칭하는 art 가 있는지 확인. -> 문제 있으면 바로 return true
+    }
+
     fun rtOnDiskSearcher(): MutableList<RtWithAlbumArt>
     {
         onDiskRingtoneList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.

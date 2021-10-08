@@ -8,7 +8,6 @@ import android.net.Uri
 import android.util.Log
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -80,16 +79,18 @@ class DiskSearcher(val context: Context)
         // SharedPref 에서 돌려받는 list 는 Disk 에 저장되어있는 RtWithAlbumArt object 들의 정보를 담고 있음.
 
         val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
+    // 1)SharedPref 파일 자체가 없을때 (깡통 List 를 받음.)
         if(listFromSharedPref.isNullOrEmpty()) {
-            // List 자체가 없을때는 깡통 List 를 받음.
+
             Log.d(TAG, "isDiskScanNeeded: We couldn't retrieve sharedPref!")
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
+    //  2) 받은 list 안을 검색했을 때 'artPath' field 가 null // todo: 혹은 'audioFilePath' 가 null 값인게 있는 놈이 있는지
+        val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty()}
 
-        val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty() }
         if(artPathEmptyList.isNotEmpty()) {
-            // -> list 안을 검색했을 때 'artPath' field 가 null 값인게 있는 놈이 있으면
+
                 for(i in 0 until artPathEmptyList.size) {
                     Log.d(TAG, "isDiskScanNeeded: 다음 파일의 artFilePathStr 은 비어있음!! = ${artPathEmptyList[i].fileName}")
                 }
@@ -173,9 +174,9 @@ class DiskSearcher(val context: Context)
 
 
                 // 4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
-                val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFileUri = fileUri, fileName = f.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
+                val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = f.path, fileName = f.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
                 onDiskRingtoneList.add(onDiskRingtone)
-                Log.d(TAG, " rtSearcher: \n[ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path} //\n artFilePath=$artFilePath,  uri=$fileUri")
+                Log.d(TAG, " rtSearcher: \n[ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path.toString()} //\n artFilePath=$artFilePath,  uri=$fileUri")
 
                 // 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우. (User 가 지웠거나 기타 등등..)
                 if(artFilePath.isNullOrEmpty()) {

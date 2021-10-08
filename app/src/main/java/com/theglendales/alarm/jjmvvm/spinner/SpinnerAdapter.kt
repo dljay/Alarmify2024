@@ -1,11 +1,7 @@
 package com.theglendales.alarm.jjmvvm.spinner
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
-import android.media.MediaMetadataRetriever
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -82,7 +78,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
         spinnerVH.tvName!!.text = rtOnDiskList[position].rtTitle // 제목
         val trackId= rtOnDiskList[position].trIdStr // 아쉽게도 스트링임.
-        val mp3FileUri = rtOnDiskList[position].audioFileUri
+        val mp3FileUri = rtOnDiskList[position].audioFilePath
         val artFilePathStr = rtOnDiskList[position].artFilePathStr
 
 

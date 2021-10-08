@@ -63,7 +63,7 @@ import java.util.Calendar
 //b-1-b) DiskScan 필요한 경우-> Coroutine 으로 스캔 돌리고 => resultList 를 DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
 //b-2) 스캔이 필요없음-> 그냥 SharedPref 에 있는 리스트를 받아서 -DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
 
-// 현재 RtaArtPathList.xml(Shared Pref) 저장까지 잘됨.
+// 현재 RtaArtPathList.xml(Shared Pref) 저장/Read 까지 잘됨.
 // 현재 artUri 자체가 아예 안 심어져있는 .rta (mp3) 도 있기에 무조건 b-1) 로 실행이 될것임 -> 모두 잘되는 .rta 로 SharedPref 잘 읽히는지 테스트해보기.
 // AlarmDetailsFrag 에서 이제 spinner 업데이트를 finalRtArtPathList 놈을 사용해서 빠르게 해보자 (DiskSearcher.kt> Companion obj 메모리)
 // 다른 알람버튼 눌렀을때, fab 눌렀을 때 - crash

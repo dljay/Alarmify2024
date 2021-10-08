@@ -173,10 +173,10 @@ class AlarmDetailsFragment : Fragment() {
 
                 val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
                 Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
-                        "uri = ${rtSelected.audioFileUri}")
+                        "uri = ${rtSelected.audioFilePath}")
 
                 // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! -->
-                val alert: String? = rtSelected.audioFileUri.toString()
+                val alert: String? = rtSelected.audioFilePath.toString()
 
 
                logger.debug { "Got ringtone: $alert" }

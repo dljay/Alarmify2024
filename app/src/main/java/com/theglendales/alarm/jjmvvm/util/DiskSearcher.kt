@@ -6,6 +6,9 @@ import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
+import com.theglendales.alarm.configuration.globalInject
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
+import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -14,42 +17,96 @@ import java.io.OutputStream
 private const val TAG="DiskSearcher"
 private const val RT_FOLDER="/.AlarmRingTones"
 private const val ART_FOLDER="/.AlbumArt"
+//private const val SH_PREF_FOLDER= "shared_prefs" //todo: is this folder name reliable? check..
 
 
 class DiskSearcher(val context: Context)
 {
-    val emptyList = mutableListOf<RtWithAlbumArt>()
-    val onDiskRingtoneList = mutableListOf<RtWithAlbumArt>()
-    val onDiskArtMap: HashMap<String?, String?> = HashMap() // <trkId, 앨범아트 경로>
+    companion object {
+        val finalRtArtPathList = mutableListOf<RtWithAlbumArt>() // AlarmListActivity> DiskSearcher.rtArtPath SharedPref 에서 받은걸 여기에 저장.
+    }
+    val mySharedPrefManager: MySharedPrefManager by globalInject() // Shared Pref by Koin!!
 
-    val folder = context.getExternalFilesDir(null)!!.absolutePath
-    val alarmRtDir = File(folder, RT_FOLDER)
-    val artDir = File(folder, ART_FOLDER)
+    val emptyList = mutableListOf<RtWithAlbumArt>()
+
+    val onDiskArtMap: HashMap<String?, String?> = HashMap() // <trkId, 앨범아트 경로> <- 이것이 먼저 업데이트되어
+    val onDiskRingtoneList = mutableListOf<RtWithAlbumArt>() // 요 리스트를 갱신하는데 도움을 줌..
+
+
+    val topFolder = context.getExternalFilesDir(null)!!.absolutePath
+    val alarmRtDir = File(topFolder, RT_FOLDER)
+    val artDir = File(topFolder, ART_FOLDER)
+    //val xmlFile = File(topFolder+SH_PREF_FOLDER+ "RtaArtPathList.xml") // RtaArtPathList.xml
 
     // 앱 최초실행인지 확인하는 기능
     fun isInitialLaunch(): Boolean {
-        var isInitialLaunch = false
+        var isInitialLaunchBool = false
 
         // <A> /.AlarmRingTones 폴더가 존재하지 않는다. -> 폴더 생성 bool= true
-        if(!alarmRtDir.exists()) { alarmRtDir.mkdir()
-            isInitialLaunch = true }
+        if(!alarmRtDir.exists()) {
+            alarmRtDir.mkdir()
+            isInitialLaunchBool = true
+            return isInitialLaunchBool
+        }
         // <B> /.AlbumArt 폴더가 존재하지 않는다.
-        if(!artDir.exists()) { artDir.mkdir()
-            isInitialLaunch = true}
+        if(!artDir.exists()) {
+            artDir.mkdir()
+            isInitialLaunchBool = true
+            return isInitialLaunchBool
+        }
         // <C> 폴더는 있는데 파일이 없다
-        if(alarmRtDir.listFiles().isNullOrEmpty()) {isInitialLaunch = true }
+        if(alarmRtDir.listFiles().isNullOrEmpty()) {
+            isInitialLaunchBool = true
+            return isInitialLaunchBool
+        }
         // <D> 폴더는 있는데 파일이 없다
-        if(artDir.listFiles().isNullOrEmpty()) {isInitialLaunch = true }
+        if(artDir.listFiles().isNullOrEmpty()) {
+            isInitialLaunchBool = true
+            return isInitialLaunchBool
+        }
 
-        return isInitialLaunch
+        else {
+            Log.d(TAG, "isInitialLaunch: This is not an INITIAL LAUNCH OF this app")
+            return isInitialLaunchBool
+        }
+
+
     }
-    // rta & art 파일이 매칭하는지 확인하는 기능 isRescanNeeded isRtListRebuildNeeded
-    fun isDiskRescanNeeded(): Boolean {
+
+    // rta & art 파일이 매칭하는지 보완이 필요없는지 확인하는 기능 isRescanNeeded isRtListRebuildNeeded
+    fun isDiskScanNeeded(): Boolean {
         var isDiskRescanNeeded = false
 
-        // <A> OnDiskRtaArtUriList (SharedPref) 가 존재하는지 체크 -> 없으면 바로 return true
+        // SharedPref 에서 돌려받는 list 는 Disk 에 저장되어있는 RtWithAlbumArt object 들의 정보를 담고 있음.
 
-        // <B> OnDiskRtaArtUriList 는 존재함 -> 그렇다면 각 rta 에 매칭하는 art 가 있는지 확인. -> 문제 있으면 바로 return true
+        val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
+        if(listFromSharedPref.isNullOrEmpty()) {
+            // List 자체가 없을때는 깡통 List 를 받음.
+            Log.d(TAG, "isDiskScanNeeded: We couldn't retrieve sharedPref!")
+            isDiskRescanNeeded=true
+            return isDiskRescanNeeded
+        }
+
+        val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty() }
+        if(artPathEmptyList.isNotEmpty()) {
+            // -> list.any 로 검색했을 때 'artPath' field 가 null 값인게 있는 놈이 있으면
+                for(i in 0 until artPathEmptyList.size) {
+                    Log.d(TAG, "isDiskScanNeeded: 다음 파일의 artFilePathStr 은 비어있음!! = ${artPathEmptyList[i].fileName}")
+                }
+            isDiskRescanNeeded=true
+            return isDiskRescanNeeded
+        }
+        return isDiskRescanNeeded
+    }
+
+    fun updateList(rtOnDiskListReceived: MutableList<RtWithAlbumArt>) {
+        Log.d(TAG, "updateList: called. rtOnDiskListReceived=$rtOnDiskListReceived")
+
+        DiskSearcher.finalRtArtPathList.clear()
+        for(i in 0 until rtOnDiskListReceived.size) {
+            DiskSearcher.finalRtArtPathList.add(rtOnDiskListReceived[i])
+        }
+        Log.d(TAG, "updateList: done..!! fianlRtArtPathList = ${DiskSearcher.finalRtArtPathList}")
     }
 
     fun rtOnDiskSearcher(): MutableList<RtWithAlbumArt>
@@ -75,7 +132,7 @@ class DiskSearcher(val context: Context)
             {
                 val mmr =  MediaMetadataRetriever()
 
-                val actualFileForMmr = folder+"/.AlarmRingTones"+ File.separator + f.name
+                val actualFileForMmr = topFolder+"/.AlarmRingTones"+ File.separator + f.name
 
                 try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
                     mmr.setDataSource(actualFileForMmr)
@@ -156,7 +213,7 @@ class DiskSearcher(val context: Context)
             // ./AlbumArt 폴더에 있는 xxx.art 파일 for loop
             for(artFile in artDir.listFiles())
             {
-                val fullPathOfArtFile: String = folder+ ART_FOLDER+ File.separator + artFile.name
+                val fullPathOfArtFile: String = topFolder+ ART_FOLDER+ File.separator + artFile.name
                 //val artUri = Uri.parse(artFile.path.toString())
                 val trkId = artFile.nameWithoutExtension // 모든 앨범아트는 RT 의 TrkId 값.art 로 설정해야함! 파일명의 앞글자만 딴것. ex) 01
 

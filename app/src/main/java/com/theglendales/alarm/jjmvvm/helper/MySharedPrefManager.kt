@@ -12,8 +12,8 @@ import java.lang.Exception
 import java.lang.reflect.Type
 
 private const val TAG="MySharedPrefManager"
-private const val TR_PLAY_INF_SHARED_PREF = "TrackPlayInfo"
-private const val ON_DISK_RTA_ART_URI_LIST = "OnDiskRtaArtUriList" //todo: 현재는 .rta 는 Uri 로 ..  .art 는 String path 로 저장
+//private const val TR_PLAY_INF_SHARED_PREF = "TrackPlayInfo"
+private const val ON_DISK_RTA_ART_URI_LIST = "RtaArtPathList" //todo: 현재는 .rta 는 Uri 로 ..  .art 는 String path 로 저장
 private const val URI_STORED_KEY ="RtaArt_Key"
 
 
@@ -26,22 +26,22 @@ class MySharedPrefManager(context: Context) {
 
     inline fun <reified T> genericType() = object: TypeToken<T>() {}.type // todo: 이것이 무엇인지 inline 에 대해서 공부해봐야함.
 
-    fun getRtaArtPathFromSharedPref(): List<RtWithAlbumArt> {
+    fun getRtaArtPathList(): List<RtWithAlbumArt> {
         return try{
             val jsonStrGet = prefs.getString(URI_STORED_KEY,"No Data")
 
             val type = genericType<List<RtWithAlbumArt>>()
             val onDiskRtaArtPathList = gson.fromJson<List<RtWithAlbumArt>>(jsonStrGet, type)
-            Log.d(TAG, "getOnDiskRtaArtUriList: onDiskRtaArtPathList = $onDiskRtaArtPathList")
+            Log.d(TAG, "getRtaArtPathList: onDiskRtaArtPathList = $onDiskRtaArtPathList")
             onDiskRtaArtPathList
         }catch (e: Exception) {
-            Log.d(TAG, "getOnDiskRtaArtUriList: Possibly no saved data yet..error message=$e")
+            Log.d(TAG, "getRtaArtPathList: Possibly no saved data yet..error message=$e")
             arrayListOf<RtWithAlbumArt>() // 에러 발생시 빈 깡통 List 를 리턴.
         }
 
     }
 
-    fun saveRtaArtPathFromSharedPref(rtaArtPathList: List<RtWithAlbumArt>) {
+    fun saveRtaArtPathList(rtaArtPathList: List<RtWithAlbumArt>) {
         val jsonStrSave = gson.toJson(rtaArtPathList)
         prefs.edit().putString(URI_STORED_KEY, jsonStrSave).apply()
     }

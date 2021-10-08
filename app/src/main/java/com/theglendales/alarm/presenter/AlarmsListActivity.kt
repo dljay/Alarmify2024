@@ -37,6 +37,7 @@ import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
@@ -45,20 +46,26 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.20a
-//1. 엡 시작-> AlarmListActivity ->
-//a) 앱 최초실행 -> /.AlarmRingtones Folder 나 /.AlbumArt Folder 가 존재 안함 (or 폴더가 비어있는 상태)  -> install -> rta , art 폴더 생성 후 저장.
-//b) rta 파일 갯수와 art 파일 갯수를 비교-> rta 와 art 숫자가 안 맞는다 => diskSearcher>rtOnDiskSearcher 로 rebuild
-//b) Init 애니메이션 "Building Ringtone List".. -> art 추출 및 rt 리스트업-> SharedPref 에 List 자체를 저장!
-//
-//2.detailsFrag 에 들어갔을때 Sharedpref에 저장된 list 로 -> rtaUri, artUri 확인., Spinner 에 넘겨줌
-//a) sharedPref 가 없을때 contingency 플랜.
 
-// 현재의 diskSearcher 로 rt, albumart 찾는 작업을 앱 시작과 동시에 하는 방법 check.
+// v0.20a
+// <앱 시작과 동시에 백그라운드에서 rta, art 파일 핸들링하는 작업>
+//1. 앱 시작-> AlarmListActivity -> onCreate() 안에서
+//a) 앱 최초 실행인지 확인 -> 인스톨 process (Package 안에 있는 rta 파일 설치->추출까지)
+//b) DiskScan 이 필요한지 확인: // rta & art 파일이 매칭하는지 / artPath 가 null 값인게 있는지(신규 다운로드 음원) // SharedPref 파일 자체가 없는지 등
+//b-1-a) DiskScan 필요한 경우-> Coroutine 으로 스캔 돌리고 => resultList 를 SharedPref 에 저장
+//b-1-b) DiskScan 필요한 경우-> Coroutine 으로 스캔 돌리고 => resultList 를 DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+//b-2) 스캔이 필요없음-> 그냥 SharedPref 에 있는 리스트를 받아서 -DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+
+// 현재 RtaArtPathList.xml(Shared Pref) 저장까지 잘됨.
+// 현재 artUri 자체가 아예 안 심어져있는 .rta (mp3) 도 있기에 무조건 b-1) 로 실행이 될것임 -> 모두 잘되는 .rta 로 SharedPref 잘 읽히는지 테스트해보기.
+// AlarmDetailsFrag 에서 이제 spinner 업데이트를 finalRtArtPathList 놈을 사용해서 빠르게 해보자 (DiskSearcher.kt> Companion obj 메모리)
 // 다른 알람버튼 눌렀을때, fab 눌렀을 때 - crash
 
 
@@ -73,7 +80,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
     //내가 추가-->
-    //val mySharedPrefManager: MySharedPrefManager by globalInject()
+    val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
     //내가 추가<-
 
@@ -239,18 +246,38 @@ class AlarmsListActivity : AppCompatActivity() {
         }
 // <--추가1) Second Fragment 관련
 
-// 추가2) --> 앱 시작과 동시에
+// 추가2) --> .rta .art 파일 핸들링 작업 (앱 시작과 동시에)
         //a) 앱 최초 실행인지 확인 : /.AlarmRingtones Folder 나 /.AlbumArt Folder 가 존재 안함 (or 폴더가 비어있는 상태)  -> install -> rta , art 폴더 생성 후 저장.
         if(myDiskSearcher.isInitialLaunch()) {
             //todo: Package 에 있는 rta 파일 설치-> art 추출까지..
         }
-        //b) rt (.rta) 와 art 가 매칭하는지 확인. (신규 다운로드 등으로 추가되엇을 때)
+        //b) DiskSearcher.rtOnDiskSearcher() 를 실행할 필요가 있는지 bool 값 확인
+            // b-1) 실행이 필요함(O) [신규 다운로드 후 rta 파일만 추가되었거나, 최초 app 실행, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
+            if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
+                Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
+                // rtOnDiskSearch 를 시작-> S
+                CoroutineScope(Dispatchers.IO).launch {
 
-        //c) b) 에서 disk Rescan 이 필요하다면 여기서..
+                    myDiskSearcher.readAlbumArtOnDisk()
+                    val resultList = myDiskSearcher.rtOnDiskSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
+                // b-1-a) 받은 정보를 얼른 Shared Pref 에다 저장!
+                    mySharedPrefManager.saveRtaArtPathList(resultList)
+                // b-1-b) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+                    myDiskSearcher.updateList(resultList)
+                    Log.d(TAG, "onCreate: rebuilding Shared Pref DONE..(Hopefully..) resultList = $resultList!")
+                }
+
+            }
+            //b-2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+            else if(!myDiskSearcher.isDiskScanNeeded()) {
+                val resultList = mySharedPrefManager.getRtaArtPathList()
+                Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
+
+            }
 
 
     // B) 현재 /.AlbumArt 에 있는 albumArt 그래픽 파일들을 우선 READ->
-        myDiskSearcher.readAlbumArtOnDisk() // -> 완료되면 DiskSearcher.kt>  onDiskArtMap <trkId, Path> 가 완성됨. 완성되기 전에 DetailsFrag 에 들어갔을때는 myDiskSearcher.rtOnDiskSearch() 에서 보완!
+        //myDiskSearcher.readAlbumArtOnDisk() // -> 완료되면 DiskSearcher.kt>  onDiskArtMap <trkId, Path> 가 완성됨. 완성되기 전에 DetailsFrag 에 들어갔을때는 myDiskSearcher.rtOnDiskSearch() 에서 보완!
 
 // <-- 추가2)
     } // onCreate() 여기까지.

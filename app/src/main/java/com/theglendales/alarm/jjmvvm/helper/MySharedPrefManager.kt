@@ -33,9 +33,10 @@ class MySharedPrefManager(context: Context) {
             val type = genericType<List<RtWithAlbumArt>>()
             val onDiskRtaArtPathList = gson.fromJson<List<RtWithAlbumArt>>(jsonStrGet, type)
             Log.d(TAG, "getRtaArtPathList: onDiskRtaArtPathList = $onDiskRtaArtPathList")
+
             onDiskRtaArtPathList
         }catch (e: Exception) {
-            Log.d(TAG, "getRtaArtPathList: Possibly no saved data yet..error message=$e")
+            Log.d(TAG, "getRtaArtPathList: Error retrieving from Shared Prefs..error message=$e")
             arrayListOf<RtWithAlbumArt>() // 에러 발생시 빈 깡통 List 를 리턴.
         }
 

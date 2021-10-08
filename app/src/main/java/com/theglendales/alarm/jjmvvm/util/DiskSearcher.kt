@@ -89,7 +89,7 @@ class DiskSearcher(val context: Context)
 
         val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty() }
         if(artPathEmptyList.isNotEmpty()) {
-            // -> list.any 로 검색했을 때 'artPath' field 가 null 값인게 있는 놈이 있으면
+            // -> list 안을 검색했을 때 'artPath' field 가 null 값인게 있는 놈이 있으면
                 for(i in 0 until artPathEmptyList.size) {
                     Log.d(TAG, "isDiskScanNeeded: 다음 파일의 artFilePathStr 은 비어있음!! = ${artPathEmptyList[i].fileName}")
                 }

@@ -150,7 +150,7 @@ class AlarmDetailsFragment : Fragment() {
 //******************* Spinner 설정 ------------>
         spinner.adapter = spinnerAdapter
         spinner.isSelected = false // 이것과
-        spinner.setSelection(0,true) // 요것을 통해서 frag 열리자마자 자동으로 ItemSelect 하는것 막음. <== 트릭은 아래 spinner 에 selectedListener 를 등록하기 전에 미리 선택! -> 무반응!
+        spinner.setSelection(0,true) // <=frag 열리자마자 자동으로 ItemSelect 하는것 막음. <== 트릭은 아래 spinner 에 selectedListener 를 등록하기 전에 미리 선택! -> 무반응!
 
 //        CoroutineScope(IO).launch {
 //            refreshSpinnerUi()
@@ -171,10 +171,7 @@ class AlarmDetailsFragment : Fragment() {
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?,view: View?,position: Int,id: Long) {
 
-
-                Log.d(TAG, "onItemSelected: position=$position")
                 val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
-
                 Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
                         "uri = ${rtSelected.audioFileUri}")
 
@@ -291,6 +288,8 @@ class AlarmDetailsFragment : Fragment() {
     }
     private suspend fun refreshSpinnerUi(prevRtFileName: String) {
         Log.d(TAG, "refreshSpinnerUi: called")
+        // AlarmListActivity 시작과 동시에 업뎃되었을테니 문제없는지 체크. 리스트 업뎃 안되었으면 아래 .rtOnDiskSearcher() 재 실행.
+        // List up 이 다 안되었을 경우를 생각.
         val resultList = myDiskSearcher.rtOnDiskSearcher()
         Log.d(TAG, "refreshSpinnerUi: result=$resultList")
         spinnerAdapter.updateList(resultList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!

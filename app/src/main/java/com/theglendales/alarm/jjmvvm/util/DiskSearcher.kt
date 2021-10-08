@@ -86,13 +86,13 @@ class DiskSearcher(val context: Context)
                         // a)File Path 를 uri 로 변환
                     val fileUri = Uri.parse(f.path.toString())
                     //3-d) artFile Path(String) ** 아래 readArtOnDisk() 가 앱 시작과 동시에 실행됨. 다 되었다는 가정하에 여기서 찾지만. Path 가 아직 없는경우에 보완책
-                    val artFilePath = onDiskArtMap[trIDString]
+                    val artFilePath = onDiskArtMap[trIDString] //trIDString & artFilePath 둘 다 nullable String
 
 
                 // 4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
                 val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFileUri = fileUri, fileName = f.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
                 onDiskRingtoneList.add(onDiskRingtone)
-                Log.d(TAG, "\n rtSearcher: [ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path} //\n artFilePath=$artFilePath,  uri=$fileUri")
+                Log.d(TAG, " rtSearcher: \n[ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path} //\n artFilePath=$artFilePath,  uri=$fileUri")
 
                 // 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우. (User 가 지웠거나 기타 등등..)
                 if(artFilePath.isNullOrEmpty()) {
@@ -158,8 +158,10 @@ class DiskSearcher(val context: Context)
         }
         // Album Art
         val artBytes: ByteArray? = mmr.embeddedPicture // returns null if no such graphic is found.
-        var albumArtBMP: Bitmap? = null
 
+
+        var albumArtBMP: Bitmap? = null
+        if(artBytes==null) {Log.d(TAG, "extractArtFromSingleRta: No embedded Image Resource found!!") }
         if(artBytes!=null) // embed 된 image 를 추출 가능하면=>
         {
             try {

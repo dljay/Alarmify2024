@@ -290,7 +290,7 @@ class AlarmDetailsFragment : Fragment() {
         Log.d(TAG, "refreshSpinnerUi: called")
         // AlarmListActivity 시작과 동시에 업뎃되었을테니 문제없는지 체크. 리스트 업뎃 안되었으면 아래 .rtOnDiskSearcher() 재 실행.
         // List up 이 다 안되었을 경우를 생각.
-        val resultList = myDiskSearcher.rtOnDiskSearcher() // todo: 이 리스트만 SharedPref 에서 가져오면 된다! -> 리스트업 되기전에 detailsFrag 에 들어와있다면? .rtOnDiskSearcher 재 가동..
+        val resultList = myDiskSearcher.downloadedRtSearcher() // todo: 이 리스트만 SharedPref 에서 가져오면 된다! -> 리스트업 되기전에 detailsFrag 에 들어와있다면? .rtOnDiskSearcher 재 가동..
         //todo: 이미 되기전에 들어왔는지 확인하는 방법?? 모든 rta 가 art 를 갖는다 했을 떄 Glide Load Fail 이 나서는 안됨. -> 아래 Glideo>LoadFailed 에 콜백으로 myDiskSearcher.rtOnDiskSearcher 재 가동??
         Log.d(TAG, "refreshSpinnerUi: result=$resultList")
         spinnerAdapter.updateList(resultList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!

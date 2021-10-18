@@ -16,7 +16,7 @@ import java.io.OutputStream
 private const val TAG="DiskSearcher"
 private const val RT_FOLDER="/.AlarmRingTones"
 private const val ART_FOLDER="/.AlbumArt"
-//private const val SH_PREF_FOLDER= "shared_prefs" //todo: is this folder name reliable? check..
+//private const val SH_PREF_FOLDER= "shared_prefs" // is this folder name reliable? check..
 
 
 class DiskSearcher(val context: Context)
@@ -38,38 +38,17 @@ class DiskSearcher(val context: Context)
     //val xmlFile = File(topFolder+SH_PREF_FOLDER+ "RtaArtPathList.xml") // RtaArtPathList.xml
 
     // 앱 최초실행인지 확인하는 기능
-    fun isInitialLaunch(): Boolean {
-        var isInitialLaunchBool = false
-
-        // <A> /.AlarmRingTones 폴더가 존재하지 않는다. -> 폴더 생성 bool= true
-        if(!alarmRtDir.exists()) {
-            alarmRtDir.mkdir()
-            isInitialLaunchBool = true
-            return isInitialLaunchBool
-        }
+    fun initialLaunchCheck()  {
+        // <A> /.AlarmRingTones 폴더가 존재하지 않는다. -> 폴더 생성
+        if(!alarmRtDir.exists()) {alarmRtDir.mkdir()}
         // <B> /.AlbumArt 폴더가 존재하지 않는다.
-        if(!artDir.exists()) {
-            artDir.mkdir()
-            isInitialLaunchBool = true
-            return isInitialLaunchBool
-        }
-        // <C> 폴더는 있는데 파일이 없다
-        if(alarmRtDir.listFiles().isNullOrEmpty()) {
-            isInitialLaunchBool = true
-            return isInitialLaunchBool
-        }
-        // <D> 폴더는 있는데 파일이 없다
-        if(artDir.listFiles().isNullOrEmpty()) {
-            isInitialLaunchBool = true
-            return isInitialLaunchBool
-        }
+        if(!artDir.exists()) {artDir.mkdir()}
+//        // <C> 폴더는 있는데 파일이 없다
+//        if(alarmRtDir.listFiles().isNullOrEmpty()) {}
+//        // <D> 폴더는 있는데 파일이 없다
+//        if(artDir.listFiles().isNullOrEmpty()) {        }
 
-        else {
-            Log.d(TAG, "isInitialLaunch: This is not an INITIAL LAUNCH OF this app")
-            return isInitialLaunchBool
-        }
-
-
+        else {Log.d(TAG, "isInitialLaunch: This is not an INITIAL LAUNCH OF this app")}
     }
 
     // rta & art 파일이 매칭하는지 보완이 필요없는지 확인하는 기능 isRescanNeeded isRtListRebuildNeeded
@@ -110,20 +89,22 @@ class DiskSearcher(val context: Context)
         Log.d(TAG, "updateList: done..!! fianlRtArtPathList = ${DiskSearcher.finalRtArtPathList}")
     }
 
-    fun rtOnDiskSearcher(): MutableList<RtWithAlbumArt>
+    fun downloadedRtSearcher(): MutableList<RtWithAlbumArt>
     {
         onDiskRingtoneList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.
+        //todo: Raw 폴더에 있는 default Ringtone 들을 먼저 리스트에 업데이트!
+
         val emptyUriList = listOf<Uri>()
 
 
         // 만약 폴더가 없을때는 폴더를 생성
         if(!alarmRtDir.exists()) {
-            Log.d(TAG, "rtAndArtSearcher: Folder $alarmRtDir doesn't exist. We'll create one")
+            Log.d(TAG, "downloadedRtSearcher: Folder $alarmRtDir doesn't exist. We'll create one")
             alarmRtDir.mkdir()
         }
         // 폴더는 있는데 파일이 없을때.. 그냥 return
         if(alarmRtDir.listFiles().isNullOrEmpty()) {
-            Log.d(TAG, "rtAndArtSearcher: NO FILES INSIDE THE FOLDER!")
+            Log.d(TAG, "downloadedRtSearcher: NO FILES INSIDE THE FOLDER!")
             return emptyList
         }
         // 폴더에 파일이 있을때..
@@ -138,24 +119,24 @@ class DiskSearcher(val context: Context)
                 try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
                     mmr.setDataSource(actualFileForMmr)
                 }catch (er:Exception) {
-                    Log.d(TAG, "rtAndArtSearcher: unable to run mmr.setDataSource for the file=${f.name}. WE'LL DELETE THIS PIECE OF SHIT!")
+                    Log.d(TAG, "downloadedRtSearcher: unable to run mmr.setDataSource for the file=${f.name}. WE'LL DELETE THIS PIECE OF SHIT!")
                     f.delete()
                     //return emptyList //
                 }
 
                 //1) 파일이 제대로 된 mp3 인지 곡 길이(duration) return 하는것으로 확인. (Ex. p1=10초=10042(ms) 리턴)  옹.
                 val fileDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                Log.d(TAG, "rtAndArtSearcher: fileName= ${f.name}, fileDuration=$fileDuration")
+                Log.d(TAG, "downloadedRtSearcher: fileName= ${f.name}, fileDuration=$fileDuration")
                 if(fileDuration==null) {
-                    Log.d(TAG, "rtAndArtSearcher: Possible Corrupted file. Filename=${f.name}")
+                    Log.d(TAG, "downloadedRtSearcher: Possible Corrupted file. Filename=${f.name}")
                     f.delete()
                 }
 
                 //2) hyphen(-) 포함이거나/'p' 가 없거나!/사이즈가=0 이면 => 삭제 // todo: 확장자명이 .rta 가 아녀도 삭제! (현재는 확장자 mp3 등 상관 없이 허용)
                 if(f.name.contains('-')||!f.name.contains('p')||f.length()==0L) {
-                    Log.d(TAG, "!!! rtSearcher: ${f.name}")
+                    Log.d(TAG, "!!! downloadedRtSearcher: ${f.name}")
                     if(f.length()==0L) {
-                        Log.d(TAG, "rtAndArtSearcher: file size prob 0? Filesize=${f.length()}")
+                        Log.d(TAG, "downloadedRtSearcher: file size prob 0? Filesize=${f.length()}")
                     }
                     f.delete()
                 }
@@ -176,20 +157,21 @@ class DiskSearcher(val context: Context)
                 // 4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
                 val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = f.path, fileName = f.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
                 onDiskRingtoneList.add(onDiskRingtone)
-                Log.d(TAG, " rtSearcher: \n[ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path.toString()} //\n artFilePath=$artFilePath,  uri=$fileUri")
+                Log.d(TAG, " downloadedRtSearcher: \n[ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path.toString()} //\n artFilePath=$artFilePath,  uri=$fileUri")
 
                 // 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우. (User 가 지웠거나 기타 등등..)
                 if(artFilePath.isNullOrEmpty()) {
                     extractArtFromSingleRta(trIDString, fileUri)
-                    //todo: 코루틴으로 이게 끝나면 밑에 업데이트된 리스트 전달하기.
+
                 }
             }// for loop 끝.
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
-        Log.d(TAG, "rtOnDiskSearcher: returning RT List!!")
+        Log.d(TAG, "downloadedRtSearcher: returning RT List!!")
         return onDiskRingtoneList
 
     }
+    fun mergeList() {}
 
     // 위의 rtOnDiskSearcher() 에서 받음 리스트로 a) album art 가 있는지 체크 -> 있는 놈 경로는 xx Uri List 에 저장 b) albumArt 가 없으면 -> 생성!-> 디스크에 저장.
     fun readAlbumArtOnDisk() {
@@ -205,7 +187,7 @@ class DiskSearcher(val context: Context)
         // A-1-b)폴더는 있는데 그 안에 아무 파일이 없을때..(** 앱 신규 설치시**)
         if(artDir.listFiles().isNullOrEmpty()) {
             Log.d(TAG, "readAlbumArtOnDisk: NO Album Art graphic FILES INSIDE THE FOLDER!. Probably the first time opening this app?")
-            rtOnDiskSearcher()
+            downloadedRtSearcher()
         }
         // todo: 쓸데없는 파일 있으면 삭제..
         // A-1-c)폴더에 파일이 있을때..

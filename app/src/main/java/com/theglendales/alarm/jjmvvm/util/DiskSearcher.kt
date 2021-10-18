@@ -72,16 +72,8 @@ class DiskSearcher(val context: Context)
     fun onDiskRtSearcher(): MutableList<RtWithAlbumArt>
     {
         onDiskRingtoneList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.
-    /*//(1) todo: Raw 폴더에 있는 default Ringtone 들을 먼저 리스트에 업데이트!
-        val defaultRtUri= Uri.parse("android.resource://" + context.packageName + "/" + R.raw.defrt1)
-        val defaultRtFile = File(defaultRtUri.toString())
-        val defaultRtObj = extractMetaDataFromRta(defaultRtFile) // todo: 이거 안됨!!
-        onDiskRingtoneList.add(defaultRtObj)
-        Log.d(TAG, " onDiskRtSearcher: \n[ADDING D.E.F TO THE LIST]  *** Title= ${defaultRtObj.rtTitle}, trId=${defaultRtObj.trIdStr}, " +
-                "\n *** file.name=${defaultRtFile.name} // file.path= ${defaultRtFile.path.toString()} //\n artFilePath=${defaultRtObj.artFilePathStr}")*/
 
-
-    //(1)  /.AlarmRingTones 에 파일이 없거나, 5개 이하로 있을때 (즉 최초 실행 혹은 문제 발생) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
+    //(1)-b  /.AlarmRingTones 에 파일이 없거나, 5개 이하로 있을때 (즉 최초 실행 혹은 문제 발생) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
 
         if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 5) {
             Log.d(TAG, "onDiskRtSearcher: NO FILES (or less than 5 files) INSIDE /.AlarmRingTones FOLDER!")
@@ -91,11 +83,14 @@ class DiskSearcher(val context: Context)
             copyDefaultRtsToPhone(R.raw.defrt4, "defrt4.rta")
             copyDefaultRtsToPhone(R.raw.defrt5, "defrt5.rta")
             }
-    // (2)-a 이제 폴더에 파일이 있을테니 이것으로 updateList() 로 전달할 ringtone 리스트를 만듬.
+    //(1)-c todo: 구입한 파일이 없으면 다운로드? 카피 등..
+
+    // (2) 이제 폴더에 파일이 있을테니 이것으로 updateList() 로 전달할 ringtone 리스트를 만듬.
         if(alarmRtDir.listFiles() != null)
         {
             for(f in alarmRtDir.listFiles())
             {
+            // (2)-a /.AlarmRingtones 폴더에 있는 파일들에서 trkId, Title, artFilePath 등을 추출!!
                 val rtOnDisk = extractMetaDataFromRta(f)
                 onDiskRingtoneList.add(rtOnDisk)
                 Log.d(TAG, " onDiskRtSearcher: \n[ADDING TO THE LIST]  *** Title= ${rtOnDisk.rtTitle}, trId=${rtOnDisk.trIdStr}, " +
@@ -103,6 +98,7 @@ class DiskSearcher(val context: Context)
 
                 // (2)-b 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우 null 상태. (User 가 지웠거나 기타 등등..)
                 if(rtOnDisk.artFilePathStr.isNullOrEmpty()) {
+                    //todo: SharedPref 파일이 존재한다면-> trId 로 artFilePath 를 SharedPref 에서 받기? 안될때만 extractArtFromSingleRta?
                     extractArtFromSingleRta(rtOnDisk.trIdStr, Uri.parse(rtOnDisk.audioFilePath)) }
             }// for loop 끝.
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
@@ -203,23 +199,24 @@ class DiskSearcher(val context: Context)
         try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
             mmr.setDataSource(actualFileForMmr)
         }catch (er:Exception) {
-            Log.d(TAG, "downloadedRtSearcher: unable to run mmr.setDataSource for the file=${fileReceived.name}. WE'LL DELETE THIS PIECE OF SHIT!")
+            Log.d(TAG, "extractMetaDataFromRta: unable to run mmr.setDataSource for the file=${fileReceived.name}. WE'LL DELETE THIS PIECE OF SHIT!")
             fileReceived.delete()
         }
 
         //1) 파일이 제대로 된 rta 인지 곡 길이(duration) return 하는것으로 확인. (Ex. p1=10초=10042(ms) 리턴)  옹.
         val fileDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-        Log.d(TAG, "downloadedRtSearcher: fileName= ${fileReceived.name}, fileDuration=$fileDuration")
+
+        Log.d(TAG, "extractMetaDataFromRta: fileName= ${fileReceived.name}, fileDuration=$fileDuration")
         if(fileDuration==null) {
-            Log.d(TAG, "downloadedRtSearcher: Possible Corrupted file. Filename=${fileReceived.name}")
+            Log.d(TAG, "extractMetaDataFromRta: Possible Corrupted file. Filename=${fileReceived.name}")
             fileReceived.delete()
         }
         //2) 파일명에 hyphen(-) 포함되어있거나(중복 다운로드)/'rt' 가 없거나!/사이즈가=0 이면 => 삭제
         // todo: 확장자명이 .rta 가 아녀도 삭제! (현재는 확장자 mp3 등 상관 없이 허용)
         if(fileReceived.name.contains('-')||!fileReceived.name.contains("rt")||fileReceived.length()==0L) {
-            Log.d(TAG, "!!! downloadedRtSearcher: ${fileReceived.name}")
+            Log.d(TAG, "!!! extractMetaDataFromRta: ${fileReceived.name}")
             if(fileReceived.length()==0L) {
-                Log.d(TAG, "downloadedRtSearcher: file size prob 0? Filesize=${fileReceived.length()}")
+                Log.d(TAG, "extractMetaDataFromRta: file size prob 0? Filesize=${fileReceived.length()}")
             }
             fileReceived.delete()
             Log.d(TAG, "downloadedRtSearcher: deleted file: [ ${fileReceived.name} ] from the disk")

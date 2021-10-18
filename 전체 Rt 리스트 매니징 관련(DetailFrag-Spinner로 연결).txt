@@ -1,0 +1,32 @@
+v0.20c) raw 안에 rta 파일 넣고 핸들링 하는것. 
+
+1. 디스크 스캔이 필요한지 확인 : myDiskSearcher.isDiskScanNeeded()
+ 필요하다면 -> 
+
+1-a) myDiskSearcher.readAlbumArtOnDisk() 
+=> /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장  
+
+1-b-1) myDiskSearcher.onDiskRtSearcher() 
+=> onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
+
+** 1-b-2) 1-b) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extracArtFromSingleRta()  -> save image(.rta) on Disk
+
+1-c) mySharedPrefManager.saveRtaArtPathList(resultList)
+=> Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
+
+1-d) myDiskSearcher.updateList(resultList)
+=> Companion obj 메모리에 띄워놓음(갱신): DiskSearcher.kt>finalRtArtPathList 
+
+2-a) 디스크 스캔이 필요없을경우 => mySharedPrefManager.getRtaArtPathList() 
+-> SharedPref 에 저장되어 있는 Path List 를 받아서 => 바로 1-d) 진행 -> 메모리에 갱신 
+
+-------------
+DiskSearcher.kt 라인 161 부터:
+a) extractMetaDataFromRta() 는 raw 파일 핸들링 안되는 상태! -> fileReceived.name 으로 actualFileForMmr 생성 당연히 안됨!!
+b) raw 파일 핸들링, 차라리 disk 에 copy 해놓고 extractMetaData.. 하는게 나을듯? 
+
+
+
+myDiskSearcher.readAlbumArtOnDisk() 와의 시간차 ? 
+
+

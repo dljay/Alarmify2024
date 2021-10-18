@@ -5,8 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.FileUtils
-import android.renderscript.ScriptGroup
 import android.util.Log
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
@@ -87,25 +85,25 @@ class DiskSearcher(val context: Context)
 
         if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 5) {
             Log.d(TAG, "onDiskRtSearcher: NO FILES (or less than 5 files) INSIDE /.AlarmRingTones FOLDER!")
-            copyDefaultRtsToPhone(R.raw.defrt1)
-            copyDefaultRtsToPhone(R.raw.defrt2)
-            copyDefaultRtsToPhone(R.raw.defrt3)
-            copyDefaultRtsToPhone(R.raw.defrt4)
-            copyDefaultRtsToPhone(R.raw.defrt5)
+            copyDefaultRtsToPhone(R.raw.defrt1, "defrt1.rta")
+            copyDefaultRtsToPhone(R.raw.defrt2,"defrt2.rta")
+            copyDefaultRtsToPhone(R.raw.defrt3, "defrt3.rta")
+            copyDefaultRtsToPhone(R.raw.defrt4, "defrt4.rta")
+            copyDefaultRtsToPhone(R.raw.defrt5, "defrt5.rta")
             }
     // (2)-a 이제 폴더에 파일이 있을테니 이것으로 updateList() 로 전달할 ringtone 리스트를 만듬.
         if(alarmRtDir.listFiles() != null)
         {
             for(f in alarmRtDir.listFiles())
             {
-                val purchasedRtOnDisk = extractMetaDataFromRta(f)
-                onDiskRingtoneList.add(purchasedRtOnDisk)
-                Log.d(TAG, " onDiskRtSearcher: \n[ADDING TO THE LIST]  *** Title= ${purchasedRtOnDisk.rtTitle}, trId=${purchasedRtOnDisk.trIdStr}, " +
-                        "\n *** file.name=${f.name} // file.path= ${f.path.toString()} //\n artFilePath=${purchasedRtOnDisk.artFilePathStr}")
+                val rtOnDisk = extractMetaDataFromRta(f)
+                onDiskRingtoneList.add(rtOnDisk)
+                Log.d(TAG, " onDiskRtSearcher: \n[ADDING TO THE LIST]  *** Title= ${rtOnDisk.rtTitle}, trId=${rtOnDisk.trIdStr}, " +
+                        "\n *** file.name=${f.name} // file.path= ${f.path.toString()} //\n artFilePath=${rtOnDisk.artFilePathStr}")
 
                 // (2)-b 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우 null 상태. (User 가 지웠거나 기타 등등..)
-                if(purchasedRtOnDisk.artFilePathStr.isNullOrEmpty()) {
-                    extractArtFromSingleRta(purchasedRtOnDisk.trIdStr, Uri.parse(purchasedRtOnDisk.audioFilePath)) }
+                if(rtOnDisk.artFilePathStr.isNullOrEmpty()) {
+                    extractArtFromSingleRta(rtOnDisk.trIdStr, Uri.parse(rtOnDisk.audioFilePath)) }
             }// for loop 끝.
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
@@ -167,11 +165,11 @@ class DiskSearcher(val context: Context)
     }
 
 //************ Private Utility Functions ====================>>>>
-    private fun copyDefaultRtsToPhone(defaultRtRaw: Int) {
+    private fun copyDefaultRtsToPhone(defaultRtRaw: Int, defRtName: String) {
         Log.d(TAG, "copyDefaultRtsToPhone: started..")
         //Method #1
         val inputStr: InputStream = context.resources.openRawResource(defaultRtRaw)
-        val outStr: FileOutputStream = FileOutputStream(topFolder + RT_FOLDER +File.separator + "defrt1.rta")
+        val outStr: FileOutputStream = FileOutputStream(topFolder + RT_FOLDER +File.separator + defRtName)
         val buff: ByteArray = ByteArray(1024)
         var length: Int = inputStr.read(buff)
         try {

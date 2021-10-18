@@ -5,14 +5,13 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.os.FileUtils
+import android.renderscript.ScriptGroup
 import android.util.Log
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
+import java.io.*
 
 private const val TAG="DiskSearcher"
 private const val RT_FOLDER="/.AlarmRingTones"
@@ -75,20 +74,26 @@ class DiskSearcher(val context: Context)
     fun onDiskRtSearcher(): MutableList<RtWithAlbumArt>
     {
         onDiskRingtoneList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.
-    //(1) todo: Raw 폴더에 있는 default Ringtone 들을 먼저 리스트에 업데이트!
+    /*//(1) todo: Raw 폴더에 있는 default Ringtone 들을 먼저 리스트에 업데이트!
         val defaultRtUri= Uri.parse("android.resource://" + context.packageName + "/" + R.raw.defrt1)
         val defaultRtFile = File(defaultRtUri.toString())
         val defaultRtObj = extractMetaDataFromRta(defaultRtFile) // todo: 이거 안됨!!
         onDiskRingtoneList.add(defaultRtObj)
         Log.d(TAG, " onDiskRtSearcher: \n[ADDING D.E.F TO THE LIST]  *** Title= ${defaultRtObj.rtTitle}, trId=${defaultRtObj.trIdStr}, " +
-                "\n *** file.name=${defaultRtFile.name} // file.path= ${defaultRtFile.path.toString()} //\n artFilePath=${defaultRtObj.artFilePathStr}")
+                "\n *** file.name=${defaultRtFile.name} // file.path= ${defaultRtFile.path.toString()} //\n artFilePath=${defaultRtObj.artFilePathStr}")*/
 
 
-    //(2)  /.AlarmRingTones 에 있는 파일 검색 -> (1) 번의 리스트에 + 하기. (merge the list!)
-        // (2)-a 폴더는 있는데 파일이 없을때.. 그냥 return
-        if(alarmRtDir.listFiles().isNullOrEmpty()) {Log.d(TAG, "onDiskRtSearcher: NO FILES INSIDE THE FOLDER!")
-            return emptyList}
-        // (2)-b 폴더에 파일이 있을때..
+    //(1)  /.AlarmRingTones 에 파일이 없거나, 5개 이하로 있을때 (즉 최초 실행 혹은 문제 발생) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
+
+        if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 5) {
+            Log.d(TAG, "onDiskRtSearcher: NO FILES (or less than 5 files) INSIDE /.AlarmRingTones FOLDER!")
+            copyDefaultRtsToPhone(R.raw.defrt1)
+            copyDefaultRtsToPhone(R.raw.defrt2)
+            copyDefaultRtsToPhone(R.raw.defrt3)
+            copyDefaultRtsToPhone(R.raw.defrt4)
+            copyDefaultRtsToPhone(R.raw.defrt5)
+            }
+    // (2)-a 이제 폴더에 파일이 있을테니 이것으로 updateList() 로 전달할 ringtone 리스트를 만듬.
         if(alarmRtDir.listFiles() != null)
         {
             for(f in alarmRtDir.listFiles())
@@ -98,8 +103,9 @@ class DiskSearcher(val context: Context)
                 Log.d(TAG, " onDiskRtSearcher: \n[ADDING TO THE LIST]  *** Title= ${purchasedRtOnDisk.rtTitle}, trId=${purchasedRtOnDisk.trIdStr}, " +
                         "\n *** file.name=${f.name} // file.path= ${f.path.toString()} //\n artFilePath=${purchasedRtOnDisk.artFilePathStr}")
 
-                // 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우 null 상태. (User 가 지웠거나 기타 등등..)
-                if(purchasedRtOnDisk.artFilePathStr.isNullOrEmpty()) { extractArtFromSingleRta(purchasedRtOnDisk.trIdStr, Uri.parse(purchasedRtOnDisk.audioFilePath)) }
+                // (2)-b 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우 null 상태. (User 가 지웠거나 기타 등등..)
+                if(purchasedRtOnDisk.artFilePathStr.isNullOrEmpty()) {
+                    extractArtFromSingleRta(purchasedRtOnDisk.trIdStr, Uri.parse(purchasedRtOnDisk.audioFilePath)) }
             }// for loop 끝.
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
@@ -107,6 +113,9 @@ class DiskSearcher(val context: Context)
         return onDiskRingtoneList
 
     }
+
+
+
     fun mergeList() {}
 
     // 위의 rtOnDiskSearcher() 에서 받음 리스트로 a) album art 가 있는지 체크 -> 있는 놈 경로는 xx Uri List 에 저장 b) albumArt 가 없으면 -> 생성!-> 디스크에 저장.
@@ -158,6 +167,36 @@ class DiskSearcher(val context: Context)
     }
 
 //************ Private Utility Functions ====================>>>>
+    private fun copyDefaultRtsToPhone(defaultRtRaw: Int) {
+        Log.d(TAG, "copyDefaultRtsToPhone: started..")
+        //Method #1
+        val inputStr: InputStream = context.resources.openRawResource(defaultRtRaw)
+        val outStr: FileOutputStream = FileOutputStream(topFolder + RT_FOLDER +File.separator + "defrt1.rta")
+        val buff: ByteArray = ByteArray(1024)
+        var length: Int = inputStr.read(buff)
+        try {
+            while (length > 0) {
+                if (length != -1) {
+                    outStr.write(buff, 0, length)
+                    length = inputStr.read(buff)
+                }
+            }
+            Log.d(TAG, "copyDefaultRtsToPhone: copying default rt=[$defaultRtRaw] completed..")
+        } catch (e: Exception) {
+            Log.d(TAG, "copyDefaultRtsToPhone: !! something went wrong! error=$e")
+        } 
+        finally {
+            inputStr.close()
+            outStr.close()
+        }
+
+     //Method #2 <- 현재는 안되는 중 (X)
+//    val defaultRtUri= Uri.parse("android.resource://" + context.packageName + "/" + R.raw.defrt1)
+//    val defaultRtFile = File(defaultRtUri.toString())
+//    defaultRtFile.copyTo(File(topFolder+ RT_FOLDER+File.separator + "defrt1.rta"))
+
+    }
+
     private fun extractMetaDataFromRta(fileReceived: File): RtWithAlbumArt {
         val mmr =  MediaMetadataRetriever()
 

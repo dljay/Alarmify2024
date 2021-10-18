@@ -78,11 +78,11 @@ class DiskSearcher(val context: Context)
     //(1) todo: Raw 폴더에 있는 default Ringtone 들을 먼저 리스트에 업데이트!
         val defaultRtUri= Uri.parse("android.resource://" + context.packageName + "/" + R.raw.defrt1)
         val defaultRtFile = File(defaultRtUri.toString())
-        val defaultRtObj = extractMetaDataFromRta(defaultRtFile)
+        val defaultRtObj = extractMetaDataFromRta(defaultRtFile) // todo: 이거 안됨!!
         onDiskRingtoneList.add(defaultRtObj)
         Log.d(TAG, " onDiskRtSearcher: \n[ADDING D.E.F TO THE LIST]  *** Title= ${defaultRtObj.rtTitle}, trId=${defaultRtObj.trIdStr}, " +
                 "\n *** file.name=${defaultRtFile.name} // file.path= ${defaultRtFile.path.toString()} //\n artFilePath=${defaultRtObj.artFilePathStr}")
-        //    context.resources.openRawResource(R.raw.defrt1)
+
 
     //(2)  /.AlarmRingTones 에 있는 파일 검색 -> (1) 번의 리스트에 + 하기. (merge the list!)
         // (2)-a 폴더는 있는데 파일이 없을때.. 그냥 return

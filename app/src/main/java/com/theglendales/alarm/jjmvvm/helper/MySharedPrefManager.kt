@@ -26,7 +26,7 @@ class MySharedPrefManager(context: Context) {
 
     inline fun <reified T> genericType() = object: TypeToken<T>() {}.type // todo: 이것이 무엇인지 inline 에 대해서 공부해봐야함.
 
-    fun getRtaArtPathList(): List<RtWithAlbumArt> {
+    fun getRtaArtPathList(): MutableList<RtWithAlbumArt> {
         return try{
             val jsonStrGet = prefs.getString(URI_STORED_KEY,"No Data")
 
@@ -34,7 +34,7 @@ class MySharedPrefManager(context: Context) {
             val onDiskRtaArtPathList = gson.fromJson<List<RtWithAlbumArt>>(jsonStrGet, type)
             Log.d(TAG, "getRtaArtPathList: onDiskRtaArtPathList = $onDiskRtaArtPathList")
 
-            onDiskRtaArtPathList
+            onDiskRtaArtPathList.toMutableList()
         }catch (e: Exception) {
             Log.d(TAG, "getRtaArtPathList: Error retrieving from Shared Prefs..error message=$e")
             arrayListOf<RtWithAlbumArt>() // 에러 발생시 빈 깡통 List 를 리턴.

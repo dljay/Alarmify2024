@@ -38,7 +38,7 @@ class DiskSearcher(val context: Context)
     //val xmlFile = File(topFolder+SH_PREF_FOLDER+ "RtaArtPathList.xml") // RtaArtPathList.xml
 
     // 앱 최초실행인지 확인하는 기능
-    fun initialLaunchCheck()  {
+ /*   fun initialLaunchCheck()  {
         // <A> /.AlarmRingTones 폴더가 존재하지 않는다. -> 폴더 생성
         if(!alarmRtDir.exists()) {alarmRtDir.mkdir()}
         // <B> /.AlbumArt 폴더가 존재하지 않는다.
@@ -49,23 +49,27 @@ class DiskSearcher(val context: Context)
 //        if(artDir.listFiles().isNullOrEmpty()) {        }
 
         else {Log.d(TAG, "isInitialLaunch: This is not an INITIAL LAUNCH OF this app")}
-    }
+    }*/
 
     // rta & art 파일이 매칭하는지 보완이 필요없는지 확인하는 기능 isRescanNeeded isRtListRebuildNeeded
     fun isDiskScanNeeded(): Boolean {
         var isDiskRescanNeeded = false
 
-        // SharedPref 에서 돌려받는 list 는 Disk 에 저장되어있는 RtWithAlbumArt object 들의 정보를 담고 있음.
+    // 1) 우선 폴더 존재하는지 확인.
+        if(!alarmRtDir.exists()) {alarmRtDir.mkdir()} // <A> /.AlarmRingTones 폴더가 존재하지 않는다. -> 폴더 생성
+        if(!artDir.exists()) {artDir.mkdir()} // <B> /.AlbumArt 폴더가 존재하지 않는다.
 
+
+        // SharedPref 에서 돌려받는 list 는 Disk 에 저장되어있는 RtWithAlbumArt object 들의 정보를 담고 있음.
         val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
-    // 1)SharedPref 파일 자체가 없을때 (깡통 List 를 받음.)
+    // 2-a)SharedPref 파일 자체가 없을때 (즉 최초 실행하여 xml 파일이 없을때) 깡통 List 를 받음.
         if(listFromSharedPref.isNullOrEmpty()) {
 
             Log.d(TAG, "isDiskScanNeeded: We couldn't retrieve sharedPref!")
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
-    //  2) 받은 list 안을 검색했을 때 'artPath' field 가 null // todo: 혹은 'audioFilePath' 가 null 값인게 있는 놈이 있는지
+    //  2-b) 받은 list 안 obj 들을 검색했을 때 'artPath' field 가 null // todo: 혹은 'audioFilePath' 가 null 값인게 있는 놈이 있는지
         val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty()}
 
         if(artPathEmptyList.isNotEmpty()) {
@@ -89,58 +93,25 @@ class DiskSearcher(val context: Context)
         Log.d(TAG, "updateList: done..!! fianlRtArtPathList = ${DiskSearcher.finalRtArtPathList}")
     }
 
-    fun downloadedRtSearcher(): MutableList<RtWithAlbumArt>
+    fun onDiskRtSearcher(): MutableList<RtWithAlbumArt>
     {
         onDiskRingtoneList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.
-        //todo: Raw 폴더에 있는 default Ringtone 들을 먼저 리스트에 업데이트!
-
-        val emptyUriList = listOf<Uri>()
+    //(1) Raw 폴더에 있는 default Ringtone 들을 먼저 리스트에 업데이트!
 
 
-        // 만약 폴더가 없을때는 폴더를 생성
-        if(!alarmRtDir.exists()) {
-            Log.d(TAG, "downloadedRtSearcher: Folder $alarmRtDir doesn't exist. We'll create one")
-            alarmRtDir.mkdir()
-        }
-        // 폴더는 있는데 파일이 없을때.. 그냥 return
-        if(alarmRtDir.listFiles().isNullOrEmpty()) {
-            Log.d(TAG, "downloadedRtSearcher: NO FILES INSIDE THE FOLDER!")
-            return emptyList
-        }
-        // 폴더에 파일이 있을때..
+    //(2) /.alarmRingTones 에 있는 파일 검색
+        // 2)-a 폴더는 있는데 파일이 없을때.. 그냥 return
+        if(alarmRtDir.listFiles().isNullOrEmpty()) {Log.d(TAG, "downloadedRtSearcher: NO FILES INSIDE THE FOLDER!")
+            return emptyList}
+        // 2)-b 폴더에 파일이 있을때..
         if(alarmRtDir.listFiles() != null)
         {
             for(f in alarmRtDir.listFiles())
             {
-                val mmr =  MediaMetadataRetriever()
 
-                val actualFileForMmr = topFolder+"/.AlarmRingTones"+ File.separator + f.name
 
-                try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
-                    mmr.setDataSource(actualFileForMmr)
-                }catch (er:Exception) {
-                    Log.d(TAG, "downloadedRtSearcher: unable to run mmr.setDataSource for the file=${f.name}. WE'LL DELETE THIS PIECE OF SHIT!")
-                    f.delete()
-                    //return emptyList //
-                }
 
-                //1) 파일이 제대로 된 mp3 인지 곡 길이(duration) return 하는것으로 확인. (Ex. p1=10초=10042(ms) 리턴)  옹.
-                val fileDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-                Log.d(TAG, "downloadedRtSearcher: fileName= ${f.name}, fileDuration=$fileDuration")
-                if(fileDuration==null) {
-                    Log.d(TAG, "downloadedRtSearcher: Possible Corrupted file. Filename=${f.name}")
-                    f.delete()
-                }
-
-                //2) hyphen(-) 포함이거나/'p' 가 없거나!/사이즈가=0 이면 => 삭제 // todo: 확장자명이 .rta 가 아녀도 삭제! (현재는 확장자 mp3 등 상관 없이 허용)
-                if(f.name.contains('-')||!f.name.contains('p')||f.length()==0L) {
-                    Log.d(TAG, "!!! downloadedRtSearcher: ${f.name}")
-                    if(f.length()==0L) {
-                        Log.d(TAG, "downloadedRtSearcher: file size prob 0? Filesize=${f.length()}")
-                    }
-                    f.delete()
-                }
-                //3) Album MetaData (제목, TrId) 찾기. 앨범 아트는 AlarDetailsFrag 에서 찾아줌. 4) 번에서 이걸 RingtoneClass 로 만들어줌.
+                /*//3) Album MetaData (제목, TrId) 찾기. 앨범 아트는 AlarDetailsFrag 에서 찾아줌. 4) 번에서 이걸 RingtoneClass 로 만들어줌.
                     // 3-a) 제목
                     val rtTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
 
@@ -155,7 +126,7 @@ class DiskSearcher(val context: Context)
 
 
                 // 4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
-                val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = f.path, fileName = f.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
+                val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = f.path, fileName = f.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정*/
                 onDiskRingtoneList.add(onDiskRingtone)
                 Log.d(TAG, " downloadedRtSearcher: \n[ADDING TO THE LIST]  *** Title= $rtTitle, trId=$trIDString, \n *** file.name=${f.name} // file.path= ${f.path.toString()} //\n artFilePath=$artFilePath,  uri=$fileUri")
 
@@ -184,10 +155,10 @@ class DiskSearcher(val context: Context)
             artDir.mkdir()
         }
 
-        // A-1-b)폴더는 있는데 그 안에 아무 파일이 없을때..(** 앱 신규 설치시**)
+        // A-1-b)폴더는 있는데 그 안에 아무 파일이 없을때..(아무것도 다운 받은게 없는 상태.)
         if(artDir.listFiles().isNullOrEmpty()) {
             Log.d(TAG, "readAlbumArtOnDisk: NO Album Art graphic FILES INSIDE THE FOLDER!. Probably the first time opening this app?")
-            downloadedRtSearcher()
+            onDiskRtSearcher()
         }
         // todo: 쓸데없는 파일 있으면 삭제..
         // A-1-c)폴더에 파일이 있을때..
@@ -212,6 +183,55 @@ class DiskSearcher(val context: Context)
     // AlarmDetailsFragment> Line 385 에서 호출 (Details Frag 열었을 때 동그란 Frame 안에 있는 Album Art 사진에 현재 RT 의 경로를 전달)
     fun getArtFilePath(trkId: String?): String? = onDiskArtMap[trkId]
 
+//************ Private Utility Functions ====================>>>>
+    private fun extractMetaData(fileReceived: File): RtWithAlbumArt {
+        val mmr =  MediaMetadataRetriever()
+
+        val actualFileForMmr = topFolder+"/.AlarmRingTones"+ File.separator + fileReceived.name
+
+        try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
+            mmr.setDataSource(actualFileForMmr)
+        }catch (er:Exception) {
+            Log.d(TAG, "downloadedRtSearcher: unable to run mmr.setDataSource for the file=${fileReceived.name}. WE'LL DELETE THIS PIECE OF SHIT!")
+            fileReceived.delete()
+        }
+
+        //1) 파일이 제대로 된 mp3 인지 곡 길이(duration) return 하는것으로 확인. (Ex. p1=10초=10042(ms) 리턴)  옹.
+        val fileDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+        Log.d(TAG, "downloadedRtSearcher: fileName= ${fileReceived.name}, fileDuration=$fileDuration")
+        if(fileDuration==null) {
+            Log.d(TAG, "downloadedRtSearcher: Possible Corrupted file. Filename=${fileReceived.name}")
+            fileReceived.delete()
+        }
+        //2) 파일명에 hyphen(-) 포함되어있거나(중복 다운로드)/'rt' 가 없거나!/사이즈가=0 이면 => 삭제
+        // todo: 확장자명이 .rta 가 아녀도 삭제! (현재는 확장자 mp3 등 상관 없이 허용)
+        if(fileReceived.name.contains('-')||!fileReceived.name.contains("rt")||fileReceived.length()==0L) {
+            Log.d(TAG, "!!! downloadedRtSearcher: ${fileReceived.name}")
+            if(fileReceived.length()==0L) {
+                Log.d(TAG, "downloadedRtSearcher: file size prob 0? Filesize=${fileReceived.length()}")
+            }
+            fileReceived.delete()
+            Log.d(TAG, "downloadedRtSearcher: deleted file: [ ${fileReceived.name} ] from the disk")
+
+        }
+        //3) Album MetaData (제목, TrId) 찾기. 앨범 아트는 AlarDetailsFrag 에서 찾아줌. 4) 번에서 이걸 RingtoneClass 로 만들어줌.
+            // 3-a) 제목
+            val rtTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
+
+            // 3-b) TrId 찾기
+            val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
+
+            // 3-c) rta File uri(경로) // File Path 를 uri 로 변환
+            val fileUri = Uri.parse(fileReceived.path.toString())
+
+            // 3-d) artFile Path(String)
+            //todo:  ** 아래 readArtOnDisk() 가 앱 시작과 동시에 실행됨. 다 되었다는 가정하에 여기서 찾지만. Path 가 아직 없는경우에 보완책
+            val artFilePath = onDiskArtMap[trIDString] //trIDString & artFilePath 둘 다 nullable String
+
+        //4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
+        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = fileReceived.path, fileName = fileReceived.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
+        return onDiskRingtone
+    }
     // 모든 링톤 파일(rta)은 albumArt 를 MetaData 로 갖고 있어야 하는데 어떤 이유에서든(User 삭제 등) 없을때
     private fun extractArtFromSingleRta(trkId: String?, rtaUri: Uri) {
         Log.d(TAG, "extractArtFromSingleRta: called for trkId=$trkId, rtaUri=$rtaUri")

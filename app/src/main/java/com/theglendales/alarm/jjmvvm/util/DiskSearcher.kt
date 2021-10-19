@@ -119,7 +119,7 @@ class DiskSearcher(val context: Context)
 
             // (2)-b 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우 null 상태. (User 가 지웠거나, onDiskRtSearcher() 가 가동 안되었을때 등등..)
                 if(rtOnDisk.artFilePathStr.isNullOrEmpty()) {
-                    //todo: SharedPref 파일이 존재하고, trId 로 artFilePath 를 SharedPref 에서 받기가 된다면.
+                    // ** 전체 file path rebuilding 이 'artFileList <-> audioFileList 대조 후 rebuilding 보다 효율적일듯. ** 생각보다 별로 안 걸림.
 
                     extractArtFromSingleRta(rtOnDisk.trIdStr, Uri.parse(rtOnDisk.audioFilePath)) } // 안될때만 extractArtFromSingleRta?
             }// for loop 끝.
@@ -159,7 +159,7 @@ class DiskSearcher(val context: Context)
             {
                 val fullPathOfArtFile: String = topFolder+ ART_FOLDER+ File.separator + artFile.name
                 //val artUri = Uri.parse(artFile.path.toString())
-                val trkId = artFile.nameWithoutExtension // 모든 앨범아트는 RT 의 TrkId 값.art 로 설정해야함! 파일명의 앞글자만 딴것. ex) 01
+                val trkId = artFile.nameWithoutExtension // 모든 앨범아트는 RT 의 TrkId 값.art 로 설정해야함! (**파일명과 TrkId 가 일치해야함!)
 
                 onDiskArtMap[trkId] = artFile.path // MAP 에 저장! <trkId, PathString>
                 Log.d(TAG, "readAlbumArtOnDisk: added artFilePath(${artFile.path}) to onDiskArtMap => $onDiskArtMap")

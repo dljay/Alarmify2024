@@ -302,6 +302,8 @@ class AlarmDetailsFragment : Fragment() {
         } else {
             Log.d(TAG, "refreshSpinnerUi: isDiskScanNeeded(X)")
             val rtOnDiskList = DiskSearcher.finalRtArtPathList // 현재 companion obj 로 메모리에 떠있는 rt obj 리스트 갖고오기.
+            //val resultList = mySharedPrefManager.getRtaArtPathList() <- 이걸로도 대체 가능.
+
             Log.d(TAG, "refreshSpinnerUi: result=$rtOnDiskList")
             spinnerAdapter.updateList(rtOnDiskList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
             refreshSpinnerAndCircleArt(prevRtFileName)
@@ -329,9 +331,10 @@ class AlarmDetailsFragment : Fragment() {
         /** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
 
         val indexOfSelectedRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == selectedRtFileName }
-        Log.d(TAG, "updateCircleAlbumArt: indexOfSelectedRt=$indexOfSelectedRt, selectedRtForThisAlarm=${SpinnerAdapter.rtOnDiskList[indexOfSelectedRt]}")
+
         if(indexOfSelectedRt!=-1) // 현재 disk 에 있는 rt list 에서 현재 '설정한(or 되어있던)' rt 를 찾았으면 CircleAlbumArt 보여주기.
         {
+            Log.d(TAG, "updateCircleAlbumArt: indexOfSelectedRt=$indexOfSelectedRt, selectedRtForThisAlarm=${SpinnerAdapter.rtOnDiskList[indexOfSelectedRt]}")
             spinner.setSelection(indexOfSelectedRt)
             val selectedRtForThisAlarm: RtWithAlbumArt = SpinnerAdapter.rtOnDiskList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
             val artPath = selectedRtForThisAlarm.artFilePathStr
@@ -393,9 +396,11 @@ class AlarmDetailsFragment : Fragment() {
                 }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: 설정된 알람톤 파일이름=$selectedRtFileName")
-                    if(isRtListReady) { // 이미 리스트가 업뎃되었다면 -> DetailsFrag 최초 시행은 아닌 경우 -> Circle albumArt 사진만 업데이트!
+                    if(isRtListReady) { // 2) Rt 변경되었을 때  -> Circle albumArt 사진만 업데이트!
+                        //Log.d(TAG, "onResume: DELMONI 2) Rt 임의로 변경되었을 때")
                         updateCircleAlbumArt(selectedRtFileName.toString())
-                    } else {
+                    } else { // 1) DetailsFrag (최초로) 열때 혹은 다른 Frag 갔다왔을 때 여기 무조건 실행됨(rxJava Trigger 때문)
+                        //Log.d(TAG, "onResume: DELMONI 1) rxJava Trigger")
                         initSpinner(selectedRtFileName.toString())
                     }
                 })

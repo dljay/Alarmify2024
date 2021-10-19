@@ -58,7 +58,7 @@ import java.util.Calendar
 
 //v0.20e2
 // lottie ANIM 을 AlarmsListActivity 안에서 관리 (제일 속 편함.. frag 안에서 view 찾는 수고 안해도 되고.)
-// 문제1: 전체 화면을 차지함. 가급적 위에 살며시 떴으면 좋겠는데..
+// 문제1: 전체 화면을 차지함. 가급적 위에 살며시 떴으면 좋겠는데..-> overlay?
 // 문제2: 실제 rt db rebuilding 하는 시간이 매우 짧아서 거의 안 보이고 (스낵바만 보임.) =-> 최소 1초는 보여주게끔?
 //todo:  list_activity.xml 만지는것부터 continue.
 

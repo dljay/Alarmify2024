@@ -292,8 +292,9 @@ class AlarmDetailsFragment : Fragment() {
 
     //1) 다운받고->AlarmsList->DetailsFrag 로 다시 와서 리스트업이 안되었다면-> DiskSearcher.kt > onDiskRtSearcher() 진행.
         if(myDiskSearcher.isDiskScanNeeded()) {
+            //todo: Animation 시작->
             Log.d(TAG, "refreshSpinnerUi: isDiskScanNeeded(O) here")
-            // todo: animation
+
             val rtOnDiskList = myDiskSearcher.onDiskRtSearcher()
             Log.d(TAG, "refreshSpinnerUi: result=$rtOnDiskList")
             spinnerAdapter.updateList(rtOnDiskList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
@@ -322,6 +323,7 @@ class AlarmDetailsFragment : Fragment() {
             updateCircleAlbumArt(prevRtFileName)
         // 3) 다 됐으니 최초 실행은 아님을 알려주기.
             isRtListReady = true
+        // 4)//todo: Animation 끝<- Main Thread 에서
             
         }
     }

@@ -254,7 +254,7 @@ class AlarmsListActivity : AppCompatActivity() {
             // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
             if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
                 Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
-
+                //todo: Animation 시작->
                 CoroutineScope(Dispatchers.IO).launch {
                 //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
                     myDiskSearcher.readAlbumArtOnDisk()
@@ -269,6 +269,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     myDiskSearcher.updateList(resultList)
                     Log.d(TAG, "onCreate: rebuilding Shared Pref DONE..(Hopefully..) resultList = $resultList!")
                 }
+                //todo: Animation 끝 <-
 
             }
         //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)

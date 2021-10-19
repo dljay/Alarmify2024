@@ -66,10 +66,14 @@ class DiskSearcher(val context: Context)
     // 2-C) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
         if (alarmRtDir.listFiles().size != artDir.listFiles().size) {
             Log.d(TAG, "isDiskScanNeeded: 2-C) 파일 갯수 불일치 /.AlarmRtFolder=${alarmRtDir.listFiles().size} <-> /.AlbumArtFolder=${artDir.listFiles().size} ")
+            isDiskRescanNeeded=true
+            return isDiskRescanNeeded
         }
     // 2-D) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
         if(alarmRtDir.listFiles().size != listFromSharedPref.size) {
             Log.d(TAG, "isDiskScanNeeded: 2-D) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 불일치.")
+            isDiskRescanNeeded=true
+            return isDiskRescanNeeded
         }
     //2-E) SharedPref에서 받은 리스트 안 obj 검색->'artPath' (혹은 audio path)가 null 임.//
         val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty()}
@@ -100,7 +104,7 @@ class DiskSearcher(val context: Context)
             copyDefaultRtsToPhone(R.raw.defrt4, "defrt4.rta")
             copyDefaultRtsToPhone(R.raw.defrt5, "defrt5.rta")
             }
-    //(1)-c todo: 구입한 파일이 없으면 다운로드? 카피 등..
+    //(1)-c: 구입한 파일이 현 폴더에 있는지 한번 더 확인? ...구축해줄곳임. flowchart 참고.
 
     // (2) 이제 폴더에 파일이 있을테니 이것으로 updateList() 로 전달할 ringtone 리스트를 만듬.
         if(alarmRtDir.listFiles() != null)
@@ -113,10 +117,11 @@ class DiskSearcher(val context: Context)
                 Log.d(TAG, " onDiskRtSearcher: \n[ADDING TO THE LIST]  *** Title= ${rtOnDisk.rtTitle}, trId=${rtOnDisk.trIdStr}, " +
                         "\n *** file.name=${f.name} // file.path= ${f.path.toString()} //\n artFilePath=${rtOnDisk.artFilePathStr}")
 
-                // (2)-b 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우 null 상태. (User 가 지웠거나 기타 등등..)
+            // (2)-b 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우 null 상태. (User 가 지웠거나, onDiskRtSearcher() 가 가동 안되었을때 등등..)
                 if(rtOnDisk.artFilePathStr.isNullOrEmpty()) {
-                    //todo: SharedPref 파일이 존재한다면-> trId 로 artFilePath 를 SharedPref 에서 받기? 안될때만 extractArtFromSingleRta?
-                    extractArtFromSingleRta(rtOnDisk.trIdStr, Uri.parse(rtOnDisk.audioFilePath)) }
+                    //todo: SharedPref 파일이 존재하고, trId 로 artFilePath 를 SharedPref 에서 받기가 된다면.
+
+                    extractArtFromSingleRta(rtOnDisk.trIdStr, Uri.parse(rtOnDisk.audioFilePath)) } // 안될때만 extractArtFromSingleRta?
             }// for loop 끝.
             //Log.d(TAG, "searchFile: file Numbers= $numberOfFiles")
         }
@@ -294,7 +299,7 @@ class DiskSearcher(val context: Context)
     //Save to Disk
     private fun saveBmpToJpgOnDisk(trkId: String?, bitmap: Bitmap?) {
         if(trkId.isNullOrEmpty() || bitmap==null) {
-            Log.d(TAG, "saveBmpToJpgOnDisk: trkId & bitmap are EMPTY! NULL!! ZILCH")
+            Log.d(TAG, "saveBmpToJpgOnDisk: trkId=$trkId & bitmap are EMPTY! NULL!! ZILCH")
             return
         }
 
@@ -316,7 +321,7 @@ class DiskSearcher(val context: Context)
             onDiskArtMap[trkId] = savedToDiskFile.path // a) onDiskArtMap 에 artPath 를 기록
             // b)onDiskRtList 에서 RtWithAlbumArt object 를 찾아서 albumArtPath 를 정리해줌 -> 그래야 Spinner 에 뜨지!!
             val index: Int = onDiskRingtoneList.indexOfFirst { rt -> rt.trIdStr == trkId } // 동일한 rt.trId 를 갖는 놈의 인덱스를 onDiskRtList 에서 찾기
-            Log.d(TAG, "saveBmpToJpgOnDisk: index of missing artPath ins onDiskRtList=$index")
+            Log.d(TAG, "saveBmpToJpgOnDisk: index of missing artPath in onDiskRtList=$index")
             onDiskRingtoneList[index].artFilePathStr = savedToDiskFile.path
 
 

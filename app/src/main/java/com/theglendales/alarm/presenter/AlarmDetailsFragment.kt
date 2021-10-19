@@ -285,17 +285,30 @@ class AlarmDetailsFragment : Fragment() {
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
     private fun initSpinner(prevRtFileName: String) { // 기존에 설정해놓은 알람을 (onResume> disposables.xx 에서) 통보 받으면 이제 refreshSpinner & Big Circle Album Art UI 업뎃을 하자!
         CoroutineScope(IO).launch {refreshSpinnerUi(prevRtFileName)}
+
     }
     private suspend fun refreshSpinnerUi(prevRtFileName: String) {
         Log.d(TAG, "refreshSpinnerUi: called")
 
-        val rtOnDiskList = DiskSearcher.finalRtArtPathList // 현재 companion obj 로 메모리에 떠있는 rt obj 리스트 갖고오기.
-        // todo: -> 리스트업 되기전에 detailsFrag 에 들어와있다면? .rtOnDiskSearcher 재 가동..
+    //1) 다운받고->AlarmsList->DetailsFrag 로 다시 와서 리스트업이 안되었다면-> DiskSearcher.kt > onDiskRtSearcher() 진행.
+        if(myDiskSearcher.isDiskScanNeeded()) {
+            Log.d(TAG, "refreshSpinnerUi: isDiskScanNeeded(O) here")
+            // todo: animation
+            val rtOnDiskList = myDiskSearcher.onDiskRtSearcher()
+            Log.d(TAG, "refreshSpinnerUi: result=$rtOnDiskList")
+            spinnerAdapter.updateList(rtOnDiskList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
+            refreshSpinnerAndCircleArt(prevRtFileName)
 
-        Log.d(TAG, "refreshSpinnerUi: result=$rtOnDiskList")
-        spinnerAdapter.updateList(rtOnDiskList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
+        } else {
+            Log.d(TAG, "refreshSpinnerUi: isDiskScanNeeded(X)")
+            val rtOnDiskList = DiskSearcher.finalRtArtPathList // 현재 companion obj 로 메모리에 떠있는 rt obj 리스트 갖고오기.
+            Log.d(TAG, "refreshSpinnerUi: result=$rtOnDiskList")
+            spinnerAdapter.updateList(rtOnDiskList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
+            refreshSpinnerAndCircleArt(prevRtFileName)
 
-        refreshSpinnerAndCircleArt(prevRtFileName)
+        }
+
+
     }
     private suspend fun refreshSpinnerAndCircleArt(prevRtFileName: String) {
         Log.d(TAG, "notifySpinnerAdapterOnMainThread: called!!**")

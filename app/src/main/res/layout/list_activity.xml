@@ -25,6 +25,22 @@
     android:weightSum="10"
     tools:context=".presenter.AlarmsListActivity">
 
+    <!--Lottie Animation-->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/id_lottie_listActivity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="50dp"
+        android:scaleType="centerInside"
+        android:visibility="gone"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="true"
+        app:lottie_rawRes="@raw/lottie_building_rt_db"
+        app:lottie_scale="0.5">
+
+    </com.airbnb.lottie.LottieAnimationView>
+
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"

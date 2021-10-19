@@ -17,6 +17,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
+import android.widget.LinearLayout
+import com.airbnb.lottie.LottieAnimationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.theglendales.alarm.BuildConfig
@@ -37,6 +39,7 @@ import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import io.reactivex.annotations.NonNull
@@ -53,23 +56,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v0.20d
-//1.전곡 trkID 메타데이터를 composer 에 넣어볼것. => 4번 이상발생. ogg 나 mp3 로 아예 포맷 확정하기!
-//=> DetailsFrag 들어갔을 때=> ArrayIndexOutOfBoundsException 대처.
-//2.isDiskScanNeeded 보강
-//A) SharedPref xml 파일 자체가 없음 (초기 오픈)
-//B) /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <5 미만
-//
-//C) rta <-> art 파일 갯수 비교.
-//D) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
-//E) SharedPref에서 받은 리스트 안 obj 검색->'artPath' (혹은 audio path)가 null 임.
-//
-//3. diskSearch animation
-//4. download 관련 ..
-
-
-
-
+//v0.20e2
+// lottie ANIM 을 AlarmsListActivity 안에서 관리 (제일 속 편함.. frag 안에서 view 찾는 수고 안해도 되고.)
+// 문제1: 전체 화면을 차지함. 가급적 위에 살며시 떴으면 좋겠는데..
+// 문제2: 실제 rt db rebuilding 하는 시간이 매우 짧아서 거의 안 보이고 (스낵바만 보임.) =-> 최소 1초는 보여주게끔?
+//todo:  list_activity.xml 만지는것부터 continue.
 
 
 
@@ -84,6 +75,10 @@ class AlarmsListActivity : AppCompatActivity() {
     //내가 추가-->
     val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
+
+    //lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
+    private val lottieAnimView by lazy { findViewById<LottieAnimationView>(R.id.id_lottie_listActivity) }
+
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -226,7 +221,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     checkPermissions(this, alarms.map { it.alarmtone })
                 }.apply { }
 
-// 추가1) Second Fragment 관련 -->
+// 추가1-A) Second Fragment 관련 -->
     // 2nd Frag 시작과 동시에 일단 SharedPref 파일 자체를 생성해줌. => 일단 사용 안함.
 //        val defaultPlayInfo = PlayInfoContainer(-10,-10,-10,StatusMp.IDLE)
 //        mySharedPrefManager.savePlayInfo(defaultPlayInfo)  // default 값은 -10, -10, -10, IDLE
@@ -246,12 +241,14 @@ class AlarmsListActivity : AppCompatActivity() {
             true
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
-// <--추가1) Second Fragment 관련
+// <--추가1-A) Second Fragment 관련
 
 // 추가2) --> .rta .art 파일 핸들링 작업 (앱 시작과 동시에)
 
         //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
             // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
+            lottieAnimCtrl("showANIM")
+        //lottieAnimCtrl("hideANIM")
             if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
                 Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
                 //todo: Animation 시작->
@@ -269,14 +266,17 @@ class AlarmsListActivity : AppCompatActivity() {
                     myDiskSearcher.updateList(resultList)
                     Log.d(TAG, "onCreate: rebuilding Shared Pref DONE..(Hopefully..) resultList = $resultList!")
                 }
-                //todo: Animation 끝 <-
+
 
             }
+
         //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
             else if(!myDiskSearcher.isDiskScanNeeded()) {
                 val resultList = mySharedPrefManager.getRtaArtPathList()
                 Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
                 myDiskSearcher.updateList(resultList)
+
+
 
             }
 
@@ -286,7 +286,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
 // <-- 추가2)
     } // onCreate() 여기까지.
-// 추가 -->
+// 추가 1-B)-->
 
     fun jjSetCurrentFragment(receivedFragment: Fragment) =
         supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
@@ -296,7 +296,32 @@ class AlarmsListActivity : AppCompatActivity() {
             Log.d(TAG, "jjSetCurrentFragment: .... ")
         }
 
-// <--추가
+// <--추가 1-B)
+
+// 추가 3) Lottie 관련-->
+    private fun lottieAnimCtrl(status: String) {
+        when(status) {
+            "hideANIM" -> {
+                runOnUiThread {
+                    Log.d(TAG, "lottieAnimCtrl: hide Lottie ANIMATION!")
+                    lottieAnimView.cancelAnimation()
+                    lottieAnimView.visibility = LottieAnimationView.GONE
+                    }
+
+                }
+            "showANIM" -> {
+                runOnUiThread {
+                    Log.d(TAG, "lottieAnimCtrl: Show ANIM! Rebuilding Rt DB now!!")
+                    lottieAnimView.visibility = LottieAnimationView.VISIBLE
+                    lottieAnimView.setAnimation(R.raw.lottie_building_rt_db)
+                    Snackbar.make(lottieAnimView, "Rebuilding Alarm sound DB", Snackbar.LENGTH_LONG).show()
+                    }
+
+                }
+        }
+    }
+// <--추가 3) Lottie 관련 <---
+
 
     override fun onStart() {
         Log.d(TAG, "onStart: jj-called")

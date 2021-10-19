@@ -50,19 +50,28 @@ class DiskSearcher(val context: Context)
         val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
 
 
-
-
     // 2-A)SharedPref 파일 자체가 없을때 (즉 최초 실행하여 xml 파일이 없을때) 깡통 List 를 받음.
         if(listFromSharedPref.isNullOrEmpty()) {
 
-            Log.d(TAG, "isDiskScanNeeded: We couldn't retrieve sharedPref!")
+            Log.d(TAG, "isDiskScanNeeded: 2-A) We couldn't retrieve sharedPref!")
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
     // 2-B) /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <5 미만
+        if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 5) {
+            Log.d(TAG, "isDiskScanNeeded: 2-B)  /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <5 미만")
+            isDiskRescanNeeded=true
+            return isDiskRescanNeeded
+        }
     // 2-C) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
-
-    //2-D) SharedPref에서 받은 리스트 안 obj 검색->'artPath' (혹은 audio path)가 null 임.// todo: ..purchase 했는데 없는 놈 있는지 등..
+        if (alarmRtDir.listFiles().size != artDir.listFiles().size) {
+            Log.d(TAG, "isDiskScanNeeded: 2-C) 파일 갯수 불일치 /.AlarmRtFolder=${alarmRtDir.listFiles().size} <-> /.AlbumArtFolder=${artDir.listFiles().size} ")
+        }
+    // 2-D) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
+        if(alarmRtDir.listFiles().size != listFromSharedPref.size) {
+            Log.d(TAG, "isDiskScanNeeded: 2-D) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 불일치.")
+        }
+    //2-E) SharedPref에서 받은 리스트 안 obj 검색->'artPath' (혹은 audio path)가 null 임.//
         val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty()}
 
         if(artPathEmptyList.isNotEmpty()) { //(즉 artPathEmptyList 안 갯수가 > 0)
@@ -235,7 +244,8 @@ class DiskSearcher(val context: Context)
             val rtTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
 
             // 3-b) TrId 찾기
-            val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
+            //val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
+            val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER)
 
             // 3-c) rta File Path
             val audioFilePath = fileReceived.path.toString()
@@ -246,6 +256,7 @@ class DiskSearcher(val context: Context)
 
         //4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
         val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileName = fileReceived.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
+        Log.d(TAG, "extractMetaDataFromRta: Extracted [onDiskRingtone]=$onDiskRingtone")
         return onDiskRingtone
     }
     // 모든 링톤 파일(rta)은 albumArt 를 MetaData 로 갖고 있어야 하는데 어떤 이유에서든(User 삭제 등) 없을때

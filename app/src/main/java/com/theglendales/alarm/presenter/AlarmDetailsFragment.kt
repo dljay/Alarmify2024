@@ -288,12 +288,12 @@ class AlarmDetailsFragment : Fragment() {
     }
     private suspend fun refreshSpinnerUi(prevRtFileName: String) {
         Log.d(TAG, "refreshSpinnerUi: called")
-        // AlarmListActivity 시작과 동시에 업뎃되었을테니 문제없는지 체크. 리스트 업뎃 안되었으면 아래 .rtOnDiskSearcher() 재 실행.
-        // List up 이 다 안되었을 경우를 생각.
-        val resultList = myDiskSearcher.onDiskRtSearcher() // todo: 이 리스트만 SharedPref 에서 가져오면 된다! -> 리스트업 되기전에 detailsFrag 에 들어와있다면? .rtOnDiskSearcher 재 가동..
-        //todo: 이미 되기전에 들어왔는지 확인하는 방법?? 모든 rta 가 art 를 갖는다 했을 떄 Glide Load Fail 이 나서는 안됨. -> 아래 Glide>LoadFailed 에 콜백으로 myDiskSearcher.rtOnDiskSearcher 재 가동??
-        Log.d(TAG, "refreshSpinnerUi: result=$resultList")
-        spinnerAdapter.updateList(resultList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
+
+        val rtOnDiskList = DiskSearcher.finalRtArtPathList // 현재 companion obj 로 메모리에 떠있는 rt obj 리스트 갖고오기.
+        // todo: -> 리스트업 되기전에 detailsFrag 에 들어와있다면? .rtOnDiskSearcher 재 가동..
+
+        Log.d(TAG, "refreshSpinnerUi: result=$rtOnDiskList")
+        spinnerAdapter.updateList(rtOnDiskList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
 
         refreshSpinnerAndCircleArt(prevRtFileName)
     }
@@ -313,12 +313,14 @@ class AlarmDetailsFragment : Fragment() {
     private fun updateCircleAlbumArt(prevRtFileName: String) {
         Log.d(TAG, "updateCircleAlbumArt: called #$#@%")
         // 2-a) 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
-//***                // .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환)
-        val indexOfSelectedRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName }
-        spinner.setSelection(indexOfSelectedRt)
-        val selectedRtForThisAlarm: RtWithAlbumArt = SpinnerAdapter.rtOnDiskList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
-        val albumArtPath = myDiskSearcher.getArtFilePath(selectedRtForThisAlarm.trIdStr)
+        /** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
 
+        val indexOfSelectedRt = SpinnerAdapter.rtOnDiskList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == prevRtFileName }
+        if(indexOfSelectedRt!=-1) // 현재 disk 에 있는 rt list 에서 현재 '설정한(or 되어있던)' rt 를 찾았으면 CircleAlbumArt 보여주기.
+        {
+            spinner.setSelection(indexOfSelectedRt)
+            val selectedRtForThisAlarm: RtWithAlbumArt = SpinnerAdapter.rtOnDiskList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
+            val albumArtPath = myDiskSearcher.getArtFilePath(selectedRtForThisAlarm.trIdStr)
 
         // 2-b) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
         context?.let {
@@ -335,6 +337,7 @@ class AlarmDetailsFragment : Fragment() {
                         return false
                     }
                 }).into(ivRtArtBig)
+            }
         }
     }
 

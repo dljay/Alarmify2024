@@ -43,6 +43,7 @@ class MySharedPrefManager(context: Context) {
     }
 
     fun saveRtaArtPathList(rtaArtPathList: List<RtWithAlbumArt>) {
+        Log.d(TAG, "saveRtaArtPathList: begins..")
         val jsonStrSave = gson.toJson(rtaArtPathList)
         prefs.edit().putString(URI_STORED_KEY, jsonStrSave).apply()
     }

@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.util.Log
+import com.google.android.exoplayer2.C
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
@@ -47,18 +48,25 @@ class DiskSearcher(val context: Context)
 
         // SharedPref 에서 돌려받는 list 는 Disk 에 저장되어있는 RtWithAlbumArt object 들의 정보를 담고 있음.
         val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
-    // 2-a)SharedPref 파일 자체가 없을때 (즉 최초 실행하여 xml 파일이 없을때) 깡통 List 를 받음.
+
+
+
+
+    // 2-A)SharedPref 파일 자체가 없을때 (즉 최초 실행하여 xml 파일이 없을때) 깡통 List 를 받음.
         if(listFromSharedPref.isNullOrEmpty()) {
 
             Log.d(TAG, "isDiskScanNeeded: We couldn't retrieve sharedPref!")
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
-    //  2-b) 받은 list 안 obj 들을 검색했을 때 'artPath' field 가 null // todo: 혹은 'audioFilePath' 가 null 값인게 있는 놈이 있는지
+    // 2-B) /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <5 미만
+    // 2-C) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
+
+    //2-D) SharedPref에서 받은 리스트 안 obj 검색->'artPath' (혹은 audio path)가 null 임.// todo: ..purchase 했는데 없는 놈 있는지 등..
         val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty()}
 
-        if(artPathEmptyList.isNotEmpty()) {
-                for(i in 0 until artPathEmptyList.size) {
+        if(artPathEmptyList.isNotEmpty()) { //(즉 artPathEmptyList 안 갯수가 > 0)
+                for(i in 0 until artPathEmptyList.size) { //todo: 여기 for loop 은 단순 모니터링 용. 없애도 됨.
                     Log.d(TAG, "isDiskScanNeeded: 다음 파일의 artFilePathStr 은 비어있음!! = ${artPathEmptyList[i].fileName}")
                 }
             isDiskRescanNeeded=true
@@ -75,7 +83,7 @@ class DiskSearcher(val context: Context)
 
     //(1)-b  /.AlarmRingTones 에 파일이 없거나, 5개 이하로 있을때 (즉 최초 실행 혹은 문제 발생) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
 
-        if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 5) {
+        if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 5) { //todo: defaulRt 추후 5개 넘으면 숫자 변경.
             Log.d(TAG, "onDiskRtSearcher: NO FILES (or less than 5 files) INSIDE /.AlarmRingTones FOLDER!")
             copyDefaultRtsToPhone(R.raw.defrt1, "defrt1.rta")
             copyDefaultRtsToPhone(R.raw.defrt2,"defrt2.rta")

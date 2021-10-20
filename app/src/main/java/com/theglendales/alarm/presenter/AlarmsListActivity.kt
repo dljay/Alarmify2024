@@ -247,7 +247,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
             replace(R.id.main_fragment_container, receivedFragment)
             commit()
-            Log.d(TAG, "jjSetCurrentFragment: .... ")
+            Log.d(TAG, "jjSetCurrentFragment: ..... ")
         }
 
 // <--추가 1-B)

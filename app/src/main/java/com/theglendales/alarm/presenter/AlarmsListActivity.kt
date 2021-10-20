@@ -58,7 +58,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 //v0.20f
-// lottie ANIM 을 AlarmsListFragment 안에서 관리 (제일 합리적이고 lottie 랑 연동 가능. 속 편함.잘됨.)
+// DiskSearch/lottie ANIM 을 AlarmsListFragment 안에서 관리 (제일 합리적이고 lottie 랑 연동 가능. 속 편함.잘됨.)
 // 문제1: 화면 가운데 overlay? / transparent, opacity
 // 문제2: 최소 1초는 나오는 것. 현재 넘 일찍 없어져서 Coroutine 안에서 delay(1000) 했는데 괜찮을지 double check.
 // 문제3: Snackbar 나올때 위로 밀기.

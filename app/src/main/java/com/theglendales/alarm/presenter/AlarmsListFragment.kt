@@ -231,18 +231,19 @@ class AlarmsListFragment : Fragment() {
         logger.debug { "onCreateView $this" }
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
-
         val listView = view.findViewById(R.id.list_fragment_list) as ListView
+    //추가 Lottie
         lottieAnimView = view.findViewById<LottieAnimationView>(R.id.id_lottie_listFrag)
 
 
     //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
-
+        lottieAnimCtrl("showANIM")
         //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
              // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
-            // ** diskScan 시작 시점-> ANIM(ON)!
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
+            // ** diskScan 시작 시점-> ANIM(ON)!
+
 
             CoroutineScope(Dispatchers.IO).launch {
                 //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
@@ -256,10 +257,12 @@ class AlarmsListFragment : Fragment() {
 
                 // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
                 myDiskSearcher.updateList(resultList)
-                // ** diskScan 종료 <--
 
                 Log.d(TAG, "onCreate: DiskScan DONE..(Hopefully..), resultList = $resultList!")
-            }
+            } // ** diskScan 종료 <--
+            lottieAnimCtrl("hideANIM")
+            //Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING ALARM TONE DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
+
 
         }
 
@@ -269,6 +272,7 @@ class AlarmsListFragment : Fragment() {
             Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
             myDiskSearcher.updateList(resultList)
         }
+
 
     //추가2) <-- DiskSearcher
 
@@ -313,19 +317,7 @@ class AlarmsListFragment : Fragment() {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG, "onViewCreated: YES..")
-        super.onViewCreated(view, savedInstanceState)
 
-        //추가3) lottie 내가 추가 ->
-
-        //lottieAnimView = view.findViewById<LottieAnimationView>(R.id.id_lottie_listFr)
-        //lottieAnimCtrl("showANIM")
-        //lottieAnimCtrl("hideANIM")
-        //추가3) lottie 내가 추가 <-
-
-    }
-// 내가 추가 4) <--
 
     override fun onResume() {
         Log.d(TAG, "onResume: jj-OnResume() TOP line")
@@ -398,7 +390,7 @@ class AlarmsListFragment : Fragment() {
                     Log.d(TAG, "lottieAnimCtrl: Show ANIM! Rebuilding Rt DB now!!")
                     lottieAnimView.visibility = LottieAnimationView.VISIBLE
                     lottieAnimView.setAnimation(R.raw.lottie_building_rt_db)
-                    Snackbar.make(lottieAnimView, "Rebuilding Alarm sound DB", Snackbar.LENGTH_LONG).show()
+
                 }
 
             }

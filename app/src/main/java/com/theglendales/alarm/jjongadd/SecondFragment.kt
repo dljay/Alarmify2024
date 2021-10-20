@@ -376,12 +376,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     Log.d(TAG, "lottieAnimController: NO INTERNET ERROR!!")
                     lottieAnimationView.visibility = LottieAnimationView.VISIBLE
                     lottieAnimationView.setAnimation(R.raw.lottie_error1)
-                    Snackbar.make(
-                        lottieAnimationView,
-                        "Please kindly check your network connection status",
-                        Snackbar.LENGTH_LONG
-                    ).show()
-
+                    Snackbar.make(lottieAnimationView,"Please kindly check your network connection status",Snackbar.LENGTH_LONG).show()
+                    //todo: 여기 SnackBar 에서 View 가 불안정할수 있음=>try this? -> Snackbar.make(requireActivity().findViewById(android.R.id.content), "..", Snackbar.LENGTH_LONG).show()
 
                 })
                 // 만약 sync(multiple file downloads)/single file download 중였다면 btmSheet 없애기.

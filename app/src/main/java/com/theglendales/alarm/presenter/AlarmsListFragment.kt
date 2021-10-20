@@ -13,9 +13,11 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.AdapterView.AdapterContextMenuInfo
+import com.airbnb.lottie.LottieAnimationView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
 import com.theglendales.alarm.configuration.Prefs
@@ -27,9 +29,14 @@ import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
+import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 import java.util.Calendar
 
@@ -55,6 +62,13 @@ class AlarmsListFragment : Fragment() {
     private var alarmsSub: Disposable = Disposables.disposed()
     private var backSub: Disposable = Disposables.disposed()
     private var timePickerDialogDisposable = Disposables.disposed()
+
+    // 내가 추가-->
+    lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
+    private val mySharedPrefManager: MySharedPrefManager by globalInject()
+    private val myDiskSearcher: DiskSearcher by globalInject()
+    //내가 추가<-
+
 
     /** changed by [Prefs.listRowLayout] in [onResume]*/
     private var listRowLayoutId = R.layout.list_row_classic
@@ -109,15 +123,16 @@ class AlarmsListFragment : Fragment() {
                     }
 
             row.digitalClockContainer.setOnClickListener {
-                timePickerDialogDisposable = TimePickerDialogFragment.showTimePicker(parentFragmentManager)
+                timePickerDialogDisposable =
+                    TimePickerDialogFragment.showTimePicker(parentFragmentManager)
                         .subscribe { picked ->
                             if (picked.isPresent()) {
                                 alarms.getAlarm(alarm.id)?.also { alarm ->
                                     alarm.edit {
                                         copy(
-                                                isEnabled = true,
-                                                hour = picked.get().hour,
-                                                minutes = picked.get().minute
+                                            isEnabled = true,
+                                            hour = picked.get().hour,
+                                            minutes = picked.get().minute
                                         )
                                     }
                                 }
@@ -209,15 +224,53 @@ class AlarmsListFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-    //추가->
+    //추가1) ->
         Log.d(TAG, "(Line213)onCreateView: jj-created")
-    //<-추가
+    //<-추가1)
 
         logger.debug { "onCreateView $this" }
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
 
         val listView = view.findViewById(R.id.list_fragment_list) as ListView
+        lottieAnimView = view.findViewById<LottieAnimationView>(R.id.id_lottie_listFrag)
+
+
+    //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
+
+        //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
+             // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
+        if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
+            // ** diskScan 시작 시점-> ANIM(ON)!
+            Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
+
+            CoroutineScope(Dispatchers.IO).launch {
+                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
+                myDiskSearcher.readAlbumArtOnDisk()
+                //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
+                val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
+                //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
+
+                // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
+                mySharedPrefManager.saveRtaArtPathList(resultList)
+
+                // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+                myDiskSearcher.updateList(resultList)
+                // ** diskScan 종료 <--
+
+                Log.d(TAG, "onCreate: DiskScan DONE..(Hopefully..), resultList = $resultList!")
+            }
+
+        }
+
+        //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+        else if(!myDiskSearcher.isDiskScanNeeded()) {
+            val resultList = mySharedPrefManager.getRtaArtPathList()
+            Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
+            myDiskSearcher.updateList(resultList)
+        }
+
+    //추가2) <-- DiskSearcher
 
         listView.adapter = mAdapter
 
@@ -259,6 +312,20 @@ class AlarmsListFragment : Fragment() {
 
         return view
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d(TAG, "onViewCreated: YES..")
+        super.onViewCreated(view, savedInstanceState)
+
+        //추가3) lottie 내가 추가 ->
+
+        //lottieAnimView = view.findViewById<LottieAnimationView>(R.id.id_lottie_listFr)
+        //lottieAnimCtrl("showANIM")
+        //lottieAnimCtrl("hideANIM")
+        //추가3) lottie 내가 추가 <-
+
+    }
+// 내가 추가 4) <--
 
     override fun onResume() {
         Log.d(TAG, "onResume: jj-OnResume() TOP line")
@@ -314,5 +381,31 @@ class AlarmsListFragment : Fragment() {
         listOf(R.id.list_context_enable, R.id.list_context_menu_disable, R.id.skip_alarm)
                 .minus(visible)
                 .forEach { menu.removeItem(it) }
+    }
+    // 추가 3) Lottie 관련-->
+    private fun lottieAnimCtrl(status: String) {
+        when(status) {
+            "hideANIM" -> {
+                activity?.runOnUiThread {
+                    Log.d(TAG, "lottieAnimCtrl: hide Lottie ANIMATION!")
+                    lottieAnimView.cancelAnimation()
+                    lottieAnimView.visibility = LottieAnimationView.GONE
+                }
+
+            }
+            "showANIM" -> {
+                activity?.runOnUiThread {
+                    Log.d(TAG, "lottieAnimCtrl: Show ANIM! Rebuilding Rt DB now!!")
+                    lottieAnimView.visibility = LottieAnimationView.VISIBLE
+                    lottieAnimView.setAnimation(R.raw.lottie_building_rt_db)
+                    Snackbar.make(lottieAnimView, "Rebuilding Alarm sound DB", Snackbar.LENGTH_LONG).show()
+                }
+
+            }
+        }
+    }
+    // <--추가 3) Lottie 관련 <---
+    fun testCallFromActivity() {
+        Log.d(TAG, "testCallFromActivity: called!")
     }
 }

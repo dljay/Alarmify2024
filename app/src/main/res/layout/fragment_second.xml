@@ -152,7 +152,7 @@
 
             <!--Lottie Animation-->
             <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/id_lottie_animView"
+                android:id="@+id/id_lottie_secondFrag"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"

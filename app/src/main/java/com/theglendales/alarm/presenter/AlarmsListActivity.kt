@@ -18,7 +18,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.LinearLayout
-import com.airbnb.lottie.LottieAnimationView
+
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.theglendales.alarm.BuildConfig
@@ -40,6 +40,7 @@ import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import io.reactivex.annotations.NonNull
@@ -60,7 +61,7 @@ import java.util.Calendar
 // lottie ANIM 을 AlarmsListActivity 안에서 관리 (제일 속 편함.. frag 안에서 view 찾는 수고 안해도 되고.)
 // 문제1: 전체 화면을 차지함. 가급적 위에 살며시 떴으면 좋겠는데..-> overlay? d
 // 문제2: 실제 rt db rebuilding 하는 시간이 매우 짧아서 거의 안 보이고 (스낵바만 보임.) =-> 최소 1초는 보여주게끔?
-//todo:  list_activity.xml 만지는것부터 continue.
+
 
 
 
@@ -73,12 +74,8 @@ class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
     //내가 추가-->
-    val mySharedPrefManager: MySharedPrefManager by globalInject()
+    private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
-
-    //lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
-    private val lottieAnimView by lazy { findViewById<LottieAnimationView>(R.id.id_lottie_listActivity) }
-
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -241,50 +238,7 @@ class AlarmsListActivity : AppCompatActivity() {
             true
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
-// <--추가1-A) Second Fragment 관련
 
-// 추가2) --> .rta .art 파일 핸들링 작업 (앱 시작과 동시에)
-
-        //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
-            // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
-            lottieAnimCtrl("showANIM")
-        //lottieAnimCtrl("hideANIM")
-            if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
-                Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
-                //todo: Animation 시작->
-                CoroutineScope(Dispatchers.IO).launch {
-                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
-                    myDiskSearcher.readAlbumArtOnDisk()
-                //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
-                    val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
-                    //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
-
-                // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
-                    mySharedPrefManager.saveRtaArtPathList(resultList)
-
-                // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
-                    myDiskSearcher.updateList(resultList)
-                    Log.d(TAG, "onCreate: rebuilding Shared Pref DONE..(Hopefully..) resultList = $resultList!")
-                }
-
-
-            }
-
-        //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
-            else if(!myDiskSearcher.isDiskScanNeeded()) {
-                val resultList = mySharedPrefManager.getRtaArtPathList()
-                Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
-                myDiskSearcher.updateList(resultList)
-
-
-
-            }
-
-
-    // B) 현재 /.AlbumArt 에 있는 albumArt 그래픽 파일들을 우선 READ->
-        //myDiskSearcher.readAlbumArtOnDisk() // -> 완료되면 DiskSearcher.kt>  onDiskArtMap <trkId, Path> 가 완성됨. 완성되기 전에 DetailsFrag 에 들어갔을때는 myDiskSearcher.rtOnDiskSearch() 에서 보완!
-
-// <-- 추가2)
     } // onCreate() 여기까지.
 // 추가 1-B)-->
 
@@ -298,29 +252,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
 // <--추가 1-B)
 
-// 추가 3) Lottie 관련-->
-    private fun lottieAnimCtrl(status: String) {
-        when(status) {
-            "hideANIM" -> {
-                runOnUiThread {
-                    Log.d(TAG, "lottieAnimCtrl: hide Lottie ANIMATION!")
-                    lottieAnimView.cancelAnimation()
-                    lottieAnimView.visibility = LottieAnimationView.GONE
-                    }
 
-                }
-            "showANIM" -> {
-                runOnUiThread {
-                    Log.d(TAG, "lottieAnimCtrl: Show ANIM! Rebuilding Rt DB now!!")
-                    lottieAnimView.visibility = LottieAnimationView.VISIBLE
-                    lottieAnimView.setAnimation(R.raw.lottie_building_rt_db)
-                    Snackbar.make(lottieAnimView, "Rebuilding Alarm sound DB", Snackbar.LENGTH_LONG).show()
-                    }
-
-                }
-        }
-    }
-// <--추가 3) Lottie 관련 <---
 
 
     override fun onStart() {
@@ -441,9 +373,7 @@ class AlarmsListActivity : AppCompatActivity() {
                         if (!lollipop()) {
                             this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
                         }
-                    }
-                    .replace(R.id.main_fragment_container, listFragment)
-                    .commitAllowingStateLoss()
+                    }.replace(R.id.main_fragment_container, listFragment).commitAllowingStateLoss()
         }
     }
 

@@ -36,9 +36,7 @@ import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
-import com.theglendales.alarm.jjmvvm.data.PlayInfoContainer
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
-import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
@@ -518,7 +516,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     private fun setUpLateInitUis(v: View) {
     //Lottie
-        lottieAnimationView = v.findViewById(R.id.id_lottie_animView)
+        lottieAnimationView = v.findViewById(R.id.id_lottie_secondFrag)
 
     //Swipe Refresh Layout Related
         swipeRefreshLayout = v.findViewById(R.id.id_swipeRefreshLayout)

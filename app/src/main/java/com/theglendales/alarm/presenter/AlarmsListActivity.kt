@@ -58,9 +58,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 //v0.20f
-// lottie ANIM 을 AlarmsListActivity 안에서 관리 (제일 속 편함.. frag 안에서 view 찾는 수고 안해도 되고.)
-// 문제1: 전체 화면을 차지함. 가급적 위에 살며시 떴으면 좋겠는데..-> overlay? d
-// 문제2: 실제 rt db rebuilding 하는 시간이 매우 짧아서 거의 안 보이고 (스낵바만 보임.) =-> 최소 1초는 보여주게끔?
+// lottie ANIM 을 AlarmsListFragment 안에서 관리 (제일 합리적이고 lottie 랑 연동 가능. 속 편함.잘됨.)
+// 문제1: 화면 가운데 overlay? / transparent, opacity
+// 문제2: 최소 1초는 나오는 것. 현재 넘 일찍 없어져서 Coroutine 안에서 delay(1000) 했는데 괜찮을지 double check.
+// 문제3: Snackbar 나올때 위로 밀기.
 
 
 

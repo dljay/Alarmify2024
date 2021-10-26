@@ -57,9 +57,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v0.21a
-// DiskSearch/lottie ANIM 을 AlarmsListFragment 안에서 관리 (제일 합리적이고 lottie 랑 연동 가능. 속 편함.잘됨.)
-// 문제1: 화면 가운데 overlay? / transparent, opacity => list_fragment(v21).xml Relative Layout 으로 변경(가운데서 중복 출력) => opacity 조절 issue.화면 see through.. RL 문제? Lottie 문제?
+// 문제1: 화면 가운데 overlay? / transparent 관련:
+//A) Opacity => list_fragment(v21).xml Relative Layout 으로 변경(가운데서 중복 출력)
+//B) ListView 보다 LottieView 를 뒤로 놓으니 overlay 하면서 뒷 화면을 안 비침!
+//C) 해결필요: Clickable/background(opacity) 애니메이션 뜸과 동시에 작동되게끔..
 // 문제2: 최소 1초는 나오는 것. 현재 넘 일찍 없어져서 Coroutine 안에서 delay(1000) 했는데 괜찮을지 double check.
 // 문제3: Snackbar 나올때 위로 밀기.
 

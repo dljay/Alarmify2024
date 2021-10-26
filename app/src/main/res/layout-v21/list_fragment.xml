@@ -22,9 +22,17 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    </FrameLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
 
         <!--Lottie Animation-->
         <com.airbnb.lottie.LottieAnimationView
@@ -32,15 +40,19 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:layout_gravity="center"
+            android:padding="30dp"
 
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="50dp"
+            android:background="#26000000"
+            android:alpha="1"
+
             android:layout_marginStart="50dp"
+            android:layout_marginTop="100dp"
+            android:layout_marginEnd="50dp"
             android:scaleType="centerInside"
             android:visibility="visible"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_rawRes="@raw/lottie_building_rt_db"
+            app:lottie_rawRes="@raw/lottie_building_rt_db_3"
             app:lottie_scale="0.5">
 
         </com.airbnb.lottie.LottieAnimationView>

@@ -71,6 +71,7 @@ class AlarmsListFragment : Fragment() {
     lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
+    lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
     //내가 추가<-
 
 
@@ -235,7 +236,8 @@ class AlarmsListFragment : Fragment() {
         logger.debug { "onCreateView $this" }
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
-        val listView = view.findViewById(R.id.list_fragment_list) as ListView
+        listView = view.findViewById(R.id.list_fragment_list) as ListView
+        //val listView = view.findViewById(R.id.list_fragment_list) as ListView
     //추가 Lottie
         lottieAnimView = view.findViewById<LottieAnimationView>(R.id.id_lottie_listFrag)
 
@@ -397,7 +399,9 @@ class AlarmsListFragment : Fragment() {
                 activity?.runOnUiThread {
                     Log.d(TAG, "lottieAnimCtrl: Show ANIM! Rebuilding Rt DB now!!")
                     lottieAnimView.visibility = LottieAnimationView.VISIBLE
-                    lottieAnimView.setAnimation(R.raw.lottie_building_rt_db)
+                    lottieAnimView.setAnimation(R.raw.lottie_building_rt_db_3)
+
+                    listView.alpha = 0.3f // listView 를 어둡게.
 
 
                 }

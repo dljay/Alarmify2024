@@ -97,6 +97,7 @@ class AlarmsListFragment : Fragment() {
             }
         }
 
+
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             // get the alarm which we have to display
         //추가->

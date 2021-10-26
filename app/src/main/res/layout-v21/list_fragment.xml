@@ -22,17 +22,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-
-    </FrameLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="#26000000">
 
+        <ListView
+            android:id="@+id/list_fragment_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            tools:layout="@layout/list_fragment"
+            tools:listitem="@layout/list_row_classic"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize" />
 
         <!--Lottie Animation-->
         <com.airbnb.lottie.LottieAnimationView
@@ -42,8 +50,6 @@
             android:layout_gravity="center"
             android:padding="30dp"
 
-            android:background="#26000000"
-            android:alpha="1"
 
             android:layout_marginStart="50dp"
             android:layout_marginTop="100dp"
@@ -57,20 +63,8 @@
 
         </com.airbnb.lottie.LottieAnimationView>
 
-        <ListView
-            android:id="@+id/list_fragment_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_weight="1"
-            tools:layout="@layout/list_fragment"
-            tools:listitem="@layout/list_row_classic" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize" />
+
 
 
     </RelativeLayout>

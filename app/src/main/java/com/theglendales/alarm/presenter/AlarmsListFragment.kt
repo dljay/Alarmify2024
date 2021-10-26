@@ -49,6 +49,9 @@ import java.util.Calendar
  * @author Yuriy
  */
 private const val TAG="*AlarmsListFragment*"
+private const val SHOW_ANIM="showANIM"
+private const val HIDE_ANIM="hideANIM"
+
 
 class AlarmsListFragment : Fragment() {
     private val alarms: IAlarmsManager by globalInject()
@@ -241,14 +244,14 @@ class AlarmsListFragment : Fragment() {
 
         //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
              // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
-        lottieAnimCtrl("showANIM")
+        lottieAnimCtrl(SHOW_ANIM)
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
             // ** diskScan 시작 시점-> ANIM(ON)!
 
 
             CoroutineScope(Dispatchers.IO).launch {
-                lottieAnimCtrl("showANIM")
+                lottieAnimCtrl(SHOW_ANIM)
                 //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
                 myDiskSearcher.readAlbumArtOnDisk()
                 //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
@@ -263,7 +266,7 @@ class AlarmsListFragment : Fragment() {
 
                 Log.d(TAG, "onCreate: DiskScan DONE..(Hopefully..), resultList = $resultList!")
                 delay(1000) // DiskScan 할 때 최소 1초간은 애니메이션을 보여주기 위해.. todo: 잘되긴 하는데 괜찮나 이 방법이..
-                lottieAnimCtrl("hideANIM")
+                lottieAnimCtrl(HIDE_ANIM)
             } // ** diskScan 종료 <--
 
             //Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING ALARM TONE DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()

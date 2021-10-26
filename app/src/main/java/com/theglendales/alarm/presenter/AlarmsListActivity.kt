@@ -57,12 +57,16 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// 문제1: 화면 가운데 overlay? / transparent 관련:
-//A) Opacity => list_fragment(v21).xml Relative Layout 으로 변경(가운데서 중복 출력)
-//B) ListView 보다 LottieView 를 뒤로 놓으니 overlay 하면서 뒷 화면을 안 비침!
-//C) 해결필요: Clickable/background(opacity) 애니메이션 뜸과 동시에 작동되게끔..
-// 문제2: 최소 1초는 나오는 것. 현재 넘 일찍 없어져서 Coroutine 안에서 delay(1000) 했는데 괜찮을지 double check.
-// 문제3: Snackbar 나올때 위로 밀기.
+//v0.22a
+//<DialogFrag 써서 Lottie_rebuild_rt 애니메이션 재생>
+//
+//AlarmsListFrag.kt 라인 254 정도부터 continue.. 10/26 밤 11:44
+//
+//이슈1) DiagloFrag 포지션 변경
+//- 포지션 변경(가운데 살짝 위..?)  : https://stackoverflow.com/questions/9698410/position-of-dialogfragment-in-android
+//이슈2) 5초간 플레이되고 나오도록.
+//이슈3) 싱글톤 관련 살짝 더 공부하기..?싱글톤 인데 나갔다왔을때 괜춘? -> 테스트 필요
+//이슈4)SnackBar 출력까지 (굳이 밀어내지 않더라도..)
 
 
 

@@ -17,7 +17,6 @@ import com.airbnb.lottie.LottieAnimationView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
-import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
 import com.theglendales.alarm.configuration.Prefs
@@ -31,6 +30,7 @@ import com.theglendales.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -68,10 +68,11 @@ class AlarmsListFragment : Fragment() {
     private var timePickerDialogDisposable = Disposables.disposed()
 
     // 내가 추가-->
-    lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
+    //lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
+    lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
-    lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
+    //lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
     //내가 추가<-
 
 
@@ -237,24 +238,27 @@ class AlarmsListFragment : Fragment() {
         logger.debug { "onCreateView $this" }
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
-        listView = view.findViewById(R.id.list_fragment_list) as ListView
-        //val listView = view.findViewById(R.id.list_fragment_list) as ListView
-    //추가 Lottie
-        lottieAnimView = view.findViewById<LottieAnimationView>(R.id.id_lottie_listFrag)
+        val listView = view.findViewById(R.id.list_fragment_list) as ListView
+
+        lottieDialogFrag = LottieDiskScanDialogFrag.newInstance()
+
+
+
 
 
     //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
 
         //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
              // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
-        lottieAnimCtrl(SHOW_ANIM)
+
+        showLottieDialogFrag() //todo: 여기서부터.
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
             // ** diskScan 시작 시점-> ANIM(ON)!
 
 
             CoroutineScope(Dispatchers.IO).launch {
-                lottieAnimCtrl(SHOW_ANIM)
+                //lottieAnimCtrl(SHOW_ANIM)
                 //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
                 myDiskSearcher.readAlbumArtOnDisk()
                 //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
@@ -268,8 +272,8 @@ class AlarmsListFragment : Fragment() {
                 myDiskSearcher.updateList(resultList)
 
                 Log.d(TAG, "onCreate: DiskScan DONE..(Hopefully..), resultList = $resultList!")
-                delay(1000) // DiskScan 할 때 최소 1초간은 애니메이션을 보여주기 위해.. todo: 잘되긴 하는데 괜찮나 이 방법이..
-                lottieAnimCtrl(HIDE_ANIM)
+                delay(1000) // DiskScan 할 때 최소 1초간은 애니메이션을 보여주기 위해.. todo: 잘되긴 하는데 바꿔주기.
+
             } // ** diskScan 종료 <--
 
             //Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING ALARM TONE DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
@@ -385,33 +389,16 @@ class AlarmsListFragment : Fragment() {
                 .minus(visible)
                 .forEach { menu.removeItem(it) }
     }
-    // 추가 3) Lottie 관련-->
-    private fun lottieAnimCtrl(status: String) {
-        when(status) {
-            "hideANIM" -> {
-                activity?.runOnUiThread {
-                    Log.d(TAG, "lottieAnimCtrl: hide Lottie ANIMATION!")
-                    lottieAnimView.cancelAnimation()
-                    lottieAnimView.visibility = LottieAnimationView.GONE
-                }
-
-            }
-            "showANIM" -> {
-                activity?.runOnUiThread {
-                    Log.d(TAG, "lottieAnimCtrl: Show ANIM! Rebuilding Rt DB now!!")
-                    lottieAnimView.visibility = LottieAnimationView.VISIBLE
-                    lottieAnimView.setAnimation(R.raw.lottie_building_rt_db_3)
-
-                    listView.alpha = 0.3f // listView 를 어둡게.
-
-
-                }
-
-            }
+// 추가 3) Lottie 관련-->
+    private fun showLottieDialogFrag() {
+        lottieDialogFrag.show(requireActivity().supportFragmentManager, lottieDialogFrag.tag)
+    }
+    private fun hideLottieDialogFrag() {
+        if(lottieDialogFrag.isAdded) {
+            lottieDialogFrag.dismissAllowingStateLoss()
         }
     }
-    // <--추가 3) Lottie 관련 <---
-    fun testCallFromActivity() {
-        Log.d(TAG, "testCallFromActivity: called!")
-    }
+
+// <--추가 3) Lottie 관련 <---
+
 }

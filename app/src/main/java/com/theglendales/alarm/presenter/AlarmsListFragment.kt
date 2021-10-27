@@ -38,7 +38,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.ArrayList
 import java.util.Calendar
@@ -260,7 +259,7 @@ class AlarmsListFragment : Fragment() {
             // ** diskScan 시작 시점-> ANIM(ON)!
             showLottieDialogFrag()
             val handler: Handler = Handler(Looper.getMainLooper())
-            handler.postDelayed({hideLottieDialogFrag()}, 2000) // 2초후에 애니메이션 없애기
+            handler.postDelayed({hideLottieAndShowSnackBar()}, 2000) // 2초후에 애니메이션 없애기-> 보통 0.1초 사이에 실 작업은 다 끝나기는 함..
 
 
             CoroutineScope(Dispatchers.IO).launch {
@@ -281,7 +280,7 @@ class AlarmsListFragment : Fragment() {
 
 
             } // ** diskScan 종료 <--
-            Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
+
         }
 
         //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
@@ -396,9 +395,10 @@ class AlarmsListFragment : Fragment() {
     private fun showLottieDialogFrag() {
         lottieDialogFrag.show(requireActivity().supportFragmentManager, lottieDialogFrag.tag)
     }
-    private fun hideLottieDialogFrag() {
+    private fun hideLottieAndShowSnackBar() {
         if(lottieDialogFrag.isAdded) {
             lottieDialogFrag.dismissAllowingStateLoss()
+            Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
         }
     }
 

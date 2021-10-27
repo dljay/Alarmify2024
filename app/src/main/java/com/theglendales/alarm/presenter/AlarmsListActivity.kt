@@ -58,17 +58,6 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 //v0.22b
-
-
-
-
-
-
-
-
-
-
-
 /**
  * This activity displays a list of alarms and optionally a details fragment.
  */

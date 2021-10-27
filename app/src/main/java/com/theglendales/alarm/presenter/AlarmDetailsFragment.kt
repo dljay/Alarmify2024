@@ -290,9 +290,9 @@ class AlarmDetailsFragment : Fragment() {
     private suspend fun refreshSpinnerUi(prevRtFileName: String) {
         Log.d(TAG, "refreshSpinnerUi: called")
 
-    //1) 다운받고->AlarmsList->DetailsFrag 로 다시 와서 리스트업이 안되었다면-> DiskSearcher.kt > onDiskRtSearcher() 진행.
+    //1) 다운받고->AlarmsList->scan+애니메이션 떠야함 -> DetailsFrag 로 다시 왔는데 리스트업이 안되었다면-> DiskSearcher.kt > onDiskRtSearcher() 진행.
         if(myDiskSearcher.isDiskScanNeeded()) {
-            //todo: Animation 시작->
+
             Log.d(TAG, "refreshSpinnerUi: isDiskScanNeeded(O) here")
 
             val rtOnDiskList = myDiskSearcher.onDiskRtSearcher()
@@ -323,8 +323,7 @@ class AlarmDetailsFragment : Fragment() {
             updateCircleAlbumArt(prevRtFileName)
         // 3) 다 됐으니 최초 실행은 아님을 알려주기.
             isRtListReady = true
-        // 4)//todo: Animation 끝<- Main Thread 에서
-            
+
         }
     }
     private fun updateCircleAlbumArt(selectedRtFileName: String) {

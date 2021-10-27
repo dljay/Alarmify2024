@@ -13,17 +13,23 @@ class LottieDiskScanDialogFrag: DialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
         //return super.onCreateView(inflater, container, savedInstanceState)
-        dialog?.window?.setGravity(Gravity.CENTER_HORIZONTAL) // 위치 설정(1)
-        dialog?.window?.setGravity(Gravity.TOP) // 위치 설정(2)
+    // 위치 설정
+        //dialog?.window?.setGravity(Gravity.CENTER_HORIZONTAL)
+        val window = dialog?.window
+        val params = window?.attributes
+        params?.x = 0
+        params?.y = -100
+        window?.attributes = params
+    // 기타 설정
 
         dialog?.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         isCancelable =false
-        return inflater.inflate(R.layout.lottie_rebuild_rt, container, false)
+        return inflater.inflate(R.layout.lottie_rebuild_rt, container, false) //xml 로 inflate..
     }
 
     companion object {
-        fun newInstance(): LottieDiskScanDialogFrag {
+        fun newInstanceDialogFrag(): LottieDiskScanDialogFrag {
             return LottieDiskScanDialogFrag()
         }
     }

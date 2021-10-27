@@ -3,6 +3,8 @@ package com.theglendales.alarm.presenter
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
@@ -13,10 +15,10 @@ import android.view.ViewGroup
 import android.widget.AbsListView
 import android.widget.AdapterView
 import android.widget.AdapterView.AdapterContextMenuInfo
-import com.airbnb.lottie.LottieAnimationView
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
 import com.theglendales.alarm.configuration.Prefs
@@ -240,7 +242,7 @@ class AlarmsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.list_fragment, container, false)
         val listView = view.findViewById(R.id.list_fragment_list) as ListView
 
-        lottieDialogFrag = LottieDiskScanDialogFrag.newInstance()
+        lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
 
 
 
@@ -251,10 +253,14 @@ class AlarmsListFragment : Fragment() {
         //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
              // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
 
-        showLottieDialogFrag() //todo: 여기서부터.
+
+
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
             // ** diskScan 시작 시점-> ANIM(ON)!
+            showLottieDialogFrag()
+            val handler: Handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({hideLottieDialogFrag()}, 2000) // 2초후에 애니메이션 없애기
 
 
             CoroutineScope(Dispatchers.IO).launch {
@@ -272,13 +278,10 @@ class AlarmsListFragment : Fragment() {
                 myDiskSearcher.updateList(resultList)
 
                 Log.d(TAG, "onCreate: DiskScan DONE..(Hopefully..), resultList = $resultList!")
-                delay(1000) // DiskScan 할 때 최소 1초간은 애니메이션을 보여주기 위해.. todo: 잘되긴 하는데 바꿔주기.
+
 
             } // ** diskScan 종료 <--
-
-            //Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING ALARM TONE DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
-
-
+            Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
         }
 
         //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)

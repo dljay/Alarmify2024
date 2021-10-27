@@ -57,16 +57,14 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v0.22a
-//<DialogFrag 써서 Lottie_rebuild_rt 애니메이션 재생>
-//
-//AlarmsListFrag.kt 라인 254 정도부터 continue.. 10/26 밤 11:44
-//
-//이슈1) DiagloFrag 포지션 변경
-//- 포지션 변경(가운데 살짝 위..?)  : https://stackoverflow.com/questions/9698410/position-of-dialogfragment-in-android
-//이슈2) 5초간 플레이되고 나오도록.
-//이슈3) 싱글톤 관련 살짝 더 공부하기..?싱글톤 인데 나갔다왔을때 괜춘? -> 테스트 필요
-//이슈4)SnackBar 출력까지 (굳이 밀어내지 않더라도..)
+//v0.22b
+
+
+
+
+
+
+
 
 
 

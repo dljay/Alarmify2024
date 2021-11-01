@@ -38,6 +38,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         idHasChanged = prev?.alarmId != id
         rowView.tag = this
     // 내가 추가->
+        digitalClockContainer.tag = this
         albumArt = find(R.id.id_row_albumArt) as ImageView
         
 

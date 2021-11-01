@@ -58,7 +58,6 @@
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
 
-            android:focusable="false"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -92,7 +91,9 @@
                 android:layout_marginRight="5dp"
                 android:text="Weekdays"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?android:attr/colorAccent" />
+                android:textColor="?android:attr/colorAccent"
+
+                android:focusableInTouchMode="false"/>
 
             <TextView
                 android:id="@+id/list_row_label"
@@ -100,7 +101,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:text="label"
-                android:textColor="?android:attr/colorAccent" />
+                android:textColor="?android:attr/colorAccent"
+
+                android:focusableInTouchMode="false"/>
         </LinearLayout>
     </LinearLayout>
 

@@ -98,6 +98,7 @@ class AlarmsListFragment : Fragment() {
         {
             val tag = convertView?.tag
 
+
             return when {
                 tag is RowHolder && tag.layout == listRowLayout -> RowHolder(convertView, id, listRowLayout)
                 else -> {
@@ -157,9 +158,17 @@ class AlarmsListFragment : Fragment() {
                         logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
                         alarms.enable(alarm, enable)
                     }
-//            rowHolder.digitalClockContainer.setOnClickListener {
-//                Log.d(TAG, "getView: clicked Linear Layout")
-//            }
+            rowHolder.digitalClockContainer.setOnClickListener {
+
+                val id = mAdapter.getItem(position)?.id
+                Log.d(TAG, "getView: clicked Linear Layout. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
+                uiStore.edit(alarm.id, it.tag as RowHolder)
+            }
+
+
+
+
+
         // 시간 적혀있는 부분 눌렀을 때 -> TimePicker 보여주기
 
 
@@ -277,6 +286,8 @@ class AlarmsListFragment : Fragment() {
         lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
 
 
+
+
     //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
 
         //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
@@ -335,8 +346,8 @@ class AlarmsListFragment : Fragment() {
     // listView.setOnItemClickListener(object: Adapt.....ClickListener{ override...xx} 이것과 같음.
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, position, _ ->
             mAdapter.getItem(position)?.id?.let {
-                Log.d(TAG, "onCreateView: AlarmListFrag>Line331, Detail 들어가는 click listener 설정! it=$it")
-                //uiStore.edit(it, view.tag as RowHolder) // it = AlarmId 임!
+                Log.d(TAG, "onCreateView: Detail 들어가는 IV click listener: alarmId=$it, view.tag= ${view.tag}")
+                uiStore.edit(it, view.tag as RowHolder) // it = AlarmId 임!
             }
         }
     // ListView <--

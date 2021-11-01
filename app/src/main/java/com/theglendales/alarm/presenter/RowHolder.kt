@@ -32,7 +32,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         container = find(R.id.list_row_on_off_checkbox_container)
         daysOfWeek = find(R.id.list_row_daysOfWeek) as TextView
         label = find(R.id.list_row_label) as TextView
-        detailsButton = find(R.id.details_button_container) // ' ... ' 이렇게 생긴 놈.
+        detailsButton = find(R.id.details_button_container) // ' ... ' 이렇게 생긴 놈. -> 지금은 album art 로 대체되어 있음.
         val prev: RowHolder? = rowView.tag as RowHolder?
         idHasChanged = prev?.alarmId != id
         rowView.tag = this

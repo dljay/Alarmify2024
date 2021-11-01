@@ -108,7 +108,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 }
 
                 override fun onBackPressed(): PublishSubject<String> {
-                    Log.d(TAG, "onBackPressed(Line93): no.1 jj-!!called!!")
+                    Log.d(TAG, "onBackPressed(Line111): no.1 jj-!!called!!")
                     return onBackPressed
                 }
 
@@ -128,6 +128,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 }
 
                 override fun edit(id: Int) {
+                    Log.d(TAG, "edit: (1) Begins.")
                     alarms.getAlarm(id)?.let { alarm ->
                         editing.onNext(EditedAlarm(
                                 isNew = false,
@@ -138,6 +139,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 }
 
                 override fun edit(id: Int, holder: RowHolder) {
+                    Log.d(TAG, "edit: (2) Begins.")
                     alarms.getAlarm(id)?.let { alarm ->
                         editing.onNext(EditedAlarm(
                                 isNew = false,
@@ -313,11 +315,11 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 // ***** !!! 여기서 showList() 로 감!!!! *****
     private fun configureTransactions() {
-        Log.d(TAG, "(line264)configureTransactions: . Begins.")
+        Log.d(TAG, "(line316)configureTransactions: . Begins.")
         subscriptions = uiStore.editing()
                 .distinctUntilChanged { edited -> edited.isEdited }
                 .subscribe(Consumer { edited ->
-                    Log.d(TAG, "(line268!)configureTransactions: jj- edited= $edited")
+                    Log.d(TAG, "(line268!)configureTransactions: jj- edited= $edited") // edited 는 (type) EditedAlarm
                     when {
                         lollipop() && isDestroyed -> return@Consumer
                         edited.isEdited -> showDetails(edited)
@@ -428,6 +430,7 @@ class AlarmsListActivity : AppCompatActivity() {
         fragmentTransaction.addSharedElement(digitalClock, "clock" + alarmId)
         fragmentTransaction.addSharedElement(container, "onOff" + alarmId)
         fragmentTransaction.addSharedElement(detailsButton, "detailsButton" + alarmId)
+
     }
 
     /**

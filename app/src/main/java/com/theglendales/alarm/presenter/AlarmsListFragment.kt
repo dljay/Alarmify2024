@@ -159,23 +159,25 @@ class AlarmsListFragment : Fragment() {
                         alarms.enable(alarm, enable)
                     }
         // 시간 적혀있는 부분 눌렀을 때 -> TimePicker 보여주기
-            row.digitalClockContainer.setOnClickListener {
-                timePickerDialogDisposable =
-                    TimePickerDialogFragment.showTimePicker(parentFragmentManager)
-                        .subscribe { picked ->
-                            if (picked.isPresent()) {
-                                alarms.getAlarm(alarm.id)?.also { alarm ->
-                                    alarm.edit {
-                                        copy(
-                                            isEnabled = true,
-                                            hour = picked.get().hour,
-                                            minutes = picked.get().minute
-                                        )
-                                    }
-                                }
-                            }
-                        }
-            }
+
+
+//            row.digitalClockContainer.setOnClickListener {
+//                timePickerDialogDisposable =
+//                    TimePickerDialogFragment.showTimePicker(parentFragmentManager)
+//                        .subscribe { picked ->
+//                            if (picked.isPresent()) {
+//                                alarms.getAlarm(alarm.id)?.also { alarm ->
+//                                    alarm.edit {
+//                                        copy(
+//                                            isEnabled = true,
+//                                            hour = picked.get().hour,
+//                                            minutes = picked.get().minute
+//                                        )
+//                                    }
+//                                }
+//                            }
+//                        }
+//            }
 
             row.digitalClockContainer.setOnLongClickListener {
                 false
@@ -327,7 +329,8 @@ class AlarmsListFragment : Fragment() {
 
         listView.onItemClickListener = AdapterView.OnItemClickListener { _, listRow, position, _ ->
             mAdapter.getItem(position)?.id?.let {
-                uiStore.edit(it, listRow.tag as RowHolder)
+                Log.d(TAG, "onCreateView: AlarmListFrag>Line331, Detail 들어가는 click listener 설정! it=$it")
+                uiStore.edit(it, listRow.tag as RowHolder) // it = AlarmId 임!
             }
         }
 

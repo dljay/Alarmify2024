@@ -57,8 +57,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v0.23a
-// UI 변경 전.
+//v0.23b
+// ListFrag - Row 에 AlbumArt 보여주기 성공.
+// issue1): 너무 작게 나옴.
+// issue2): 새 알람 추가시 (Rt 선택이 안되면) 안 뜰 수 있음.
+// 기타 sharedPref(ArtPatForListFrag.xml) 에서 못 찾았을 때 대응 필요..
 
 
 /**

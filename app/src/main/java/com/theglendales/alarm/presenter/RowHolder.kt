@@ -2,6 +2,7 @@ package com.theglendales.alarm.presenter
 
 import android.view.View
 import android.widget.CompoundButton
+import android.widget.ImageView
 import android.widget.TextView
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
@@ -21,6 +22,8 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
     val label: TextView
     val detailsButton: View
     val idHasChanged: Boolean
+// 내가 추가->
+    val albumArt: ImageView// Album Art 추가 (detailsButton 대체 <== '...' 요렇게 생긴 놈.)
 
     init {
         digitalClock = find(R.id.list_row_digital_clock) as DigitalClock
@@ -33,6 +36,10 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         val prev: RowHolder? = rowView.tag as RowHolder?
         idHasChanged = prev?.alarmId != id
         rowView.tag = this
+    // 내가 추가->
+        albumArt = find(R.id.id_row_albumArt) as ImageView
+
+        // 입력받는 id 를 활용해서 해당 알람이 설정해놓은 Album Art 이미지 찾기.
     }
 
     private fun find(id: Int): View = rowView.findViewById(id)

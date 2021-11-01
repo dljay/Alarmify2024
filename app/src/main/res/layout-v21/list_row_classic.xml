@@ -116,14 +116,23 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
-            <TextView
+<!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
+            <ImageView
+                android:id="@+id/id_row_albumArt"
+                android:background="@drawable/errordisplay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
-                android:focusable="false"
-                android:text="···"
-                android:textSize="40sp"
-                android:textStyle="normal" />
+                android:focusable="false"/>
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:clickable="false"-->
+<!--                android:focusable="false"-->
+<!--                android:text="···"-->
+<!--                android:textSize="40sp"-->
+<!--                android:textStyle="normal" />-->
 
             <View
                 android:layout_width="0dp"

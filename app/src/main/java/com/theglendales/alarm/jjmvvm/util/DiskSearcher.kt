@@ -46,11 +46,11 @@ class DiskSearcher(val context: Context)
         if(!artDir.exists()) {artDir.mkdir()} // <B> /.AlbumArt 폴더가 존재하지 않는다.
 
 
-        // SharedPref 에서 돌려받는 list 는 Disk 에 저장되어있는 RtWithAlbumArt object 들의 정보를 담고 있음.
+        // SharedPref (RtaArtPathList.xml)에서 돌려받는 list 는 Disk 에 저장되어있는 RtWithAlbumArt object 들의 정보를 담고 있음.
         val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
 
 
-    // 2-A)SharedPref 파일 자체가 없을때 (즉 최초 실행하여 xml 파일이 없을때) 깡통 List 를 받음.
+    // 2-A)SharedPref (RtaArtPathList.xml) 파일 자체가 없을때 (즉 최초 실행하여 xml 파일이 없을때) 깡통 List 를 받음.
         if(listFromSharedPref.isNullOrEmpty()) {
 
             Log.d(TAG, "isDiskScanNeeded: 2-A) We couldn't retrieve sharedPref!")
@@ -63,19 +63,19 @@ class DiskSearcher(val context: Context)
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
-    // 2-C) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
+    // 2-C) /.AlbumArtFolder 파일 갯수 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
         if (alarmRtDir.listFiles().size != artDir.listFiles().size) {
             Log.d(TAG, "isDiskScanNeeded: 2-C) 파일 갯수 불일치 /.AlarmRtFolder=${alarmRtDir.listFiles().size} <-> /.AlbumArtFolder=${artDir.listFiles().size} ")
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
-    // 2-D) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
+    // 2-D) SharedPref (RtaArtPathList.xml) 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
         if(alarmRtDir.listFiles().size != listFromSharedPref.size) {
             Log.d(TAG, "isDiskScanNeeded: 2-D) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 불일치.")
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
-    //2-E) SharedPref에서 받은 리스트 안 obj 검색->'artPath' (혹은 audio path)가 null 임.//
+    //2-E) SharedPref (RtaArtPathList.xml) 에서 받은 리스트 안 obj 검색->'artPath' (혹은 audio path)가 null 임.//
         val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty()}
 
         if(artPathEmptyList.isNotEmpty()) { //(즉 artPathEmptyList 안 갯수가 > 0)

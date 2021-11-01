@@ -49,6 +49,7 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjadapters.GlideApp
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -89,6 +90,8 @@ class AlarmDetailsFragment : Fragment() {
         private val ivRtArtBig: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArtBig) as ImageView}
 
         private var isRtListReady=false
+        //SharedPref
+        private val mySharedPrefManager: MySharedPrefManager by globalInject()
     // 내가 추가 <-
 
     private val alarms: IAlarmsManager by globalInject()
@@ -283,11 +286,11 @@ class AlarmDetailsFragment : Fragment() {
 
 
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
-    private fun initSpinner(prevRtFileName: String) { // 기존에 설정해놓은 알람을 (onResume> disposables.xx 에서) 통보 받으면 이제 refreshSpinner & Big Circle Album Art UI 업뎃을 하자!
-        CoroutineScope(IO).launch {refreshSpinnerUi(prevRtFileName)}
+    private fun initSpinner(selectedRtFileName: String) { // 기존에 설정해놓은 알람을 (onResume> disposables.xx 에서) 통보 받으면 이제 refreshSpinner & Big Circle Album Art UI 업뎃을 하자!
+        CoroutineScope(IO).launch {refreshSpinnerUi(selectedRtFileName)}
 
     }
-    private suspend fun refreshSpinnerUi(prevRtFileName: String) {
+    private suspend fun refreshSpinnerUi(selectedRtFileName: String) {
         Log.d(TAG, "refreshSpinnerUi: called")
 
     //1) 다운받고->AlarmsList->scan+애니메이션 떠야함 -> DetailsFrag 로 다시 왔는데 리스트업이 안되었다면-> DiskSearcher.kt > onDiskRtSearcher() 진행.
@@ -298,7 +301,7 @@ class AlarmDetailsFragment : Fragment() {
             val rtOnDiskList = myDiskSearcher.onDiskRtSearcher()
             Log.d(TAG, "refreshSpinnerUi: result=$rtOnDiskList")
             spinnerAdapter.updateList(rtOnDiskList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
-            refreshSpinnerAndCircleArt(prevRtFileName)
+            refreshSpinnerAndCircleArt(selectedRtFileName)
 
         } else {
             Log.d(TAG, "refreshSpinnerUi: isDiskScanNeeded(X)")
@@ -307,20 +310,20 @@ class AlarmDetailsFragment : Fragment() {
 
             Log.d(TAG, "refreshSpinnerUi: result=$rtOnDiskList")
             spinnerAdapter.updateList(rtOnDiskList) // ******  이제 디스크에 있는 Rt 찾고, 그래픽 없는 놈 찾아서 디스크에 저장해주는 등 온갖것이 다 되었다는 가정하에! 드디어 UI 업데이트!
-            refreshSpinnerAndCircleArt(prevRtFileName)
+            refreshSpinnerAndCircleArt(selectedRtFileName)
 
         }
 
 
     }
-    private suspend fun refreshSpinnerAndCircleArt(prevRtFileName: String) {
+    private suspend fun refreshSpinnerAndCircleArt(selectedRtFileName: String) {
         Log.d(TAG, "notifySpinnerAdapterOnMainThread: called!!**")
 
         withContext(Main) {
         // 1)Spinner Update
             spinnerAdapter.notifyDataSetChanged()
         // 2)스피너 옆 큰 Circle Art 업데이트
-            updateCircleAlbumArt(prevRtFileName)
+            updateCircleAlbumArt(selectedRtFileName)
         // 3) 다 됐으니 최초 실행은 아님을 알려주기.
             isRtListReady = true
 
@@ -339,8 +342,11 @@ class AlarmDetailsFragment : Fragment() {
             spinner.setSelection(indexOfSelectedRt)
             val selectedRtForThisAlarm: RtWithAlbumArt = SpinnerAdapter.rtOnDiskList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
             val artPath = selectedRtForThisAlarm.artFilePathStr
+        // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
+            mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath)
 
-        // 2-b) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
+
+        // 2-c) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
         context?.let {
             GlideApp.with(it).load(artPath).circleCrop()
                 .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -395,13 +401,18 @@ class AlarmDetailsFragment : Fragment() {
                         is Alarmtone.Sound -> {RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()}
                     }
                 }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
+//** RT 변경 or 최초 DetailsFrag 열릴 때 이쪽으로 들어옴
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
-                    Log.d(TAG, "onResume: 설정된 알람톤 파일이름=$selectedRtFileName")
+                    Log.d(TAG, "onResume: 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId")
                     if(isRtListReady) { // 2) Rt 변경되었을 때  -> Circle albumArt 사진만 업데이트!
-                        //Log.d(TAG, "onResume: DELMONI 2) Rt 임의로 변경되었을 때")
+                        //Log.d(TAG, "onResume: 2) Rt 임의로 변경되었을 때")
+
+
+
+                    //b) DetailsFrag 에 있는 Circle Album Art 변경
                         updateCircleAlbumArt(selectedRtFileName.toString())
                     } else { // 1) DetailsFrag (최초로) 열때 혹은 다른 Frag 갔다왔을 때 여기 무조건 실행됨(rxJava Trigger 때문)
-                        //Log.d(TAG, "onResume: DELMONI 1) rxJava Trigger")
+                        //Log.d(TAG, "onResume: 1) rxJava Trigger")
                         initSpinner(selectedRtFileName.toString())
                     }
                 })

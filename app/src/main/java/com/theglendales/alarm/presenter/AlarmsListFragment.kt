@@ -2,6 +2,7 @@ package com.theglendales.alarm.presenter
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,6 +19,12 @@ import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
@@ -30,6 +37,7 @@ import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
+import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
@@ -83,7 +91,9 @@ class AlarmsListFragment : Fragment() {
     /** changed by [Prefs.listRowLayout] in [onResume]*/
     private var listRowLayout = prefs.layout()
 
-    inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
+// ## Inner Class ##
+    inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values)
+    {
 
         private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder
         {
@@ -103,10 +113,9 @@ class AlarmsListFragment : Fragment() {
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             // get the alarm which we have to display
-        //추가->
-            Log.d(TAG, "getView: jj-called")
-        //<-추가
+
             val alarm = values[position]
+
 
             val row = recycleView(convertView, parent, alarm.id)
 
@@ -117,6 +126,25 @@ class AlarmsListFragment : Fragment() {
                 row.container.transitionName = "onOff" + alarm.id
                 row.detailsButton.transitionName = "detailsButton" + alarm.id
             }
+        // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
+            val pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
+            Log.d(TAG, "getView: Row 생성중. alarm.id=$alarm.id, pathForRowArt=$pathForRowArt")
+            context?.let {
+                GlideApp.with(it).load(pathForRowArt).circleCrop()
+                    .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.placeholder).listener(object :
+                        RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
+                            return false
+                        }
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            Log.d(TAG,"onResourceReady: 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                            return false
+                        }
+                    }).into(row.albumArt)
+            }
+        //<-추가
 
             //Delete add, skip animation
             if (row.idHasChanged) {
@@ -243,9 +271,6 @@ class AlarmsListFragment : Fragment() {
         val listView = view.findViewById(R.id.list_fragment_list) as ListView
 
         lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
-
-
-
 
 
     //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)

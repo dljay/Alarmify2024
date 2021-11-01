@@ -1,5 +1,6 @@
 package com.theglendales.alarm.presenter
 
+import android.util.Log
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.ImageView
@@ -38,6 +39,8 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         rowView.tag = this
     // 내가 추가->
         albumArt = find(R.id.id_row_albumArt) as ImageView
+        
+
 
         // 입력받는 id 를 활용해서 해당 알람이 설정해놓은 Album Art 이미지 찾기.
     }

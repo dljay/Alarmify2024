@@ -19,7 +19,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -117,14 +116,14 @@ class AlarmsListFragment : Fragment() {
             val alarm = values[position]
 
 
-            val row = recycleView(convertView, parent, alarm.id)
+            val rowHolder = recycleView(convertView, parent, alarm.id)
 
-            row.onOff.isChecked = alarm.isEnabled
+            rowHolder.onOff.isChecked = alarm.isEnabled
 
             lollipop {
-                row.digitalClock.transitionName = "clock" + alarm.id
-                row.container.transitionName = "onOff" + alarm.id
-                row.detailsButton.transitionName = "detailsButton" + alarm.id
+                rowHolder.digitalClock.transitionName = "clock" + alarm.id
+                rowHolder.container.transitionName = "onOff" + alarm.id
+                rowHolder.detailsButton.transitionName = "detailsButton" + alarm.id
             }
         // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
             val pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
@@ -142,22 +141,25 @@ class AlarmsListFragment : Fragment() {
                             Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
                             return false
                         }
-                    }).into(row.albumArt)
+                    }).into(rowHolder.albumArt)
             }
         //<-추가
 
             //Delete add, skip animation
-            if (row.idHasChanged) {
-                row.onOff.jumpDrawablesToCurrentState()
+            if (rowHolder.idHasChanged) {
+                rowHolder.onOff.jumpDrawablesToCurrentState()
             }
 
-            row.container
+            rowHolder.container
                     //onOff
                     .setOnClickListener {
                         val enable = !alarm.isEnabled
                         logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
                         alarms.enable(alarm, enable)
                     }
+//            rowHolder.digitalClockContainer.setOnClickListener {
+//                Log.d(TAG, "getView: clicked Linear Layout")
+//            }
         // 시간 적혀있는 부분 눌렀을 때 -> TimePicker 보여주기
 
 
@@ -179,7 +181,7 @@ class AlarmsListFragment : Fragment() {
 //                        }
 //            }
 
-            row.digitalClockContainer.setOnLongClickListener {
+            rowHolder.digitalClockContainer.setOnLongClickListener {
                 false
             }
 
@@ -187,12 +189,12 @@ class AlarmsListFragment : Fragment() {
             val c = Calendar.getInstance()
             c.set(Calendar.HOUR_OF_DAY, alarm.hour)
             c.set(Calendar.MINUTE, alarm.minutes)
-            row.digitalClock.updateTime(c)
+            rowHolder.digitalClock.updateTime(c)
 
             val removeEmptyView = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
             // Set the repeat text or leave it blank if it does not repeat.
 
-            row.daysOfWeek.run {
+            rowHolder.daysOfWeek.run {
                 text = daysOfWeekStringWithSkip(alarm)
                 visibility = when {
                     text.isNotEmpty() -> View.VISIBLE
@@ -202,9 +204,9 @@ class AlarmsListFragment : Fragment() {
             }
 
             // Set the repeat text or leave it blank if it does not repeat.
-            row.label.text = alarm.label
+            rowHolder.label.text = alarm.label
 
-            row.label.visibility = when {
+            rowHolder.label.visibility = when {
                 alarm.label.isNotBlank() -> View.VISIBLE
                 removeEmptyView -> View.GONE
                 else -> View.INVISIBLE
@@ -215,7 +217,7 @@ class AlarmsListFragment : Fragment() {
             //     else -> View.VISIBLE
             // }
 
-            return row.rowView
+            return rowHolder.rowView
         }
 
         private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
@@ -321,19 +323,23 @@ class AlarmsListFragment : Fragment() {
 
     //추가2) <-- DiskSearcher
 
+    // ListView -->
         listView.adapter = mAdapter
 
         listView.isVerticalScrollBarEnabled = false
         listView.setOnCreateContextMenuListener(this)
         listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+      /*  listView.setOnItemClickListener(object: AdapterView.OnItemClickListener{
+            override fun onItemClick(parent: AdapterView<*>?,view: View?,position: Int,id: Long) {}})*/
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, listRow, position, _ ->
+    // listView.setOnItemClickListener(object: Adapt.....ClickListener{ override...xx} 이것과 같음.
+        listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, position, _ ->
             mAdapter.getItem(position)?.id?.let {
                 Log.d(TAG, "onCreateView: AlarmListFrag>Line331, Detail 들어가는 click listener 설정! it=$it")
-                uiStore.edit(it, listRow.tag as RowHolder) // it = AlarmId 임!
+                //uiStore.edit(it, view.tag as RowHolder) // it = AlarmId 임!
             }
         }
-
+    // ListView <--
         registerForContextMenu(listView)
 
         setHasOptionsMenu(true)

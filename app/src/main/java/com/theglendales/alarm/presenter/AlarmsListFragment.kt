@@ -85,7 +85,8 @@ class AlarmsListFragment : Fragment() {
 
     inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values) {
 
-        private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder {
+        private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder
+        {
             val tag = convertView?.tag
 
             return when {
@@ -129,7 +130,7 @@ class AlarmsListFragment : Fragment() {
                         logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
                         alarms.enable(alarm, enable)
                     }
-
+        // 시간 적혀있는 부분 눌렀을 때 -> TimePicker 보여주기
             row.digitalClockContainer.setOnClickListener {
                 timePickerDialogDisposable =
                     TimePickerDialogFragment.showTimePicker(parentFragmentManager)

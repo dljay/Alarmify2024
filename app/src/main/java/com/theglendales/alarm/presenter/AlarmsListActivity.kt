@@ -57,15 +57,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v0.22b
-//2초간 애니메이션 보여주고 스낵바 출력까지..
-//- 지금부터 온갖 테스트 실행:
-//
-//0) 알람 리스트 길어졌을때 Spinner??  -> P3 - P10  까지 넣어봄 -> 보기 나쁘지 않음-> 갤s20 에서는 Dark Mode 일때 잘 보이는것 추후 해결 필요.
-//1) Disk scan - Harsh test
-//2)갤럭시에서 알람 기능 시도  -> 일단 잘됨. 전원 껐다켰다는 안해봄.문제없이 될것으로 생각. 다만
-//3)Fab 버튼 누르면 종료 등.
-//4) List Frag 에서도 선택된 RT Image 보여주기!!
+//v0.23a
+// UI 변경 전.
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

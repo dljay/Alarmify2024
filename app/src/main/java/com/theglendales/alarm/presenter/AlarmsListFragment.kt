@@ -139,7 +139,7 @@ class AlarmsListFragment : Fragment() {
                             return false
                         }
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            Log.d(TAG,"onResourceReady: 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                            Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
                             return false
                         }
                     }).into(row.albumArt)

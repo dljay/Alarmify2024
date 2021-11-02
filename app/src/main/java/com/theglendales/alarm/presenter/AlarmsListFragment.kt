@@ -40,6 +40,7 @@ import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
+import com.theglendales.alarm.jjongadd.TimePickerJjong
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -80,6 +81,7 @@ class AlarmsListFragment : Fragment() {
     lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
+    private val myTimePickerJjong: TimePickerJjong by globalInject()
     //lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
     //내가 추가<-
 
@@ -158,21 +160,41 @@ class AlarmsListFragment : Fragment() {
                         logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
                         alarms.enable(alarm, enable)
                     }
+//        // Option A) 만약 ListFrag 에서 시간 눌렀을 때 => 바로 Details Frag 로 가고 싶다면 아래를 넣으면 된다!
+//            rowHolder.digitalClockContainer.setOnClickListener {
+//                val id = mAdapter.getItem(position)?.id
+//                Log.d(TAG, "getView: clicked Linear Layout. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
+//                uiStore.edit(alarm.id, it.tag as RowHolder)
+//            }
+
+
+        // Option B-1) [내가 새로 적은 것] Time Picker 보여주기
+            /*rowHolder.digitalClockContainer.setOnClickListener {
+
+                myTimePickerJjong.showTimePicker(parentFragmentManager)
+
+            }*/
             rowHolder.digitalClockContainer.setOnClickListener {
+                timePickerDialogDisposable =
+                    myTimePickerJjong.showTimePicker(parentFragmentManager)
+                        .subscribe { picked ->
+                            if (picked.isPresent()) {
+                                alarms.getAlarm(alarm.id)?.also { alarm ->
+                                    alarm.edit {
+                                        copy(
+                                            isEnabled = true,
+                                            hour = picked.get().hour,
+                                            minutes = picked.get().minute
+                                        )
+                                    }
+                                }
+                            }
+                        }
 
-                val id = mAdapter.getItem(position)?.id
-                Log.d(TAG, "getView: clicked Linear Layout. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
-                uiStore.edit(alarm.id, it.tag as RowHolder)
+
             }
-
-
-
-
-
-        // 시간 적혀있는 부분 눌렀을 때 -> TimePicker 보여주기
-
-
-//            row.digitalClockContainer.setOnClickListener {
+        // Option B-2) [원래적혀있던것] 시간 적혀있는 부분 눌렀을 때 -> TimePicker 보여주기
+//            rowHolder.digitalClockContainer.setOnClickListener {
 //                timePickerDialogDisposable =
 //                    TimePickerDialogFragment.showTimePicker(parentFragmentManager)
 //                        .subscribe { picked ->

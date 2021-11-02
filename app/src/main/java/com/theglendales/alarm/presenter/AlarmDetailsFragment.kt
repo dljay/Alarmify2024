@@ -231,6 +231,7 @@ class AlarmDetailsFragment : Fragment() {
 
             rowView.setOnClickListener {
                 saveAlarm()
+
             }
         }
 

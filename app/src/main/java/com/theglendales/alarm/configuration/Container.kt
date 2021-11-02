@@ -19,6 +19,7 @@ import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjongadd.TimePickerJjong
 import com.theglendales.alarm.logger.LogcatLogWriter
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.logger.LoggerFactory
@@ -137,6 +138,7 @@ fun startKoin(context: Context): Koin {
         single<MySharedPrefManager> {MySharedPrefManager(context = context)}
         single<DiskSearcher> { DiskSearcher(context = context)}
         single<SpinnerAdapter> { SpinnerAdapter(context = context) }
+        single<TimePickerJjong> {TimePickerJjong()}
         // 내가 추가 <--
 
         factory(named("volumePreferenceDemo")) {

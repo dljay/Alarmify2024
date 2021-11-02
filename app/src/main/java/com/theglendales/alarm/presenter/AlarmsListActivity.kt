@@ -57,12 +57,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v0.23c
-// ListFrag - Row 에 AlbumArt 보여주기 성공.
-// 시간 클릭 -> DetailsFrag 들어가게끔
-// 최초에 digitalClockContainer (리니어 Layout) 클릭이 안 되는 문제 있었음. (listview.onClickListener 로 했으나 하부 view .. focus 어쩌고 문제로 아무리 해도 안되서. 결국 )
-// 결국  digitalClockContainer 에도 (앨범 아트 IV 와 동일한 tag 를 설정해줌!) (설정은 RowHolder.kt -> init {} 에서 해줌!)
-
+//v0.24a
+// 내가 만든 Material TimePicker 로 RxJava Subscribe 까지 성공한듯.
+// Single.create.. { emitter -> } 요거 더 파악 필요.
+// 테스트 필요 => xy pad 스타일로 변경 시도!!
 // 기타 sharedPref(ArtPatForListFrag.xml) 에서 못 찾았을 때 대응 필요..
 
 

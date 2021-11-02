@@ -54,10 +54,12 @@ import com.theglendales.alarm.jjmvvm.spinner.MyCustomSpinner
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
+import com.theglendales.alarm.jjongadd.TimePickerJjong
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.model.Alarmtone
+import com.theglendales.alarm.presenter.TimePickerDialogFragment.showTimePicker
 import com.theglendales.alarm.util.Optional
 import com.theglendales.alarm.util.modify
 import com.theglendales.alarm.view.showDialog
@@ -92,6 +94,8 @@ class AlarmDetailsFragment : Fragment() {
         private var isRtListReady=false
         //SharedPref
         private val mySharedPrefManager: MySharedPrefManager by globalInject()
+    //Time Picker (material design)
+        private val myTimePickerJjong: TimePickerJjong by globalInject()
     // 내가 추가 <-
 
     private val alarms: IAlarmsManager by globalInject()
@@ -226,7 +230,8 @@ class AlarmDetailsFragment : Fragment() {
 
             digitalClock.setLive(false)
             digitalClockContainer.setOnClickListener {
-                disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
+                //disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
+                disposableDialog = myTimePickerJjong.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
             }
 
             rowView.setOnClickListener {

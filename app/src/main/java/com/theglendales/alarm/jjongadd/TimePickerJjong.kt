@@ -79,7 +79,7 @@ class TimePickerJjong: DialogFragment() {
         val clockFormat = TimeFormat.CLOCK_12H
         val timePickerDFrag = MaterialTimePicker.Builder()
             .setTimeFormat(clockFormat)
-            .setHour(hrNow) // todo: 현재 시간으로 설정
+            .setHour(hrNow) // 현재 시간으로 설정
             .setMinute(minuteNow)
             .setTitleText("Set Alarm")
             .build()

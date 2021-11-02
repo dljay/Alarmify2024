@@ -53,7 +53,7 @@ public class DigitalClock extends LinearLayout {
     private boolean mLive = true;
     private boolean mAttached;
 
-    private final Single<Boolean> is24HoutFormat;
+    private final Single<Boolean> is24HourFormat;
 
     /* called by system on minute ticks */
     private final Handler mHandler = new Handler();
@@ -88,7 +88,8 @@ public class DigitalClock extends LinearLayout {
         public void setShowAmPm(boolean show) {
             if (mAmPm != null) {
                 // check for null to be able to use ADT preview
-                mAmPm.setVisibility(show ? View.VISIBLE : View.GONE);
+                mAmPm.setVisibility(show ? View.VISIBLE : View.VISIBLE);
+                //**뒤에꺼 View.Gone 였음.(무조건 am/pm 보여주기 위해 수정)
             }
         }
 
@@ -118,9 +119,9 @@ public class DigitalClock extends LinearLayout {
     public DigitalClock(Context context, AttributeSet attrs) {
         super(context, attrs);
         if (isInEditMode()) {
-            is24HoutFormat = Single.just(true);
+            is24HourFormat = Single.just(true);
         } else {
-            is24HoutFormat = InjectKt.globalInject(Prefs.class).getValue().is24HourFormat();
+            is24HourFormat = InjectKt.globalInject(Prefs.class).getValue().is24HourFormat();
         }
     }
 
@@ -192,7 +193,7 @@ public class DigitalClock extends LinearLayout {
     }
 
     private void setDateFormat() {
-        mFormat = is24HoutFormat.blockingGet() ? M24 : M12;
+        mFormat = is24HourFormat.blockingGet() ? M12 : M12; // M12 : M24 (**original) 내가 수정.
         mAmPm.setShowAmPm(M12.equals(mFormat) || isInEditMode());
     }
 

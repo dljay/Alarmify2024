@@ -76,7 +76,7 @@ class TimePickerJjong: DialogFragment() {
         val minuteNow = rightNow.get(Calendar.MINUTE) //
 
         Log.d(TAG, "showTimePicker: entered.. ")
-        val clockFormat = TimeFormat.CLOCK_12H
+        val clockFormat = TimeFormat.CLOCK_12H // Always 12H format .. 무조건
         val timePickerDFrag = MaterialTimePicker.Builder()
             .setTimeFormat(clockFormat)
             .setHour(hrNow) // 현재 시간으로 설정

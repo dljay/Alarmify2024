@@ -42,6 +42,7 @@ import io.reactivex.functions.Cancellable;
 /**
  * Dialog to set alarm time.
  */
+// **Time Picker 변경으로 이 파일은 안 쓰임!!
 public class TimePickerDialogFragment extends DialogFragment {
     private final DynamicThemeHandler dynamicThemeHandler = InjectKt.globalInject(DynamicThemeHandler.class).getValue();
     private TimePicker mPicker;

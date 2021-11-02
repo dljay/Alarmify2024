@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 
+
 package com.theglendales.alarm.model
 
+import android.util.Log
 import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.configuration.Prefs
 import com.theglendales.alarm.configuration.Store
@@ -103,6 +105,9 @@ object Create : Event()
  * }
  * @enduml
  */
+
+private const val TAG="AlarmCore"
+
 class AlarmCore(
         private val alarmStore: AlarmStore,
         private val log: Logger,
@@ -682,6 +687,7 @@ class AlarmCore(
         val addDays = container.daysOfWeek.getNextAlarm(this)
         if (addDays > 0) {
             add(Calendar.DAY_OF_WEEK, addDays)
+            Log.d(TAG, "advanceCalendar: add days? jj")
         }
     }
 

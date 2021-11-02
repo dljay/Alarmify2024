@@ -141,7 +141,7 @@ class AlarmsListFragment : Fragment() {
                             return false
                         }
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                            // Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
                             return false
                         }
                     }).into(rowHolder.albumArt)
@@ -222,15 +222,16 @@ class AlarmsListFragment : Fragment() {
             c.set(Calendar.MINUTE, alarm.minutes)
             rowHolder.digitalClock.updateTime(c)
 
-            val removeEmptyView = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
+            val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
             // Set the repeat text or leave it blank if it does not repeat.
 
             rowHolder.daysOfWeek.run {
-                text = daysOfWeekStringWithSkip(alarm)
+                text = daysOfWeekStringWithSkip(alarm) // 해당 Function 에서 String 을 받아서 textView 에 setting (ex. Mon,Tue,Wed)
+                // **아래에 utility function 을 만들어서. if 'daysOfWeekStringWithSkip' function 에서 받은 str => contains "mon" => highlight mon. 이런식으로.
                 visibility = when {
                     text.isNotEmpty() -> View.VISIBLE
-                    removeEmptyView -> View.GONE
-                    else -> View.INVISIBLE
+                    removeEmptyView -> View.GONE // if(removeEmptyView) is true => View.Gone.. hmm...?
+                        else -> View.INVISIBLE
                 }
             }
 
@@ -253,6 +254,7 @@ class AlarmsListFragment : Fragment() {
 
         private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
             val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
+            Log.d(TAG, "daysOfWeekStringWithSkip=$daysOfWeekStr. alarm.skipping = ${alarm.skipping}")
             return if (alarm.skipping) "$daysOfWeekStr (skipping)" else daysOfWeekStr
         }
     }

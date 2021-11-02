@@ -17,6 +17,7 @@ import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import java.lang.IllegalStateException
 import java.time.LocalTime
+import java.util.*
 
 private const val TAG="TimePickerJjong"
 private const val EXTRA_TIME = "time"
@@ -27,11 +28,9 @@ class TimePickerJjong: DialogFragment() {
     private var mPicker: TimePicker? = null
     private var emitter: SingleEmitter<Optional<PickedTime>>? = null
 
-    lateinit var localTime: LocalTime
+    //lateinit var localTime: LocalTime
 
-    companion object {
 
-    }
 
 //    override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
 //        val v: View = inflater.inflate(R.layout.time_picker_dialog, null)
@@ -51,13 +50,15 @@ class TimePickerJjong: DialogFragment() {
 //        return v
 //    }
 
-    override fun onCancel(dialog: DialogInterface) {
-        notifyOnCancelListener()
-        super.onCancel(dialog!!)
-    }
+//    override fun onCancel(dialog: DialogInterface) {
+//        Log.d(TAG, "onCancel: cancel..")
+//        notifyOnCancelListener()
+//        super.onCancel(dialog!!)
+//    }
 
 
     private fun notifyOnCancelListener() {
+        Log.d(TAG, "notifyOnCancelListener: called")
         if (emitter != null) {
             emitter!!.onSuccess(absent<PickedTime>())
         }
@@ -69,12 +70,17 @@ class TimePickerJjong: DialogFragment() {
 
     fun showTimePicker(fragManagerReceived: FragmentManager): Single<Optional<PickedTime>> {
     //Material Time Picker Setup A <Basic>
+        // 우선 현재 시간 구하기 API < 26 에서도 되는 방법으로..
+        val rightNow: Calendar = Calendar.getInstance()
+        val hrNow = rightNow.get(Calendar.HOUR) // 12 시간 포맷으로
+        val minuteNow = rightNow.get(Calendar.MINUTE) //
+
         Log.d(TAG, "showTimePicker: entered.. ")
         val clockFormat = TimeFormat.CLOCK_12H
         val timePickerDFrag = MaterialTimePicker.Builder()
             .setTimeFormat(clockFormat)
-            .setHour(12) // todo: 현재 시간으로 설정
-            .setMinute(0)
+            .setHour(hrNow) // todo: 현재 시간으로 설정
+            .setMinute(minuteNow)
             .setTitleText("Set Alarm")
             .build()
 
@@ -101,10 +107,12 @@ class TimePickerJjong: DialogFragment() {
         // b) Cancel 버튼
         timePickerDFrag.addOnNegativeButtonClickListener {
             Log.d(TAG, "showTimePicker: hit cancel. Hour=${timePickerDFrag.hour}, Minute= ${timePickerDFrag.minute}")
+            notifyOnCancelListener()
         }
         // c) 다른데 클릭해서 cancel
         timePickerDFrag.addOnCancelListener {
             Log.d(TAG, "showTimePicker: hit outside. Hour=${timePickerDFrag.hour}, Minute= ${timePickerDFrag.minute}")
+            notifyOnCancelListener()
         }
         // d) Dismissed
         timePickerDFrag.addOnDismissListener {

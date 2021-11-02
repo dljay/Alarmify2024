@@ -92,9 +92,9 @@ class TimePickerJjong: DialogFragment() {
         timePickerDFrag.addOnPositiveButtonClickListener {
 
             val pickedTime: PickedTime = PickedTime(timePickerDFrag.hour, timePickerDFrag.minute)
-            if(emitter!=null) {
-                emitter!!.onSuccess(of(pickedTime))
-                Log.d(TAG, "showTimePicker: emitter!=null. Hit okay. Hour=${timePickerDFrag.hour}, Minute= ${timePickerDFrag.minute}")
+            if(emitter!=null) {// 아래 Sinigle.create 에서 emitter 가 다음 type 으로 잘 설정되었다면 (type: SingleEmitter<Optional<PickedTime>>)
+                emitter!!.onSuccess(of(pickedTime)) // emitter 가 발산하는것을 여기서 capture 하여 -> AlarmListFrag subscribe 쪽으로 PickedTime 타입의 variable 을 전달
+                Log.d(TAG, "showTimePicker: Hit okay.  (emitter!=null) Hour=${timePickerDFrag.hour}, Minute= ${timePickerDFrag.minute}")
             }
             //dismiss()
         }

@@ -57,7 +57,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v0.24a
+//v0.24e
 // 내가 만든 Material TimePicker 로 RxJava Subscribe 까지 성공한듯.
 // Single.create.. { emitter -> } 요거 더 파악 필요.
 // 테스트 필요 => xy pad 스타일로 변경 시도!!

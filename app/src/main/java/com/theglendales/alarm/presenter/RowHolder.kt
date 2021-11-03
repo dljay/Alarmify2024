@@ -1,6 +1,5 @@
 package com.theglendales.alarm.presenter
 
-import android.util.Log
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.ImageView
@@ -25,7 +24,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
     val idHasChanged: Boolean
 // 내가 추가->
     val albumArt: ImageView// Album Art 추가 (detailsButton 대체 <== '...' 요렇게 생긴 놈.)
-    val ivSun: ImageView
+    val tvSun: TextView
     val ivMon: ImageView
     val ivTue: ImageView
     val ivWed: ImageView
@@ -49,7 +48,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         digitalClockContainer.tag = this
         albumArt = find(R.id.id_row_albumArt) as ImageView
 
-        ivSun = find(R.id._ivSun) as ImageView
+        tvSun = find(R.id._tvSun) as TextView
         ivMon = find(R.id._ivMon) as ImageView
         ivTue = find(R.id._ivTue) as ImageView
         ivWed = find(R.id._ivWed) as ImageView

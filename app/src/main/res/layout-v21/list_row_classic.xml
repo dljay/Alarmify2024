@@ -87,10 +87,14 @@
             android:orientation="horizontal"
             android:weightSum="14">
 
-            <ImageView
-                android:id="@+id/_ivSun"
+            <TextView
+                android:id="@+id/_tvSun"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:fontFamily="sans-serif"
+                android:text="S"
+                android:textColor="@color/clock_red"
+                android:gravity="center_horizontal"
                 android:layout_weight="1"/>
 
             <Space

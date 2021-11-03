@@ -220,9 +220,10 @@ class AlarmsListFragment : Fragment() {
             val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
             // Set the repeat text or leave it blank if it does not repeat.
         // 내가 추가:: 요일 표시-->
+            //todo: Dark Mode 관련..
+            //1) 일단 모두 선택 안된 상태로 되어있음.[원 없음,흰 글씨]
 
-            //1) 일단 모두 선택 안된 상태로 설정 [회색배경,흰 글씨]
-            rowHolder.ivSun.setImageDrawable(noAlarmSun)
+            //rowHolder.tvSun.background = noAlarmSun
             rowHolder.ivMon.setImageDrawable(noAlarmMon)
             rowHolder.ivTue.setImageDrawable(noAlarmTue)
             rowHolder.ivWed.setImageDrawable(noAlarmWed)

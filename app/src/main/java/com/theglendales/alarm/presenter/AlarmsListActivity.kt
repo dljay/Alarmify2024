@@ -57,8 +57,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v0.24e
-// updating m t w th fr sat sun ..
+// v0.24f
+//- EveryDay 일때 다 동글뱅이.
+//- 색깔 maker amulyakhare
+//- DetailsFrag 에서도 요일 표시 해주고 -> button 으로 선택 가능하게끔 ㄷㄷ
+//- Every day 일 때 알람이 급 리스트에서 제일 밑으로 가네.
 
 
 /**

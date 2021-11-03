@@ -87,14 +87,14 @@ class AlarmsListFragment : Fragment() {
     private val myTimePickerJjong: TimePickerJjong by globalInject()
     //lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
 
-    //요일 표시용 동그래미 Text Drawable
-    private val noAlarmSun = getNoAlarmDayDrawable("Sun")
-    private val noAlarmMon = getNoAlarmDayDrawable("M")
-    private val noAlarmTue = getNoAlarmDayDrawable("T")
-    private val noAlarmWed = getNoAlarmDayDrawable("W")
-    private val noAlarmThu = getNoAlarmDayDrawable("T")
-    private val noAlarmFri = getNoAlarmDayDrawable("F")
-    private val noAlarmSat = getNoAlarmDayDrawable("Sat")
+    //"알람 선택된 요일" 표시용 동그래미 Text Drawable
+    private val yesAlarmSun = getYesAlarmDayDrawable("Sun")
+    private val yesAlarmMon = getYesAlarmDayDrawable("M")
+    private val yesAlarmTue = getYesAlarmDayDrawable("T")
+    private val yesAlarmWed = getYesAlarmDayDrawable("W")
+    private val yesAlarmThu = getYesAlarmDayDrawable("T")
+    private val yesAlarmFri = getYesAlarmDayDrawable("F")
+    private val yesAlarmSat = getYesAlarmDayDrawable("Sat")
 //내가 추가<-
 
 
@@ -221,17 +221,36 @@ class AlarmsListFragment : Fragment() {
             // Set the repeat text or leave it blank if it does not repeat.
         // 내가 추가:: 요일 표시-->
             //todo: Dark Mode 관련..
-            //1) 일단 모두 선택 안된 상태로 되어있음.[원 없음,흰 글씨]
+            //1) 일단 요일 표시TextView 는 모두 선택 안된 상태로 되어있음.[원 없음,회색 글씨]
+            //2-a) 현재 선택된 '요일'의 list 받기 (String 전달-> list[Mon,Tue] )
+            val enabledDaysList: List<String> = getEnabledDaysList(daysOfWeekStringWithSkip(alarm))
+            //2-b) 리스트에 포함된 '요일' 은 기존 TextView 의 글자를 없애주고 -> 동글뱅이 text 표기로 변경!
+            for(i in enabledDaysList.indices) {
+                when(enabledDaysList[i])
+                {
+                    "Sun" -> {rowHolder.tvSun.text=""
+                        rowHolder.tvSun.background=yesAlarmSun}
+                    "Mon" ->{rowHolder.tvMon.text=""
+                        rowHolder.tvMon.background=yesAlarmMon}
+                    "Tue" ->{rowHolder.tvTue.text=""
+                        rowHolder.tvTue.background=yesAlarmTue}
+                    "Wed" ->{rowHolder.tvWed.text=""
+                        rowHolder.tvWed.background=yesAlarmWed}
+                    "Thu" ->{rowHolder.tvThu.text=""
+                        rowHolder.tvThu.background=yesAlarmThu}
+                    "Fri" ->{rowHolder.tvFri.text=""
+                        rowHolder.tvFri.background=yesAlarmFri}
+                    "Sat" ->{rowHolder.tvSat.text=""
+                        rowHolder.tvSat.background=yesAlarmSat}
+                    "Every day" -> {}
 
-            //rowHolder.tvSun.background = noAlarmSun
-            rowHolder.ivMon.setImageDrawable(noAlarmMon)
-            rowHolder.ivTue.setImageDrawable(noAlarmTue)
-            rowHolder.ivWed.setImageDrawable(noAlarmWed)
-            rowHolder.ivThu.setImageDrawable(noAlarmThu)
-            rowHolder.ivFri.setImageDrawable(noAlarmFri)
-            rowHolder.ivSat.setImageDrawable(noAlarmSat)
+                }
+            }
+        // 내가 추가:: 요일 표시<--
 
-        // 내가 추가:: String 에서 요일 확인하는 Method<--
+
+
+
 //            rowHolder.daysOfWeek.run {
 //                text = daysOfWeekStringWithSkip(alarm) // 해당 Function 에서 String 을 받아서 textView 에 setting (ex. Mon,Tue,Wed)
 //                // **아래에 utility function 을 만들어서. if 'daysOfWeekStringWithSkip' function 에서 받은 str => contains "mon" => highlight mon. 이런식으로.
@@ -261,7 +280,7 @@ class AlarmsListFragment : Fragment() {
 
         private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
             val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
-            Log.d(TAG, "daysOfWeekStringWithSkip=$daysOfWeekStr. alarm.skipping = ${alarm.skipping}")
+            Log.d(TAG, "daysOfWeekStringWithSkip=$daysOfWeekStr, alarm.skipping = ${alarm.skipping}")
             return if (alarm.skipping) "$daysOfWeekStr (skipping)" else daysOfWeekStr
         }
     }
@@ -486,24 +505,32 @@ class AlarmsListFragment : Fragment() {
 // <--추가 3) Lottie 관련 <---
 
 // 추가 4) daysOfWeekStringWithSkip() 에서 받은 String 에서 알람 설정된 날들을 찾기. (Ex. M,T
-    private fun getEnabledDaysList(daysInString: String) {
+    private fun getEnabledDaysList(daysInString: String): List<String> {
+        // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split
+        val enabledDaysList: List<String> = daysInString.split(",").map {dayStr -> dayStr.trim()}
+        Log.d(TAG, "getEnabledDaysList: enabledDaysList=$enabledDaysList")
+        return enabledDaysList
 
     }
 // ImageView 에 주입할 Circle (text) Drawable Builder: https://github.com/amulyakhare/TextDrawable
     // 기본 1주일 전체 알람 없는 날 표시용 drawable [회색 배경, 흰 글씨]
-    private fun getNoAlarmDayDrawable(day: String): TextDrawable {
+    private fun getYesAlarmDayDrawable(day: String): TextDrawable {
+    //todo: color builder : https://github.com/amulyakhare/TextDrawable
     return when (day) {
         "Sun" -> {
-            TextDrawable.builder().beginConfig().textColor(Color.RED).useFont(Typeface.SANS_SERIF).endConfig()
-                .buildRound("S", Color.GRAY)
+            TextDrawable.builder().beginConfig().textColor(Color.RED).useFont(Typeface.SANS_SERIF)
+                .fontSize(35).bold().endConfig()
+                .buildRound("S", Color.LTGRAY)
         }
         "Sat" -> {
-            TextDrawable.builder().beginConfig().textColor(Color.BLUE).useFont(Typeface.SANS_SERIF).endConfig()
-                .buildRound("S", Color.GRAY)
+            TextDrawable.builder().beginConfig().textColor(Color.BLUE).useFont(Typeface.SANS_SERIF)
+                .fontSize(35).bold().endConfig()
+                .buildRound("S", Color.LTGRAY)
         }
         else -> {
-            TextDrawable.builder().beginConfig().textColor(Color.WHITE).useFont(Typeface.SANS_SERIF).endConfig()
-                .buildRound(day, Color.GRAY)
+            TextDrawable.builder().beginConfig().textColor(Color.WHITE).useFont(Typeface.SANS_SERIF)
+                .fontSize(35).bold().endConfig()
+                .buildRound(day, Color.LTGRAY)
         }
     }
     }

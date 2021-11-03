@@ -93,8 +93,9 @@
                 android:layout_height="20dp"
                 android:fontFamily="sans-serif"
                 android:text="S"
-                android:textColor="@color/clock_red"
-                android:gravity="center_horizontal"
+                android:textSize="13sp"
+                android:textColor="@color/mat_red"
+                android:gravity="center"
                 android:layout_weight="1"/>
 
             <Space
@@ -102,10 +103,15 @@
                 android:layout_height="20dp"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/_ivMon"
+            <TextView
+                android:id="@+id/_tvMon"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:fontFamily="sans-serif"
+                android:text="M"
+                android:textSize="13sp"
+                android:textColor="@color/grey"
+                android:gravity="center"
                 android:layout_weight="1"/>
 
             <Space
@@ -113,10 +119,15 @@
                 android:layout_height="20dp"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/_ivTue"
+            <TextView
+                android:id="@+id/_tvTue"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:fontFamily="sans-serif"
+                android:text="T"
+                android:textSize="13sp"
+                android:textColor="@color/grey"
+                android:gravity="center"
                 android:layout_weight="1"/>
 
             <Space
@@ -124,10 +135,15 @@
                 android:layout_height="20dp"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/_ivWed"
+            <TextView
+                android:id="@+id/_tvWed"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:fontFamily="sans-serif"
+                android:text="W"
+                android:textSize="13sp"
+                android:textColor="@color/grey"
+                android:gravity="center"
                 android:layout_weight="1"/>
 
             <Space
@@ -135,10 +151,15 @@
                 android:layout_height="20dp"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/_ivThu"
+            <TextView
+                android:id="@+id/_tvThu"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:fontFamily="sans-serif"
+                android:text="T"
+                android:textSize="13sp"
+                android:textColor="@color/grey"
+                android:gravity="center"
                 android:layout_weight="1"/>
 
             <Space
@@ -146,10 +167,15 @@
                 android:layout_height="20dp"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/_ivFri"
+            <TextView
+                android:id="@+id/_tvFri"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:fontFamily="sans-serif"
+                android:text="F"
+                android:textSize="13sp"
+                android:textColor="@color/grey"
+                android:gravity="center"
                 android:layout_weight="1"/>
 
             <Space
@@ -157,10 +183,15 @@
                 android:layout_height="20dp"
                 android:layout_weight="1" />
 
-            <ImageView
-                android:id="@+id/_ivSat"
+            <TextView
+                android:id="@+id/_tvSat"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:fontFamily="sans-serif"
+                android:text="S"
+                android:textSize="13sp"
+                android:textColor="@color/mat_blue"
+                android:gravity="center"
                 android:layout_weight="1"/>
 
 <!--            <TextView-->

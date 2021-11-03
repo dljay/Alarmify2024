@@ -25,12 +25,12 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
 // 내가 추가->
     val albumArt: ImageView// Album Art 추가 (detailsButton 대체 <== '...' 요렇게 생긴 놈.)
     val tvSun: TextView
-    val ivMon: ImageView
-    val ivTue: ImageView
-    val ivWed: ImageView
-    val ivThu: ImageView
-    val ivFri: ImageView
-    val ivSat: ImageView
+    val tvMon: TextView
+    val tvTue: TextView
+    val tvWed: TextView
+    val tvThu: TextView
+    val tvFri: TextView
+    val tvSat: TextView
 
     init {
         digitalClock = find(R.id.list_row_digital_clock) as DigitalClock
@@ -49,12 +49,12 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         albumArt = find(R.id.id_row_albumArt) as ImageView
 
         tvSun = find(R.id._tvSun) as TextView
-        ivMon = find(R.id._ivMon) as ImageView
-        ivTue = find(R.id._ivTue) as ImageView
-        ivWed = find(R.id._ivWed) as ImageView
-        ivThu = find(R.id._ivThu) as ImageView
-        ivFri = find(R.id._ivFri) as ImageView
-        ivSat = find(R.id._ivSat) as ImageView
+        tvMon = find(R.id._tvMon) as TextView
+        tvTue = find(R.id._tvTue) as TextView
+        tvWed = find(R.id._tvWed) as TextView
+        tvThu = find(R.id._tvThu) as TextView
+        tvFri = find(R.id._tvFri) as TextView
+        tvSat = find(R.id._tvSat) as TextView
     // 내가 추가<-
         
 

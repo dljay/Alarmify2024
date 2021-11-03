@@ -62,6 +62,7 @@ import java.util.Calendar
 //- 색깔 maker amulyakhare
 //- DetailsFrag 에서도 요일 표시 해주고 -> button 으로 선택 가능하게끔 ㄷㄷ
 //- Every day 일 때 알람이 급 리스트에서 제일 밑으로 가네.
+//
 
 
 /**

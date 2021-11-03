@@ -219,8 +219,9 @@ class AlarmDetailsFragment : Fragment() {
             }
 
             // detailsButton().visibility = View.INVISIBLE
-            daysOfWeek.visibility = View.INVISIBLE
-            label.visibility = View.INVISIBLE
+            //daysOfWeek.visibility = View.INVISIBLE
+            //label.visibility = View.INVISIBLE
+
 
             lollipop {
                 this.digitalClock.transitionName = "clock$alarmId"

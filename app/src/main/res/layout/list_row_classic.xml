@@ -80,12 +80,7 @@
                 android:text="Weekdays"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
-            <TextView
-                android:id="@+id/list_row_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="label" />
+
         </LinearLayout>
     </LinearLayout>
 

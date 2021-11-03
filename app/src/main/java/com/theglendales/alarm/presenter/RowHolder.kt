@@ -19,27 +19,44 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
     val onOff: CompoundButton
     val container: View
     val alarmId: Int = id
-    val daysOfWeek: TextView
-    val label: TextView
+    //val daysOfWeek: TextView
+    //val label: TextView
     val detailsButton: View
     val idHasChanged: Boolean
 // 내가 추가->
     val albumArt: ImageView// Album Art 추가 (detailsButton 대체 <== '...' 요렇게 생긴 놈.)
+    val ivSun: ImageView
+    val ivMon: ImageView
+    val ivTue: ImageView
+    val ivWed: ImageView
+    val ivThu: ImageView
+    val ivFri: ImageView
+    val ivSat: ImageView
 
     init {
         digitalClock = find(R.id.list_row_digital_clock) as DigitalClock
         digitalClockContainer = find(R.id.list_row_digital_clock_container)
         onOff = find(R.id.list_row_on_off_switch) as CompoundButton
         container = find(R.id.list_row_on_off_checkbox_container)
-        daysOfWeek = find(R.id.list_row_daysOfWeek) as TextView
-        label = find(R.id.list_row_label) as TextView
+        //daysOfWeek = find(R.id.list_row_daysOfWeek) as TextView
+         //label = find(R.id.list_row_label) as TextView
         detailsButton = find(R.id.details_button_container) // ' ... ' 이렇게 생긴 놈. -> 지금은 album art 로 대체되어 있음.
         val prev: RowHolder? = rowView.tag as RowHolder?
         idHasChanged = prev?.alarmId != id
         rowView.tag = this
+
     // 내가 추가->
         digitalClockContainer.tag = this
         albumArt = find(R.id.id_row_albumArt) as ImageView
+
+        ivSun = find(R.id._ivSun) as ImageView
+        ivMon = find(R.id._ivMon) as ImageView
+        ivTue = find(R.id._ivTue) as ImageView
+        ivWed = find(R.id._ivWed) as ImageView
+        ivThu = find(R.id._ivThu) as ImageView
+        ivFri = find(R.id._ivFri) as ImageView
+        ivSat = find(R.id._ivSat) as ImageView
+    // 내가 추가<-
         
 
 

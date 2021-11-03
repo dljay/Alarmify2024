@@ -169,6 +169,8 @@ dependencies {
     implementation("com.google.android.exoplayer:exoplayer:2.14.0")
     //GSON (SharedPref 에 Object 저장용)
     implementation("com.google.code.gson:gson:2.8.8")
+    // ImageView 에 넣을 GMAIl 스타일 Circle Text Builder https://github.com/amulyakhare/TextDrawable
+    implementation("com.amulyakhare:com.amulyakhare.textdrawable:1.0.1")
 
 
 }

@@ -81,29 +81,96 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="20dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
             android:gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="14">
 
-            <TextView
-                android:id="@+id/list_row_daysOfWeek"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:text="Weekdays"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="?android:attr/colorAccent"
+            <ImageView
+                android:id="@+id/_ivSun"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"/>
 
-                android:focusableInTouchMode="false"/>
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="20dp"
+                android:layout_weight="1" />
 
-            <TextView
-                android:id="@+id/list_row_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="label"
-                android:textColor="?android:attr/colorAccent"
+            <ImageView
+                android:id="@+id/_ivMon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"/>
 
-                android:focusableInTouchMode="false"/>
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="20dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/_ivTue"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"/>
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="20dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/_ivWed"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"/>
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="20dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/_ivThu"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"/>
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="20dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/_ivFri"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"/>
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="20dp"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/_ivSat"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_weight="1"/>
+
+<!--            <TextView-->
+<!--                android:id="@+id/list_row_daysOfWeek"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginRight="5dp"-->
+<!--                android:text="Weekdays"-->
+<!--                android:textAppearance="?android:attr/textAppearanceSmall"-->
+<!--                android:textColor="?android:attr/colorAccent"-->
+
+<!--                android:focusableInTouchMode="false"/>-->
+
+
         </LinearLayout>
     </LinearLayout>
 

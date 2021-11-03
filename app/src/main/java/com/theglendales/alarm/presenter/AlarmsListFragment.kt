@@ -2,6 +2,8 @@ package com.theglendales.alarm.presenter
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
@@ -19,6 +21,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+import com.amulyakhare.textdrawable.TextDrawable
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -76,14 +79,23 @@ class AlarmsListFragment : Fragment() {
     private var backSub: Disposable = Disposables.disposed()
     private var timePickerDialogDisposable = Disposables.disposed()
 
-    // 내가 추가-->
+// 내가 추가-->
     //lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
     lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
     private val myTimePickerJjong: TimePickerJjong by globalInject()
     //lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
-    //내가 추가<-
+
+    //요일 표시용 동그래미 Text Drawable
+    private val noAlarmSun = getNoAlarmDayDrawable("Sun")
+    private val noAlarmMon = getNoAlarmDayDrawable("M")
+    private val noAlarmTue = getNoAlarmDayDrawable("T")
+    private val noAlarmWed = getNoAlarmDayDrawable("W")
+    private val noAlarmThu = getNoAlarmDayDrawable("T")
+    private val noAlarmFri = getNoAlarmDayDrawable("F")
+    private val noAlarmSat = getNoAlarmDayDrawable("Sat")
+//내가 추가<-
 
 
     /** changed by [Prefs.listRowLayout] in [onResume]*/
@@ -168,12 +180,8 @@ class AlarmsListFragment : Fragment() {
 //            }
 
 
-        // Option B-1) [내가 새로 적은 것] Time Picker 보여주기
-            /*rowHolder.digitalClockContainer.setOnClickListener {
+        // Option B-1) [내가 수정해서 적은 것] Material Time Picker 보여주기
 
-                myTimePickerJjong.showTimePicker(parentFragmentManager)
-
-            }*/
             rowHolder.digitalClockContainer.setOnClickListener {
                 timePickerDialogDisposable =
                     myTimePickerJjong.showTimePicker(parentFragmentManager)
@@ -195,22 +203,9 @@ class AlarmsListFragment : Fragment() {
             }
         // Option B-2) [원래적혀있던것] 시간 적혀있는 부분 눌렀을 때 -> TimePicker 보여주기
 //            rowHolder.digitalClockContainer.setOnClickListener {
-//                timePickerDialogDisposable =
-//                    TimePickerDialogFragment.showTimePicker(parentFragmentManager)
-//                        .subscribe { picked ->
-//                            if (picked.isPresent()) {
-//                                alarms.getAlarm(alarm.id)?.also { alarm ->
-//                                    alarm.edit {
-//                                        copy(
-//                                            isEnabled = true,
-//                                            hour = picked.get().hour,
-//                                            minutes = picked.get().minute
-//                                        )
-//                                    }
-//                                }
-//                            }
-//                        }
-//            }
+//                timePickerDialogDisposable =TimePickerDialogFragment.showTimePicker(parentFragmentManager)
+//                        .subscribe { picked ->if (picked.isPresent()) {alarms.getAlarm(alarm.id)?.also { alarm ->
+//                                    alarm.edit {copy(isEnabled = true,hour = picked.get().hour,minutes = picked.get().minute)}}}}}
 
             rowHolder.digitalClockContainer.setOnLongClickListener {
                 false
@@ -224,25 +219,36 @@ class AlarmsListFragment : Fragment() {
 
             val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
             // Set the repeat text or leave it blank if it does not repeat.
+        // 내가 추가:: 요일 표시-->
 
-            rowHolder.daysOfWeek.run {
-                text = daysOfWeekStringWithSkip(alarm) // 해당 Function 에서 String 을 받아서 textView 에 setting (ex. Mon,Tue,Wed)
-                // **아래에 utility function 을 만들어서. if 'daysOfWeekStringWithSkip' function 에서 받은 str => contains "mon" => highlight mon. 이런식으로.
-                visibility = when {
-                    text.isNotEmpty() -> View.VISIBLE
-                    removeEmptyView -> View.GONE // if(removeEmptyView) is true => View.Gone.. hmm...?
-                        else -> View.INVISIBLE
-                }
-            }
+            //1) 일단 모두 선택 안된 상태로 설정 [회색배경,흰 글씨]
+            rowHolder.ivSun.setImageDrawable(noAlarmSun)
+            rowHolder.ivMon.setImageDrawable(noAlarmMon)
+            rowHolder.ivTue.setImageDrawable(noAlarmTue)
+            rowHolder.ivWed.setImageDrawable(noAlarmWed)
+            rowHolder.ivThu.setImageDrawable(noAlarmThu)
+            rowHolder.ivFri.setImageDrawable(noAlarmFri)
+            rowHolder.ivSat.setImageDrawable(noAlarmSat)
 
-            // Set the repeat text or leave it blank if it does not repeat.
-            rowHolder.label.text = alarm.label
+        // 내가 추가:: String 에서 요일 확인하는 Method<--
+//            rowHolder.daysOfWeek.run {
+//                text = daysOfWeekStringWithSkip(alarm) // 해당 Function 에서 String 을 받아서 textView 에 setting (ex. Mon,Tue,Wed)
+//                // **아래에 utility function 을 만들어서. if 'daysOfWeekStringWithSkip' function 에서 받은 str => contains "mon" => highlight mon. 이런식으로.
+//                visibility = when {
+//                    text.isNotEmpty() -> View.VISIBLE
+//                    removeEmptyView -> View.GONE // if(removeEmptyView) is true => View.Gone.. hmm...?
+//                        else -> View.INVISIBLE
+//                }
+//            }
+
+            // Label 관련. 현재는 사용 안함. Set the repeat text or leave it blank if it does not repeat.
+            /*rowHolder.label.text = alarm.label
 
             rowHolder.label.visibility = when {
                 alarm.label.isNotBlank() -> View.VISIBLE
                 removeEmptyView -> View.GONE
                 else -> View.INVISIBLE
-            }
+            }*/
 
             // row.labelsContainer.visibility = when {
             //     row.label().visibility == View.GONE && row.daysOfWeek().visibility == View.GONE -> GONE
@@ -258,6 +264,8 @@ class AlarmsListFragment : Fragment() {
             return if (alarm.skipping) "$daysOfWeekStr (skipping)" else daysOfWeekStr
         }
     }
+
+
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val info = item.menuInfo as AdapterContextMenuInfo
@@ -461,6 +469,8 @@ class AlarmsListFragment : Fragment() {
                 .minus(visible)
                 .forEach { menu.removeItem(it) }
     }
+
+// **** 내가 추가한 Utility Methods **
 // 추가 3) Lottie 관련-->
     private fun showLottieDialogFrag() {
         lottieDialogFrag.show(requireActivity().supportFragmentManager, lottieDialogFrag.tag)
@@ -473,5 +483,33 @@ class AlarmsListFragment : Fragment() {
     }
 
 // <--추가 3) Lottie 관련 <---
+
+// 추가 4) daysOfWeekStringWithSkip() 에서 받은 String 에서 알람 설정된 날들을 찾기. (Ex. M,T
+    private fun getEnabledDaysList(daysInString: String) {
+
+    }
+// ImageView 에 주입할 Circle (text) Drawable Builder: https://github.com/amulyakhare/TextDrawable
+    // 기본 1주일 전체 알람 없는 날 표시용 drawable [회색 배경, 흰 글씨]
+    private fun getNoAlarmDayDrawable(day: String): TextDrawable {
+    return when (day) {
+        "Sun" -> {
+            TextDrawable.builder().beginConfig().textColor(Color.RED).useFont(Typeface.SANS_SERIF).endConfig()
+                .buildRound("S", Color.GRAY)
+        }
+        "Sat" -> {
+            TextDrawable.builder().beginConfig().textColor(Color.BLUE).useFont(Typeface.SANS_SERIF).endConfig()
+                .buildRound("S", Color.GRAY)
+        }
+        else -> {
+            TextDrawable.builder().beginConfig().textColor(Color.WHITE).useFont(Typeface.SANS_SERIF).endConfig()
+                .buildRound(day, Color.GRAY)
+        }
+    }
+    }
+
+    //(O) 알람 있는 날 표시용 drawable [하늘색 배경, 흰 글씨]
+//    private fun getDayYesAlarmDrawable(day: String): TextDrawable {
+//
+//    }
 
 }

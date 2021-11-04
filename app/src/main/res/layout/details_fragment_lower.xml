@@ -43,10 +43,11 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/_chipGroupDays"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="2"
-                    android:layout_gravity="left"
+                    android:layout_gravity="center|left"
 
                     android:paddingEnd="50dp"
                     app:chipSpacingHorizontal="1dp"

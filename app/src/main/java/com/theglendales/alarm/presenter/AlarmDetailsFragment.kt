@@ -41,6 +41,8 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import com.theglendales.alarm.R
 import com.theglendales.alarm.checkPermissions
 import com.theglendales.alarm.configuration.Layout
@@ -84,18 +86,20 @@ private const val TAG="*AlarmDetailsFragment*"
 class AlarmDetailsFragment : Fragment() {
     // 내가 추가 ->
         // 폰에 저장된 ringtone (mp3 or ogg?) 과 앨범쟈켓(png) 을 찾기위해
-        private val myDiskSearcher: DiskSearcher by globalInject()
+            private val myDiskSearcher: DiskSearcher by globalInject()
         // Spinner
-        private val spinnerAdapter: SpinnerAdapter by globalInject()
-        private val spinner: MyCustomSpinner by lazy { fragmentView.findViewById(R.id.id_spinner) as MyCustomSpinner}
+            private val spinnerAdapter: SpinnerAdapter by globalInject()
+            private val spinner: MyCustomSpinner by lazy { fragmentView.findViewById(R.id.id_spinner) as MyCustomSpinner}
         // 링톤 옆에 표시되는 앨범 아트
-        private val ivRtArtBig: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArtBig) as ImageView}
+            private val ivRtArtBig: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArtBig) as ImageView}
 
-        private var isRtListReady=false
+            private var isRtListReady=false
         //SharedPref
-        private val mySharedPrefManager: MySharedPrefManager by globalInject()
-    //Time Picker (material design)
-        private val myTimePickerJjong: TimePickerJjong by globalInject()
+            private val mySharedPrefManager: MySharedPrefManager by globalInject()
+        //Time Picker (material design)
+            private val myTimePickerJjong: TimePickerJjong by globalInject()
+        //요일 표시 ChipGroup
+            lateinit var chipGroupDays: ChipGroup
     // 내가 추가 <-
 
     private val alarms: IAlarmsManager by globalInject()
@@ -280,12 +284,26 @@ class AlarmDetailsFragment : Fragment() {
 //        mPreAlarmRow.setOnClickListener {
 //            modify("Pre-alarm") { editor -> editor.copy(isPrealarm = !editor.isPrealarm, isEnabled = true) }
 //        }
+    // 설정된 알람(Repeat) ChipGroup 관련
+        //1) initChip + chip onSelectedListener 설정
+        chipGroupDays = fragmentView.findViewById(R.id._chipGroupDays)
+        for(i in 0 until chipGroupDays.childCount) {
+            val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
+            chipDay.setOnCheckedChangeListener { buttonView, isChecked ->
+                //getDaysStrListFromChips()
+                when(isChecked) {
+                    true -> Log.d(TAG, "onCreateView: checkedChip=${chipDay.text}")
+                    false ->Log.d(TAG, "onCreateView: UnCheckedChip=${chipDay.text}")
+                }
+            }
+        }
 
         mRepeatRow.setOnClickListener {
             editor.firstOrError()
                     .flatMap { editor -> editor.daysOfWeek.showDialog(requireContext()) }
                     .subscribe { daysOfWeek ->
                         modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
+                        //Log.d(TAG, "onCreateView: daysOfWeekJJ=$daysOfWeek")
                     }
         }
 
@@ -422,7 +440,13 @@ class AlarmDetailsFragment : Fragment() {
                     rowHolder.onOff.isChecked = editor.isEnabled
                     //mPreAlarmCheckBox.isChecked = editor.isPrealarm
 
-                    mRepeatSummary.text = editor.daysOfWeek.summary(requireContext())
+                //**알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
+                    mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
+                    val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
+                    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr)
+                    Log.d(TAG, "onResume: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
+                    activateChipForAlarmSetDays(alarmSetDaysStrList) // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
+
 
 //                    if (editor.label != mLabel.text.toString()) {
 //                        mLabel.setText(editor.label)
@@ -465,6 +489,8 @@ class AlarmDetailsFragment : Fragment() {
 
         store.transitioningToNewAlarmDetails().onNext(false)
     }
+
+
 
     fun Ringtone?.title(): CharSequence {
         return try {
@@ -570,5 +596,30 @@ class AlarmDetailsFragment : Fragment() {
                 }
             })
         }
+    }
+//*********** 내가 추가한 Utility Method **********
+    private fun getAlarmSetDaysListFromStr(alarmSetDaysStr: String): List<String> {
+    // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split
+    val alarmSetDaysStrList: List<String> = alarmSetDaysStr.split(",").map {dayStr -> dayStr.trim()}
+    Log.d(TAG, "getAlarmSetDaysListFromStr: alarmSetDaysStrList=$alarmSetDaysStrList")
+    return alarmSetDaysStrList
+
+    }
+    // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
+    private fun activateChipForAlarmSetDays(alarmSetDaysStrList: List<String>) {
+        for(i in alarmSetDaysStrList.indices) {
+            when(alarmSetDaysStrList[i]) {
+                "Sun" -> chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
+                "Mon" -> chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
+                "Tue" -> chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
+                "Wed" -> chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
+                "Thu" -> chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
+                "Fri" -> chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
+                "Sat" -> chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
+            }
+        }
+
+
+
     }
 }

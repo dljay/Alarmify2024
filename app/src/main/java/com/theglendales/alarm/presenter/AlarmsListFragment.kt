@@ -22,6 +22,7 @@ import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
 import com.amulyakhare.textdrawable.TextDrawable
+import com.amulyakhare.textdrawable.util.ColorGenerator
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -515,21 +516,25 @@ class AlarmsListFragment : Fragment() {
 // ImageView 에 주입할 Circle (text) Drawable Builder: https://github.com/amulyakhare/TextDrawable
     // 기본 1주일 전체 알람 없는 날 표시용 drawable [회색 배경, 흰 글씨]
     private fun getYesAlarmDayDrawable(day: String): TextDrawable {
-    //todo: color builder : https://github.com/amulyakhare/TextDrawable
+    //amulyakhare 라이브러리에서 color builder 는 유저에 따라 key 값을 다른 색 부여하는것일 뿐. 내가 쓸만한 것은 아님: https://github.com/amulyakhare/TextDrawable
+    // 추후에 Color.xx 에 다양한 색 넣는것으로 해보자. Color Class: https://developer.android.com/reference/android/graphics/Color
+
+
+
     return when (day) {
         "Sun" -> {
             TextDrawable.builder().beginConfig().textColor(Color.RED).useFont(Typeface.SANS_SERIF)
-                .fontSize(35).bold().endConfig()
+                .fontSize(33).endConfig()
                 .buildRound("S", Color.LTGRAY)
         }
         "Sat" -> {
             TextDrawable.builder().beginConfig().textColor(Color.BLUE).useFont(Typeface.SANS_SERIF)
-                .fontSize(35).bold().endConfig()
+                .fontSize(33).endConfig()
                 .buildRound("S", Color.LTGRAY)
         }
         else -> {
             TextDrawable.builder().beginConfig().textColor(Color.WHITE).useFont(Typeface.SANS_SERIF)
-                .fontSize(35).bold().endConfig()
+                .fontSize(33).endConfig()
                 .buildRound(day, Color.LTGRAY)
         }
     }

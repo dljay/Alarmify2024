@@ -225,7 +225,8 @@
 <!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
             <ImageView
                 android:id="@+id/id_row_albumArt"
-                android:padding="10dp"
+                android:padding="13dp"
+
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="false"

@@ -114,6 +114,7 @@ class AlarmDetailsFragment : Fragment() {
     //private val mRingtoneSummary by lazy { fragmentView.findViewById(R.id.details_ringtone_summary) as TextView }
     private val mRepeatRow by lazy { fragmentView.findViewById(R.id.details_repeat_row) as LinearLayout }
     private val mRepeatSummary by lazy { fragmentView.findViewById(R.id.details_repeat_summary) as TextView }
+    private val timePickerSpinner by lazy { fragmentView.findViewById(R.id._tPicker_jj_Spinner) as TimePicker }//<-내가 추가 timePicker Spinner
 // PreAlarm & Label 관련. 내가 없앰.
     //private val mPreAlarmRow by lazy {fragmentView.findViewById(R.id.details_prealarm_row) as LinearLayout}
     //private val mPreAlarmCheckBox by lazy {fragmentView.findViewById(R.id.details_prealarm_checkbox) as CheckBox}
@@ -230,10 +231,10 @@ class AlarmDetailsFragment : Fragment() {
             }
 
             digitalClock.setLive(false)
-            digitalClockContainer.setOnClickListener {
-                //disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
-                disposableDialog = myTimePickerJjong.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
-            }
+            // 원래 rowHolder 를 빌려서 채워줬던 view (linear layout) 자체를 visibility=Gone 으로 해버림. 아래는 필요없게됨.
+//            digitalClockContainer.setOnClickListener {
+//                disposableDialog = myTimePickerJjong.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
+//            }
 
 
             rowView.setOnClickListener {
@@ -248,6 +249,17 @@ class AlarmDetailsFragment : Fragment() {
 
         } // rowHolder.run <--
 
+    //TimePicker Spinner 설정 및 시간 골랐을 때 시스템과 연결해주는 부분 --->
+        timePickerSpinner.setIs24HourView(false) // amp Pm 시스템으로
+        //todo: 기존에 세팅되었던 시간 보여주기.
+        timePickerSpinner.setOnTimeChangedListener { view, hourOfDay, minute ->
+            Log.d(TAG, "onCreateView: Hour=$hourOfDay, minute=$minute")
+            val pickedTime: PickedTime = PickedTime(hourOfDay, minute)
+            disposableDialog = myTimePickerJjong.timePickerSpinnerTracker(hourOfDay,minute).subscribe(pickerConsumer)
+            //disposableDialog = myTimePickerJjong.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer) // 기존 material TimePicker 구현용도.
+        }
+
+    //TimePicker Spinner 로 시간 골랐을 때 시스템과 연결해주는 부분 <---
 
         view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
         view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }

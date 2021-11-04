@@ -20,7 +20,8 @@ import java.util.*
 private const val TAG="TimePickerJjong"
 private const val EXTRA_TIME = "time"
 
-
+// ** 이 클래스 자체를 현재는 사용하지 않음!! 21.11.4 **
+// *** 더이상 리스트Frag 에서 시간 클릭 했을 때 TimePicker 가 뜨지 않게 설정했다! 시간은 오로지 Details Frag 에 가서만 설정! 이놈도 사용하지 않게됨!!! ***
 class TimePickerJjong: DialogFragment() {
     private val dynamicThemeHandler = globalInject(DynamicThemeHandler::class.java).value
     private var mPicker: TimePickerNumbPad? = null
@@ -62,11 +63,11 @@ class TimePickerJjong: DialogFragment() {
         }
     }
 
-    private fun setEmitter(timePicker: MaterialTimePicker, emitterInput: SingleEmitter<Optional<PickedTime>>?) {
+    private fun setEmitter(emitterInput: SingleEmitter<Optional<PickedTime>>?) {
         emitter = emitterInput
     }
 
-    fun showTimePicker(fragManagerReceived: FragmentManager): Single<Optional<PickedTime>> {
+    fun showMaterialTimePicker(fragManagerReceived: FragmentManager): Single<Optional<PickedTime>> {
     //Material Time Picker Setup A <Basic>
         // 우선 현재 시간 구하기 API < 26 에서도 되는 방법으로..
         val rightNow: Calendar = Calendar.getInstance()
@@ -125,7 +126,7 @@ class TimePickerJjong: DialogFragment() {
             try {
                 Log.d(TAG, "showTimePicker: try block")
                 //timePickerDFrag.show(fragmentManager, "time_dialog_jjong")
-                setEmitter(timePickerDFrag, emitter)
+                setEmitter(emitter)
                 emitter.setCancellable {
 
                     if (timePickerDFrag.isAdded) {
@@ -139,5 +140,35 @@ class TimePickerJjong: DialogFragment() {
         }
     }
 
+    fun timePickerSpinnerTracker(hour: Int, minute: Int): Single<Optional<PickedTime>> {
+        // <AlarmListFrag 에서 전달받은 시간을 PickedTime 하여 subscribe 가능 형태로 제공.>
+        Log.d(TAG, "timePickerSpinnerTracker: called. Hr=$hour, Min=$minute")
+
+        val pickedTime: PickedTime = PickedTime(hour, minute)
+            if(emitter!=null) {// 아래 Sinigle.create 에서 emitter 가 다음 type 으로 잘 설정되었다면 (type: SingleEmitter<Optional<PickedTime>>)
+                emitter!!.onSuccess(of(pickedTime)) // emitter 가 발산하는것을 여기서 capture 하여 -> AlarmListFrag subscribe 쪽으로 PickedTime 타입의 variable 을 전달
+                Log.d(TAG, "timePickerSpinnerTracker: <<TRACKING!>>  (emitter!=null) Hour=${hour}, Minute= $minute")
+            }
+        // DetailsFrag 자체가 cancel 될 때 notifyOnCancelListener() 구동되야함.
+        // b) Cancel 버튼
+//        timePickerDFrag.addOnNegativeButtonClickListener {
+//            notifyOnCancelListener()
+//        }
+
+
+        //RXJava
+        return Single.create { emitter ->
+
+            try {
+                Log.d(TAG, "showTimePicker: try block")
+                //timePickerDFrag.show(fragmentManager, "time_dialog_jjong")
+                setEmitter(emitter)
+                emitter.setCancellable {}
+            } catch (e: IllegalStateException) {
+                Log.d(TAG, "showTimePicker: catch block. Error=$e")
+                emitter.onSuccess(absent())
+            }
+        }
+    }
 
 }

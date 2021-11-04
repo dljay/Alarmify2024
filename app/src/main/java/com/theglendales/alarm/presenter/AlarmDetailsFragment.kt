@@ -154,7 +154,7 @@ class AlarmDetailsFragment : Fragment() {
         this.fragmentView = view
         //View Initializing <-
 
-//******************* Spinner 설정 ------------>
+//******************* RT 보여주는 Spinner 설정 ------------>
         spinner.adapter = spinnerAdapter
         spinner.isSelected = false // 이것과
         spinner.setSelection(0,true) // <=frag 열리자마자 자동으로 ItemSelect 하는것 막음. <== 트릭은 아래 spinner 에 selectedListener 를 등록하기 전에 미리 선택! -> 무반응!
@@ -209,7 +209,7 @@ class AlarmDetailsFragment : Fragment() {
                 Log.d(TAG, "Spinner - onNothingSelected: ... ")
             }
         }
-//****** Spinner 설정 <------------ *************
+//****** RT 보여주는 Spinner 설정 <------------ *************
 
         rowHolder.run {
             this.container.setOnClickListener {
@@ -235,11 +235,19 @@ class AlarmDetailsFragment : Fragment() {
                 disposableDialog = myTimePickerJjong.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
             }
 
+
             rowView.setOnClickListener {
                 saveAlarm()
 
             }
-        }
+        // 내가 추가-> 스위치 파트&시계 파트 둘다 아예 &&안보이게&& 만들기!
+//            digitalClockContainer.visibility=View.GONE
+//            onOff.visibility=View.GONE
+
+        // 내가 추가<--
+
+        } // rowHolder.run <--
+
 
         view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
         view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }

@@ -36,7 +36,7 @@ import java.text.DateFormatSymbols;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
-public class TimePicker extends LinearLayout implements Button.OnClickListener {
+public class TimePickerNumbPad extends LinearLayout implements Button.OnClickListener {
     private final Context mContext;
 
     private final boolean mIs24HoursMode;
@@ -54,11 +54,11 @@ public class TimePicker extends LinearLayout implements Button.OnClickListener {
     private final SparseArray<View> views = new SparseArray<>();
     public static final String[] AM_PM_STRINGS = new DateFormatSymbols().getAmPmStrings();
 
-    public TimePicker(Context context) {
+    public TimePickerNumbPad(Context context) {
         this(context, null);
     }
 
-    public TimePicker(Context context, AttributeSet attrs) {
+    public TimePickerNumbPad(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -1,6 +1,5 @@
 package com.theglendales.alarm.jjongadd
 
-import android.content.DialogInterface
 import android.util.Log
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
@@ -12,11 +11,10 @@ import com.theglendales.alarm.presenter.PickedTime
 import com.theglendales.alarm.util.Optional
 import com.theglendales.alarm.util.Optional.Companion.absent
 import com.theglendales.alarm.util.Optional.Companion.of
-import com.theglendales.alarm.view.TimePicker
+import com.theglendales.alarm.view.TimePickerNumbPad
 import io.reactivex.Single
 import io.reactivex.SingleEmitter
 import java.lang.IllegalStateException
-import java.time.LocalTime
 import java.util.*
 
 private const val TAG="TimePickerJjong"
@@ -25,7 +23,7 @@ private const val EXTRA_TIME = "time"
 
 class TimePickerJjong: DialogFragment() {
     private val dynamicThemeHandler = globalInject(DynamicThemeHandler::class.java).value
-    private var mPicker: TimePicker? = null
+    private var mPicker: TimePickerNumbPad? = null
     private var emitter: SingleEmitter<Optional<PickedTime>>? = null
 
     //lateinit var localTime: LocalTime

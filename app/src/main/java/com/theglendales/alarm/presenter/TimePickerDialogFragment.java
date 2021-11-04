@@ -31,7 +31,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.theglendales.alarm.R;
 import com.theglendales.alarm.configuration.InjectKt;
 import com.theglendales.alarm.util.Optional;
-import com.theglendales.alarm.view.TimePicker;
+import com.theglendales.alarm.view.TimePickerNumbPad;
 
 import io.reactivex.Single;
 import io.reactivex.SingleEmitter;
@@ -45,7 +45,7 @@ import io.reactivex.functions.Cancellable;
 // **Time Picker 변경으로 이 파일은 안 쓰임!!
 public class TimePickerDialogFragment extends DialogFragment {
     private final DynamicThemeHandler dynamicThemeHandler = InjectKt.globalInject(DynamicThemeHandler.class).getValue();
-    private TimePicker mPicker;
+    private TimePickerNumbPad mPicker;
     private SingleEmitter<Optional<PickedTime>> emitter;
 
     /**
@@ -79,7 +79,7 @@ public class TimePickerDialogFragment extends DialogFragment {
                 dismiss();
             }
         });
-        mPicker = (TimePicker) v.findViewById(R.id.time_picker);
+        mPicker = (TimePickerNumbPad) v.findViewById(R.id.time_picker);
         mPicker.setSetButton(set);
         set.setOnClickListener(new View.OnClickListener() {
             @Override

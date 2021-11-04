@@ -251,7 +251,7 @@ class AlarmDetailsFragment : Fragment() {
 
     //TimePicker Spinner 설정 및 시간 골랐을 때 시스템과 연결해주는 부분 --->
         timePickerSpinner.setIs24HourView(false) // amp Pm 시스템으로
-        //기존에 설정된 알람 시간은 밑에 onResume() >disposables.. 라인 410(?) 언저리 에서 해줬음!! 대 성공!!
+        //기존에 설정된 알람 시간은 밑에 onResume() >disposables.. 라인 410(?) 언저리 에서 해줬음!! 대 성공!!!
 
         timePickerSpinner.setOnTimeChangedListener { view, hourOfDay, minute ->
             Log.d(TAG, "onCreateView: Hour=$hourOfDay, minute=$minute")

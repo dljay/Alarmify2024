@@ -174,34 +174,34 @@ class AlarmsListFragment : Fragment() {
                         alarms.enable(alarm, enable)
                     }
 //        // Option A) 만약 ListFrag 에서 시간 눌렀을 때 => 바로 Details Frag 로 가고 싶다면 아래를 넣으면 된다!
-//            rowHolder.digitalClockContainer.setOnClickListener {
-//                val id = mAdapter.getItem(position)?.id
-//                Log.d(TAG, "getView: clicked Linear Layout. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
-//                uiStore.edit(alarm.id, it.tag as RowHolder)
-//            }
+            rowHolder.digitalClockContainer.setOnClickListener {
+                val id = mAdapter.getItem(position)?.id
+                Log.d(TAG, "getView: clicked Linear Layout. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
+                uiStore.edit(alarm.id, it.tag as RowHolder)
+            }
 
 
         // Option B-1) [내가 수정해서 적은 것] Material Time Picker 보여주기
 
-            rowHolder.digitalClockContainer.setOnClickListener {
-                timePickerDialogDisposable =
-                    myTimePickerJjong.showTimePicker(parentFragmentManager)
-                        .subscribe { picked ->
-                            if (picked.isPresent()) {
-                                alarms.getAlarm(alarm.id)?.also { alarm ->
-                                    alarm.edit {
-                                        copy(
-                                            isEnabled = true,
-                                            hour = picked.get().hour,
-                                            minutes = picked.get().minute
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-
-            }
+//            rowHolder.digitalClockContainer.setOnClickListener {
+//                timePickerDialogDisposable =
+//                    myTimePickerJjong.showTimePicker(parentFragmentManager)
+//                        .subscribe { picked ->
+//                            if (picked.isPresent()) {
+//                                alarms.getAlarm(alarm.id)?.also { alarm ->
+//                                    alarm.edit {
+//                                        copy(
+//                                            isEnabled = true,
+//                                            hour = picked.get().hour,
+//                                            minutes = picked.get().minute
+//                                        )
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//
+//            }
         // Option B-2) [원래적혀있던것] 시간 적혀있는 부분 눌렀을 때 -> TimePicker 보여주기
 //            rowHolder.digitalClockContainer.setOnClickListener {
 //                timePickerDialogDisposable =TimePickerDialogFragment.showTimePicker(parentFragmentManager)

@@ -57,12 +57,16 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.24f
-//- EveryDay 일때 다 동글뱅이.
-//- 색깔 maker amulyakhare
-//- DetailsFrag 에서도 요일 표시 해주고 -> button 으로 선택 가능하게끔 ㄷㄷ
+// v0.25a [시간,요일 부분 클릭-> Details Frag 로 가게끔]
+
 //- Every day 일 때 알람이 급 리스트에서 제일 밑으로 가네.
+//2) timepicker - spinner 삽입 시도.
+//3) 시간 전달 잘 되는지 확인..
+//4) List frag에 뜨는 UI 변경
+//[왼쪽 시간/ 오른쪽 S M T ... ] -> click -> 바로 DetailsFrag
 //
+//-상단: 시간-> Custom Time Picker Spinner
+//-요일: Chip style (애니메이션은 덤?)
 
 
 /**

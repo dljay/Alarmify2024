@@ -25,6 +25,45 @@
                 android:layout_height="1dip"
                 android:background="?android:attr/dividerHorizontal" />
 
+            <!--Repeat(요일선택) 칩으로 >>>>>> -->
+            <LinearLayout
+                android:id="@+id/details_repeat_chipRow"
+                android:layout_width="match_parent"
+                android:layout_height="68dip"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center|left"
+                    android:layout_weight="1"
+                    android:text="Repeat Chip Test"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    app:chipSpacingHorizontal="2dp"
+                    app:chipSpacingVertical="0dp"
+                    app:singleLine="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/_chipSun"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:text="S"
+                        style="@style/customChipStyle"/>
+
+
+                </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+            <!-- <<<<<< Repeat(요일선택) 칩으로  -->
+
             <LinearLayout
                 android:id="@+id/details_repeat_row"
                 android:layout_width="match_parent"

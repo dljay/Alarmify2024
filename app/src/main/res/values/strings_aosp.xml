@@ -65,6 +65,9 @@
     <!-- Setting labels on Set alarm screen: Repeat -->
     <string name="alarm_repeat">Repeat</string>
 
+    <!-- 내가 심음. jj - Setting labels on Set alarm screen: Repeat Chip -->
+    <string name="alarm_repeatChip">Repeat Chip</string>
+
     <!-- Setting labels on Set alarm screen: Select alarm ringtone -->
     <string name="alert">Ringtone</string>
 

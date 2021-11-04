@@ -19,6 +19,8 @@
     <style name="customChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_background_color</item>
         <item name="android:textColor">@color/chip_text_color</item>
+        <item name="checkedIconEnabled">false</item>
+        <item name="checkedIcon">@null</item>
     </style>
 
     <style name="RoundTouchButton">

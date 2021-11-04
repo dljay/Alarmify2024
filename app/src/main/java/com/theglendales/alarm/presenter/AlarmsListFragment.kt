@@ -524,17 +524,17 @@ class AlarmsListFragment : Fragment() {
     return when (day) {
         "Sun" -> {
             TextDrawable.builder().beginConfig().textColor(Color.RED).useFont(Typeface.SANS_SERIF)
-                .fontSize(33).endConfig()
+                .fontSize(31).endConfig()
                 .buildRound("S", Color.LTGRAY)
         }
         "Sat" -> {
             TextDrawable.builder().beginConfig().textColor(Color.BLUE).useFont(Typeface.SANS_SERIF)
-                .fontSize(33).endConfig()
+                .fontSize(31).endConfig()
                 .buildRound("S", Color.LTGRAY)
         }
         else -> {
             TextDrawable.builder().beginConfig().textColor(Color.WHITE).useFont(Typeface.SANS_SERIF)
-                .fontSize(33).endConfig()
+                .fontSize(31).endConfig()
                 .buildRound(day, Color.LTGRAY)
         }
     }

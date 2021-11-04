@@ -251,7 +251,8 @@ class AlarmDetailsFragment : Fragment() {
 
     //TimePicker Spinner 설정 및 시간 골랐을 때 시스템과 연결해주는 부분 --->
         timePickerSpinner.setIs24HourView(false) // amp Pm 시스템으로
-        //todo: 기존에 세팅되었던 시간 보여주기.
+        //기존에 설정된 알람 시간은 밑에 onResume() >disposables.. 라인 410(?) 언저리 에서 해줬음!! 대 성공!!
+
         timePickerSpinner.setOnTimeChangedListener { view, hourOfDay, minute ->
             Log.d(TAG, "onCreateView: Hour=$hourOfDay, minute=$minute")
             val pickedTime: PickedTime = PickedTime(hourOfDay, minute)
@@ -310,6 +311,7 @@ class AlarmDetailsFragment : Fragment() {
         return view
     }
 // <<<<----------onCreateView
+
 
 
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
@@ -407,9 +409,15 @@ class AlarmDetailsFragment : Fragment() {
                 .distinctUntilChanged() // DistinctUntilChanged: 중복방 지 ex) Dog-Cat-Cat-Dog => Dog-Cat-Dog
                 .subscribe { editor ->
                     rowHolder.digitalClock.updateTime(Calendar.getInstance().apply {
-                        set(Calendar.HOUR_OF_DAY, editor.hour)
-                        set(Calendar.MINUTE, editor.minutes)
+                    //old) 기존 Digital Clock 에 설정된 알람 시간을 그대로 보여주는 기능 2줄. (RowHolder 칸을 빌려서 DetailsFrag 에 보여줄 때)
+//                        set(Calendar.HOUR_OF_DAY, editor.hour)
+//                        set(Calendar.MINUTE, editor.minutes)
+
+                    //new) ** TimePickerSpinner 에 "기존에 설정된 알람 시간"을 그대로 보여주기!!!! 대성공!!=>
+                        timePickerSpinner.hour = editor.hour
+                        timePickerSpinner.minute = editor.minutes
                     })
+
 
                     rowHolder.onOff.isChecked = editor.isEnabled
                     //mPreAlarmCheckBox.isChecked = editor.isPrealarm

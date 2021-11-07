@@ -61,7 +61,6 @@ import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.model.Alarmtone
-import com.theglendales.alarm.presenter.TimePickerDialogFragment.showTimePicker
 import com.theglendales.alarm.util.Optional
 import com.theglendales.alarm.util.modify
 import com.theglendales.alarm.view.showDialog
@@ -290,7 +289,8 @@ class AlarmDetailsFragment : Fragment() {
         for(i in 0 until chipGroupDays.childCount) {
             val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
             chipDay.setOnCheckedChangeListener { buttonView, isChecked ->
-                //getDaysStrListFromChips()
+                createStrListFromSelectedChips()
+
                 when(isChecked) {
                     true -> Log.d(TAG, "onCreateView: checkedChip=${chipDay.text}")
                     false ->Log.d(TAG, "onCreateView: UnCheckedChip=${chipDay.text}")
@@ -329,6 +329,8 @@ class AlarmDetailsFragment : Fragment() {
         return view
     }
 // <<<<----------onCreateView
+
+
 
 
 
@@ -621,5 +623,40 @@ class AlarmDetailsFragment : Fragment() {
 
 
 
+    }
+    // 선택된 Chip 날들 String 으로 받기.
+//    private fun createStrListFromSelectedChips() {
+//        val selectedChipsDaysList =  mutableListOf<String>()
+//
+//        chipGroupDays.checkedChipIds.forEach {selectedDay ->
+//            when(selectedDay) {
+//                R.id._chipSun -> selectedChipsDaysList.add("Sun")
+//                R.id._chipMon -> selectedChipsDaysList.add("Mon")
+//                R.id._chipTue -> selectedChipsDaysList.add("Tue")
+//                R.id._chipWed -> selectedChipsDaysList.add("Wed")
+//                R.id._chipThu -> selectedChipsDaysList.add("Thu")
+//                R.id._chipFri -> selectedChipsDaysList.add("Fri")
+//                R.id._chipSat -> selectedChipsDaysList.add("Sat")
+//
+//            }
+//        }
+//        Log.d(TAG, "createStrListFromSelectedChips: selectedChipsDaysList=$selectedChipsDaysList")
+//    }
+    private fun createStrListFromSelectedChips() {
+        val selectedChipsDaysList =  mutableListOf<String>()
+
+        chipGroupDays.checkedChipIds.forEach {selectedDay ->
+            when(selectedDay) {
+                R.id._chipSun -> selectedChipsDaysList.add("Sun")
+                R.id._chipMon -> selectedChipsDaysList.add("Mon")
+                R.id._chipTue -> selectedChipsDaysList.add("Tue")
+                R.id._chipWed -> selectedChipsDaysList.add("Wed")
+                R.id._chipThu -> selectedChipsDaysList.add("Thu")
+                R.id._chipFri -> selectedChipsDaysList.add("Fri")
+                R.id._chipSat -> selectedChipsDaysList.add("Sat")
+
+            }
+        }
+        Log.d(TAG, "createStrListFromSelectedChips: selectedChipsDaysList=$selectedChipsDaysList")
     }
 }

@@ -82,7 +82,7 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
         val artFilePathStr = rtOnDiskList[position].artFilePathStr
 
 
-        Log.d(TAG, "getView: position=$position, rtTitle= ${rtOnDiskList[position].rtTitle}, trId= $trackId")
+        //Log.d(TAG, "getView: position=$position, rtTitle= ${rtOnDiskList[position].rtTitle}, trId= $trackId")
 
 
 
@@ -92,14 +92,14 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
             .error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
+                    //Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
                     return false
                 }
 
                 // (여러 ViewHolder 를 로딩중인데) 현재 로딩한 View 에 Glide 가 이미지를 성공적으로 넣었다면.
                 override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?
                                              , dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    Log.d(TAG,"onResourceReady: Glide loading success! trId: $trackId, Position: $position") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                    //Log.d(TAG,"onResourceReady: Glide loading success! trId: $trackId, Position: $position") // debug 결과 절대 순.차.적으로 진행되지는 않음!
 
                     return false
                 }

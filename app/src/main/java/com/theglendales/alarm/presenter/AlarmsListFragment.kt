@@ -143,7 +143,7 @@ class AlarmsListFragment : Fragment() {
             }
         // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
             val pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
-            Log.d(TAG, "getView: Row 생성중. alarm.id=$alarm.id, pathForRowArt=$pathForRowArt")
+            //Log.d(TAG, "getView: Row 생성중. alarm.id=$alarm.id, pathForRowArt=$pathForRowArt")
             context?.let {
                 GlideApp.with(it).load(pathForRowArt).circleCrop() //
                     .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -227,9 +227,7 @@ class AlarmsListFragment : Fragment() {
         //2-a) 현재 선택된 '요일'의 list 받기 (String 전달-> list[Mon,Tue] )
             val enabledDaysList: List<String> = getEnabledDaysList(daysOfWeekStringWithSkip(alarm))
         //2-b) 선택된 '요일'이 하루일 때  ex.Saturday 이렇게 완전한 글자가 들어옴.
-            if(enabledDaysList.size==1) {
-                enabledDaysList[0]
-            }
+
         //2-c) 선택된 '요일'이 하루 이상 (ex. Mon,Tue) 이런식으로 들어옴. 리스트에 포함된 '요일' 은 기존 TextView 의 글자를 없애주고 -> 동글뱅이 text 표기로 변경!
             for(i in enabledDaysList.indices) {
                 when(enabledDaysList[i])
@@ -250,6 +248,14 @@ class AlarmsListFragment : Fragment() {
                         rowHolder.tvSat.background=yesAlarmSat}
                     "Never" -> {} // 아무 표시도 안함.
                     "Every day" -> {
+                        rowHolder.tvSun.text=""
+                        rowHolder.tvMon.text=""
+                        rowHolder.tvTue.text=""
+                        rowHolder.tvWed.text=""
+                        rowHolder.tvThu.text=""
+                        rowHolder.tvFri.text=""
+                        rowHolder.tvSat.text=""
+
                         rowHolder.tvSun.background=yesAlarmSun
                         rowHolder.tvMon.background=yesAlarmMon
                         rowHolder.tvTue.background=yesAlarmTue
@@ -296,7 +302,7 @@ class AlarmsListFragment : Fragment() {
 
         private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
             val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
-            Log.d(TAG, "daysOfWeekStringWithSkip=$daysOfWeekStr, alarm.skipping = ${alarm.skipping}")
+            //Log.d(TAG, "daysOfWeekStringWithSkip=$daysOfWeekStr, alarm.skipping = ${alarm.skipping}")
             return if (alarm.skipping) "$daysOfWeekStr (skipping)" else daysOfWeekStr
         }
     }
@@ -353,15 +359,9 @@ class AlarmsListFragment : Fragment() {
 
         lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
 
-
-
-
     //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
-
         //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
              // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
-
-
 
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
@@ -440,7 +440,7 @@ class AlarmsListFragment : Fragment() {
                             val sorted = alarms
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())
-                                    .sortedWith(Comparators.RepeatComparator())
+                                    //.sortedWith(Comparators.RepeatComparator())
                             mAdapter.clear()
                             mAdapter.addAll(sorted)
                         }
@@ -524,17 +524,16 @@ class AlarmsListFragment : Fragment() {
     private fun getEnabledDaysList(daysInString: String): List<String> {
         // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split
         val enabledDaysList: List<String> = daysInString.split(",").map {dayStr -> dayStr.trim()}
-        Log.d(TAG, "getEnabledDaysList: enabledDaysList=$enabledDaysList")
+        //Log.d(TAG, "getEnabledDaysList: enabledDaysList=$enabledDaysList")
         return enabledDaysList
 
     }
-// ImageView 에 주입할 Circle (text) Drawable Builder: https://github.com/amulyakhare/TextDrawable
+
+    // ImageView 에 주입할 Circle (text) Drawable Builder: https://github.com/amulyakhare/TextDrawable
     // 기본 1주일 전체 알람 없는 날 표시용 drawable [회색 배경, 흰 글씨]
     private fun getYesAlarmDayDrawable(day: String): TextDrawable {
     //amulyakhare 라이브러리에서 color builder 는 유저에 따라 key 값을 다른 색 부여하는것일 뿐. 내가 쓸만한 것은 아님: https://github.com/amulyakhare/TextDrawable
     // 추후에 Color.xx 에 다양한 색 넣는것으로 해보자. Color Class: https://developer.android.com/reference/android/graphics/Color
-
-
 
     return when (day) {
         "Sun" -> {

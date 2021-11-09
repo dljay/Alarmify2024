@@ -17,7 +17,7 @@ data class DaysOfWeek(val coded: Int) { // coded = mutableDays 콘스트럭터. 
     val isRepeatSet = coded != 0
 
     fun toString(context: Context, showNever: Boolean): String {
-        Log.d(TAG, "toString: called. this=$this, coded=$coded")
+        //Log.d(TAG, "toString: called. this=$this, coded=$coded")
         return when {
             coded == 0 && showNever -> context.getText(R.string.never).toString()
             coded == 0 -> ""
@@ -51,7 +51,7 @@ data class DaysOfWeek(val coded: Int) { // coded = mutableDays 콘스트럭터. 
      */
     fun getNextAlarm(today: Calendar): Int {
         val todayIndex = (today.get(Calendar.DAY_OF_WEEK) + 5) % 7
-        Log.d(TAG, "getNextAlarm: called. todayIndex=$todayIndex")
+        //Log.d(TAG, "getNextAlarm: called. todayIndex=$todayIndex")
 
         return (0..6).firstOrNull { dayCount ->
             val day = (todayIndex + dayCount) % 7

@@ -21,6 +21,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.provider.AlarmClock
+import android.util.Log
 import com.theglendales.alarm.configuration.Store
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
@@ -29,6 +30,7 @@ import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.interfaces.Intents
 import com.theglendales.alarm.logger.Logger
 
+private const val TAG="HandleSetAlarm"
 
 class HandleSetAlarm : Activity() {
     private val store: Store by globalInject()
@@ -99,6 +101,7 @@ class HandleSetAlarm : Activity() {
 
     private fun createNewAlarm(hours: Int, minutes: Int, label: String): Alarm {
         logger.debug { "No alarm found, creating a new one" }
+        Log.d(TAG, "createNewAlarm: No alarm found, creating a new one")
         return alarmsManager.createNewAlarm().apply {
             edit {
                 copy(

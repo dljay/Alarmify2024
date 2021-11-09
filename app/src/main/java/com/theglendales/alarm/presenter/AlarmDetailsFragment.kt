@@ -99,8 +99,11 @@ class AlarmDetailsFragment : Fragment() {
             private val mySharedPrefManager: MySharedPrefManager by globalInject()
         //Time Picker (material design)
             private val myTimePickerJjong: TimePickerJjong by globalInject()
-        //요일 표시 ChipGroup
+        //요일 표시 ChipGroup + TextView
             lateinit var chipGroupDays: ChipGroup
+            private val tv_repeatDaysSum by lazy { fragmentView.findViewById(R.id.details_repeat_sum_jj) as TextView }
+
+
     // 내가 추가 <-
 
     private val alarms: IAlarmsManager by globalInject()
@@ -446,6 +449,7 @@ class AlarmDetailsFragment : Fragment() {
 
             //****알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
                     mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
+                    //tv_repeatDaysSum.text = "Repeat" + editor.daysOfWeek.summary(requireContext())
                     val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
                     val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr)
                     Log.d(TAG, "onResume: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")

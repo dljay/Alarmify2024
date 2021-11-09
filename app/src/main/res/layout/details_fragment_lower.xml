@@ -29,17 +29,19 @@
             <LinearLayout
                 android:id="@+id/details_repeat_chipRow"
                 android:layout_width="match_parent"
-                android:layout_height="68dip"
+                android:layout_height="72dip"
+                android:layout_marginBottom="5dp"
                 android:layout_marginTop="12dp"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/details_repeat_sum_jj"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="center|left"
                     android:layout_weight="1"
                     android:layout_marginBottom="2dp"
-                    android:text="Repeat Chip Test"
+                    android:text="Repeat"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <com.google.android.material.chip.ChipGroup
@@ -139,18 +141,22 @@
             </LinearLayout>
             <!-- <<<<<< Repeat(요일선택) 칩으로  -->
 
+            <!-- 아래 기존에 있던 요일 summary 는 visibility=gone 으로했음-->
             <LinearLayout
                 android:id="@+id/details_repeat_row"
                 android:layout_width="match_parent"
                 android:layout_height="68dip"
                 android:layout_marginTop="12dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
+
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="center|left"
                     android:layout_weight="1"
+
                     android:text="@string/alarm_repeat"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 

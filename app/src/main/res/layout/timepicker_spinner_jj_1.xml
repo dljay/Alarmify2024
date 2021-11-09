@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
 
         android:timePickerMode="spinner"
+
         android:background="@color/alarm_selected_color"
 
         app:layout_constraintBottom_toBottomOf="parent"

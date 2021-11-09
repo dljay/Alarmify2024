@@ -57,8 +57,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.26a
+// v0.26b
 // DetailsFrag 에서 Chip 으로 요일 표시,설정해주기 잘 됨. 초기 테스트 중.
+// 추가 UI 수정.
 
 
 

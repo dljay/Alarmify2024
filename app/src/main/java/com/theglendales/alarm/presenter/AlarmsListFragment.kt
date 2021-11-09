@@ -145,7 +145,7 @@ class AlarmsListFragment : Fragment() {
             val pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
             Log.d(TAG, "getView: Row 생성중. alarm.id=$alarm.id, pathForRowArt=$pathForRowArt")
             context?.let {
-                GlideApp.with(it).load(pathForRowArt).circleCrop()
+                GlideApp.with(it).load(pathForRowArt).circleCrop() //
                     .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.drawable.placeholder).listener(object :
                         RequestListener<Drawable> {
@@ -540,17 +540,20 @@ class AlarmsListFragment : Fragment() {
         "Sun" -> {
             TextDrawable.builder().beginConfig().textColor(Color.RED).useFont(Typeface.SANS_SERIF)
                 .fontSize(31).endConfig()
-                .buildRound("S", Color.LTGRAY)
+                .buildRoundRect("S",Color.LTGRAY,10)
+                //.buildRound("S", Color.LTGRAY)
         }
         "Sat" -> {
             TextDrawable.builder().beginConfig().textColor(Color.BLUE).useFont(Typeface.SANS_SERIF)
                 .fontSize(31).endConfig()
-                .buildRound("S", Color.LTGRAY)
+                .buildRoundRect("S",Color.LTGRAY,10)
+                //.buildRound("S", Color.LTGRAY)
         }
         else -> {
             TextDrawable.builder().beginConfig().textColor(Color.WHITE).useFont(Typeface.SANS_SERIF)
                 .fontSize(31).endConfig()
-                .buildRound(day, Color.LTGRAY)
+                .buildRoundRect(day,Color.LTGRAY,10)
+                //.buildRound(day, Color.LTGRAY)
         }
     }
     }

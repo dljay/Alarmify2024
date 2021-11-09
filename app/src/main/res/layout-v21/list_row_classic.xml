@@ -15,7 +15,7 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="68dp"
+    android:layout_height="75dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:baselineAligned="true"
     android:orientation="horizontal">
@@ -45,7 +45,7 @@
 
     <LinearLayout
         android:id="@+id/list_row_digital_clock_container"
-        android:layout_width="0dip"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="1"
 
@@ -54,8 +54,11 @@
 
         <com.theglendales.alarm.view.DigitalClock
             android:id="@+id/list_row_digital_clock"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="10dp"
             android:layout_gravity="center_horizontal"
 
             android:gravity="center"
@@ -65,6 +68,8 @@
                 android:id="@+id/digital_clock_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
 
                 tools:text="12:45"
                 android:fontFamily="sans-serif"
@@ -74,17 +79,21 @@
                 android:id="@+id/digital_clock_am_pm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
 
                 android:layout_gravity="bottom" />
         </com.theglendales.alarm.view.DigitalClock>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:paddingStart="30dp"
-            android:paddingEnd="30dp"
+
             android:gravity="center_horizontal"
             android:orientation="horizontal"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="10dp"
             android:weightSum="14">
 
             <TextView
@@ -211,13 +220,16 @@
 
     <LinearLayout
         style="@style/alarm_list_left_column"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_weight="1">
 
         <LinearLayout
             android:id="@+id/details_button_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
             android:gravity="center">
 
 
@@ -225,12 +237,16 @@
 <!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
             <ImageView
                 android:id="@+id/id_row_albumArt"
-                android:padding="13dp"
+
 
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="false"
-                android:focusable="false"/>
+                android:focusable="false"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="20dp"/>
 
 <!--            <TextView-->
 <!--                android:layout_width="wrap_content"-->

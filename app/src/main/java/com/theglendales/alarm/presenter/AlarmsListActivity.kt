@@ -57,8 +57,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.26c
-// FAB Click-> Material Time Picker 뜨게끔 수정 완료.
+// v0.26e
+// SwipeRevealLayout 테스트전. (3rd party 스와이프 딜리트 기능)
 
 
 /**

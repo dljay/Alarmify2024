@@ -21,6 +21,8 @@ import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.amulyakhare.textdrawable.TextDrawable
 import com.amulyakhare.textdrawable.util.ColorGenerator
 import com.bumptech.glide.load.DataSource
@@ -97,6 +99,8 @@ class AlarmsListFragment : Fragment() {
     private val yesAlarmFri = getYesAlarmDayDrawable("F")
     private val yesAlarmSat = getYesAlarmDayDrawable("Sat")
 //내가 추가<-
+
+
 
 
     /** changed by [Prefs.listRowLayout] in [onResume]*/
@@ -207,6 +211,7 @@ class AlarmsListFragment : Fragment() {
 //                timePickerDialogDisposable =TimePickerDialogFragment.showTimePicker(parentFragmentManager)
 //                        .subscribe { picked ->if (picked.isPresent()) {alarms.getAlarm(alarm.id)?.also { alarm ->
 //                                    alarm.edit {copy(isEnabled = true,hour = picked.get().hour,minutes = picked.get().minute)}}}}}
+
 
             rowHolder.digitalClockContainer.setOnLongClickListener {
                 false
@@ -418,6 +423,7 @@ class AlarmsListFragment : Fragment() {
                 uiStore.edit(it, view.tag as RowHolder) // it = AlarmId 임!
             }
         }
+
     // ListView <--
         registerForContextMenu(listView)
 
@@ -553,13 +559,10 @@ class AlarmsListFragment : Fragment() {
                 .fontSize(31).endConfig()
                 .buildRoundRect(day,Color.LTGRAY,10)
                 //.buildRound(day, Color.LTGRAY)
+            }
         }
     }
-    }
+// 추가 5)
 
-    //(O) 알람 있는 날 표시용 drawable [하늘색 배경, 흰 글씨]
-//    private fun getDayYesAlarmDrawable(day: String): TextDrawable {
-//
-//    }
 
 }

@@ -34,6 +34,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
+
             tools:layout="@layout/list_fragment"
             tools:listitem="@layout/list_row_classic"/>
 

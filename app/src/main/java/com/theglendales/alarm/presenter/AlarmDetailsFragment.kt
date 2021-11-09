@@ -285,35 +285,18 @@ class AlarmDetailsFragment : Fragment() {
 //        mPreAlarmRow.setOnClickListener {
 //            modify("Pre-alarm") { editor -> editor.copy(isPrealarm = !editor.isPrealarm, isEnabled = true) }
 //        }
-    // 설정된 알람(Repeat) ChipGroup 관련
-        //1) initChip + chip onSelectedListener 설정
-        /*chipGroupDays = fragmentView.findViewById(R.id._chipGroupDays)
-        for(i in 0 until chipGroupDays.childCount) {
-            val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
-            chipDay.setOnCheckedChangeListener { buttonView, isChecked ->
-                createStrListFromSelectedChips()
-
-                when(isChecked) {
-                    true -> Log.d(TAG, "onCreateView: checkedChip=${chipDay.text}")
-                    false ->Log.d(TAG, "onCreateView: UnCheckedChip=${chipDay.text}")
-                }
-            }
-        }*/
-
-
-
+    // 설정된 알람(Repeat) ChipGroup 안에서 요일을 선택 -> DaysOfWeek.onChipDayClicked() -> rxjava Single 을 만들고 -> 그것을 editor 가 subscribe!
         chipGroupDays = fragmentView.findViewById(R.id._chipGroupDays)
         for(i in 0 until chipGroupDays.childCount) {
             val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
-            chipDay.setOnCheckedChangeListener { buttonView, isChecked ->
+            chipDay.setOnCheckedChangeListener { _, isChecked ->
                 val whichInt = createWhichIntFromTickedChip(chipDay.id)
 // ** Subscribe 미리 된 상태에서-> chip 변화 -> onChipDayClicked..
-                editor.firstOrError().flatMap { editor -> editor.daysOfWeek.onChipDayClicked(whichInt, isChecked) }.subscribe {daysOfWeek ->
-                    modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
-                    Log.d(TAG, "onCreateView: daysOfWeekJJ_new=$daysOfWeek, whichInt=$whichInt, isChecked=$isChecked")
-
-                }
-
+                val subscribe = editor.firstOrError()
+                    .flatMap { editor -> editor.daysOfWeek.onChipDayClicked(whichInt, isChecked) }
+                    .subscribe { daysOfWeek ->modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
+                        Log.d(TAG,"onCreateView: daysOfWeekJJ_new=$daysOfWeek, whichInt=$whichInt, isChecked=$isChecked")
+                    }
             }
         }
 

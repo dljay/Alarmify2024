@@ -306,7 +306,7 @@ class AlarmsListFragment : Fragment() {
             return if (alarm.skipping) "$daysOfWeekStr (skipping)" else daysOfWeekStr
         }
     }
-
+// d
 
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

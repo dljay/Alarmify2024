@@ -273,14 +273,15 @@ class AlarmDetailsFragment : Fragment() {
         view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
         view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }
 
-    //!! 여기서 subscribe?? !!
+    //** 신규 알람 생성할때 TimePicker 보여주는 것. (기존에는 TimePickerDialogFragment.showxx() 였지만 -> myTimePickerJjong.. 으로 바꿈.)
         store.transitioningToNewAlarmDetails().firstOrError().subscribe { isNewAlarm ->
                     Log.d(TAG, "onCreateView: jj-!!inside .subscribe-1")
                     if (isNewAlarm) {
                         Log.d(TAG, "onCreateView: jj-!!inside .subscribe-2")
                         store.transitioningToNewAlarmDetails().onNext(false)
-                        disposableDialog = TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager)
-                                .subscribe(pickerConsumer)
+                        disposableDialog =
+                            //TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager) <- 기존 timePicker 코드
+                            myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
                     }
                 }.addToDisposables()
 

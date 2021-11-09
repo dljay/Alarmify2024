@@ -16,6 +16,7 @@
 package com.theglendales.alarm.model;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -34,7 +35,10 @@ import io.reactivex.functions.Consumer;
 /**
  * The Alarms implements application domain logic
  */
+
+
 @SuppressLint("UseSparseArrays")
+
 public class Alarms implements IAlarmsManager {
     private final IAlarmsScheduler mAlarmsScheduler;
 
@@ -94,6 +98,7 @@ public class Alarms implements IAlarmsManager {
     @Override
     @NonNull
     public Alarm createNewAlarm() {
+        Log.d("AlarmsJava", "createNewAlarm: called!");
         AlarmCore alarm = factory.create(containerFactory.create());
         alarms.put(alarm.getId(), alarm);
         alarm.start();

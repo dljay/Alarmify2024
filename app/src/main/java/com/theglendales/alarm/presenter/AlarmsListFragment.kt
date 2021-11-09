@@ -222,28 +222,43 @@ class AlarmsListFragment : Fragment() {
             // Set the repeat text or leave it blank if it does not repeat.
         // 내가 추가:: 요일 표시-->
             //todo: Dark Mode 관련..
+            // todo: 요일이 다른 언어에서 뜰 때 아래 when() 이 잘 작동될지 ..
             //1) 일단 요일 표시TextView 는 모두 선택 안된 상태로 되어있음.[원 없음,회색 글씨]
-            //2-a) 현재 선택된 '요일'의 list 받기 (String 전달-> list[Mon,Tue] )
+        //2-a) 현재 선택된 '요일'의 list 받기 (String 전달-> list[Mon,Tue] )
             val enabledDaysList: List<String> = getEnabledDaysList(daysOfWeekStringWithSkip(alarm))
-            //2-b) 리스트에 포함된 '요일' 은 기존 TextView 의 글자를 없애주고 -> 동글뱅이 text 표기로 변경!
+        //2-b) 선택된 '요일'이 하루일 때  ex.Saturday 이렇게 완전한 글자가 들어옴.
+            if(enabledDaysList.size==1) {
+                enabledDaysList[0]
+            }
+        //2-c) 선택된 '요일'이 하루 이상 (ex. Mon,Tue) 이런식으로 들어옴. 리스트에 포함된 '요일' 은 기존 TextView 의 글자를 없애주고 -> 동글뱅이 text 표기로 변경!
             for(i in enabledDaysList.indices) {
                 when(enabledDaysList[i])
                 {
-                    "Sun" -> {rowHolder.tvSun.text=""
+                    "Sun","Sunday"-> {rowHolder.tvSun.text=""
                         rowHolder.tvSun.background=yesAlarmSun}
-                    "Mon" ->{rowHolder.tvMon.text=""
+                    "Mon","Monday" ->{rowHolder.tvMon.text=""
                         rowHolder.tvMon.background=yesAlarmMon}
-                    "Tue" ->{rowHolder.tvTue.text=""
+                    "Tue","Tuesday" ->{rowHolder.tvTue.text=""
                         rowHolder.tvTue.background=yesAlarmTue}
-                    "Wed" ->{rowHolder.tvWed.text=""
+                    "Wed","Wednesday" ->{rowHolder.tvWed.text=""
                         rowHolder.tvWed.background=yesAlarmWed}
-                    "Thu" ->{rowHolder.tvThu.text=""
+                    "Thu","Thursday" ->{rowHolder.tvThu.text=""
                         rowHolder.tvThu.background=yesAlarmThu}
-                    "Fri" ->{rowHolder.tvFri.text=""
+                    "Fri","Friday" ->{rowHolder.tvFri.text=""
                         rowHolder.tvFri.background=yesAlarmFri}
-                    "Sat" ->{rowHolder.tvSat.text=""
+                    "Sat","Saturday" ->{rowHolder.tvSat.text=""
                         rowHolder.tvSat.background=yesAlarmSat}
-                    "Every day" -> {}
+                    "Never" -> {} // 아무 표시도 안함.
+                    "Every day" -> {
+                        rowHolder.tvSun.background=yesAlarmSun
+                        rowHolder.tvMon.background=yesAlarmMon
+                        rowHolder.tvTue.background=yesAlarmTue
+                        rowHolder.tvWed.background=yesAlarmWed
+                        rowHolder.tvThu.background=yesAlarmThu
+                        rowHolder.tvFri.background=yesAlarmFri
+                        rowHolder.tvSat.background=yesAlarmSat
+                    }
+
 
                 }
             }

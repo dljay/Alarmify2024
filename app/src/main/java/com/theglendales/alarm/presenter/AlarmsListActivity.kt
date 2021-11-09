@@ -57,12 +57,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.25d
-// DetailsFrag 에서 Chip 으로 요일 표시,설정해주기 진행중.
-// <표시해주기>  기존에 설정된 요일에 대해서 잘 표시됨.
-//  issue1): 모든 요일 설정된 경우 Every Day (현재 마지막 알람의 경우) 표시안됨! 이거 해주기!!@!
-// issue2) : 마찬가지로 ListFrag 에서도 표시 안됨. 해주기.
-// <설정해주기> 요일을 선택했을 때 그것을 반영하여 subscribe 까지 연결해주기.  (AlarmDetailsFrag.kt 라인 273~ 307 사이)
+// v0.26a
+// DetailsFrag 에서 Chip 으로 요일 표시,설정해주기 잘 됨. 초기 테스트 중.
+
 
 
 

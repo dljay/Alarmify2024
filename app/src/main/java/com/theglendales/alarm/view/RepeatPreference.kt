@@ -17,14 +17,34 @@
 package com.theglendales.alarm.view
 
 import android.content.Context
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import com.theglendales.alarm.model.DaysOfWeek
 import io.reactivex.Single
 import java.text.DateFormatSymbols
 import java.util.Calendar
 
+private const val TAG="RepeatPreference"
 fun DaysOfWeek.summary(context: Context): String {
     return toString(context, true)
+}
+
+//Extension Function: ClassName.xxx()
+
+
+fun DaysOfWeek.onChipDayClicked(which: Int, isChecked:Boolean): Single<DaysOfWeek> {
+    return Single.create { emitter->
+        var mutableDays: Int = coded
+        mutableDays = when {
+            isChecked -> {mutableDays or (1 shl which)} // 기존 mutableDays + 선택된 which 의 bitwise 연산으로 새로운 mutableDays 값을 얻음!
+                //Log.d(TAG, "onChipDayClicked: isChecked=[$isChecked] which=$which, 1 shl which= ${1 shl which},mutD or 1shlWhich=${mutableDays or (1 shl which)},  ")}
+            else -> {mutableDays and (1 shl which).inv()}
+                //Log.d(TAG, "onChipDayClicked: isChecked=[$isChecked], which=$which, 1 shl which= ${1 shl which}, else")}
+        }
+        Log.d(TAG, "onChipDayClicked: isChecked=[$isChecked], mutableDays=$mutableDays")
+        emitter.onSuccess(DaysOfWeek(mutableDays))
+
+    }
 }
 
 fun DaysOfWeek.showDialog(context: Context): Single<DaysOfWeek> {
@@ -32,18 +52,26 @@ fun DaysOfWeek.showDialog(context: Context): Single<DaysOfWeek> {
         val weekdays = DateFormatSymbols().weekdays
         val entries = arrayOf(weekdays[Calendar.MONDAY], weekdays[Calendar.TUESDAY], weekdays[Calendar.WEDNESDAY], weekdays[Calendar.THURSDAY], weekdays[Calendar.FRIDAY], weekdays[Calendar.SATURDAY], weekdays[Calendar.SUNDAY])
         var mutableDays: Int = coded
+        Log.d(TAG, "showDialog: mutableDays=$mutableDays, DaysOfWeek(mutableDays)=${DaysOfWeek(mutableDays)}")
+
         AlertDialog.Builder(context)
                 .setMultiChoiceItems(entries, booleanArray) { _, which, isChecked ->
                     mutableDays = when {
-                        isChecked -> mutableDays or (1 shl which)
-                        else -> mutableDays and (1 shl which).inv()
+                        isChecked -> {mutableDays or (1 shl which)
+                            Log.d(TAG, "showDialog: which=$which, 1 shl which= ${1 shl which}, mutD or 1shlWhich=${mutableDays or (1 shl which)} isChecked=$isChecked")}
+                        else -> {mutableDays and (1 shl which).inv()
+                            Log.d(TAG, "showDialog: which=$which, 1 shl which= ${1 shl which}, else")}
+                        
                     }
+                    Log.d(TAG, "showDialog: .setMultiChoiceItems 체크박스 누를때마다 여기로 들어옴= mutableDays=$mutableDays")
                 }
                 .setPositiveButton(android.R.string.ok) { _, _ ->
                     emitter.onSuccess(DaysOfWeek(mutableDays))
+                    Log.d(TAG, "showDialog: .setPositiveButton(ok). mutableDays=$mutableDays")
                 }
                 .setOnCancelListener {
                     emitter.onSuccess(DaysOfWeek(mutableDays))
+                    Log.d(TAG, "showDialog: .setCancelListener. mutableDays=$mutableDays")
                 }
                 .create()
                 .show()

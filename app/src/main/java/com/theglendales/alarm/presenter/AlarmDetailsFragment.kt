@@ -63,6 +63,8 @@ import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.util.Optional
 import com.theglendales.alarm.util.modify
+import com.theglendales.alarm.view.onChipDayClicked
+
 import com.theglendales.alarm.view.showDialog
 import com.theglendales.alarm.view.summary
 import io.reactivex.Observable
@@ -285,7 +287,7 @@ class AlarmDetailsFragment : Fragment() {
 //        }
     // 설정된 알람(Repeat) ChipGroup 관련
         //1) initChip + chip onSelectedListener 설정
-        chipGroupDays = fragmentView.findViewById(R.id._chipGroupDays)
+        /*chipGroupDays = fragmentView.findViewById(R.id._chipGroupDays)
         for(i in 0 until chipGroupDays.childCount) {
             val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
             chipDay.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -296,16 +298,33 @@ class AlarmDetailsFragment : Fragment() {
                     false ->Log.d(TAG, "onCreateView: UnCheckedChip=${chipDay.text}")
                 }
             }
+        }*/
+
+
+
+        chipGroupDays = fragmentView.findViewById(R.id._chipGroupDays)
+        for(i in 0 until chipGroupDays.childCount) {
+            val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
+            chipDay.setOnCheckedChangeListener { buttonView, isChecked ->
+                val whichInt = createWhichIntFromTickedChip(chipDay.id)
+// ** Subscribe 미리 된 상태에서-> chip 변화 -> onChipDayClicked..
+                editor.firstOrError().flatMap { editor -> editor.daysOfWeek.onChipDayClicked(whichInt, isChecked) }.subscribe {daysOfWeek ->
+                    modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
+                    Log.d(TAG, "onCreateView: daysOfWeekJJ_new=$daysOfWeek, whichInt=$whichInt, isChecked=$isChecked")
+
+                }
+
+            }
         }
 
-        mRepeatRow.setOnClickListener {
-            editor.firstOrError()
-                    .flatMap { editor -> editor.daysOfWeek.showDialog(requireContext()) }
-                    .subscribe { daysOfWeek ->
-                        modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
-                        //Log.d(TAG, "onCreateView: daysOfWeekJJ=$daysOfWeek")
-                    }
-        }
+//        mRepeatRow.setOnClickListener {
+//            editor.firstOrError()
+//                    .flatMap { editor -> editor.daysOfWeek.showDialog(requireContext()) }
+//                    .subscribe { daysOfWeek ->
+//                        modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
+//                        Log.d(TAG, "onCreateView: daysOfWeekJJ_old=$daysOfWeek")
+//                    }
+//        }
 
         class TextWatcherIR : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -442,12 +461,15 @@ class AlarmDetailsFragment : Fragment() {
                     rowHolder.onOff.isChecked = editor.isEnabled
                     //mPreAlarmCheckBox.isChecked = editor.isPrealarm
 
-                //**알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
+            //****알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
                     mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
                     val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
                     val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr)
                     Log.d(TAG, "onResume: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
-                    activateChipForAlarmSetDays(alarmSetDaysStrList) // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
+                // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
+                    activateChipForAlarmSetDays(alarmSetDaysStrList)
+                //
+
 
 
 //                    if (editor.label != mLabel.text.toString()) {
@@ -460,6 +482,8 @@ class AlarmDetailsFragment : Fragment() {
                         is Alarmtone.Silent -> {requireContext().getText(R.string.silent_alarm_summary)}
                         is Alarmtone.Default -> {RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()}
                         is Alarmtone.Sound -> {RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()}
+                        else -> {
+                            Log.d(TAG, "onResume: !! 갑자기 여기에 else 문 넣으라고 오류가 뜨네. 이해 불가!!!!!! wtf????")}
                     }
                 }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
 //** RT 변경 or 최초 DetailsFrag 열릴 때 이쪽으로 들어옴
@@ -611,13 +635,22 @@ class AlarmDetailsFragment : Fragment() {
     private fun activateChipForAlarmSetDays(alarmSetDaysStrList: List<String>) {
         for(i in alarmSetDaysStrList.indices) {
             when(alarmSetDaysStrList[i]) {
-                "Sun" -> chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
-                "Mon" -> chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
-                "Tue" -> chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
-                "Wed" -> chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
-                "Thu" -> chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
-                "Fri" -> chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
-                "Sat" -> chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
+                "Sun","Sunday" -> chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
+                "Mon", "Monday" -> chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
+                "Tue", "Tuesday" -> chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
+                "Wed", "Wednesday" -> chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
+                "Thu", "Thursday" -> chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
+                "Fri", "Friday" -> chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
+                "Sat", "Saturday" -> chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
+                "Every day" -> {
+                    chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
+                    chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
+                    chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
+                    chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
+                    chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
+                    chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
+                    chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
+                }
             }
         }
 
@@ -625,23 +658,7 @@ class AlarmDetailsFragment : Fragment() {
 
     }
     // 선택된 Chip 날들 String 으로 받기.
-//    private fun createStrListFromSelectedChips() {
-//        val selectedChipsDaysList =  mutableListOf<String>()
-//
-//        chipGroupDays.checkedChipIds.forEach {selectedDay ->
-//            when(selectedDay) {
-//                R.id._chipSun -> selectedChipsDaysList.add("Sun")
-//                R.id._chipMon -> selectedChipsDaysList.add("Mon")
-//                R.id._chipTue -> selectedChipsDaysList.add("Tue")
-//                R.id._chipWed -> selectedChipsDaysList.add("Wed")
-//                R.id._chipThu -> selectedChipsDaysList.add("Thu")
-//                R.id._chipFri -> selectedChipsDaysList.add("Fri")
-//                R.id._chipSat -> selectedChipsDaysList.add("Sat")
-//
-//            }
-//        }
-//        Log.d(TAG, "createStrListFromSelectedChips: selectedChipsDaysList=$selectedChipsDaysList")
-//    }
+
     private fun createStrListFromSelectedChips() {
         val selectedChipsDaysList =  mutableListOf<String>()
 
@@ -658,5 +675,21 @@ class AlarmDetailsFragment : Fragment() {
             }
         }
         Log.d(TAG, "createStrListFromSelectedChips: selectedChipsDaysList=$selectedChipsDaysList")
+    }
+    private fun createWhichIntFromTickedChip(dayTickedId: Int): Int {
+        return when(dayTickedId) {
+            R.id._chipSun -> 6
+            R.id._chipMon -> 0
+            R.id._chipTue -> 1
+            R.id._chipWed -> 2
+            R.id._chipThu -> 3
+            R.id._chipFri -> 4
+            R.id._chipSat -> 5
+
+            else -> {
+                Log.d(TAG, "createWhichIntFromTickedChip: error. Well let's just returning 10")
+                444
+            }
+        }
     }
 }

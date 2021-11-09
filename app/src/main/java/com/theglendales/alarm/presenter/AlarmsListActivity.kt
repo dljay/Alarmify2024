@@ -58,7 +58,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 // v0.26e
-// SwipeRevealLayout 테스트전. (3rd party 스와이프 딜리트 기능)
+// Contextual Action Mode 테스트 전.
 
 
 /**

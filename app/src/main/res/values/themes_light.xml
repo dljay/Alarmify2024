@@ -3,7 +3,7 @@
     <!-- Light Themes -->
     <style name="DefaultLightTheme" parent="Theme.AppCompat.Light.DarkActionBar"></style>
 
-    <style name="AlarmAlertFullScreenLightTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AlarmAlertFullScreenLightTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowNoTitle">true</item>
     </style>
 

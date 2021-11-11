@@ -9,4 +9,12 @@
     <attr name="alarmDetailsButtonStyle" format="reference" />
     <attr name="timePickerDeleteButtonStyle" format="reference" />
     <item type="id" name="numbers_key" />
+
+    <declare-styleable name="SwipeRevealLayout">
+        <attr name="dragFromEdge">
+            <flag name="left" value="1" />
+            <flag name="right" value="2" />
+        </attr>
+    </declare-styleable>
 </resources>
+

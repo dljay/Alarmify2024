@@ -57,8 +57,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.26e
-// Contextual Action Mode 테스트 전.
+// v0.27a
+// SwipeRevealLayout Example-easy 로 성공!
+// todo: 좌,우 방향 바꾸고 imgBtn 제대로 넣기.
+// todo: CardView 까지 도전? (Google 알람 모양)
 
 
 /**

@@ -301,6 +301,11 @@ class AlarmsListFragment : Fragment() {
             //     row.label().visibility == View.GONE && row.daysOfWeek().visibility == View.GONE -> GONE
             //     else -> View.VISIBLE
             // }
+        // 추가- Swipe 했을 때 ImageButton onClickListener
+            rowHolder.swipeBtnDelete.setOnClickListener {
+                Log.d(TAG, "getView: imgbtn_1 Clicked!!")
+            }
+            
 
             return rowHolder.rowView
         }

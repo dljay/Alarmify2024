@@ -2,6 +2,7 @@ package com.theglendales.alarm.presenter
 
 import android.view.View
 import android.widget.CompoundButton
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import com.theglendales.alarm.R
@@ -24,6 +25,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
     val idHasChanged: Boolean
 // 내가 추가->
     val albumArt: ImageView// Album Art 추가 (detailsButton 대체 <== '...' 요렇게 생긴 놈.)
+    val swipeBtnDelete: ImageButton // Swipe 했을 때  Delete 하는 버튼
     val tvSun: TextView
     val tvMon: TextView
     val tvTue: TextView
@@ -47,6 +49,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
     // 내가 추가->
         digitalClockContainer.tag = this
         albumArt = find(R.id.id_row_albumArt) as ImageView
+        swipeBtnDelete = find(R.id.btn1_test) as ImageButton
 
         tvSun = find(R.id._tvSun) as TextView
         tvMon = find(R.id._tvMon) as TextView

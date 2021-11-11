@@ -171,6 +171,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.8")
     // ImageView 에 넣을 GMAIl 스타일 Circle Text Builder https://github.com/amulyakhare/TextDrawable
     implementation("com.amulyakhare:com.amulyakhare.textdrawable:1.0.1")
+    // Swipe Reveal Layout (ListView 에서 Swipe 할 수 있게 하는 3rd party)
+    implementation("com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1")
 
 
 }

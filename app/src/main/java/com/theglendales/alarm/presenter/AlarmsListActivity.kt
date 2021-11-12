@@ -57,10 +57,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.27a
-// SwipeRevealLayout Example-easy 로 성공!
-// todo: 좌,우 방향 바꾸고 imgBtn 제대로 넣기.
-// todo: CardView 까지 도전? (Google 알람 모양)
+// v0.28a
+//최종적으로 오른쪽에서 Delete [쓰레기통] 나오는것만 표시하기로.
+//- 양쪽 swipe 가능하게 했을 때 이런저런 문제 발생
+//issue1) 한쪽으로 스와이프 닫으면 다른쪽 스와이프 튀어나옴.
+//issue2) 왼쪽 스와이프의 경우 on/off 버튼때문에 스와이프 반응 위치 조절 등. 복잡해짐..
+
 
 
 /**

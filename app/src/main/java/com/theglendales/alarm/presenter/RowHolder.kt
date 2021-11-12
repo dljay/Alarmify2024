@@ -49,7 +49,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
     // 내가 추가->
         digitalClockContainer.tag = this
         albumArt = find(R.id.id_row_albumArt) as ImageView
-        swipeBtnDelete = find(R.id.btn1_test) as ImageButton
+        swipeBtnDelete = find(R.id.imgBtn_swipe_delete) as ImageButton
 
         tvSun = find(R.id._tvSun) as TextView
         tvMon = find(R.id._tvMon) as TextView

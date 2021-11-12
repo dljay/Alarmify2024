@@ -14,308 +14,319 @@
      limitations under the License.
 -->
 
-<com.chauthai.swipereveallayout.SwipeRevealLayout
+<com.theglendales.alarm.jjongadd.SwipeRevealLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="75dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:baselineAligned="true"
-    android:orientation="horizontal"
-    app:mode="same_level"
+    android:layout_gravity="center_vertical"
+    app:mode="normal"
     app:dragFromEdge="right">
 
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|end"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btn1_test"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/avocado">
-
-
-        </ImageButton>
-
-<!--        <ImageButton-->
-<!--            android:id="@+id/info_button"-->
-<!--            android:layout_width="50dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            app:srcCompat="@drawable/ic_info_outline"-->
-<!--            android:text="Info"/>-->
-
-<!--        <ImageButton-->
-<!--            android:id="@+id/edit_button"-->
-<!--            android:layout_width="50dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            app:srcCompat="@drawable/ic_edit"-->
-<!--            android:text="Edit"/>-->
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <com.theglendales.alarm.view.DontPressWithParentLayout
-            android:id="@+id/list_row_on_off_checkbox_container"
-            style="@style/alarm_list_left_column"
-            android:gravity="center">
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/list_row_on_off_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:clickable="false"
-                android:focusable="false" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-        </com.theglendales.alarm.view.DontPressWithParentLayout>
-
+        android:layout_height="match_parent">
         <LinearLayout
-            android:id="@+id/list_row_digital_clock_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:gravity="center_vertical|end"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp"
+            android:orientation="horizontal"
+            android:background="@color/mat_red"
+            android:weightSum="3">
 
-            android:longClickable="false"
-            android:orientation="vertical">
-
-            <com.theglendales.alarm.view.DigitalClock
-                android:id="@+id/list_row_digital_clock"
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="2dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="10dp"
-                android:layout_gravity="center_horizontal"
-                android:paddingStart="30dp"
-
+                android:layout_height="match_parent"
+                android:textSize="14sp"
+                android:text="DELETE"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:layout_margin="3dp"
 
-                <TextView
-                    android:id="@+id/digital_clock_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
+                android:layout_weight="2"/>
 
-
-                    android:fontFamily="sans-serif"
-                    android:textSize="30sp" />
-
-                <TextView
-                    android:id="@+id/digital_clock_am_pm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-
-                    android:layout_gravity="bottom" />
-            </com.theglendales.alarm.view.DigitalClock>
-
-            <LinearLayout
+            <ImageButton
+                android:id="@+id/imgBtn_swipe_delete"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingStart="30dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_vertical"
+                android:background="@color/grey"
+                android:src="@drawable/delete_swipe_v1_24"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:text="Edit"/>
 
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="10dp"
-                android:weightSum="14">
-
-                <TextView
-                    android:id="@+id/_tvSun"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:fontFamily="sans-serif"
-                    android:text="S"
-                    android:textSize="13sp"
-                    android:textColor="@color/mat_red"
-                    android:gravity="center"
-                    android:layout_weight="1"/>
-
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/_tvMon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:fontFamily="sans-serif"
-                    android:text="M"
-                    android:textSize="13sp"
-                    android:textColor="@color/grey"
-                    android:gravity="center"
-                    android:layout_weight="1"/>
-
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/_tvTue"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:fontFamily="sans-serif"
-                    android:text="T"
-                    android:textSize="13sp"
-                    android:textColor="@color/grey"
-                    android:gravity="center"
-                    android:layout_weight="1"/>
-
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/_tvWed"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:fontFamily="sans-serif"
-                    android:text="W"
-                    android:textSize="13sp"
-                    android:textColor="@color/grey"
-                    android:gravity="center"
-                    android:layout_weight="1"/>
-
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/_tvThu"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:fontFamily="sans-serif"
-                    android:text="T"
-                    android:textSize="13sp"
-                    android:textColor="@color/grey"
-                    android:gravity="center"
-                    android:layout_weight="1"/>
-
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/_tvFri"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:fontFamily="sans-serif"
-                    android:text="F"
-                    android:textSize="13sp"
-                    android:textColor="@color/grey"
-                    android:gravity="center"
-                    android:layout_weight="1"/>
-
-                <Space
-                    android:layout_width="5dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/_tvSat"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:fontFamily="sans-serif"
-                    android:text="S"
-                    android:textSize="13sp"
-                    android:textColor="@color/mat_blue"
-                    android:gravity="center"
-                    android:layout_weight="1"/>
-
-                <!--            <TextView-->
-                <!--                android:id="@+id/list_row_daysOfWeek"-->
-                <!--                android:layout_width="wrap_content"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:layout_marginRight="5dp"-->
-                <!--                android:text="Weekdays"-->
-                <!--                android:textAppearance="?android:attr/textAppearanceSmall"-->
-                <!--                android:textColor="?android:attr/colorAccent"-->
-
-                <!--                android:focusableInTouchMode="false"/>-->
-
-
-            </LinearLayout>
         </LinearLayout>
+    </FrameLayout>
+
+    <androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:cardBackgroundColor="@color/mat_dark_grey_purple_overlay_original"
+        app:cardElevation="5dp"
+        app:cardCornerRadius="8dp"
+        android:visibility="visible">
 
         <LinearLayout
-            style="@style/alarm_list_left_column"
-            android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
 
-            <LinearLayout
-                android:id="@+id/details_button_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginTop="3dp"
-                android:layout_marginEnd="3dp"
+            <com.theglendales.alarm.view.DontPressWithParentLayout
+                android:id="@+id/list_row_on_off_checkbox_container"
+                style="@style/alarm_list_left_column"
                 android:gravity="center">
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
 
-
-                <!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
-                <ImageView
-                    android:id="@+id/id_row_albumArt"
-
-
-                    android:layout_width="match_parent"
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/list_row_on_off_switch"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:clickable="false"
-                    android:focusable="false"
-                    android:layout_marginTop="5dp"
+                    android:focusable="false" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </com.theglendales.alarm.view.DontPressWithParentLayout>
+
+            <LinearLayout
+                android:id="@+id/list_row_digital_clock_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+
+                android:longClickable="false"
+                android:orientation="vertical">
+
+                <com.theglendales.alarm.view.DigitalClock
+                    android:id="@+id/list_row_digital_clock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="20dp"/>
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingStart="30dp"
 
-                <!--            <TextView-->
-                <!--                android:layout_width="wrap_content"-->
-                <!--                android:layout_height="wrap_content"-->
-                <!--                android:clickable="false"-->
-                <!--                android:focusable="false"-->
-                <!--                android:text="···"-->
-                <!--                android:textSize="40sp"-->
-                <!--                android:textStyle="normal" />-->
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/digital_clock_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="2dp"
 
 
+                        android:fontFamily="sans-serif"
+                        android:textSize="30sp" />
+
+                    <TextView
+                        android:id="@+id/digital_clock_am_pm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="2dp"
+
+                        android:layout_gravity="bottom" />
+                </com.theglendales.alarm.view.DigitalClock>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="30dp"
+
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:weightSum="14">
+
+                    <TextView
+                        android:id="@+id/_tvSun"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:fontFamily="sans-serif"
+                        android:text="S"
+                        android:textSize="13sp"
+                        android:textColor="@color/mat_red"
+                        android:gravity="center"
+                        android:layout_weight="1"/>
+
+                    <Space
+                        android:layout_width="5dp"
+                        android:layout_height="20dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/_tvMon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:fontFamily="sans-serif"
+                        android:text="M"
+                        android:textSize="13sp"
+                        android:textColor="@color/grey"
+                        android:gravity="center"
+                        android:layout_weight="1"/>
+
+                    <Space
+                        android:layout_width="5dp"
+                        android:layout_height="20dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/_tvTue"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:fontFamily="sans-serif"
+                        android:text="T"
+                        android:textSize="13sp"
+                        android:textColor="@color/grey"
+                        android:gravity="center"
+                        android:layout_weight="1"/>
+
+                    <Space
+                        android:layout_width="5dp"
+                        android:layout_height="20dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/_tvWed"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:fontFamily="sans-serif"
+                        android:text="W"
+                        android:textSize="13sp"
+                        android:textColor="@color/grey"
+                        android:gravity="center"
+                        android:layout_weight="1"/>
+
+                    <Space
+                        android:layout_width="5dp"
+                        android:layout_height="20dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/_tvThu"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:fontFamily="sans-serif"
+                        android:text="T"
+                        android:textSize="13sp"
+                        android:textColor="@color/grey"
+                        android:gravity="center"
+                        android:layout_weight="1"/>
+
+                    <Space
+                        android:layout_width="5dp"
+                        android:layout_height="20dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/_tvFri"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:fontFamily="sans-serif"
+                        android:text="F"
+                        android:textSize="13sp"
+                        android:textColor="@color/grey"
+                        android:gravity="center"
+                        android:layout_weight="1"/>
+
+                    <Space
+                        android:layout_width="5dp"
+                        android:layout_height="20dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/_tvSat"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:fontFamily="sans-serif"
+                        android:text="S"
+                        android:textSize="13sp"
+                        android:textColor="@color/mat_blue"
+                        android:gravity="center"
+                        android:layout_weight="1"/>
+
+                    <!--            <TextView-->
+                    <!--                android:id="@+id/list_row_daysOfWeek"-->
+                    <!--                android:layout_width="wrap_content"-->
+                    <!--                android:layout_height="wrap_content"-->
+                    <!--                android:layout_marginRight="5dp"-->
+                    <!--                android:text="Weekdays"-->
+                    <!--                android:textAppearance="?android:attr/textAppearanceSmall"-->
+                    <!--                android:textColor="?android:attr/colorAccent"-->
+
+                    <!--                android:focusableInTouchMode="false"/>-->
+
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/alarm_list_left_column"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:id="@+id/details_button_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="3dp"
+                    android:gravity="center">
+
+
+
+                    <!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
+                    <ImageView
+                        android:id="@+id/id_row_albumArt"
+
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="20dp"/>
+
+                    <!--            <TextView-->
+                    <!--                android:layout_width="wrap_content"-->
+                    <!--                android:layout_height="wrap_content"-->
+                    <!--                android:clickable="false"-->
+                    <!--                android:focusable="false"-->
+                    <!--                android:text="···"-->
+                    <!--                android:textSize="40sp"-->
+                    <!--                android:textStyle="normal" />-->
+
+
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
 
 
 
-    </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
 
 
-
-
-
-
-</com.chauthai.swipereveallayout.SwipeRevealLayout>
+</com.theglendales.alarm.jjongadd.SwipeRevealLayout>
 
 
 

@@ -43,6 +43,7 @@ import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
+import com.theglendales.alarm.jjongadd.SwipeRevealLayout
 import com.theglendales.alarm.jjongadd.TimePickerJjong
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -199,6 +200,9 @@ class AlarmsListFragment : Fragment() {
                 }
 
             }
+
+
+
         // Option B-1) [내가 수정해서 적은 것] Material Time Picker 보여주기
 //
 //            rowHolder.digitalClockContainer.setOnClickListener {

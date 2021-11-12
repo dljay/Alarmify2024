@@ -264,6 +264,7 @@ public class SwipeRevealLayout extends ViewGroup {
         int desiredWidth = 0;
         int desiredHeight = 0;
 
+
         // first find the largest child
         for (int i = 0; i < getChildCount(); i++) {
             final View child = getChildAt(i);

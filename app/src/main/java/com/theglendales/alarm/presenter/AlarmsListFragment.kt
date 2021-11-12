@@ -21,10 +21,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import com.amulyakhare.textdrawable.TextDrawable
-import com.amulyakhare.textdrawable.util.ColorGenerator
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -190,7 +187,18 @@ class AlarmsListFragment : Fragment() {
                 //Log.d(TAG, "getView: clicked **ALBUM ART CONTAINER**. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
                 uiStore.edit(alarm.id, it.tag as RowHolder)
             }
+        // swipe 했을 때 imgBtn 과 DELETE (textView) 담고 있는 LinearLayout
 
+            rowHolder.swipeDeleteContainer.setOnClickListener {
+                val currentAlarm = mAdapter.getItem(position)
+                if(currentAlarm!=null) {
+                    alarms.delete(currentAlarm)
+                    Log.d(TAG, "getView: [DELETING ALARM] currentAlarm=$currentAlarm, position=$position")
+                } else {
+                    Log.d(TAG, "getView: Failed to DELETE ALARM! currentAlarm=$currentAlarm, position=$position")
+                }
+
+            }
         // Option B-1) [내가 수정해서 적은 것] Material Time Picker 보여주기
 //
 //            rowHolder.digitalClockContainer.setOnClickListener {
@@ -307,10 +315,7 @@ class AlarmsListFragment : Fragment() {
             //     row.label().visibility == View.GONE && row.daysOfWeek().visibility == View.GONE -> GONE
             //     else -> View.VISIBLE
             // }
-        // 추가- Swipe 했을 때 ImageButton onClickListener
-            rowHolder.swipeBtnDelete.setOnClickListener {
-                Log.d(TAG, "getView: imgbtn_1 Clicked!!")
-            }
+
             
 
             return rowHolder.rowView

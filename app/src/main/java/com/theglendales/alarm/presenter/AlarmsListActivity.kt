@@ -57,11 +57,18 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.28b
+// v0.28c
+
+//delete 버튼 연결 (O), LongClick (O)
+// todo: - Swipe 한번 했다 다른 row 로 넘어가면 기존 Swipe 안보이게 없애주기..
 //- 신규 알람 생성시 -> RT 자동 생성해주기 (안되서 계속 Glide AlbumArt 에 느낌표 에러 아이콘 뜨네..)
 //- DetailFrag 넘어갈 때 Swipe 보임. Delete
 //- 애니메이션 땜인지 굉장히 버벅이는 느낌?
-//delete 버튼 연결
+
+
+
+
+
 
 
 

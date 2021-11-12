@@ -29,6 +29,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/round_for_swipe_framelayout">
         <LinearLayout
+            android:id="@+id/ll_swipeDeleteContainer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical|end"
@@ -48,8 +49,8 @@
 
                 android:layout_weight="2"/>
 
-            <ImageButton
-                android:id="@+id/imgBtn_swipe_delete"
+            <ImageView
+                android:id="@+id/iv_swipe_deleteIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:layout_gravity="center_vertical"

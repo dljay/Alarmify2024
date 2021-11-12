@@ -31,7 +31,7 @@
         <item name="android:background">@null</item>
     </style>
 
-    <style name="alarm_list_left_column">
+    <style name="alarm_list_albumArt_Container">
         <item name="android:layout_width">68dip</item>
         <item name="android:layout_height">68dip</item>
     </style>

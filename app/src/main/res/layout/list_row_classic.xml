@@ -21,7 +21,7 @@
 
     <com.theglendales.alarm.view.DontPressWithParentLayout
         android:id="@+id/list_row_on_off_checkbox_container"
-        style="@style/alarm_list_left_column"
+        style="@style/alarm_list_albumArt_Container"
         android:gravity="center">
 
         <CheckBox
@@ -86,7 +86,7 @@
 
     <com.theglendales.alarm.view.DontPressWithParentLayout
         android:id="@+id/details_button_container"
-        style="@style/alarm_list_left_column"
+        style="@style/alarm_list_albumArt_Container"
         android:gravity="center">
 
         <TextView

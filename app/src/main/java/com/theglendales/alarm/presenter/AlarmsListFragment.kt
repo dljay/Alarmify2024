@@ -177,16 +177,22 @@ class AlarmsListFragment : Fragment() {
                         logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
                         alarms.enable(alarm, enable)
                     }
-//        // Option A) 만약 ListFrag 에서 시간 눌렀을 때 => 바로 Details Frag 로 가고 싶다면 아래를 넣으면 된다!
+//      // Option A-1) 만약 ListFrag 에서 시간 눌렀을 때 => 바로 Details Frag 로 가고 싶다면 아래를 넣으면 된다!
             rowHolder.digitalClockContainer.setOnClickListener {
                 val id = mAdapter.getItem(position)?.id
-                Log.d(TAG, "getView: clicked Linear Layout. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
+                //Log.d(TAG, "getView: clicked ++CLOCK CONTAINER++. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
                 uiStore.edit(alarm.id, it.tag as RowHolder)
             }
 
+        // Option A-2) AlbumArt 쪽 클릭햇을 때 위와 동일!!하게 DetailsFrag 로 감!
+            rowHolder.albumArtContainer.setOnClickListener {
+                val id = mAdapter.getItem(position)?.id
+                //Log.d(TAG, "getView: clicked **ALBUM ART CONTAINER**. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
+                uiStore.edit(alarm.id, it.tag as RowHolder)
+            }
 
         // Option B-1) [내가 수정해서 적은 것] Material Time Picker 보여주기
-
+//
 //            rowHolder.digitalClockContainer.setOnClickListener {
 //                timePickerDialogDisposable =
 //                    myTimePickerJjong.showTimePicker(parentFragmentManager)
@@ -213,9 +219,9 @@ class AlarmsListFragment : Fragment() {
 //                                    alarm.edit {copy(isEnabled = true,hour = picked.get().hour,minutes = picked.get().minute)}}}}}
 
 
-            rowHolder.digitalClockContainer.setOnLongClickListener {
-                false
-            }
+//            rowHolder.digitalClockContainer.setOnLongClickListener {
+//                false
+//            }
 
             // set the alarm text
             val c = Calendar.getInstance()
@@ -318,7 +324,7 @@ class AlarmsListFragment : Fragment() {
     }
 // d
 
-
+    //LongClick related.. i think..
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val info = item.menuInfo as AdapterContextMenuInfo
         val alarm = mAdapter.getItem(info.position) ?: return false

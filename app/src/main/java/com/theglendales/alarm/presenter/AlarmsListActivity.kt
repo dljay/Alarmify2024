@@ -57,11 +57,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.28a
-//최종적으로 오른쪽에서 Delete [쓰레기통] 나오는것만 표시하기로.
-//- 양쪽 swipe 가능하게 했을 때 이런저런 문제 발생
-//issue1) 한쪽으로 스와이프 닫으면 다른쪽 스와이프 튀어나옴.
-//issue2) 왼쪽 스와이프의 경우 on/off 버튼때문에 스와이프 반응 위치 조절 등. 복잡해짐..
+// v0.28b
+//- 신규 알람 생성시 -> RT 자동 생성해주기 (안되서 계속 Glide AlbumArt 에 느낌표 에러 아이콘 뜨네..)
+//- DetailFrag 넘어갈 때 Swipe 보임. Delete
+//- 애니메이션 땜인지 굉장히 버벅이는 느낌?
+//delete 버튼 연결
 
 
 

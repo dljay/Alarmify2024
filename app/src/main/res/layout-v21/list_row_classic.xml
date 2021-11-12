@@ -26,7 +26,8 @@
 
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/round_for_swipe_framelayout">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -34,7 +35,7 @@
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
             android:orientation="horizontal"
-            android:background="@color/mat_red"
+
             android:weightSum="3">
 
             <TextView
@@ -52,7 +53,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:layout_gravity="center_vertical"
-                android:background="@color/grey"
+
                 android:src="@drawable/delete_swipe_v1_24"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
@@ -78,7 +79,7 @@
 
             <com.theglendales.alarm.view.DontPressWithParentLayout
                 android:id="@+id/list_row_on_off_checkbox_container"
-                style="@style/alarm_list_left_column"
+                style="@style/alarm_list_albumArt_Container"
                 android:gravity="center">
 
                 <View
@@ -276,7 +277,8 @@
             </LinearLayout>
 
             <LinearLayout
-                style="@style/alarm_list_left_column"
+                android:id="@+id/ll_albumArt_Container"
+                style="@style/alarm_list_albumArt_Container"
                 android:orientation="vertical"
                 android:layout_weight="1">
 
@@ -294,8 +296,6 @@
                     <!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
                     <ImageView
                         android:id="@+id/id_row_albumArt"
-
-
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:clickable="false"

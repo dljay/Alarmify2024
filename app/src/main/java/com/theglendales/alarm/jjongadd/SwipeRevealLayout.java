@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,7 +22,7 @@ import androidx.customview.widget.ViewDragHelper;
 import com.theglendales.alarm.R;
 
 public class SwipeRevealLayout extends ViewGroup {
-
+    private static final String TAG="SwipeRevealLayout.java";
     private static final String SUPER_INSTANCE_STATE = "saved_instance_state_parcelable";
 
     private static final int DEFAULT_MIN_FLING_VELOCITY = 300; // dp per second
@@ -510,6 +511,9 @@ public class SwipeRevealLayout extends ViewGroup {
     }
 
     private void init(Context context, AttributeSet attrs) {
+        Log.d(TAG, "init: called. ");
+        
+
         if (attrs != null && context != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(
                     attrs,
@@ -525,6 +529,7 @@ public class SwipeRevealLayout extends ViewGroup {
 
         mDragHelper = ViewDragHelper.create(this, 1.0f, mDragHelperCallback);
         mDragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_ALL);
+
 
         mGestureDetector = new GestureDetectorCompat(context, mGestureListener);
     }

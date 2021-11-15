@@ -612,8 +612,12 @@ public class SwipeRevealLayout extends ViewGroup {
 
     private int getHalfwayPivotHorizontal() {
         if (mDragEdge == DRAG_EDGE_LEFT) {
+//            int result = mRectMainClose.right - mSecondaryView.getWidth() / 2; // 내가 logd 를 위해 만듬
+//            Log.d(TAG, "getHalfwayPivotHorizontal: if문 안. return value="+result);
             return mRectMainClose.left + mSecondaryView.getWidth() / 2;
         } else {
+//            int result = mRectMainClose.right - mSecondaryView.getWidth() / 2; // 내가 logd 를 위해 만듬
+//            Log.d(TAG, "getHalfwayPivotHorizontal: else 문 안. return value= "+ result);
             return mRectMainClose.right - mSecondaryView.getWidth() / 2;
         }
     }
@@ -655,24 +659,28 @@ public class SwipeRevealLayout extends ViewGroup {
             final boolean velRightExceeded =  pxToDp((int) xvel) >= mMinFlingVelocity;
             final boolean velLeftExceeded =   pxToDp((int) xvel) <= -mMinFlingVelocity;
 
-            final int pivotHorizontal = getHalfwayPivotHorizontal();
+            final int pivotHorizontal = getHalfwayPivotHorizontal(); // 항상 924!
+            //Log.d(TAG, "onViewReleased: pivotHorizontal="+pivotHorizontal);
 
             switch (mDragEdge) {
                 case DRAG_EDGE_RIGHT:
-                    Log.d(TAG, "onViewReleased: DRAG_EDGE_RIGHT -switch-"); // 오른쪽 EDGE 를 왼쪽 방향으로 스와이프 했을 때 (현재 우리가 적용중인..)
+                    //Log.d(TAG, "onViewReleased: DRAG_EDGE_RIGHT -switch-"); // 오른쪽 EDGE 를 왼쪽 방향으로 스와이프 했을 때 (현재 우리가 적용중인..)
                     if (velRightExceeded) { // 정상 닫기1) : 휙 Fling 해서 close 하기
-                        Log.d(TAG, "onViewReleased: 휙 fling close");
+                        //Log.d(TAG, "onViewReleased: 휙 fling close");
                         close(true);
                         
                     } else if (velLeftExceeded) { // 정상 오픈1): 가장 일반적인 휙~ Fling 으로 Drag 해서 열리는 순간! (O)
-                        Log.d(TAG, "onViewReleased: velLeftExceeded=" + velLeftExceeded);
+                        //Log.d(TAG, "onViewReleased: velLeftExceeded=" + velLeftExceeded);
                         open(true);
                     } else {
-                        if (mMainView.getRight() < pivotHorizontal) { // 정상 오픈 2): 천천히 Drag 해서 (일정 수준 이상 보였을 때) 열리면서 일로 들어옴.
-                            Log.d(TAG, "onViewReleased: mMainView.getRight() < pivotHorizontal");
+                        // todo: 조금 더 Drag 했을 때 열리게 하기 위해서 mMainView.getRight() + 20 했음. 다른 기기에서도 괜찮을지 테스트?
+                        if (mMainView.getRight() +20 < pivotHorizontal) { // 정상 오픈 2): 천천히 Drag 해서 (일정 수준 이상 보였을 때) 열리면서 일로 들어옴.
+//                            int getRightInt = mMainView.getRight(); // logd 를 위해 작성
+//                            Log.d(TAG, "onViewReleased: mMainView.getRight() < pivotHorizontal \n getRightInt="+getRightInt);
                             open(true);
                         } else { //정상 닫기2) : 천천히 Drag 해서 닫기.
-                            Log.d(TAG, "onViewReleased: 천천히 Drag close..");
+//                            int getRightInt = mMainView.getRight(); // logd 를 위해 작성
+//                            Log.d(TAG, "onViewReleased: 천천히 Drag close.. \n getRightInt="+getRightInt);
                             close(true);
                         }
                     }

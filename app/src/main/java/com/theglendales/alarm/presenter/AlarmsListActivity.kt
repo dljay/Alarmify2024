@@ -57,13 +57,15 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.28d
+// v0.28e
 
-//delete 버튼 연결 (O), LongClick (O)
 
-//- 신규 알람 생성시 -> RT 자동 select 해주기 (안되서 계속 Glide AlbumArt 에 느낌표 에러 아이콘 뜨네..)
-//- DetailFrag 넘어갈 때 Swipe 보임. Delete
-//- 애니메이션 땜인지 굉장히 버벅이는 느낌? 한번 체크 필요..
+//(O) 좀 더 많이  swipe/ drag 했을 때 열리게 하기 (O)  SwipeRevealLayout> getRightInt  + 20 해줬음.
+
+//- 애니메이션 땜인지 굉장히 버벅이는 느낌?
+//
+//- 신규 알람 생성시 -> RT 자동으로 DR1 해주기? 생성해주기 (안되서 계속 Glide AlbumArt 에 느낌표 에러 아이콘 뜨네..)
+//- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

@@ -674,7 +674,7 @@ public class SwipeRevealLayout extends ViewGroup {
                         open(true);
                     } else {
                         // todo: 조금 더 Drag 했을 때 열리게 하기 위해서 mMainView.getRight() + 20 했음. 다른 기기에서도 괜찮을지 테스트?
-                        if (mMainView.getRight() +20 < pivotHorizontal) { // 정상 오픈 2): 천천히 Drag 해서 (일정 수준 이상 보였을 때) 열리면서 일로 들어옴.
+                        if (mMainView.getRight() +40 < pivotHorizontal) { // 정상 오픈 2): 천천히 Drag 해서 (일정 수준 이상 보였을 때) 열리면서 일로 들어옴.
 //                            int getRightInt = mMainView.getRight(); // logd 를 위해 작성
 //                            Log.d(TAG, "onViewReleased: mMainView.getRight() < pivotHorizontal \n getRightInt="+getRightInt);
                             open(true);

@@ -95,6 +95,7 @@ public class SwipeRevealLayout extends ViewGroup {
     public SwipeRevealLayout(Context context) {
         super(context);
         init(context, null);
+        Log.d(TAG, "SwipeRevealLayout: CREATED. this=" +this.toString());
     }
 
     public SwipeRevealLayout(Context context, AttributeSet attrs) {
@@ -170,6 +171,7 @@ public class SwipeRevealLayout extends ViewGroup {
     @SuppressWarnings("ConstantConditions")
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        Log.d(TAG, "(2-A)onLayout: called.");
         for (int index = 0; index < getChildCount(); index++) {
             final View child = getChildAt(index);
 
@@ -240,12 +242,21 @@ public class SwipeRevealLayout extends ViewGroup {
 
         initRects();
 
-        if (mIsOpenBeforeInit) {
+        /*if (mIsOpenBeforeInit) {
+            Log.d(TAG, "(2-B-OPEN)onLayout: line247, else 문 안. mIsOpenBeforeInit = "+mIsOpenBeforeInit);
             open(false);
         } else {
+            Log.d(TAG, "(2-B-CLOSE)onLayout: line247, else 문 안. mIsOpenBeforeInit = "+mIsOpenBeforeInit);
             close(false);
-        }
 
+        }*/
+        // DELETE 했을 때 기존 row 포지션으로 이동되는 row 의 swipe reveal 을 닫게 해주기 위해 위의 line 들을 지웠음!!
+
+        // 1)알람을 지웟을 때 Delete 버른 누르면->onViewReleased 불림 -> Swipe Drag 된 영역이 (이미 지나치게 나와있어서)
+        //  -> 자동으로 open 설정이 됨.
+        //  2) 자동으로 open 된 상태에서 row 하나가 delete 되고 다시 "init" 이 불리면서 여기서 mIsOpenBeforeInit 때문에
+        //  -> 기존에 삭제되었던 위치로 가게되는 row 의 DELETE (빨간색 layout)가 보이게됨.
+        close(false);
     }
 
     /**
@@ -343,6 +354,7 @@ public class SwipeRevealLayout extends ViewGroup {
      * Open the panel to show the secondary view
      */
     public void open(boolean animation) {
+        Log.d(TAG, "open: called! animation="+animation);
         mIsOpenBeforeInit = true;
 
         if (animation) {
@@ -372,6 +384,7 @@ public class SwipeRevealLayout extends ViewGroup {
      * Close the panel to hide the secondary view
      */
     public void close(boolean animation) {
+        Log.d(TAG, "close: called. animation boolean=" + animation);
         mIsOpenBeforeInit = false;
 
         if (animation) {
@@ -511,7 +524,7 @@ public class SwipeRevealLayout extends ViewGroup {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        Log.d(TAG, "init: called. ");
+        Log.d(TAG, "(1)init: called. ");
         
 
         if (attrs != null && context != null) {
@@ -635,9 +648,10 @@ public class SwipeRevealLayout extends ViewGroup {
                     return child.getLeft();
             }
         }
-
+    // onViewReleased 일반적으로 Drag 와 관련된 경우 일로 들어옴. (정상 drag, drag 하다 놓았을 때, 근데 지울때도 일로 들어오네..)
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
+            Log.d(TAG, "onViewReleased: called");
             final boolean velRightExceeded =  pxToDp((int) xvel) >= mMinFlingVelocity;
             final boolean velLeftExceeded =   pxToDp((int) xvel) <= -mMinFlingVelocity;
 
@@ -645,20 +659,27 @@ public class SwipeRevealLayout extends ViewGroup {
 
             switch (mDragEdge) {
                 case DRAG_EDGE_RIGHT:
-                    if (velRightExceeded) {
+                    Log.d(TAG, "onViewReleased: DRAG_EDGE_RIGHT -switch-"); // 오른쪽 EDGE 를 왼쪽 방향으로 스와이프 했을 때 (현재 우리가 적용중인..)
+                    if (velRightExceeded) { // 정상 닫기1) : 휙 Fling 해서 close 하기
+                        Log.d(TAG, "onViewReleased: 휙 fling close");
                         close(true);
-                    } else if (velLeftExceeded) {
+                        
+                    } else if (velLeftExceeded) { // 정상 오픈1): 가장 일반적인 휙~ Fling 으로 Drag 해서 열리는 순간! (O)
+                        Log.d(TAG, "onViewReleased: velLeftExceeded=" + velLeftExceeded);
                         open(true);
                     } else {
-                        if (mMainView.getRight() < pivotHorizontal) {
+                        if (mMainView.getRight() < pivotHorizontal) { // 정상 오픈 2): 천천히 Drag 해서 (일정 수준 이상 보였을 때) 열리면서 일로 들어옴.
+                            Log.d(TAG, "onViewReleased: mMainView.getRight() < pivotHorizontal");
                             open(true);
-                        } else {
+                        } else { //정상 닫기2) : 천천히 Drag 해서 닫기.
+                            Log.d(TAG, "onViewReleased: 천천히 Drag close..");
                             close(true);
                         }
                     }
                     break;
 
                 case DRAG_EDGE_LEFT:
+                    Log.d(TAG, "onViewReleased: DRAG_EDGE_LEFT -switch-");
                     if (velRightExceeded) {
                         open(true);
                     } else if (velLeftExceeded) {

@@ -195,6 +195,7 @@ class AlarmsListFragment : Fragment() {
                 if(currentAlarm!=null) {
                     alarms.delete(currentAlarm)
                     Log.d(TAG, "getView: [DELETING ALARM] currentAlarm=$currentAlarm, position=$position")
+
                 } else {
                     Log.d(TAG, "getView: Failed to DELETE ALARM! currentAlarm=$currentAlarm, position=$position")
                 }
@@ -462,7 +463,7 @@ class AlarmsListFragment : Fragment() {
                         .switchMap { uiStore.transitioningToNewAlarmDetails() }
                         .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
                         .subscribe { alarms ->
-                            Log.d(TAG, "(Line 251) onCreateView: alarmsSub~!!")
+                            Log.d(TAG, "(Line 251) onCreateView: alarmsSub~!! alarms=$alarms")
                             val sorted = alarms
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())

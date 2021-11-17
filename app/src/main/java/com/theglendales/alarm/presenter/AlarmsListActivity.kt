@@ -57,15 +57,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.29b
+// v0.29c
 // FadeIn/Out 없앴음.
-// 신규 알람 생성시 RT 자동으로 Dr01 해주기. 근데 왜 Spinner onItemSelected 가 최초 DetailsFrag 열때만 반응하냐..?????!?!?
+// 신규 알람 생성시 RT 자동으로 Dr01 해주기.
 
-//
-//
-
-//
-//2)todo: - 신규 알람 생성시 -> RT 자동으로 DR1 해주기? 생성해주기 (안되서 계속 Glide AlbumArt 에 느낌표 에러 아이콘 뜨네..)
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 
 /**

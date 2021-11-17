@@ -277,7 +277,11 @@ class AlarmDetailsFragment : Fragment() {
         store.transitioningToNewAlarmDetails().firstOrError().subscribe { isNewAlarm ->
                     Log.d(TAG, "onCreateView: jj-!!inside .subscribe-1")
                     if (isNewAlarm) {
-                        Log.d(TAG, "onCreateView: jj-!!inside .subscribe-2")
+                        Log.d(TAG, "onCreateView: jj-!!inside .subscribe-2 NEW ALARM SETUP")
+                        spinner.adapter=spinnerAdapter
+                        spinner.setSelection(0,true)
+
+
                         store.transitioningToNewAlarmDetails().onNext(false)
                         disposableDialog =
                             //TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager) <- 기존 timePicker 코드
@@ -581,8 +585,12 @@ class AlarmDetailsFragment : Fragment() {
                 editor.copy(hour = picked.get().hour,
                         minutes = picked.get().minute,
                         isEnabled = true)
+
             }
+            //Log.d(TAG, "Picker consumer: inside..")
+
         }
+
     }
 
     private fun modify(reason: String, function: (AlarmValue) -> AlarmValue) {

@@ -57,8 +57,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.28g
-
+// v0.29a
+// FadeIn/Out 없앴음.
 
 //1) Skipped xx frame. too much work on its main thread 관련:
 // 일단 getDaysxx 없애고 (훨씬 빠르고 간소한) alarm.daysOfWeek -> 바로 string 으로 확인 -> Day 표시! 해주는 방식으로 했음!.
@@ -353,7 +353,7 @@ class AlarmsListActivity : AppCompatActivity() {
             // 애니메이션
             supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
                 lollipop {
-                    exitTransition = Fade()
+//**ANIM 관련줄인데 삭제 a) exitTransition = Fade()
                 }
             }
             //Below is equivalent to : val listFragment= AlarmsListFragment()
@@ -361,9 +361,10 @@ class AlarmsListActivity : AppCompatActivity() {
         //                          listFragment.enterTransition = Fade() .. 기타 등등.
             val listFragment = AlarmsListFragment().apply {
                 lollipop {
-                    sharedElementEnterTransition = moveTransition()
-                    enterTransition = Fade()
-                    allowEnterTransitionOverlap = true
+            // ANIM  관련 다음 3줄 삭제하면 Fade In/Out 안함!!
+//                        sharedElementEnterTransition = moveTransition()
+//                        enterTransition = Fade()
+//                        allowEnterTransitionOverlap = true
                 }
             }
 
@@ -371,11 +372,13 @@ class AlarmsListActivity : AppCompatActivity() {
                     .apply {
                         lollipop { // SDK 21 인듯
                             edited.holder.getOrNull()?.addSharedElementsToTransition(this)
+                            //Log.d(TAG, "showList: yes lollipop")
                         }
                     }
                     .apply {
                         if (!lollipop()) {
                             this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
+                            //Log.d(TAG, "showList: not lollipop()")
                         }
                     }.replace(R.id.main_fragment_container, listFragment).commitAllowingStateLoss()
         }
@@ -390,7 +393,7 @@ class AlarmsListActivity : AppCompatActivity() {
             logger.debug { "transition from: $currentFragment to show details, edited: $edited" }
             currentFragment?.apply {
                 lollipop {
-                    exitTransition = Fade()
+//**ANIM 관련줄인데 삭제 a)                    exitTransition = Fade()
                 }
             }
 
@@ -398,16 +401,18 @@ class AlarmsListActivity : AppCompatActivity() {
                 arguments = Bundle()
             }.apply {
                 lollipop {
-                    enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
-                    sharedElementEnterTransition = moveTransition()
-                    allowEnterTransitionOverlap = true
+// ANIM  관련 다음 3줄 삭제하면 Fade In/Out 안함!!
+//                    enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
+//                    sharedElementEnterTransition = moveTransition()
+//                    allowEnterTransitionOverlap = true
                 }
             }
 
             supportFragmentManager.beginTransaction()
                     .apply {
                         if (!lollipop()) { //lollipop = SDK 21인듯..
-                            this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
+                            //this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
+
                         }
                     }
                     .apply {

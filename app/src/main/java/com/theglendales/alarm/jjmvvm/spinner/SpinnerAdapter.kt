@@ -58,12 +58,13 @@ class SpinnerAdapter(val context: Context) : BaseAdapter() {
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        //Log.d(TAG, "getView: called.")
+        //Log.d(TAG, "getView: jj-SpinnerAdapter get view called.")
          // ** !! 자원을 재사용할때는 convertView 가 null 이 아닌 값으로 들어옴!!! !! **
         val view: View
         val spinnerVH: SpnViewHolder
 
         if(convertView == null) {
+            //Log.d(TAG, "getView: convertView==null")
             view = LayoutInflater.from(context).inflate(R.layout.item_rt_on_disk, parent, false)
             spinnerVH = SpnViewHolder()
             spinnerVH.tvName = view.findViewById<TextView>(R.id.item_name)

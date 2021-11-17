@@ -282,6 +282,7 @@ class AlarmDetailsFragment : Fragment() {
                         disposableDialog =
                             //TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager) <- 기존 timePicker 코드
                             myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
+
                     }
                 }.addToDisposables()
 
@@ -466,26 +467,40 @@ class AlarmDetailsFragment : Fragment() {
                 })
 
         disposables.add(editor.distinctUntilChanged().observeOn(Schedulers.computation()).map { editor ->
+            Log.d(TAG, "onResume: editor.alarmtone=${editor.alarmtone}")
                     when (editor.alarmtone) {
                         is Alarmtone.Silent -> {requireContext().getText(R.string.silent_alarm_summary)}
                         is Alarmtone.Default -> {RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()}
+                        //is Alarmtone.Default -> {RingtoneManager.getRingtone(context, Uri.parse(DiskSearcher.finalRtArtPathList[0].audioFilePath))}
+
                         is Alarmtone.Sound -> {RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()}
                         else -> {
                             Log.d(TAG, "onResume: !! 갑자기 여기에 else 문 넣으라고 오류가 뜨네. 이해 불가!!!!!! wtf????")}
                     }
+
                 }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
 //** RT 변경 or 최초 DetailsFrag 열릴 때 이쪽으로 들어옴
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId")
-                    if(isRtListReady) { // 2) Rt 변경되었을 때  -> Circle albumArt 사진만 업데이트!
-                        //Log.d(TAG, "onResume: 2) Rt 임의로 변경되었을 때")
 
+//                    if(selectedRtFileName.toString().contains("Cesium")) {
+//                        Log.d(TAG, "onResume: contains Cesium.. selectedRtFileName= ${selectedRtFileName.toString()}")
+//                        spinner.setSelection(0,true)
+//                        //return@subscribe
+//                    }
 
-
+                    if(isRtListReady) { // 2) Rt 를 User 가 변경하였을 때  -> Circle albumArt 사진만 업데이트!
+                                Log.d(TAG, "onResume: 2) Rt 임의로 변경되었을 때")
                     //b) DetailsFrag 에 있는 Circle Album Art 변경
-                        updateCircleAlbumArt(selectedRtFileName.toString())
-                    } else { // 1) DetailsFrag (최초로) 열때 혹은 다른 Frag 갔다왔을 때 여기 무조건 실행됨(rxJava Trigger 때문)
-                        //Log.d(TAG, "onResume: 1) rxJava Trigger")
+                                updateCircleAlbumArt(selectedRtFileName.toString())
+                    } else { // 1) DetailsFrag (최초로) 열렸을때 혹은 다른 Frag 갔다왔을 때 여기 무조건 실행됨(rxJava Trigger 때문)
+                        Log.d(TAG, "onResume: 1) rxJava Trigger")
+//                        if(selectedRtFileName.toString().contains("Cesium"))
+//                        {
+//                        Log.d(TAG, "onResume: contains Cesium.. selectedRtFileName= ${selectedRtFileName.toString()}")
+//                        spinner.setSelection(0,true)
+//
+//                        }
                         initSpinner(selectedRtFileName.toString())
                     }
                 })
@@ -521,6 +536,7 @@ class AlarmDetailsFragment : Fragment() {
         disposableDialog.dispose()
         backButtonSub.dispose()
         disposables.dispose()
+
         // 나갈 때  SpinnerAdapter 에 있는 Glide 없애기? 메모리 이슈? //
     }
 

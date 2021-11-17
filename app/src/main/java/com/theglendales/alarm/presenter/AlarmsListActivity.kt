@@ -57,9 +57,13 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.29c
+// v0.29d
 // FadeIn/Out 없앴음.
 // 신규 알람 생성시 RT 자동으로 Dr01 해주기.
+// todo: - issue: 최초 install 후 rt 를 defrt01 로 설정해주기.
+// 1)프로그램 인스톨 후 첫 실행-> AlamrApplication.kt 에서 우선! raw>defrt01~05 rta 카피 및 art 추출 후 -> mySharedPref 에 경로(uri?string?) 저장작업
+// 2) 이 끝나면 AlarmApplication.kt 에서 알람 생서 작업 시작 (라인 47? 정도 : koin.get<Alarms>().start())
+// 3) Alarmtone.kt 에서 Default 의 audio uri 자체를 mySharedPref 에서 defrt01.rta 주소 받아오는 것으로 바꿀것!
 
 
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.

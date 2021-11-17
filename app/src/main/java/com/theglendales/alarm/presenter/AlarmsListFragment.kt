@@ -145,7 +145,7 @@ class AlarmsListFragment : Fragment() {
             }
         // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
             val pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
-            //Log.d(TAG, "getView: Row 생성중. alarm.id=$alarm.id, pathForRowArt=$pathForRowArt")
+            Log.d(TAG, "getView: Row 생성중. alarm=$alarm, pathForRowArt=$pathForRowArt")
             context?.let {
                 GlideApp.with(it).load(pathForRowArt).circleCrop() //
                     .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -156,7 +156,7 @@ class AlarmsListFragment : Fragment() {
                             return false
                         }
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            // Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                             Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
                             return false
                         }
                     }).into(rowHolder.albumArt)
@@ -244,54 +244,80 @@ class AlarmsListFragment : Fragment() {
 
             val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
             // Set the repeat text or leave it blank if it does not repeat.
-        // 내가 추가:: 요일 표시-->
+        // 내가 추가:: 요일 표시--> (단순화 버전)
             //todo: Dark Mode 관련..
-            // todo: 요일이 다른 언어에서 뜰 때 아래 when() 이 잘 작동될지 ..
-            //1) 일단 요일 표시TextView 는 모두 선택 안된 상태로 되어있음.[원 없음,회색 글씨]
-        //2-a) 현재 선택된 '요일'의 list 받기 (String 전달-> list[Mon,Tue] )
-            val enabledDaysList: List<String> = getEnabledDaysList(daysOfWeekStringWithSkip(alarm))
-        //2-b) 선택된 '요일'이 하루일 때  ex.Saturday 이렇게 완전한 글자가 들어옴.
+            val daysOfWeekStr = alarm.daysOfWeek.toString() // 설정된 요일 ex) _tw___s (화/목/일 알람 repeat 설정된 상태)
+            for(i in daysOfWeekStr.indices) {
+                if(daysOfWeekStr[i] == '_') { // 알파벳 없는 빈칸이면
+                    // do nothing
+                }  else { // 알파벳이 있으면
+                    when(i) {
 
-        //2-c) 선택된 '요일'이 하루 이상 (ex. Mon,Tue) 이런식으로 들어옴. 리스트에 포함된 '요일' 은 기존 TextView 의 글자를 없애주고 -> 동글뱅이 text 표기로 변경!
-            for(i in enabledDaysList.indices) {
-                when(enabledDaysList[i])
-                {
-                    "Sun","Sunday"-> {rowHolder.tvSun.text=""
-                        rowHolder.tvSun.background=yesAlarmSun}
-                    "Mon","Monday" ->{rowHolder.tvMon.text=""
-                        rowHolder.tvMon.background=yesAlarmMon}
-                    "Tue","Tuesday" ->{rowHolder.tvTue.text=""
-                        rowHolder.tvTue.background=yesAlarmTue}
-                    "Wed","Wednesday" ->{rowHolder.tvWed.text=""
-                        rowHolder.tvWed.background=yesAlarmWed}
-                    "Thu","Thursday" ->{rowHolder.tvThu.text=""
-                        rowHolder.tvThu.background=yesAlarmThu}
-                    "Fri","Friday" ->{rowHolder.tvFri.text=""
-                        rowHolder.tvFri.background=yesAlarmFri}
-                    "Sat","Saturday" ->{rowHolder.tvSat.text=""
-                        rowHolder.tvSat.background=yesAlarmSat}
-                    "Never" -> {} // 아무 표시도 안함.
-                    "Every day" -> {
-                        rowHolder.tvSun.text=""
-                        rowHolder.tvMon.text=""
-                        rowHolder.tvTue.text=""
-                        rowHolder.tvWed.text=""
-                        rowHolder.tvThu.text=""
-                        rowHolder.tvFri.text=""
-                        rowHolder.tvSat.text=""
-
-                        rowHolder.tvSun.background=yesAlarmSun
-                        rowHolder.tvMon.background=yesAlarmMon
-                        rowHolder.tvTue.background=yesAlarmTue
-                        rowHolder.tvWed.background=yesAlarmWed
-                        rowHolder.tvThu.background=yesAlarmThu
-                        rowHolder.tvFri.background=yesAlarmFri
-                        rowHolder.tvSat.background=yesAlarmSat
+                        0 ->{rowHolder.tvMon.text=""
+                            rowHolder.tvMon.background=yesAlarmMon}
+                        1 ->{rowHolder.tvTue.text=""
+                            rowHolder.tvTue.background=yesAlarmTue}
+                        2 ->{rowHolder.tvWed.text=""
+                            rowHolder.tvWed.background=yesAlarmWed}
+                        3 ->{rowHolder.tvThu.text=""
+                            rowHolder.tvThu.background=yesAlarmThu}
+                        4 ->{rowHolder.tvFri.text=""
+                            rowHolder.tvFri.background=yesAlarmFri}
+                        5 ->{rowHolder.tvSat.text=""
+                            rowHolder.tvSat.background=yesAlarmSat}
+                        6-> {rowHolder.tvSun.text=""
+                            rowHolder.tvSun.background=yesAlarmSun}
                     }
-
-
                 }
             }
+
+
+            //1) 일단 요일 표시TextView 는 모두 선택 안된 상태로 되어있음.[원 없음,회색 글씨]
+        //2-a) 현재 선택된 '요일'의 list 받기 (String 전달-> list[Mon,Tue] )
+
+//            val enabledDaysList: List<String> = getEnabledDaysList(daysOfWeekStringWithSkip(alarm))
+//        //2-b) 선택된 '요일'이 하루일 때  ex.Saturday 이렇게 완전한 글자가 들어옴.
+//
+//        //2-c) 선택된 '요일'이 하루 이상 (ex. Mon,Tue) 이런식으로 들어옴. 리스트에 포함된 '요일' 은 기존 TextView 의 글자를 없애주고 -> 동글뱅이 text 표기로 변경!
+//            for(i in enabledDaysList.indices) {
+//                when(enabledDaysList[i])
+//                {
+//                    "Sun","Sunday"-> {rowHolder.tvSun.text=""
+//                        rowHolder.tvSun.background=yesAlarmSun}
+//                    "Mon","Monday" ->{rowHolder.tvMon.text=""
+//                        rowHolder.tvMon.background=yesAlarmMon}
+//                    "Tue","Tuesday" ->{rowHolder.tvTue.text=""
+//                        rowHolder.tvTue.background=yesAlarmTue}
+//                    "Wed","Wednesday" ->{rowHolder.tvWed.text=""
+//                        rowHolder.tvWed.background=yesAlarmWed}
+//                    "Thu","Thursday" ->{rowHolder.tvThu.text=""
+//                        rowHolder.tvThu.background=yesAlarmThu}
+//                    "Fri","Friday" ->{rowHolder.tvFri.text=""
+//                        rowHolder.tvFri.background=yesAlarmFri}
+//                    "Sat","Saturday" ->{rowHolder.tvSat.text=""
+//                        rowHolder.tvSat.background=yesAlarmSat}
+//                    "Never" -> {} // 아무 표시도 안함.
+//                    "Every day" -> {
+//                        rowHolder.tvSun.text=""
+//                        rowHolder.tvMon.text=""
+//                        rowHolder.tvTue.text=""
+//                        rowHolder.tvWed.text=""
+//                        rowHolder.tvThu.text=""
+//                        rowHolder.tvFri.text=""
+//                        rowHolder.tvSat.text=""
+//
+//                        rowHolder.tvSun.background=yesAlarmSun
+//                        rowHolder.tvMon.background=yesAlarmMon
+//                        rowHolder.tvTue.background=yesAlarmTue
+//                        rowHolder.tvWed.background=yesAlarmWed
+//                        rowHolder.tvThu.background=yesAlarmThu
+//                        rowHolder.tvFri.background=yesAlarmFri
+//                        rowHolder.tvSat.background=yesAlarmSat
+//                    }
+//
+//
+//                }
+//            }
         // 내가 추가:: 요일 표시<--
 
 
@@ -326,13 +352,13 @@ class AlarmsListFragment : Fragment() {
             return rowHolder.rowView
         }
 
-        private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
+        /*private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
             val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
             //Log.d(TAG, "daysOfWeekStringWithSkip=$daysOfWeekStr, alarm.skipping = ${alarm.skipping}")
             return if (alarm.skipping) "$daysOfWeekStr (skipping)" else daysOfWeekStr
-        }
+        }*/
     }
-// d
+//
 
     //LongClick related.. i think..
     override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -548,13 +574,13 @@ class AlarmsListFragment : Fragment() {
 // <--추가 3) Lottie 관련 <---
 
 // 추가 4) daysOfWeekStringWithSkip() 에서 받은 String 에서 알람 설정된 날들을 찾기. (Ex. M,T
-    private fun getEnabledDaysList(daysInString: String): List<String> {
+    /*private fun getEnabledDaysList(daysInString: String): List<String> {
         // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split
         val enabledDaysList: List<String> = daysInString.split(",").map {dayStr -> dayStr.trim()}
-        //Log.d(TAG, "getEnabledDaysList: enabledDaysList=$enabledDaysList")
+        Log.d(TAG, "getEnabledDaysList: enabledDaysList=$enabledDaysList")
         return enabledDaysList
 
-    }
+    }*/
 
     // ImageView 에 주입할 Circle (text) Drawable Builder: https://github.com/amulyakhare/TextDrawable
     // 기본 1주일 전체 알람 없는 날 표시용 drawable [회색 배경, 흰 글씨]

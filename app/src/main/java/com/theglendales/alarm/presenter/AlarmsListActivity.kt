@@ -57,14 +57,14 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.28e
+// v0.28g
 
 
-//(O) 좀 더 많이  swipe/ drag 했을 때 열리게 하기 (O)  SwipeRevealLayout> getRightInt  + 20 해줬음.
+//1) Skipped xx frame. too much work on its main thread 관련:
+// 일단 getDaysxx 없애고 (훨씬 빠르고 간소한) alarm.daysOfWeek -> 바로 string 으로 확인 -> Day 표시! 해주는 방식으로 했음!.
 
-//- 애니메이션 땜인지 굉장히 버벅이는 느낌?
 //
-//- 신규 알람 생성시 -> RT 자동으로 DR1 해주기? 생성해주기 (안되서 계속 Glide AlbumArt 에 느낌표 에러 아이콘 뜨네..)
+//2)todo: - 신규 알람 생성시 -> RT 자동으로 DR1 해주기? 생성해주기 (안되서 계속 Glide AlbumArt 에 느낌표 에러 아이콘 뜨네..)
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 
 /**

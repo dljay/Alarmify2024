@@ -2,8 +2,10 @@ package com.theglendales.alarm.model
 
 import android.media.RingtoneManager
 import android.net.Uri
+import android.util.Log
 import java.util.Calendar
 
+private const val TAG="AlarmValue.kt"
 data class AlarmValue(
         val nextTime: Calendar,
         val state: String,
@@ -38,6 +40,7 @@ data class AlarmValue(
     }
 
     override fun toString(): String {
+        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // alert= ${alert}, alarmtone=${alarmtone.toString()}, ")
         val box = if (isEnabled) "[x]" else "[ ]"
         return "$id $box $hour:$minutes $daysOfWeek $label"
     }

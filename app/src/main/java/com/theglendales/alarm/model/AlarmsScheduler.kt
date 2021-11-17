@@ -15,6 +15,7 @@
  */
 package com.theglendales.alarm.model
 
+import android.util.Log
 import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.configuration.Prefs
 import com.theglendales.alarm.configuration.Store
@@ -25,6 +26,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.PriorityQueue
 
+private const val TAG="AlarmsScheduler"
 class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, private val store: Store, private val prefs: Prefs, private val calendars: Calendars) : IAlarmsScheduler {
 
     data class ScheduledAlarm(
@@ -49,6 +51,7 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
 
     /** Actually start scheduling alarms */
     fun start() {
+        Log.d(TAG, "start: jj called")
         isStarted = true
         fireAlarmsInThePast()
         if (queue.isNotEmpty()) {
@@ -61,6 +64,7 @@ class AlarmsScheduler(private val setter: AlarmSetter, private val log: Logger, 
     }
 
     override fun setAlarm(id: Int, type: CalendarType, calendar: Calendar, alarmValue: AlarmValue) {
+        Log.d(TAG, "setAlarm: called.")
         val scheduledAlarm = ScheduledAlarm(id, calendar, type, alarmValue)
         replaceAlarm(id, scheduledAlarm)
     }

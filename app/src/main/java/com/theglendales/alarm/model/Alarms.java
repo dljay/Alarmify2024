@@ -58,6 +58,7 @@ public class Alarms implements IAlarmsManager {
     }
 
     public void start() {
+
         query.query().subscribe(new Consumer<List<AlarmStore>>() {
             @Override
             public void accept(@NonNull List<AlarmStore> alarmRecords) throws Exception {

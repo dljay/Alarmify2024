@@ -2,10 +2,13 @@ package com.theglendales.alarm.model
 
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 
+private const val TAG="Alarmtone.kt"
 private val defaultAlarmAlertUri = Settings.System.DEFAULT_ALARM_ALERT_URI.toString()
 
 fun Alarmtone.ringtoneManagerString(): Uri? {
+    Log.d(TAG, "ringtoneManagerString: this=$this")
     return when (this) {
         is Alarmtone.Silent -> null
         is Alarmtone.Default -> Uri.parse(defaultAlarmAlertUri)

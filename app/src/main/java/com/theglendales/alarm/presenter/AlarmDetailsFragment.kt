@@ -487,24 +487,12 @@ class AlarmDetailsFragment : Fragment() {
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId")
 
-//                    if(selectedRtFileName.toString().contains("Cesium")) {
-//                        Log.d(TAG, "onResume: contains Cesium.. selectedRtFileName= ${selectedRtFileName.toString()}")
-//                        spinner.setSelection(0,true)
-//                        //return@subscribe
-//                    }
-
                     if(isRtListReady) { // 2) Rt 를 User 가 변경하였을 때  -> Circle albumArt 사진만 업데이트!
                                 Log.d(TAG, "onResume: 2) Rt 임의로 변경되었을 때")
                     //b) DetailsFrag 에 있는 Circle Album Art 변경
                                 updateCircleAlbumArt(selectedRtFileName.toString())
                     } else { // 1) DetailsFrag (최초로) 열렸을때 혹은 다른 Frag 갔다왔을 때 여기 무조건 실행됨(rxJava Trigger 때문)
                         Log.d(TAG, "onResume: 1) rxJava Trigger")
-//                        if(selectedRtFileName.toString().contains("Cesium"))
-//                        {
-//                        Log.d(TAG, "onResume: contains Cesium.. selectedRtFileName= ${selectedRtFileName.toString()}")
-//                        spinner.setSelection(0,true)
-//
-//                        }
                         initSpinner(selectedRtFileName.toString())
                     }
                 })

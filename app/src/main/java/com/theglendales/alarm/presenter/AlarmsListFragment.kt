@@ -447,6 +447,7 @@ class AlarmsListFragment : Fragment() {
         //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
         else if(!myDiskSearcher.isDiskScanNeeded()) {
             val resultList = mySharedPrefManager.getRtaArtPathList()
+
             Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
             myDiskSearcher.updateList(resultList)
         }

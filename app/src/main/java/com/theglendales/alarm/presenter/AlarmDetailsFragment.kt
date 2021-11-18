@@ -65,7 +65,6 @@ import com.theglendales.alarm.util.Optional
 import com.theglendales.alarm.util.modify
 import com.theglendales.alarm.view.onChipDayClicked
 
-import com.theglendales.alarm.view.showDialog
 import com.theglendales.alarm.view.summary
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -199,7 +198,9 @@ class AlarmDetailsFragment : Fragment() {
 
                val alarmtone = when (alert) {
                    null -> Alarmtone.Silent() // 선택한 alarm 톤이 a)어떤 오류등으로 null 값일때 -> .Silent()
-                   RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default() // b)Default 일때
+
+                   // b)Default 일때.. 근데 아예 Default 가 이쪽으로 안들어오게 AlarmValue.kt & Alarmtone.kt 에서 손 봐놨ㅇ므.
+                   RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default()
                    else -> Alarmtone.Sound(alert) // 내가 선택한 놈.
                }
                // 테스트중 <-
@@ -278,8 +279,8 @@ class AlarmDetailsFragment : Fragment() {
                     Log.d(TAG, "onCreateView: jj-!!inside .subscribe-1")
                     if (isNewAlarm) {
                         Log.d(TAG, "onCreateView: jj-!!inside .subscribe-2 NEW ALARM SETUP")
-                        spinner.adapter=spinnerAdapter
-                        spinner.setSelection(0,true)
+                        //spinner.adapter=spinnerAdapter
+                        //spinner.setSelection(0,true)
 
 
                         store.transitioningToNewAlarmDetails().onNext(false)
@@ -474,8 +475,8 @@ class AlarmDetailsFragment : Fragment() {
             Log.d(TAG, "onResume: editor.alarmtone=${editor.alarmtone}")
                     when (editor.alarmtone) {
                         is Alarmtone.Silent -> {requireContext().getText(R.string.silent_alarm_summary)}
-                        is Alarmtone.Default -> {RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()}
-                        //is Alarmtone.Default -> {RingtoneManager.getRingtone(context, Uri.parse(DiskSearcher.finalRtArtPathList[0].audioFilePath))}
+                        //is Alarmtone.Default -> {RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()}
+                        is Alarmtone.Default -> {RingtoneManager.getRingtone(context, Uri.parse(getRandomDefaultRtaPath())).title()}
 
                         is Alarmtone.Sound -> {RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()}
                         else -> {
@@ -624,6 +625,28 @@ class AlarmDetailsFragment : Fragment() {
         }
     }
 //*********** 내가 추가한 Utility Method **********
+private fun getRandomDefaultRtaPath(): String? { // 신규 알람 생성시 defRta 1~5 중 하나로 지정!
+    Log.d(TAG, "getDefaultRta: called!!")
+
+
+    try{
+        val rdnNumbA = (0..DiskSearcher.finalRtArtPathList.size).random() // 전체 있는 Ringtone 중 아무거나 random 세팅!
+        var rtaPath = DiskSearcher.finalRtArtPathList[rdnNumbA].audioFilePath
+
+        if(!rtaPath.isNullOrEmpty()) {
+            return rtaPath
+        } else { // 위에서 만약 실패했을 경우
+            val rdnNumbB = (0..mySharedPrefManager.getRtaArtPathList().size).random()
+            val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
+            rtaPath = listFromSharedPref[rdnNumbB].audioFilePath
+            return rtaPath
+        }
+    }catch (e: java.lang.Exception) {
+        Log.d(TAG, "getDefaultRta: error getting default rta path.. error=$e ")
+        return null
+    }
+}
+
     private fun getAlarmSetDaysListFromStr(alarmSetDaysStr: String): List<String> {
     // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split
     val alarmSetDaysStrList: List<String> = alarmSetDaysStr.split(",").map {dayStr -> dayStr.trim()}

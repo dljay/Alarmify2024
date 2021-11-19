@@ -57,11 +57,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.30b
-
-//- 앱 최초 인스톨 후 생기는 두개의 알람 (8시,09시30분) 은 둘다 defrt01 로 해줌.
-//- 이렇게 생성된 두 알람 [id, artPath] 등록이 불가해서 AlarmListFragment.kt 에서 Glide 가 찾기전에 path=null => mySharedPref, DiskSearcher 활용해서 art 보여줌!
-// todo: 2) 이 모든 과정전에 lottie 애니메이션 보여주는 작업 필요함. 여차하면 ListActivity 시작과 동시에 보여주기..?
+// v0.30c (11/19 저녁 6시)
+// AlarmApplication 시작하자마자 '앱 첫 인스톨' -> ' 'SplashScreen' 이나 Launching Activity? 할것.. AlarmApplication.kt>Line66 부터
 //todo: - fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 
 /**

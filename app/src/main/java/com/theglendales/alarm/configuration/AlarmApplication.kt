@@ -14,6 +14,7 @@ import com.theglendales.alarm.alert.BackgroundNotifications
 import com.theglendales.alarm.background.AlertServicePusher
 import com.theglendales.alarm.bugreports.BugReporter
 import com.theglendales.alarm.createNotificationChannels
+import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
@@ -32,7 +33,7 @@ class AlarmApplication : Application() {
     // 내가 추가-->> 앱 install 후 최초 시행!-> 하자마자 diskSearcher->mySharedPref 에 rta/art path 를 올려놓기 위해서 -> 그 뒤에 default 알람 (아침 8시30분.주말 9시 설정)
         private val myDiskSearcher: DiskSearcher by globalInject()
         private val mySharedPrefManager: MySharedPrefManager by globalInject()
-        lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
+        //lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
 
     // 내가 추가 <<--
 
@@ -61,14 +62,17 @@ class AlarmApplication : Application() {
 
         createNotificationChannels()
 // 내가 추가---> DiskSearcher 시행 및 mySharedPref 생성하여 art,rta path 기록해놓기.
-        lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
+        //lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
+        // todo: 여기서 첫 install 후 런칭인지 확인 -> SplashScreen? Launch Activity? "Getting our app Ready !" ->
+        // todo: 추후 여기서 Permission 관련도 해결해줬으면..
 
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
+            // 추후 SPLASH 스크린으로 대체 가능하지만. 일단은 앱 인스톨 후 첫 Launch-> DiskScan 진행할때는 아래 GlbVars.isFirstAppLaunch
+
+
             // ** diskScan 시작 시점-> ANIM(ON)!
-            //showLottieDialogFrag()
-//            val handler: Handler = Handler(Looper.getMainLooper())
-//            handler.postDelayed({hideLottieAndShowSnackBar()}, 2000) // 2초후에 애니메이션 없애기-> 보통 0.1초 사이에 실 작업은 다 끝나기는 함..
+
 
                 //lottieAnimCtrl(SHOW_ANIM)
                 //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
@@ -127,15 +131,15 @@ class AlarmApplication : Application() {
 
 
 
-    //Lottie 관련 추가->
-    private fun showLottieDialogFrag() {
-        //lottieDialogFrag.show(requireActivity().supportFragmentManager, lottieDialogFrag.tag)
-
-    }
-    private fun hideLottieAndShowSnackBar() {
-        if(lottieDialogFrag.isAdded) {
-            lottieDialogFrag.dismissAllowingStateLoss()
-            //Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
-        }
-    }
+    //Lottie 관련 추가-> 여기서 실행 안됨..
+//    private fun showLottieDialogFrag() {
+//        //lottieDialogFrag.show(requireActivity().supportFragmentManager, lottieDialogFrag.tag)
+//
+//    }
+//    private fun hideLottieAndShowSnackBar() {
+//        if(lottieDialogFrag.isAdded) {
+//            lottieDialogFrag.dismissAllowingStateLoss()
+//            //Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
+//        }
+//    }
 }

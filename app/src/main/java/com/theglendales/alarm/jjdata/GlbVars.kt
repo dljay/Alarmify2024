@@ -7,7 +7,6 @@ object GlbVars {
 
 
 
-
 //    var seekBarMax: Int = -10
 //    var playbackPos: Long = -10L
 //    var seekbarProgress: Int = -10

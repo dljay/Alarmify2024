@@ -40,6 +40,7 @@ import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.jjadapters.GlideApp
+import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
@@ -427,6 +428,7 @@ class AlarmsListFragment : Fragment() {
     //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
         //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
              // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
+
 
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")

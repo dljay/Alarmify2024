@@ -57,19 +57,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.30a
-//// 1)프로그램 인스톨 후 첫 실행-> AlamrApplication.kt 에서 우선! raw>defrt01~05 rta 카피 및 art 추출 후 -> mySharedPref 에 경로(uri?string?) 저장작업 (O)
-//// 2) 이 끝나면 AlarmApplication.kt 에서 알람 생서 작업 시작 (라인 47? 정도 : koin.get<Alarms>().start()) (O)
-//-- 일단은 disksearcher 다 끝나고 (최초) 알람 자동생성 작업까지 순차적으로 하는건 성공인듯.. 바탕화면>@Log>21_11_18_0시49분.png 참고
-////3) 인스톨 후 최초 알람 생성시 random 하게 defrt1~5 사이 지정: AlarmTone.kt // 최초 인스톨 후 알람 2개 생성할때만 관여하는듯..
-////4) 신규 알람 생성시 random 하게 defrt1~5 + PurchasedRta 중에 지정: AlarmValue.kt  // 신규 알람 생성 관련
-//
-////todo: 1) 인스톨 후 최초 알람 생성시 rta 를 임의로 지정해주지만 mySharedPref 에 [alarm.id, artPath] 설정을 못해줌! saveArtPathForAlarm(id,artPath) 해줘야함!
-//=> 이걸 해야만 AlarmsListActivity 가 떴을 때 Glide 에서 앨범 art 보여줄 수 있음.
-//
-//// todo: 2) 이 모든 과정전에 lottie 애니메이션 보여주는 작업 필요함. 여차하면 ListActivity 시작과 동시에 보여주기..?
+// v0.30b
 
-
+//- 앱 최초 인스톨 후 생기는 두개의 알람 (8시,09시30분) 은 둘다 defrt01 로 해줌.
+//- 이렇게 생성된 두 알람 [id, artPath] 등록이 불가해서 AlarmListFragment.kt 에서 Glide 가 찾기전에 path=null => mySharedPref, DiskSearcher 활용해서 art 보여줌!
+// todo: 2) 이 모든 과정전에 lottie 애니메이션 보여주는 작업 필요함. 여차하면 ListActivity 시작과 동시에 보여주기..?
 //todo: - fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 
 /**

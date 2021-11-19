@@ -626,7 +626,7 @@ class AlarmDetailsFragment : Fragment() {
     }
 //*********** 내가 추가한 Utility Method **********
 private fun getRandomDefaultRtaPath(): String? { // 신규 알람 생성시 defRta 1~5 중 하나로 지정!
-    Log.d(TAG, "getDefaultRta: called!!")
+    Log.d(TAG, "getRandomDefaultRta: called!!")
 
 
     try{
@@ -642,7 +642,7 @@ private fun getRandomDefaultRtaPath(): String? { // 신규 알람 생성시 defR
             return rtaPath
         }
     }catch (e: java.lang.Exception) {
-        Log.d(TAG, "getDefaultRta: error getting default rta path.. error=$e ")
+        Log.d(TAG, "getRandomDefaultRta: error getting default random rta path.. error=$e ")
         return null
     }
 }

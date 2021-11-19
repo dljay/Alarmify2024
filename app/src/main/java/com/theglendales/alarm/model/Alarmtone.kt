@@ -20,18 +20,23 @@ fun Alarmtone.ringtoneManagerString(): Uri? {
         is Alarmtone.Sound -> Uri.parse(this.uriString)
     }
 }
-private fun getDefaultRtaPath(): String? { // 최초 인스톨 후 신규 알람 2개 생성시 defRta 1~5 중 하나로 지정! (둘 다 같음!!)
+private fun getDefaultRtaPath(): String? { // 최초 인스톨 후 생성되는 **신규 알람 2개는** 무조건 defRta1 으로 지정할것! (둘 다 같음!!)
     Log.d(TAG, "getDefaultRta: called!!")
-    val randomNumber = (0..4).random() // todo: 최초 ringtone 갯수가 변경되면 이것도 변경해줘야함.
+    //val randomNumber = (0..4).random() //
 
         try{
-            var rtaPath = DiskSearcher.finalRtArtPathList[randomNumber].audioFilePath
+            var rtaPath = DiskSearcher.finalRtArtPathList[0].audioFilePath
+
+
+//            var artPath = DiskSearcher.finalRtArtPathList[randomNumber].artFilePathStr
+//            mySharedPrefManager.saveArtPathForAlarm(id, artPath)
+
 
             if(!rtaPath.isNullOrEmpty()) {
                 return rtaPath
             } else { // 위에서 만약 실패했을 경우
                 val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
-                rtaPath = listFromSharedPref[randomNumber].audioFilePath
+                rtaPath = listFromSharedPref[0].audioFilePath
                 return rtaPath
             }
         }catch (e: Exception) {
@@ -48,12 +53,14 @@ sealed class Alarmtone(open val persistedString: String?) {
 
     companion object {
         fun fromString(string: String?): Alarmtone {
+
             when (string) {
                 null -> {
                     Log.d(TAG, "fromString: null")
                     return Silent()}
                 "" -> {Log.d(TAG, "fromString: 최초 알람 생성 -> defaultAlarmAlertUri 전달 예정!") //
                     if(!defaultAlarmAlertUri.isNullOrEmpty()) {
+
                         return Sound(defaultAlarmAlertUri)
                         } else {
                         return Default() // <- todo: 이거 괜찮을지..
@@ -62,7 +69,7 @@ sealed class Alarmtone(open val persistedString: String?) {
                 defaultAlarmAlertUri -> {
                     Log.d(TAG, "fromString: defaultAlarmAlertUri. string=$string")
                     return Sound(defaultAlarmAlertUri)}
-                else -> {
+                else -> { // user 가 지정해놓은 rta 일 경우 string 이 이상한 경로겠지.. ex. string=/storage/emulated/0/Android/data/com.theglendales.alarm.debug/files/.AlarmRingTones/defrt5.rta
                     Log.d(TAG, "fromString: else.. string=$string")
                     return Sound(string)}
             }

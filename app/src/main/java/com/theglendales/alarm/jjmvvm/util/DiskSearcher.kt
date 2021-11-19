@@ -98,11 +98,11 @@ class DiskSearcher(val context: Context)
 
         if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 5) { //todo: defaulRt 추후 5개 넘으면 숫자 변경.
             Log.d(TAG, "onDiskRtSearcher: NO FILES (or less than 5 files) INSIDE /.AlarmRingTones FOLDER!")
-            copyDefaultRtsToPhone(R.raw.defrt1, "defrt1.rta")
-            copyDefaultRtsToPhone(R.raw.defrt2,"defrt2.rta")
-            copyDefaultRtsToPhone(R.raw.defrt3, "defrt3.rta")
-            copyDefaultRtsToPhone(R.raw.defrt4, "defrt4.rta")
-            copyDefaultRtsToPhone(R.raw.defrt5, "defrt5.rta")
+            copyDefaultRtsToPhone(R.raw.defrt1, "defrt01.rta")
+            copyDefaultRtsToPhone(R.raw.defrt2,"defrt02.rta")
+            copyDefaultRtsToPhone(R.raw.defrt3, "defrt03.rta")
+            copyDefaultRtsToPhone(R.raw.defrt4, "defrt04.rta")
+            copyDefaultRtsToPhone(R.raw.defrt5, "defrt05.rta")
             }
     //(1)-c: 구입한 파일이 현 폴더에 있는지 한번 더 확인? ...구축해줄곳임. flowchart 참고.
 
@@ -130,9 +130,19 @@ class DiskSearcher(val context: Context)
 
     }
 
-
-
-    fun mergeList() {}
+    fun getArtPathViaRtaFileName(rtaFileName: String): String {
+        // .listFiles filter 쓰는것보다 이게 더 효과적. filter 는 결국 모든 파일이 filter 조건문에 맞는지 확인함..
+        var artFilePath= ""
+        here@for(artFile in artDir.listFiles()) {
+            Log.d(TAG, "getArtPathViaRtaFileName: artFile.nameWithouExtension=${artFile.nameWithoutExtension}")
+            if(artFile.nameWithoutExtension == rtaFileName) {
+                Log.d(TAG, "getArtPathViaRtaFileName: We found matching art file! name=${artFile.name}")
+                artFilePath = artFile.path
+                break@here // 찾는 순간 here@ 로 가고-> '루프 바로 뒤의 실행문으로 점프!!'
+            }
+        }
+        return artFilePath
+    }
 
     // 위의 rtOnDiskSearcher() 에서 받음 리스트로 a) album art 가 있는지 체크 -> 있는 놈 경로는 xx Uri List 에 저장 b) albumArt 가 없으면 -> 생성!-> 디스크에 저장.
     fun readAlbumArtOnDisk() {
@@ -159,7 +169,7 @@ class DiskSearcher(val context: Context)
             {
                 val fullPathOfArtFile: String = topFolder+ ART_FOLDER+ File.separator + artFile.name
                 //val artUri = Uri.parse(artFile.path.toString())
-                val trkId = artFile.nameWithoutExtension // 모든 앨범아트는 RT 의 TrkId 값.art 로 설정해야함! (**파일명과 TrkId 가 일치해야함!)
+                val trkId = artFile.nameWithoutExtension // 모든 앨범아트는 RT 의 TrkId 값.art 로 설정해야함! (**파일명과 TrkId 가 일치해야함! ) -> ex) defrt01.art
 
                 onDiskArtMap[trkId] = artFile.path // MAP 에 저장! <trkId, PathString>
                 Log.d(TAG, "readAlbumArtOnDisk: added artFilePath(${artFile.path}) to onDiskArtMap => $onDiskArtMap")

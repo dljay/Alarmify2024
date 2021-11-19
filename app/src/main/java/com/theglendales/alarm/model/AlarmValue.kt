@@ -19,6 +19,7 @@ data class AlarmValue(
         val label: String,
         val daysOfWeek: DaysOfWeek
 ) {
+
     val skipping = state.contentEquals("SkippingSetState")
 
     val isSilent: Boolean
@@ -43,13 +44,13 @@ data class AlarmValue(
         }
 
     }
-    private fun getRandomDefaultRtaPath(): String? { // ** 신규 생성하는 알람에 defrta1~5 사이 아무거나 지정..? 사실상 이건 의미없고. AlarmDetailsFrag.getRandomDefaultRtaPath 가 결정지음!!
-        Log.d(TAG, "getDefaultRta: called!!")
+    private fun getRandomDefaultRtaPath(): String? { // ** 신규 알람 생성할때만! 불리네. 인스톨시 2개 생성 말고.. **
+        // 알람에 defrta1~5 사이 아무거나 지정..? 사실상 이건 의미없고. AlarmDetailsFrag.getRandomDefaultRtaPath 가 결정지음!!
+        Log.d(TAG, "getRandomDefaultRta: called!!")
         val randomNumber = (0..4).random()
 
         try{
             var rtaPath = DiskSearcher.finalRtArtPathList[randomNumber].audioFilePath
-            //var artPath = DiskSearcher.finalRtArtPathList[randomNumber].artFilePathStr
 
             if(!rtaPath.isNullOrEmpty()) {
                 return rtaPath
@@ -67,6 +68,7 @@ data class AlarmValue(
     override fun toString(): String {
         Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // alertSoundUri= ${alertSoundUri}, alarmtone=${alarmtone.toString()}, ")
 
+        // 여기서
 //        val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
 //        rtaPath = listFromSharedPref[randomNumber].audioFilePath
 

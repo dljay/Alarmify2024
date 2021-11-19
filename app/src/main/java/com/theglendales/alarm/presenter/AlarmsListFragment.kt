@@ -43,7 +43,6 @@ import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
-import com.theglendales.alarm.jjongadd.SwipeRevealLayout
 import com.theglendales.alarm.jjongadd.TimePickerJjong
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
@@ -144,7 +143,21 @@ class AlarmsListFragment : Fragment() {
                 rowHolder.detailsButton.transitionName = "detailsButton" + alarm.id
             }
         // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
-            val pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
+            var pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
+
+        // ** 현재 row 의 알람.id 로 artPath 를 못 찾앗을 때. (특히 인스톨 직후 생성된 알람의 경우 [alarm.id, artPath] 자료가 없음!
+        //  따라서 아래에서 현재 지정되어잇는 알람음에 매칭하는 art 파일을 찾음. (참고로 신규인스톨 첫 두 알람은 무조건 defrt01로 지정)
+            if(pathForRowArt.isNullOrEmpty()) { // 인스톨 후 알람 신규 생성시 해당 생성된 [alarmId, artPath] 는 따로 저장이 안되어 있는 상태. 따라서 null 값임.
+
+                val rtaFileName= mySharedPrefManager.getArtPathFromRtaPath(alarm.alarmtone.persistedString)
+                val artFilePath= myDiskSearcher.getArtPathViaRtaFileName(rtaFileName)
+                pathForRowArt = artFilePath
+
+                Log.d(TAG, "getView: rtaFileName=$rtaFileName, artFilePath= $artFilePath, pathForRowArt=$pathForRowArt")
+                mySharedPrefManager.saveArtPathForAlarm(alarm.id, artFilePath)
+            }
+
+
             Log.d(TAG, "getView: Row 생성중. alarm=$alarm, pathForRowArt=$pathForRowArt")
             context?.let {
                 GlideApp.with(it).load(pathForRowArt).circleCrop() //

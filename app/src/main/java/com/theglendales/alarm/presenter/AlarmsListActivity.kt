@@ -69,6 +69,7 @@ private const val TAG="*AlarmsListActivity*"
 class AlarmsListActivity : AppCompatActivity() {
     private lateinit var mActionBarHandler: ActionBarHandler
 
+
     //내가 추가-->
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()

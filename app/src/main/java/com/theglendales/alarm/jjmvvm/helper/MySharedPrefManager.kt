@@ -48,6 +48,7 @@ class MySharedPrefManager(context: Context) {
         Log.d(TAG, "saveRtaArtPathList: begins..")
         val jsonStrSave = gson.toJson(rtaArtPathList)
         prefForRtaArt.edit().putString(KEY_1, jsonStrSave).apply()
+        Log.d(TAG, "saveRtaArtPathList: done")
     }
 
 //<2> List Fragment ROW 에서 보여질 ART PATH 용도: [Key,Value] = [AlarmId-Int, ArtPath-String]

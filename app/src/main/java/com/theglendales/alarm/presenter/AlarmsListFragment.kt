@@ -41,10 +41,12 @@ import com.theglendales.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
+import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
 import com.theglendales.alarm.jjongadd.SwipeRevealLayout
 import com.theglendales.alarm.jjongadd.TimePickerJjong
+import com.theglendales.alarm.model.Alarmtone
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -107,6 +109,53 @@ class AlarmsListFragment : Fragment() {
     /** changed by [Prefs.listRowLayout] in [onResume]*/
     private var listRowLayout = prefs.layout()
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d(TAG, "onAttach: called")
+        lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
+
+        //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
+        //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
+        // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
+
+        if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
+            Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
+            // ** diskScan 시작 시점-> ANIM(ON)!
+            showLottieDialogFrag()
+            val handler: Handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({hideLottieAndShowSnackBar()}, 2000) // 2초후에 애니메이션 없애기-> 보통 0.1초 사이에 실 작업은 다 끝나기는 함..
+
+
+            //CoroutineScope(Dispatchers.IO).launch { <== ** 일부러 코루틴에서 제외-> 그래야 여기서 update SharedPref 등이 끝나고나서 밑에 innerClass>getView 실행됨.
+                //lottieAnimCtrl(SHOW_ANIM)
+                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
+                myDiskSearcher.readAlbumArtOnDisk()
+                //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
+                val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
+                //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
+
+                // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
+                mySharedPrefManager.saveRtaArtPathList(resultList)
+
+                // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+                myDiskSearcher.updateList(resultList)
+
+                Log.d(TAG, "onCreate: --------------------------- DiskScan DONE..(Hopefully..)---------- \n\n resultList = $resultList!")
+
+
+            //} // ** diskScan 종료 <--
+
+        }
+
+        //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+        else if(!myDiskSearcher.isDiskScanNeeded()) {
+            val resultList = mySharedPrefManager.getRtaArtPathList()
+
+            Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
+            myDiskSearcher.updateList(resultList)
+        }
+    }
+
 // ## Inner Class ##
     inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values)
     {
@@ -128,6 +177,7 @@ class AlarmsListFragment : Fragment() {
         }
 
 
+
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
             // get the alarm which we have to display
 
@@ -144,8 +194,27 @@ class AlarmsListFragment : Fragment() {
                 rowHolder.detailsButton.transitionName = "detailsButton" + alarm.id
             }
         // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
-            val pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
-            Log.d(TAG, "getView: Row 생성중. alarm=$alarm, pathForRowArt=$pathForRowArt")
+            var pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
+            
+        // ** Row 의 앨범아트 path가 null => 아이콘 (!) 요걸로 뜰 때 설정해주기 (정상적인 상황이라면 앱 Install 후 자동 생성되는 알람 2개 8:30, 9:00 건의 경우만 해당됨)
+            if(pathForRowArt.isNullOrEmpty()) {
+                Log.d(TAG, "getView: pathForRowArt=$pathForRowArt, alarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
+
+                val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
+                val availableRtCount= currentRtaArtPathList.size
+                var rndRtPos = 0
+                rndRtPos = (0..availableRtCount).random()
+                if(rndRtPos == availableRtCount && rndRtPos >= 0 ) {rndRtPos = 0 } // ex. 총 갯수가 5개인데 5번이 뽑히면 안되니깐..
+
+                val artPath = currentRtaArtPathList[rndRtPos].artFilePathStr
+                mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
+                pathForRowArt = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
+                // **??? alarm.alarmtone = Alarmtone.fromString()
+            }
+            //Log.d(TAG, "getView: alarm.id=${alarm.id}, pathForRowArt= $pathForRowArt")
+
+
+                Log.d(TAG, "getView: Row 생성중. alarm=$alarm, pathForRowArt=$pathForRowArt")
             context?.let {
                 GlideApp.with(it).load(pathForRowArt).circleCrop() //
                     .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -201,41 +270,6 @@ class AlarmsListFragment : Fragment() {
                 }
 
             }
-
-
-
-        // Option B-1) [내가 수정해서 적은 것] Material Time Picker 보여주기
-//
-//            rowHolder.digitalClockContainer.setOnClickListener {
-//                timePickerDialogDisposable =
-//                    myTimePickerJjong.showTimePicker(parentFragmentManager)
-//                        .subscribe { picked ->
-//                            if (picked.isPresent()) {
-//                                alarms.getAlarm(alarm.id)?.also { alarm ->
-//                                    alarm.edit {
-//                                        copy(
-//                                            isEnabled = true,
-//                                            hour = picked.get().hour,
-//                                            minutes = picked.get().minute
-//                                        )
-//                                    }
-//                                }
-//                            }
-//                        }
-//
-//
-//            }
-        // Option B-2) [원래적혀있던것] 시간 적혀있는 부분 눌렀을 때 -> TimePicker 보여주기
-//            rowHolder.digitalClockContainer.setOnClickListener {
-//                timePickerDialogDisposable =TimePickerDialogFragment.showTimePicker(parentFragmentManager)
-//                        .subscribe { picked ->if (picked.isPresent()) {alarms.getAlarm(alarm.id)?.also { alarm ->
-//                                    alarm.edit {copy(isEnabled = true,hour = picked.get().hour,minutes = picked.get().minute)}}}}}
-
-
-//            rowHolder.digitalClockContainer.setOnLongClickListener {
-//                false
-//            }
-
             // set the alarm text
             val c = Calendar.getInstance()
             c.set(Calendar.HOUR_OF_DAY, alarm.hour)
@@ -271,94 +305,10 @@ class AlarmsListFragment : Fragment() {
                 }
             }
 
-
-            //1) 일단 요일 표시TextView 는 모두 선택 안된 상태로 되어있음.[원 없음,회색 글씨]
-        //2-a) 현재 선택된 '요일'의 list 받기 (String 전달-> list[Mon,Tue] )
-
-//            val enabledDaysList: List<String> = getEnabledDaysList(daysOfWeekStringWithSkip(alarm))
-//        //2-b) 선택된 '요일'이 하루일 때  ex.Saturday 이렇게 완전한 글자가 들어옴.
-//
-//        //2-c) 선택된 '요일'이 하루 이상 (ex. Mon,Tue) 이런식으로 들어옴. 리스트에 포함된 '요일' 은 기존 TextView 의 글자를 없애주고 -> 동글뱅이 text 표기로 변경!
-//            for(i in enabledDaysList.indices) {
-//                when(enabledDaysList[i])
-//                {
-//                    "Sun","Sunday"-> {rowHolder.tvSun.text=""
-//                        rowHolder.tvSun.background=yesAlarmSun}
-//                    "Mon","Monday" ->{rowHolder.tvMon.text=""
-//                        rowHolder.tvMon.background=yesAlarmMon}
-//                    "Tue","Tuesday" ->{rowHolder.tvTue.text=""
-//                        rowHolder.tvTue.background=yesAlarmTue}
-//                    "Wed","Wednesday" ->{rowHolder.tvWed.text=""
-//                        rowHolder.tvWed.background=yesAlarmWed}
-//                    "Thu","Thursday" ->{rowHolder.tvThu.text=""
-//                        rowHolder.tvThu.background=yesAlarmThu}
-//                    "Fri","Friday" ->{rowHolder.tvFri.text=""
-//                        rowHolder.tvFri.background=yesAlarmFri}
-//                    "Sat","Saturday" ->{rowHolder.tvSat.text=""
-//                        rowHolder.tvSat.background=yesAlarmSat}
-//                    "Never" -> {} // 아무 표시도 안함.
-//                    "Every day" -> {
-//                        rowHolder.tvSun.text=""
-//                        rowHolder.tvMon.text=""
-//                        rowHolder.tvTue.text=""
-//                        rowHolder.tvWed.text=""
-//                        rowHolder.tvThu.text=""
-//                        rowHolder.tvFri.text=""
-//                        rowHolder.tvSat.text=""
-//
-//                        rowHolder.tvSun.background=yesAlarmSun
-//                        rowHolder.tvMon.background=yesAlarmMon
-//                        rowHolder.tvTue.background=yesAlarmTue
-//                        rowHolder.tvWed.background=yesAlarmWed
-//                        rowHolder.tvThu.background=yesAlarmThu
-//                        rowHolder.tvFri.background=yesAlarmFri
-//                        rowHolder.tvSat.background=yesAlarmSat
-//                    }
-//
-//
-//                }
-//            }
-        // 내가 추가:: 요일 표시<--
-
-
-
-
-//            rowHolder.daysOfWeek.run {
-//                text = daysOfWeekStringWithSkip(alarm) // 해당 Function 에서 String 을 받아서 textView 에 setting (ex. Mon,Tue,Wed)
-//                // **아래에 utility function 을 만들어서. if 'daysOfWeekStringWithSkip' function 에서 받은 str => contains "mon" => highlight mon. 이런식으로.
-//                visibility = when {
-//                    text.isNotEmpty() -> View.VISIBLE
-//                    removeEmptyView -> View.GONE // if(removeEmptyView) is true => View.Gone.. hmm...?
-//                        else -> View.INVISIBLE
-//                }
-//            }
-
-            // Label 관련. 현재는 사용 안함. Set the repeat text or leave it blank if it does not repeat.
-            /*rowHolder.label.text = alarm.label
-
-            rowHolder.label.visibility = when {
-                alarm.label.isNotBlank() -> View.VISIBLE
-                removeEmptyView -> View.GONE
-                else -> View.INVISIBLE
-            }*/
-
-            // row.labelsContainer.visibility = when {
-            //     row.label().visibility == View.GONE && row.daysOfWeek().visibility == View.GONE -> GONE
-            //     else -> View.VISIBLE
-            // }
-
-            
-
             return rowHolder.rowView
         }
-
-        /*private fun daysOfWeekStringWithSkip(alarm: AlarmValue): String {
-            val daysOfWeekStr = alarm.daysOfWeek.toString(context, false)
-            //Log.d(TAG, "daysOfWeekStringWithSkip=$daysOfWeekStr, alarm.skipping = ${alarm.skipping}")
-            return if (alarm.skipping) "$daysOfWeekStr (skipping)" else daysOfWeekStr
-        }*/
     }
-//
+// InnerClass <--
 
     //LongClick related.. i think..
     override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -409,48 +359,48 @@ class AlarmsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.list_fragment, container, false)
         val listView = view.findViewById(R.id.list_fragment_list) as ListView
 
-        lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
-
-    //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
-        //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
-             // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
-
-        if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
-            Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
-            // ** diskScan 시작 시점-> ANIM(ON)!
-            showLottieDialogFrag()
-            val handler: Handler = Handler(Looper.getMainLooper())
-            handler.postDelayed({hideLottieAndShowSnackBar()}, 2000) // 2초후에 애니메이션 없애기-> 보통 0.1초 사이에 실 작업은 다 끝나기는 함..
-
-
-            CoroutineScope(Dispatchers.IO).launch {
-                //lottieAnimCtrl(SHOW_ANIM)
-                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
-                myDiskSearcher.readAlbumArtOnDisk()
-                //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
-                val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
-                //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
-
-                // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
-                mySharedPrefManager.saveRtaArtPathList(resultList)
-
-                // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
-                myDiskSearcher.updateList(resultList)
-
-                Log.d(TAG, "onCreate: DiskScan DONE..(Hopefully..), resultList = $resultList!")
-
-
-            } // ** diskScan 종료 <--
-
-        }
-
-        //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
-        else if(!myDiskSearcher.isDiskScanNeeded()) {
-            val resultList = mySharedPrefManager.getRtaArtPathList()
-
-            Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
-            myDiskSearcher.updateList(resultList)
-        }
+//        lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
+//
+//    //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
+//        //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
+//             // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
+//
+//        if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
+//            Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
+//            // ** diskScan 시작 시점-> ANIM(ON)!
+//            showLottieDialogFrag()
+//            val handler: Handler = Handler(Looper.getMainLooper())
+//            handler.postDelayed({hideLottieAndShowSnackBar()}, 2000) // 2초후에 애니메이션 없애기-> 보통 0.1초 사이에 실 작업은 다 끝나기는 함..
+//
+//
+//            CoroutineScope(Dispatchers.IO).launch {
+//                //lottieAnimCtrl(SHOW_ANIM)
+//                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
+//                myDiskSearcher.readAlbumArtOnDisk()
+//                //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
+//                val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
+//                //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
+//
+//                // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
+//                mySharedPrefManager.saveRtaArtPathList(resultList)
+//
+//                // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+//                myDiskSearcher.updateList(resultList)
+//
+//                Log.d(TAG, "onCreate: DiskScan DONE..(Hopefully..), resultList = $resultList!")
+//
+//
+//            } // ** diskScan 종료 <--
+//
+//        }
+//
+//        //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+//        else if(!myDiskSearcher.isDiskScanNeeded()) {
+//            val resultList = mySharedPrefManager.getRtaArtPathList()
+//
+//            Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
+//            myDiskSearcher.updateList(resultList)
+//        }
 
 
     //추가2) <-- DiskSearcher

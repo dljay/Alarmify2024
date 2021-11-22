@@ -57,9 +57,16 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.29e
+// v0.29f
 // 0.30x 에서 롤백해서 우선 신규 알람 생성시 Random 으로 Rt 지정해주기!
-// todo: 인스톨 후 생성되는 두 Alarm 은 alarmtone=Default(persisted..) 로 뜸. '신규 생성된 알람' 은 절대로 Default 가 떠서는 안됨!!
+// 사실상 0.30x 와 같은 성능! 신규 알람 생성시 AlarmListFrag 에서 "Lottie" 애님 보여주면서 DiskSearch => Glide 안보여주는것 보여줌!(O)
+// AlarmsListFrag.kt> 앨범아트>Glide 에서 pathForArt 가 null 로 뜬 놈은 강제로 art, rta 지정해주기(O)
+// 인스톨 후 생성되는 두 Alarm 은 alarmtone=Default(persisted..) 로 뜸 = '신규 생성된 알람' 은 절대로 Default 가 떠서는 안됨!! (O)
+
+// issue)그러나 이렇게 앨범아트 보여주는데 성공한뒤 DetailsFrag 로 들어가면 Default (Cesium).. 이런놈으로 지정되어있어서 dr1 로 변하면서 isNewAlarm 집행안됨!
+//todo: a) AlarmListFrag.kt Line 212 에서 alarmTone=..(String 주소입력) 하여 Sound 로 강제 type 변경
+// todo: (or) 이게 안되면 AlarmDetailFrag.kt 라인 282 에서 수정
+
 
 
 

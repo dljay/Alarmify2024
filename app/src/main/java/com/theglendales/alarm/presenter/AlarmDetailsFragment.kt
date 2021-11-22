@@ -275,7 +275,12 @@ class AlarmDetailsFragment : Fragment() {
     //** 신규 알람 생성할때 TimePicker 보여주는 것. (기존에는 TimePickerDialogFragment.showxx() 였지만 -> myTimePickerJjong.. 으로 바꿈.)
         store.transitioningToNewAlarmDetails().firstOrError().subscribe { isNewAlarm ->
                     Log.d(TAG, "onCreateView: jj-!!subscribe-1")
+    //todo: if(isNewAlarm|인스톨 후 설치되어서 아직 editor.alarmtone=Default 혹은 seletedRtFilName= Default (Cesium.?) 이딴거..
+    //todo: 혹은 else { isNewAlarm 은 아니지만..}
+            // 이것도 안되면 결국 v0.30x 방식으로 신규생성 rt 타입을 Sound 로 해주기?
+
                     if (isNewAlarm) {
+
         //** 신규 알람 생성시 RT를 "현재 사용 가능한 RT 중에서 Random 으로 골라주기"
                         spinner.adapter=spinnerAdapter
                     // 현재 가용 가능한 RT 리스트 (스피너의 드랍다운 메뉴) 갯수를 파악하여 그중 하나 random! 으로 골라주기!

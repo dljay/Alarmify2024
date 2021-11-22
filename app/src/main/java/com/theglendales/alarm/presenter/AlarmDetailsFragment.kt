@@ -65,7 +65,6 @@ import com.theglendales.alarm.util.Optional
 import com.theglendales.alarm.util.modify
 import com.theglendales.alarm.view.onChipDayClicked
 
-import com.theglendales.alarm.view.showDialog
 import com.theglendales.alarm.view.summary
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -275,11 +274,17 @@ class AlarmDetailsFragment : Fragment() {
 
     //** 신규 알람 생성할때 TimePicker 보여주는 것. (기존에는 TimePickerDialogFragment.showxx() 였지만 -> myTimePickerJjong.. 으로 바꿈.)
         store.transitioningToNewAlarmDetails().firstOrError().subscribe { isNewAlarm ->
-                    Log.d(TAG, "onCreateView: jj-!!inside .subscribe-1")
+                    Log.d(TAG, "onCreateView: jj-!!subscribe-1")
                     if (isNewAlarm) {
-                        Log.d(TAG, "onCreateView: jj-!!inside .subscribe-2 NEW ALARM SETUP")
+        //** 신규 알람 생성시 RT를 "현재 사용 가능한 RT 중에서 Random 으로 골라주기"
                         spinner.adapter=spinnerAdapter
-                        spinner.setSelection(0,true)
+                    // 현재 가용 가능한 RT 리스트 (스피너의 드랍다운 메뉴) 갯수를 파악하여 그중 하나 random! 으로 골라주기!
+                        val availableRtCount= SpinnerAdapter.rtOnDiskList.size
+                        var rndRtPos = (0..availableRtCount).random()
+                        if(rndRtPos == availableRtCount && rndRtPos >= 0 ) {rndRtPos = 0 } // ex. 총 갯수가 5개인데 5번이 뽑히면 안되니깐..
+                        spinner.setSelection(rndRtPos,true) // 이 순간 editor.alarm = Alarmtone.Default 에서 -> Sound 타입이 되버림!
+
+                        Log.d(TAG, "onCreateView: jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
 
 
                         store.transitioningToNewAlarmDetails().onNext(false)

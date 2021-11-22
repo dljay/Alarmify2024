@@ -25,11 +25,6 @@ import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.NotificationSettings
 import com.theglendales.alarm.R
 import com.theglendales.alarm.checkPermissions
-import com.theglendales.alarm.configuration.EditedAlarm
-import com.theglendales.alarm.configuration.Store
-import com.theglendales.alarm.configuration.globalGet
-import com.theglendales.alarm.configuration.globalInject
-import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjongadd.SecondFragment
 import com.theglendales.alarm.logger.Logger
@@ -40,9 +35,11 @@ import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
+import com.theglendales.alarm.configuration.*
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.model.Alarms
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -53,11 +50,14 @@ import io.reactivex.subjects.Subject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.core.context.KoinContextHandler
+import org.koin.core.context.KoinContextHandler.get
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.30c (11/19 저녁 6시)
+// v0.30d (11/22 밤 11시) ->> 0.29d 로 롤백 전!
+
 // AlarmApplication 시작하자마자 '앱 첫 인스톨' -> ' 'SplashScreen' 이나 Launching Activity? 할것.. AlarmApplication.kt>Line66 부터
 //todo: - fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 
@@ -181,6 +181,9 @@ class AlarmsListActivity : AppCompatActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
+
         Log.d(TAG, "onCreate: !!AlarmListActivitiy onCreate() !!! ")
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)

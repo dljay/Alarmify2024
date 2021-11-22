@@ -39,12 +39,14 @@ import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
+import com.theglendales.alarm.interfaces.Alarm
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
 import com.theglendales.alarm.jjongadd.TimePickerJjong
+import com.theglendales.alarm.model.Alarmtone
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -149,6 +151,7 @@ class AlarmsListFragment : Fragment() {
         // ** 현재 row 의 알람.id 로 artPath 를 못 찾앗을 때. (특히 인스톨 직후 생성된 알람의 경우 [alarm.id, artPath] 자료가 없음!
         //  따라서 아래에서 현재 지정되어잇는 알람음에 매칭하는 art 파일을 찾음. (참고로 신규인스톨 첫 두 알람은 무조건 defrt01로 지정)
             if(pathForRowArt.isNullOrEmpty()) { // 인스톨 후 알람 신규 생성시 해당 생성된 [alarmId, artPath] 는 따로 저장이 안되어 있는 상태. 따라서 null 값임.
+
 
                 val rtaFileName= mySharedPrefManager.getArtPathFromRtaPath(alarm.alarmtone.persistedString)
                 val artFilePath= myDiskSearcher.getArtPathViaRtaFileName(rtaFileName)

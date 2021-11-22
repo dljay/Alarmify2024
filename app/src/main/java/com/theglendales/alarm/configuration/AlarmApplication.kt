@@ -2,6 +2,7 @@ package com.theglendales.alarm.configuration
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -61,6 +62,8 @@ class AlarmApplication : Application() {
         koin.get<BackgroundNotifications>()
 
         createNotificationChannels()
+
+
 // 내가 추가---> DiskSearcher 시행 및 mySharedPref 생성하여 art,rta path 기록해놓기.
         //lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
         // todo: 여기서 첫 install 후 런칭인지 확인 -> SplashScreen? Launch Activity? "Getting our app Ready !" ->
@@ -68,7 +71,7 @@ class AlarmApplication : Application() {
 
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
-            // 추후 SPLASH 스크린으로 대체 가능하지만. 일단은 앱 인스톨 후 첫 Launch-> DiskScan 진행할때는 아래 GlbVars.isFirstAppLaunch
+            // 추후 SPLASH 스크린으로 대체 가능하지만.
 
 
             // ** diskScan 시작 시점-> ANIM(ON)!

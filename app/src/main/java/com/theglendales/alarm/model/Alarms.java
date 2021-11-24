@@ -101,6 +101,8 @@ public class Alarms implements IAlarmsManager {
     public Alarm createNewAlarm() {
         Log.d("AlarmsJava", "createNewAlarm: called!");
         AlarmCore alarm = factory.create(containerFactory.create());
+
+        //todo: 여기서 (유저가 직접 선택한 알람) label 에 표시!!
         alarms.put(alarm.getId(), alarm);
         alarm.start();
         return alarm;

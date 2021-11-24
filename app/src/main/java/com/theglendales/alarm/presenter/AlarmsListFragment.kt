@@ -196,22 +196,23 @@ class AlarmsListFragment : Fragment() {
         // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
             var pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
             
-        // ** Row 의 앨범아트 path가 null => 아이콘 (!) 요걸로 뜰 때 설정해주기 (정상적인 상황이라면 앱 Install 후 자동 생성되는 알람 2개 8:30, 9:00 건의 경우만 해당됨)
+        // ** Row 의 앨범아트 path가 null => 아이콘 (!) 요걸로 뜰 때 "defRtaxx.art" 로 무조건 설정해주기 (정상적인 상황이라면 앱 Install 후 자동 생성되는 알람 2개 8:30, 9:00 건의 경우만 해당됨)
             if(pathForRowArt.isNullOrEmpty()) {
-                Log.d(TAG, "getView: pathForRowArt=$pathForRowArt, alarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
+                Log.d(TAG, "getView: (1) pathForRowArt=$pathForRowArt, alarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
 
                 val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
-                val availableRtCount= currentRtaArtPathList.size
-                var rndRtPos = 0
-                rndRtPos = (0..availableRtCount).random()
-                if(rndRtPos == availableRtCount && rndRtPos >= 0 ) {rndRtPos = 0 } // ex. 총 갯수가 5개인데 5번이 뽑히면 안되니깐..
+                //val availableRtCount= currentRtaArtPathList.size
+                //var rndRtPos = 0
+                //rndRtPos = (0..availableRtCount).random()
+                //if(rndRtPos == availableRtCount && rndRtPos >= 0 ) {rndRtPos = 0 } // ex. 총 갯수가 5개인데 5번이 뽑히면 안되니깐..
+                if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
+                    val artPath = currentRtaArtPathList[0].artFilePathStr // 무조건 리스트 최상단에 위치한 놈의 art path 로..
 
-                val artPath = currentRtaArtPathList[rndRtPos].artFilePathStr
-                mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
-                pathForRowArt = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
-                // **??? alarm.alarmtone = Alarmtone.fromString()
+                    mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
+                    pathForRowArt = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
+                }
             }
-            //Log.d(TAG, "getView: alarm.id=${alarm.id}, pathForRowArt= $pathForRowArt")
+            Log.d(TAG, "getView: (2) alarm.id=${alarm.id}, pathForRowArt= $pathForRowArt, alarm.alarmtone= ${alarm.alarmtone}")
 
 
                 Log.d(TAG, "getView: Row 생성중. alarm=$alarm, pathForRowArt=$pathForRowArt")

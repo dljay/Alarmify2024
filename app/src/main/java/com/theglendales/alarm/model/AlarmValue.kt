@@ -14,7 +14,7 @@ data class AlarmValue(
         val hour: Int,
         val minutes: Int,
         val isPrealarm: Boolean,
-        val alarmtone: Alarmtone,
+        val alarmtone: Alarmtone, // val -> var 로 변경 0.29g
         val isVibrate: Boolean,
         val label: String,
         val daysOfWeek: DaysOfWeek

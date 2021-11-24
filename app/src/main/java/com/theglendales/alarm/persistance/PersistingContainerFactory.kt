@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.util.Log
 import com.theglendales.alarm.model.AlarmStore
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.model.Alarmtone
@@ -21,6 +22,7 @@ import java.util.Calendar
  *
  * @author Yuriy
  */
+private const val TAG="PersistingContainerFactory"
 class PersistingContainerFactory(private val calendars: Calendars, private val mContext: Context) : ContainerFactory {
     private val subscriptions = mutableMapOf<Int, Disposable>()
 
@@ -52,6 +54,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
     }
 
     override fun create(): AlarmStore {
+        Log.d(TAG, "create: Creating alarm here!")
         return createStore(create(
                 calendars = calendars,
                 idMapper = { container ->
@@ -65,6 +68,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
     }
 
     private fun fromCursor(c: Cursor, calendars: Calendars): AlarmValue {
+        Log.d(TAG, "fromCursor: called!")
         return AlarmValue(
                 id = c.getInt(Columns.ALARM_ID_INDEX),
                 isEnabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1,
@@ -83,6 +87,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
     companion object {
         @JvmStatic
         fun create(calendars: Calendars, idMapper: (AlarmValue) -> Int): AlarmValue {
+            Log.d(TAG, "create: 'Companion Obj'")
             val now = calendars.now()
 
             val defaultActiveRecord = AlarmValue(
@@ -93,7 +98,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                     daysOfWeek = DaysOfWeek(0),
                     isVibrate = true,
                     isPrealarm = false,
-                    label = "",
+                    label = "userCreated", // 내가 추가했음!! App install 시 생성되는 알람과 구분짓기 위해!!
                     alarmtone = Alarmtone.Default(),
                     state = "",
                     nextTime = now
@@ -101,11 +106,13 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
 
             //generate a new id
             val id = idMapper(defaultActiveRecord)
+
             return defaultActiveRecord.copy(id = id)
         }
     }
 
     private fun AlarmValue.createContentValues(): ContentValues {
+        Log.d(TAG, "createContentValues: called")
         return ContentValues(12).apply {
             // id
             put(Columns.ENABLED, isEnabled)

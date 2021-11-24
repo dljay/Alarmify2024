@@ -71,6 +71,7 @@ class HandleSetAlarm : Activity() {
      * intent extras.
      */
     private fun createNewAlarmFromIntent(intent: Intent): Alarm {
+        Log.d(TAG, "createNewAlarmFromIntent: called")
         val hours = intent.getIntExtra(AlarmClock.EXTRA_HOUR, 0)
         val minutes = intent.getIntExtra(AlarmClock.EXTRA_MINUTES, 0)
         val msg = intent.getStringExtra(AlarmClock.EXTRA_MESSAGE)

@@ -57,15 +57,13 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.29f
-// 0.30x 에서 롤백해서 우선 신규 알람 생성시 Random 으로 Rt 지정해주기!
-// 사실상 0.30x 와 같은 성능! 신규 알람 생성시 AlarmListFrag 에서 "Lottie" 애님 보여주면서 DiskSearch => Glide 안보여주는것 보여줌!(O)
-// AlarmsListFrag.kt> 앨범아트>Glide 에서 pathForArt 가 null 로 뜬 놈은 강제로 art, rta 지정해주기(O)
-// 인스톨 후 생성되는 두 Alarm 은 alarmtone=Default(persisted..) 로 뜸 = '신규 생성된 알람' 은 절대로 Default 가 떠서는 안됨!! (O)
+// v0.29H
 
-// issue)그러나 이렇게 앨범아트 보여주는데 성공한뒤 DetailsFrag 로 들어가면 Default (Cesium).. 이런놈으로 지정되어있어서 dr1 로 변하면서 isNewAlarm 집행안됨!
-//todo: a) AlarmListFrag.kt Line 212 에서 alarmTone=..(String 주소입력) 하여 Sound 로 강제 type 변경
-// todo: (or) 이게 안되면 AlarmDetailFrag.kt 라인 282 에서 수정
+//<앱 설치시 생성된 알람 2개 rta 바꿔주기 미션.. 휴우..>
+//AlarmDetailsFrag.kt > APP 설치시 생성된 알람 두개에 대한 로직 > label 로 userCreated 가 아닐때.. spinner.setSelection 했더니 지랄나네.
+//305 번째줄부터. 무한 룹.
+//- 추가로 AlarmsListFrag.kt 에서 artPath  없는 것들 (앱설치 알람 2개) -> 여기서 설정되는 rta 와 detailsFrag 305번째줄에서 선정하는 rta 매칭필요..
+
 
 
 
@@ -120,6 +118,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     return onBackPressed
                 }
 
+            // USER 가 직접 생성하는 알람에 대해서만 createNewAlarm() 이 불림!
                 override fun createNewAlarm() {
                     Log.d(TAG, "(line97) createNewAlarm: jj- called")
                     transitioningToNewAlarmDetails.onNext(true)
@@ -138,6 +137,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 override fun edit(id: Int) {
                     Log.d(TAG, "edit: (1) Begins.")
                     alarms.getAlarm(id)?.let { alarm ->
+                        //alarm.labelOrDefault
                         editing.onNext(EditedAlarm(
                                 isNew = false,
                                 value = Optional.of(alarm.data),
@@ -149,11 +149,28 @@ class AlarmsListActivity : AppCompatActivity() {
                 override fun edit(id: Int, holder: RowHolder) {
                     Log.d(TAG, "edit: (2) Begins.")
                     alarms.getAlarm(id)?.let { alarm ->
-                        editing.onNext(EditedAlarm(
+                    // 알람 수정시에는 항상 이쪽으로 옴.
+                        //alarm.labelOrDefault < - 이걸 이용해서 판단하는게 맞아..
+//                    //2-A) app 인스톨 중 생성된 알람 (두개)
+//                        if(alarm.alarmtone.persistedString=="") {
+//                            Log.d(TAG, "edit: (2-A) 앱 설치시 만들어진 알람 수정")
+//                            editing.onNext(EditedAlarm(
+//                                isNew = true, // 이걸 true 로 놔줘서 -> AlarmDetailsFrag -> if (isNewAlarm) 여기에 걸리게끔! -> 걸리면 자동으로 Spinner 가 알람 지정을 해줌.
+//                                value = Optional.of(alarm.data),
+//                                id = id,
+//                                holder = Optional.of(holder)))
+//                        }
+//                    //2-B) 내가 직접 만든 알람 isNew= false
+//                        else {
+                            Log.d(TAG, "edit: (2-B) 기존에 만든 알람 수정")
+                            editing.onNext(EditedAlarm(
                                 isNew = false,
                                 value = Optional.of(alarm.data),
                                 id = id,
                                 holder = Optional.of(holder)))
+                        //}
+
+
                     }
                 }
 

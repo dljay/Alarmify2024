@@ -191,19 +191,19 @@ class AlarmDetailsFragment : Fragment() {
                         "uri = ${rtSelected.audioFilePath}")
 
                 // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! -->
-                val alert: String? = rtSelected.audioFilePath.toString()
+                val alertSoundPath: String? = rtSelected.audioFilePath.toString()
 
 
-               logger.debug { "Got ringtone: $alert" }
+               logger.debug { "Got ringtone: $alertSoundPath" }
 
-               val alarmtone = when (alert) {
+               val alarmtone: Alarmtone = when (alertSoundPath) {
                    null -> Alarmtone.Silent() // 선택한 alarm 톤이 a)어떤 오류등으로 null 값일때 -> .Silent()
                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default() // b)Default 일때
-                   else -> Alarmtone.Sound(alert) // 내가 선택한 놈.
+                   else -> Alarmtone.Sound(alertSoundPath) // 내가 선택한 놈.
                }
                // 테스트중 <-
 
-               logger.debug { "Spinner- onItemSelected! $alert -> $alarmtone" }
+               logger.debug { "Spinner- onItemSelected! $alertSoundPath -> $alarmtone" }
 
                checkPermissions(requireActivity(), listOf(alarmtone))
 
@@ -275,18 +275,19 @@ class AlarmDetailsFragment : Fragment() {
     //** 신규 알람 생성할때 TimePicker 보여주는 것. (기존에는 TimePickerDialogFragment.showxx() 였지만 -> myTimePickerJjong.. 으로 바꿈.)
         store.transitioningToNewAlarmDetails().firstOrError().subscribe { isNewAlarm ->
                     Log.d(TAG, "onCreateView: jj-!!subscribe-1")
-    //todo: if(isNewAlarm|인스톨 후 설치되어서 아직 editor.alarmtone=Default 혹은 seletedRtFilName= Default (Cesium.?) 이딴거..
-    //todo: 혹은 else { isNewAlarm 은 아니지만..}
-            // 이것도 안되면 결국 v0.30x 방식으로 신규생성 rt 타입을 Sound 로 해주기?
+
+
+        //** a)신규 User 가 알람 생성시 =>  RT를 "현재 사용 가능한 RT 중에서 Random 으로 골라주기"
 
                     if (isNewAlarm) {
 
-        //** 신규 알람 생성시 RT를 "현재 사용 가능한 RT 중에서 Random 으로 골라주기"
-                        spinner.adapter=spinnerAdapter
+
                     // 현재 가용 가능한 RT 리스트 (스피너의 드랍다운 메뉴) 갯수를 파악하여 그중 하나 random! 으로 골라주기!
                         val availableRtCount= SpinnerAdapter.rtOnDiskList.size
                         var rndRtPos = (0..availableRtCount).random()
                         if(rndRtPos == availableRtCount && rndRtPos >= 0 ) {rndRtPos = 0 } // ex. 총 갯수가 5개인데 5번이 뽑히면 안되니깐..
+
+                        spinner.adapter=spinnerAdapter
                         spinner.setSelection(rndRtPos,true) // 이 순간 editor.alarm = Alarmtone.Default 에서 -> Sound 타입이 되버림!
 
                         Log.d(TAG, "onCreateView: jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
@@ -296,6 +297,19 @@ class AlarmDetailsFragment : Fragment() {
                         disposableDialog =
                             //TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager) <- 기존 timePicker 코드
                             myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
+
+                    }
+        //** 2) //** b) 기존에 APP 설치시 만들어진 알람의 detailsFrag 를 열었을 때  (app 설치시 alarm.labelOrDefault 은 값이 빈칸 "" 임. user 가 직접 생성하는 알람에는 "userCreated" 레이블이 박혀있음)
+                    else if(alarms.getAlarm(alarmId)!!.labelOrDefault!="userCreated") {
+                        Log.d(TAG, "onCreateView: **THIS IS CREATED DURING THE APP INSTALLATION ******")
+//                        spinner.adapter=spinnerAdapter
+//                        spinner.setSelection(0,true) // 이 순간 editor.alarm = Alarmtone.Default 에서 -> Sound 타입이 되버림!
+//
+//                        Log.d(TAG, "onCreateView: jj-!!subscribe-3 NEW ALARM SETUP. ")
+//
+//
+//                        store.transitioningToNewAlarmDetails().onNext(false)
+//                        disposableDialog = myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
 
                     }
                 }.addToDisposables()
@@ -479,18 +493,39 @@ class AlarmDetailsFragment : Fragment() {
 //                        mLabel.setText(editor.label)
 //                    }
                 })
-
+    // DetailsFragment 열었을때 '(기)설정' 되어있는 알람톤에 대해 반응.
         disposables.add(editor.distinctUntilChanged().observeOn(Schedulers.computation()).map { editor ->
-            Log.d(TAG, "onResume: editor.alarmtone=${editor.alarmtone}")
+            Log.d(TAG, "onResume:  [PRE] editor.alarmtone=${editor.alarmtone}, editor.alarmtone.persistedstring=")
                     when (editor.alarmtone) {
                         is Alarmtone.Silent -> {requireContext().getText(R.string.silent_alarm_summary)}
-                        is Alarmtone.Default -> {RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()}
-                        //is Alarmtone.Default -> {RingtoneManager.getRingtone(context, Uri.parse(DiskSearcher.finalRtArtPathList[0].audioFilePath))}
+                        is Alarmtone.Default -> {
+                            RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()
+                            //if(editor.alarmtone.persistedString)
+//                                val rtUrlList = mySharedPrefManager.getRtaArtPathList()
+//                                val rtFileName = rtUrlList[0].fileName
+//                                val rtaPath = rtUrlList[0].audioFilePath
+//
+//                                if(!rtaPath.isNullOrEmpty()) {
+//                                    val alarmtone = Alarmtone.Sound(rtaPath)
+//
+//                                    //checkPermissions(requireActivity(), listOf(alarmtone))
+//
+//                                    modify("Alarmtone is Default jj-") {prev ->
+//                                        prev.copy(alarmtone = alarmtone, isEnabled = true)
+//                                    }
+//                                    //editor.alarmtone = alarmtone
+//                                } else { }
+
+                            }
+
 
                         is Alarmtone.Sound -> {RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()}
                         else -> {
                             Log.d(TAG, "onResume: !! 갑자기 여기에 else 문 넣으라고 오류가 뜨네. 이해 불가!!!!!! wtf????")}
                     }
+                    //todo: Log.d(TAG, "onResume: editor.alarmtone [POST] =${editor.alarmtone}") <-- 이거 넣으면 밑에 selectedRtFileName 이 '1' 이 되버림!!!! 지워!!!
+
+
 
                 }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
 //** RT 변경 or 최초 DetailsFrag 열릴 때 이쪽으로 들어옴
@@ -503,8 +538,10 @@ class AlarmDetailsFragment : Fragment() {
                                 updateCircleAlbumArt(selectedRtFileName.toString())
                     } else { // 1) DetailsFrag (최초로) 열렸을때 혹은 다른 Frag 갔다왔을 때 여기 무조건 실행됨(rxJava Trigger 때문)
                         Log.d(TAG, "onResume: 1) rxJava Trigger")
+
                         initSpinner(selectedRtFileName.toString())
                     }
+
                 })
 
         //pre-alarm duration, if set to "none", remove the option
@@ -564,10 +601,11 @@ class AlarmDetailsFragment : Fragment() {
     }
 
     private fun revert() {
-
+// DetailFrag 에서 Cancel 때리고 나갈 때 생성된 알람을 지움!
         store.editing().value?.let { edited ->
             Log.d(TAG, "(line322)revert: jj- ") // // 알람List -> Detail(...) 클릭-> cancel 클릭-> 여기 log 뜸!!!
             // "Revert" on a newly created alarm should delete it.
+
             if (edited.isNew) {
                 alarms.getAlarm(edited.id)?.delete()
                 Log.d(TAG, "(line326)revert: jj- edited.isNew")

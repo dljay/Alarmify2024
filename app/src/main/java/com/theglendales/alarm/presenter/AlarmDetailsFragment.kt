@@ -93,7 +93,7 @@ class AlarmDetailsFragment : Fragment() {
         // 링톤 옆에 표시되는 앨범 아트
             private val ivRtArtBig: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArtBig) as ImageView}
 
-            private var isRtListReady=false
+            private var isDropDownSpinnerReady=false
         //SharedPref
             private val mySharedPrefManager: MySharedPrefManager by globalInject()
         //Time Picker (material design)
@@ -280,8 +280,6 @@ class AlarmDetailsFragment : Fragment() {
         //** a)신규 User 가 알람 생성시 =>  RT를 "현재 사용 가능한 RT 중에서 Random 으로 골라주기"
 
                     if (isNewAlarm) {
-
-
                     // 현재 가용 가능한 RT 리스트 (스피너의 드랍다운 메뉴) 갯수를 파악하여 그중 하나 random! 으로 골라주기!
                         val availableRtCount= SpinnerAdapter.rtOnDiskList.size
                         var rndRtPos = (0..availableRtCount).random()
@@ -299,19 +297,7 @@ class AlarmDetailsFragment : Fragment() {
                             myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
 
                     }
-        //** 2) //** b) 기존에 APP 설치시 만들어진 알람의 detailsFrag 를 열었을 때  (app 설치시 alarm.labelOrDefault 은 값이 빈칸 "" 임. user 가 직접 생성하는 알람에는 "userCreated" 레이블이 박혀있음)
-                    else if(alarms.getAlarm(alarmId)!!.labelOrDefault!="userCreated") {
-                        Log.d(TAG, "onCreateView: **THIS IS CREATED DURING THE APP INSTALLATION ******")
-//                        spinner.adapter=spinnerAdapter
-//                        spinner.setSelection(0,true) // 이 순간 editor.alarm = Alarmtone.Default 에서 -> Sound 타입이 되버림!
-//
-//                        Log.d(TAG, "onCreateView: jj-!!subscribe-3 NEW ALARM SETUP. ")
-//
-//
-//                        store.transitioningToNewAlarmDetails().onNext(false)
-//                        disposableDialog = myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
 
-                    }
                 }.addToDisposables()
 
         //pre-alarm
@@ -359,7 +345,15 @@ class AlarmDetailsFragment : Fragment() {
             }
         }
 
-        //mLabel.addTextChangedListener(TextWatcherIR())
+        // *** APP 설치 중 설정된 알람일 경우 -> 무조건 defaultRta1 로 설정해주고(spinner.setSelection 이용) -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
+        if(alarms.getAlarm(alarmId)!!.labelOrDefault!="userCreated") {
+            Log.d(TAG, "onCreateView: **THIS ALARM WAS CREATED DURING APP INSTALLATION")
+
+            spinner.adapter = spinnerAdapter
+            spinner.setSelection(0,true)
+
+            modify("Label") {prev -> prev.copy(label = "userCreated", isEnabled = true)}
+        }
 
         return view
     }
@@ -409,7 +403,7 @@ class AlarmDetailsFragment : Fragment() {
         // 2)스피너 옆 큰 Circle Art 업데이트
             updateCircleAlbumArt(selectedRtFileName)
         // 3) 다 됐으니 최초 실행은 아님을 알려주기.
-            isRtListReady = true
+            isDropDownSpinnerReady = true
 
         }
     }
@@ -493,46 +487,23 @@ class AlarmDetailsFragment : Fragment() {
 //                        mLabel.setText(editor.label)
 //                    }
                 })
-    // DetailsFragment 열었을때 '(기)설정' 되어있는 알람톤에 대해 반응.
+    // DetailsFragment 열었을때 '기존 설정 되어있는' & 새로 설정한 알람톤에 대해 반응.
         disposables.add(editor.distinctUntilChanged().observeOn(Schedulers.computation()).map { editor ->
             Log.d(TAG, "onResume:  [PRE] editor.alarmtone=${editor.alarmtone}, editor.alarmtone.persistedstring=")
                     when (editor.alarmtone) {
                         is Alarmtone.Silent -> {requireContext().getText(R.string.silent_alarm_summary)}
-                        is Alarmtone.Default -> {
-                            RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()
-                            //if(editor.alarmtone.persistedString)
-//                                val rtUrlList = mySharedPrefManager.getRtaArtPathList()
-//                                val rtFileName = rtUrlList[0].fileName
-//                                val rtaPath = rtUrlList[0].audioFilePath
-//
-//                                if(!rtaPath.isNullOrEmpty()) {
-//                                    val alarmtone = Alarmtone.Sound(rtaPath)
-//
-//                                    //checkPermissions(requireActivity(), listOf(alarmtone))
-//
-//                                    modify("Alarmtone is Default jj-") {prev ->
-//                                        prev.copy(alarmtone = alarmtone, isEnabled = true)
-//                                    }
-//                                    //editor.alarmtone = alarmtone
-//                                } else { }
-
-                            }
-
-
+                        is Alarmtone.Default -> {RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)).title()}
                         is Alarmtone.Sound -> {RingtoneManager.getRingtone(context, Uri.parse(editor.alarmtone.uriString)).title()}
                         else -> {
                             Log.d(TAG, "onResume: !! 갑자기 여기에 else 문 넣으라고 오류가 뜨네. 이해 불가!!!!!! wtf????")}
                     }
                     //todo: Log.d(TAG, "onResume: editor.alarmtone [POST] =${editor.alarmtone}") <-- 이거 넣으면 밑에 selectedRtFileName 이 '1' 이 되버림!!!! 지워!!!
-
-
-
                 }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
 //** RT 변경 or 최초 DetailsFrag 열릴 때 이쪽으로 들어옴
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId")
 
-                    if(isRtListReady) { // 2) Rt 를 User 가 변경하였을 때  -> Circle albumArt 사진만 업데이트!
+                    if(isDropDownSpinnerReady) { // 2) Rt 를 User 가 변경하였을 때  -> 변경된 RT에 해당하는  Circle albumArt 사진만 업데이트!
                                 Log.d(TAG, "onResume: 2) Rt 임의로 변경되었을 때")
                     //b) DetailsFrag 에 있는 Circle Album Art 변경
                                 updateCircleAlbumArt(selectedRtFileName.toString())

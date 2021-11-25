@@ -184,6 +184,7 @@ class AlarmsListFragment : Fragment() {
             val alarm = values[position]
 
 
+
             val rowHolder = recycleView(convertView, parent, alarm.id)
 
             rowHolder.onOff.isChecked = alarm.isEnabled

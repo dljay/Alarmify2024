@@ -57,12 +57,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.29H
+// v0.31a
 
-//<앱 설치시 생성된 알람 2개 rta 바꿔주기 미션.. 휴우..>
-//AlarmDetailsFrag.kt > APP 설치시 생성된 알람 두개에 대한 로직 > label 로 userCreated 가 아닐때.. spinner.setSelection 했더니 지랄나네.
-//305 번째줄부터. 무한 룹.
-//- 추가로 AlarmsListFrag.kt 에서 artPath  없는 것들 (앱설치 알람 2개) -> 여기서 설정되는 rta 와 detailsFrag 305번째줄에서 선정하는 rta 매칭필요..
+// AlarmsListFrag.kt> 앨범아트>Glide 에서 pathForArt 가 null 로 뜬 놈은 강제로 art, rta defaultrt1 으로 지정해주기(O)
+// 인스톨 후 생성되는 두 Alarm 은 .label = " " 빈칸임. => 이걸 이용해서 detailsFrag.kt 에서 app install 생성 알람 찾아준뒤 -> spinner -> defaultRta1 보여주기!(O)
 
 
 
@@ -149,28 +147,12 @@ class AlarmsListActivity : AppCompatActivity() {
                 override fun edit(id: Int, holder: RowHolder) {
                     Log.d(TAG, "edit: (2) Begins.")
                     alarms.getAlarm(id)?.let { alarm ->
-                    // 알람 수정시에는 항상 이쪽으로 옴.
-                        //alarm.labelOrDefault < - 이걸 이용해서 판단하는게 맞아..
-//                    //2-A) app 인스톨 중 생성된 알람 (두개)
-//                        if(alarm.alarmtone.persistedString=="") {
-//                            Log.d(TAG, "edit: (2-A) 앱 설치시 만들어진 알람 수정")
-//                            editing.onNext(EditedAlarm(
-//                                isNew = true, // 이걸 true 로 놔줘서 -> AlarmDetailsFrag -> if (isNewAlarm) 여기에 걸리게끔! -> 걸리면 자동으로 Spinner 가 알람 지정을 해줌.
-//                                value = Optional.of(alarm.data),
-//                                id = id,
-//                                holder = Optional.of(holder)))
-//                        }
-//                    //2-B) 내가 직접 만든 알람 isNew= false
-//                        else {
                             Log.d(TAG, "edit: (2-B) 기존에 만든 알람 수정")
                             editing.onNext(EditedAlarm(
                                 isNew = false,
                                 value = Optional.of(alarm.data),
                                 id = id,
                                 holder = Optional.of(holder)))
-                        //}
-
-
                     }
                 }
 

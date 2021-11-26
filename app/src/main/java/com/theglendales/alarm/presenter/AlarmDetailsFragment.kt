@@ -497,7 +497,7 @@ class AlarmDetailsFragment : Fragment() {
                         else -> {
                             Log.d(TAG, "onResume: !! 갑자기 여기에 else 문 넣으라고 오류가 뜨네. 이해 불가!!!!!! wtf????")}
                     }
-                    //todo: Log.d(TAG, "onResume: editor.alarmtone [POST] =${editor.alarmtone}") <-- 이거 넣으면 밑에 selectedRtFileName 이 '1' 이 되버림!!!! 지워!!!
+                    // 여기 logd 넣으면 안됨.
                 }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
 //** RT 변경 or 최초 DetailsFrag 열릴 때 이쪽으로 들어옴
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..

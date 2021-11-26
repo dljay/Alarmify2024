@@ -57,10 +57,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.31a
+// v0.32a
+// [DetailsFrag > 벨소리 누르면-> Fragment 로 이동 (구글 알람 Style) ] [작업중]
 
-// AlarmsListFrag.kt> 앨범아트>Glide 에서 pathForArt 가 null 로 뜬 놈은 강제로 art, rta defaultrt1 으로 지정해주기(O)
-// 인스톨 후 생성되는 두 Alarm 은 .label = " " 빈칸임. => 이걸 이용해서 detailsFrag.kt 에서 app install 생성 알람 찾아준뒤 -> spinner -> defaultRta1 보여주기!(O)
 
 
 

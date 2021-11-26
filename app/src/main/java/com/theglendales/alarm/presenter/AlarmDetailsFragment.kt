@@ -345,7 +345,7 @@ class AlarmDetailsFragment : Fragment() {
             }
         }
 
-        // *** APP 설치 중 설정된 알람일 경우 -> 무조건 defaultRta1 로 설정해주고(spinner.setSelection 이용) -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
+    // !!*** APP 설치 중 설정된 알람일 경우 -> 무조건 defaultRta1 로 설정해주고(spinner.setSelection 이용) -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
         if(alarms.getAlarm(alarmId)!!.labelOrDefault!="userCreated") {
             Log.d(TAG, "onCreateView: **THIS ALARM WAS CREATED DURING APP INSTALLATION")
 

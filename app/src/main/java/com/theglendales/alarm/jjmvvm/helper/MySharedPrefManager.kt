@@ -51,13 +51,25 @@ class MySharedPrefManager(context: Context) {
         Log.d(TAG, "saveRtaArtPathList: done")
     }
 
-//<2> List Fragment ROW 에서 보여질 ART PATH 용도: [Key,Value] = [AlarmId-Int, ArtPath-String]
+//<2> List Fragment ROW 에서 보여질 ART PATH 용도: [Key,Value] = [AlarmId-Int, ArtPath-String].. AlarmDetailsFrag.kt 에서 알람 설정 후 [알람 id, artPath] 형태로 저장.
     fun saveArtPathForAlarm(alarmId: Int, artPath: String?) {
         Log.d(TAG, "saveArtPathForAlarm: alarmId=$alarmId, artPath=$artPath")
         preForListFrag.edit().putString(alarmId.toString(),artPath).apply()
     }
+    // 알람 id 로 art Path 받기
     fun getArtPathForAlarm(alarmId: Int): String? {
         return preForListFrag.getString(alarmId.toString(), null) // 없으면 그냥 null 을 return.
+    }
+    // rta 제목으로 art Path 받기 (전달받은 스트링은 경로포함-> 여기서 링톤명(ex.defrt5) 추출해야함!)
+    fun getArtPathFromRtaPath(fullRtaPath: String?): String {
+        if(!fullRtaPath.isNullOrEmpty()) {
+            val rtaFileName= fullRtaPath.substringAfter(".AlarmRingTones/").substringBefore(".rta")
+            Log.d(TAG, "getArtPathFromRtaPath: rtaFileName=$rtaFileName")
+            return rtaFileName
+        } else {
+            return "null rtaFileName..+_+"
+        }
+
     }
 
 //// 아래 셋다 현재 사용 안되는 상태

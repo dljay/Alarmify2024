@@ -1,8 +1,8 @@
 package com.theglendales.alarm.model
 
-import android.media.RingtoneManager
 import android.net.Uri
 import android.util.Log
+import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import java.util.Calendar
 
 private const val TAG="AlarmValue.kt"
@@ -19,6 +19,7 @@ data class AlarmValue(
         val label: String,
         val daysOfWeek: DaysOfWeek
 ) {
+
     val skipping = state.contentEquals("SkippingSetState")
 
     val isSilent: Boolean
@@ -27,20 +28,50 @@ data class AlarmValue(
     // If the database alert is null or it failed to parse, use the
     // default alert.
     @Deprecated("TODO move to where it is used")
-    val alert: Uri by lazy {
+    val alertSoundUri: Uri by lazy {
         when (alarmtone) {
             is Alarmtone.Silent -> throw RuntimeException("Alarm is silent")
-            is Alarmtone.Default -> RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            is Alarmtone.Default -> {
+                //RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                Uri.parse(getRandomDefaultRtaPath())
+                }
             is Alarmtone.Sound -> try {
                 Uri.parse(alarmtone.uriString)
             } catch (e: Exception) {
-                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                //RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                Uri.parse(getRandomDefaultRtaPath())
             }
+        }
+
+    }
+    private fun getRandomDefaultRtaPath(): String? { // ** 신규 알람 생성할때만! 불리네. 인스톨시 2개 생성 말고.. **
+        // 알람에 defrta1~5 사이 아무거나 지정..? 사실상 이건 의미없고. AlarmDetailsFrag.getRandomDefaultRtaPath 가 결정지음!!
+        Log.d(TAG, "getRandomDefaultRta: called!!")
+        val randomNumber = (0..4).random()
+
+        try{
+            var rtaPath = DiskSearcher.finalRtArtPathList[randomNumber].audioFilePath
+
+            if(!rtaPath.isNullOrEmpty()) {
+                return rtaPath
+            } else { // 위에서 만약 실패했을 경우
+                val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
+                rtaPath = listFromSharedPref[randomNumber].audioFilePath
+                return rtaPath
+            }
+        }catch (e: java.lang.Exception) {
+            Log.d(TAG, "getDefaultRta: error getting default rta path.. error=$e ")
+            return null
         }
     }
 
     override fun toString(): String {
-        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // alert= ${alert}, alarmtone=${alarmtone.toString()}, ")
+        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // alertSoundUri= ${alertSoundUri}, alarmtone=${alarmtone.toString()}, ")
+
+        // 여기서
+//        val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
+//        rtaPath = listFromSharedPref[randomNumber].audioFilePath
+
         val box = if (isEnabled) "[x]" else "[ ]"
         return "$id $box $hour:$minutes $daysOfWeek $label"
     }

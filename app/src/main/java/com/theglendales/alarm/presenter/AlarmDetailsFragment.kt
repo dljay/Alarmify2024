@@ -293,7 +293,7 @@ class AlarmDetailsFragment : Fragment() {
 
                         store.transitioningToNewAlarmDetails().onNext(false)
                         disposableDialog =
-                            //TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager) <- 기존 timePicker 코드
+                            //TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager) <- 기존 timePicker  코드
                             myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
 
                     }

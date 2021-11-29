@@ -62,6 +62,8 @@ import java.util.Calendar
 // tv_rtPicker_test 만들어놓음 (O)
 // ActionBar 로 뒤로 돌아갔을 때 DetailsFrag 잘 보임 (O)
 // STRING PATH 전달 intent 로 일단 성공(O): DetailsFrag.kt > onActivityResult() [대충 라인 466]
+// 할일:
+// RtPickerActivity 에 RecyclerView 삽입(RcView 구성: RTA 정보+Player) + Selector +  음악 재생..
 // Activity 간 이동: 우리는 startActivityForResult 니깐 setResult() 로 이동하는게 맞는듯.  (vs SettingsFragment.kt > goBack() 은 새로운 Activity 를 Intent 로 시작하는듯..)
 
 

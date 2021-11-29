@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.widget.Button
 import com.theglendales.alarm.R
 
+// startActivityForResult 참고: https://youtu.be/AD5qt7xoUU8
+
 private const val TAG="RtPickerActivity"
 private const val PICKER_RESULT_KEY_YO="result"
 
@@ -33,6 +35,7 @@ class RtPickerActivity : AppCompatActivity() {
             setResult(RESULT_OK, resultIntent)
             finish()
         }
+
 
     // RT 고르기(X) Cancel Btn 눌렀을 때
 

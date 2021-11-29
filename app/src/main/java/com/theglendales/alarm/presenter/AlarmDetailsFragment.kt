@@ -101,6 +101,8 @@ class AlarmDetailsFragment : Fragment() {
         //요일 표시 ChipGroup + TextView
             lateinit var chipGroupDays: ChipGroup
             private val tv_repeatDaysSum by lazy { fragmentView.findViewById(R.id.details_repeat_sum_jj) as TextView }
+        // RtPicker Test
+            private val tvRtPicker by lazy { fragmentView.findViewById(R.id.tv_RtPicker_Test) as TextView }
 
 
     // 내가 추가 <-
@@ -218,7 +220,12 @@ class AlarmDetailsFragment : Fragment() {
             }
         }
 //****** RT 보여주는 Spinner 설정 <------------ *************
+        // RTPicker Test -- >
+        tvRtPicker.setOnClickListener {
 
+        }
+
+        // RtPicker Test <--
         rowHolder.run {
             this.container.setOnClickListener {
                 modify("onOff") { editor ->

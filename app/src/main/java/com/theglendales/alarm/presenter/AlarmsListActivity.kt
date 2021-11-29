@@ -57,8 +57,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.32a
+// v0.32b
 // [DetailsFrag > 벨소리 누르면-> Fragment 로 이동 (구글 알람 Style) ] [작업중]
+// tv_rtPicker_test 만들어놓음.
 
 
 

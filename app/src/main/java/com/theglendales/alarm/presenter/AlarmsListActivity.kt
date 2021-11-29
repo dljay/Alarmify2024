@@ -57,9 +57,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.32b
+// v0.32c
 // [DetailsFrag > 벨소리 누르면-> Fragment 로 이동 (구글 알람 Style) ] [작업중]
-// tv_rtPicker_test 만들어놓음 / ActionBar 로 뒤로 돌아갔을 때 DetailsFrag 잘 보임 (Logd 메시지가 SettingsActivity 갔다오는것과 동일..)
+// tv_rtPicker_test 만들어놓음 (O)
+// ActionBar 로 뒤로 돌아갔을 때 DetailsFrag 잘 보임 (O)
+// STRING PATH 전달 intent 로 일단 성공(O): DetailsFrag.kt > onActivityResult() [대충 라인 466]
+// Activity 간 이동: 우리는 startActivityForResult 니깐 setResult() 로 이동하는게 맞는듯.  (vs SettingsFragment.kt > goBack() 은 새로운 Activity 를 Intent 로 시작하는듯..)
 
 
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.

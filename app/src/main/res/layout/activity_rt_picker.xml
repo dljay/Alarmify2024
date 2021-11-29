@@ -17,4 +17,25 @@
         android:layout_marginStart="173dp"
         android:layout_marginTop="99dp"
         android:text="TextView" />
+
+    <Button
+        android:id="@+id/btn_rtPicked"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="54dp"
+        android:text="Ringtone Picked" />
+
+    <Button
+        android:id="@+id/btn_rtPickCanceled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="200dp"
+        android:layout_marginEnd="200dp"
+        android:text="Cancel"
+        android:layout_toLeftOf="@id/btn_rtPicked"/>
 </RelativeLayout>

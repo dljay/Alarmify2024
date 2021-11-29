@@ -18,6 +18,7 @@
 package com.theglendales.alarm.presenter
 
 import android.annotation.TargetApi
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.media.Ringtone
@@ -83,6 +84,9 @@ import java.util.Calendar
  * Details activity allowing for fine-grained alarm modification
  */
 private const val TAG="*AlarmDetailsFragment*"
+private const val REQ_CODE_FOR_RTPICKER = 588 // RTPICKER Intent 관련 (1)
+private const val PICKER_RESULT_KEY="result" // RTPICKER Intent 관련 (2)
+
 class AlarmDetailsFragment : Fragment() {
     // 내가 추가 ->
         // 폰에 저장된 ringtone (mp3 or ogg?) 과 앨범쟈켓(png) 을 찾기위해
@@ -223,7 +227,7 @@ class AlarmDetailsFragment : Fragment() {
         // RTPicker Test -- >
         tvRtPicker.setOnClickListener {
         val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
-        startActivityForResult(intent, 588)
+        startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
         }
 
         // RtPicker Test <--
@@ -455,7 +459,15 @@ class AlarmDetailsFragment : Fragment() {
 // ***** <==== DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행)
 
     // Line 179 에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌 -> 이제는 빈 깡통.. 안 씀.
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {if (data != null && requestCode == 42) {}}
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (data != null && requestCode == REQ_CODE_FOR_RTPICKER) {
+            if(resultCode == RESULT_OK) { // RESULT_OK == -1 임!!
+                val rtPathFromRtPickerIntent = data.getStringExtra(PICKER_RESULT_KEY) // 결과 없을때 default Result 값은 'null'
+                Log.d(TAG, "onActivityResult: ----We got our Selected RT Path which is..rtPathFromPickerIntent=$rtPathFromRtPickerIntent ")
+            }
+
+        }
+    }
 
     override fun onResume() {
         Log.d(TAG, "onResume: *here we have backButtonSub")

@@ -20,6 +20,7 @@ package com.theglendales.alarm.presenter;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -33,6 +34,7 @@ import com.theglendales.alarm.configuration.InjectKt;
  * Settings for the Alarm Clock.
  */
 public class SettingsActivity extends AppCompatActivity {
+    private final String TAG = "SettingsActivity.java"; // 내가 추가
     private final DynamicThemeHandler dynamicThemeHandler = InjectKt.globalInject(DynamicThemeHandler.class).getValue();
 
     @Override
@@ -62,6 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void goBack() {
         // This is called when the Home (Up) button is pressed
         // in the Action Bar.
+        Log.d(TAG, "goBack: Pressed jj!");
         Intent parentActivityIntent = new Intent(this, AlarmsListActivity.class);
         // parentActivityIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(parentActivityIntent);

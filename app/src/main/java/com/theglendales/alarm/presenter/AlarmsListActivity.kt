@@ -59,11 +59,7 @@ import java.util.Calendar
 
 // v0.32b
 // [DetailsFrag > 벨소리 누르면-> Fragment 로 이동 (구글 알람 Style) ] [작업중]
-// tv_rtPicker_test 만들어놓음.
-
-
-
-
+// tv_rtPicker_test 만들어놓음 / ActionBar 로 뒤로 돌아갔을 때 DetailsFrag 잘 보임 (Logd 메시지가 SettingsActivity 갔다오는것과 동일..)
 
 
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.

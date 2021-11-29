@@ -44,6 +44,7 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.theglendales.alarm.R
+import com.theglendales.alarm.RtPicker_Test1_Activity
 import com.theglendales.alarm.checkPermissions
 import com.theglendales.alarm.configuration.Layout
 import com.theglendales.alarm.configuration.Prefs
@@ -222,7 +223,8 @@ class AlarmDetailsFragment : Fragment() {
 //****** RT 보여주는 Spinner 설정 <------------ *************
         // RTPicker Test -- >
         tvRtPicker.setOnClickListener {
-
+        val intent = Intent(requireActivity(), RtPicker_Test1_Activity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
+        startActivityForResult(intent, 588)
         }
 
         // RtPicker Test <--

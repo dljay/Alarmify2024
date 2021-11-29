@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.theglendales.alarm">
 
@@ -13,21 +14,21 @@
         android:name="android.permission.READ_PHONE_STATE"
         android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
-        android:name="com.theglendales.alarm.configuration.AlarmApplication"
+        android:name=".configuration.AlarmApplication"
+        android:allowBackup="true"
         android:icon="@mipmap/ic_main2"
         android:installLocation="internalOnly"
-        android:label="@string/app_name_jjong"
-        android:allowBackup="true">
+        android:label="@string/app_name_jjong">
 
         <!-- Activity to set a new or modify existing alarm -->
         <activity
-            android:name="com.theglendales.alarm.presenter.AlarmsListActivity"
+            android:name=".presenter.AlarmsListActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:exported="true"
             android:label="@string/alarm_list_title"
@@ -35,57 +36,58 @@
             android:theme="@style/DefaultDarkTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Application Settings -->
+        </activity> <!-- Application Settings -->
+        <!-- RtPicker Activity (Child of 메인- AlarmsListActivity) -->
         <activity
-            android:name="com.theglendales.alarm.presenter.SettingsActivity"
+            android:name=".RtPicker_Test1_Activity"
+            android:exported="false"
+            android:theme="@style/DefaultDarkTheme"
+            android:parentActivityName=".presenter.AlarmsListActivity"/>
+        <activity
+            android:name=".presenter.SettingsActivity"
             android:excludeFromRecents="true"
             android:label="@string/settings">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.theglendales.alarm.presenter.HandleSetAlarm"
+            android:name=".presenter.HandleSetAlarm"
             android:excludeFromRecents="true"
             android:permission="com.android.alarm.permission.SET_ALARM"
             android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.SET_ALARM" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <!-- This activity is basically the same as AlarmAlert
-             but full-screen so that it can turn the display on. -->
+        <!--
+ This activity is basically the same as AlarmAlert
+             but full-screen so that it can turn the display on.
+        -->
         <activity
-            android:name="com.theglendales.alarm.alert.AlarmAlertFullScreen"
+            android:name=".alert.AlarmAlertFullScreen"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
-            android:taskAffinity="" />
-
-        <!-- Transparent activity with TimPickerFragment -->
+            android:taskAffinity="" /> <!-- Transparent activity with TimPickerFragment -->
         <activity
-            android:name="com.theglendales.alarm.presenter.TransparentActivity"
+            android:name=".presenter.TransparentActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|navigation"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             android:taskAffinity=""
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" />
-
-        <!-- KlaxonPresenter plays sound -->
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" /> <!-- KlaxonPresenter plays sound -->
         <service
-            android:name="com.theglendales.alarm.background.AlertServiceWrapper"
+            android:name=".background.AlertServiceWrapper"
             android:description="@string/alarm_klaxon_service_desc"
-            android:exported="false" />
-
-        <!-- Model -->
+            android:exported="false" /> <!-- Model -->
         <receiver
-            android:name="com.theglendales.alarm.model.AlarmsReceiver"
+            android:name=".model.AlarmsReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="${applicationId}.ACTION_FIRED" />
@@ -98,11 +100,11 @@
                 <action android:name="android.intent.action.LOCALE_CHANGED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
-        </receiver>
-        <!-- Persistence -->
+        </receiver> <!-- Persistence -->
         <provider
-            android:name="com.theglendales.alarm.persistance.AlarmProvider"
+            android:name=".persistance.AlarmProvider"
             android:authorities="${applicationId}.model"
             android:exported="false" />
     </application>
+
 </manifest>

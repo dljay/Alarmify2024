@@ -40,9 +40,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Application Settings -->
+
         <!-- RtPicker Activity (Child of 메인- AlarmsListActivity) -->
         <activity
-            android:name=".RtPicker_Test1_Activity"
+            android:name=".presenter.RtPickerActivity"
             android:exported="false"
             android:theme="@style/DefaultDarkTheme"
             android:parentActivityName=".presenter.AlarmsListActivity"/>

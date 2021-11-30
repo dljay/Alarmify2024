@@ -206,7 +206,7 @@ class AlarmsListFragment : Fragment() {
                 if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
 
                     // ** 리스트에서 하나만 돌려받는것! 절대 dr1 이란 놈이 한 개 이상 있으면 안돼!! **
-                    val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // ** Safety Check
+                    val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // **todo: Safety Check 실제로 뻑남.
                     val artPath = defRta1.artFilePathStr
                     //val artPath = currentRtaArtPathList[0].artFilePathStr // 무조건 리스트 최상단에 위치한 놈의 art path 로..
 

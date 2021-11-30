@@ -105,6 +105,7 @@ class AlarmDetailsFragment : Fragment() {
         // RtPicker 관련
             private val tvRtPicker by lazy { fragmentView.findViewById(R.id.tv_RtPicker_DetailsFrag) as TextView }
             private val clRtPickerContainer by lazy { fragmentView.findViewById(R.id.cl_RtPicker_Container) as ConstraintLayout} // Ringtone 이라고 써 있는 전체 박스!!
+            private val tvRtDescription by lazy { fragmentView.findViewById(R.id.tv_rt_description_detailsFrag) as TextView }
 
 
     // 내가 추가 <-

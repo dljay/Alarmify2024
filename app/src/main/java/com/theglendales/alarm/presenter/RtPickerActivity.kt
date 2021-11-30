@@ -43,8 +43,8 @@ class RtPickerActivity : AppCompatActivity() {
         // todo: actionBar 꾸미기. 현재 사용중인 actionBar 스타일로 하려면  AlarmListActivity - mActionBarHandler 등 참고. DetailsFrag 는 또 다름 (쓰레기통 표시)
             supportActionBar?.setDisplayHomeAsUpEnabled(true) // null check?
 
-    // 2) RT 리스트 갖고 오기
-        val rtOnDiskList:  MutableList<RtWithAlbumArt> = DiskSearcher.finalRtArtPathList
+    // 2) XXX
+
 
     //3) RcView 셋업-->
         rcView = findViewById<RecyclerView>(R.id.rcV_RtPicker)
@@ -63,11 +63,12 @@ class RtPickerActivity : AppCompatActivity() {
         })
 
     //5) RcVAdapter Init
-        rcvAdapter = RtPickerAdapter(ArrayList(), rtPickerVModel)
+        rcvAdapter = RtPickerAdapter(ArrayList(), this, rtPickerVModel)
         rcView.adapter = rcvAdapter
         rcView.setHasFixedSize(true)
 
     //6) RcVAdapter 에 보여줄 List<RtWithAlbumArt> 를 제공 (이미 DiskSearcher 에 로딩되어있으니 특별히 기다릴 필요 없지..)
+        val rtOnDiskList:  MutableList<RtWithAlbumArt> = DiskSearcher.finalRtArtPathList
         rcvAdapter.updateRcV(rtOnDiskList)
 
 

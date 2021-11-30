@@ -57,13 +57,13 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.32c
-// [DetailsFrag > 벨소리 누르면-> Fragment 로 이동 (구글 알람 Style) ] [작업중]
-// tv_rtPicker_test 만들어놓음 (O)
-// ActionBar 로 뒤로 돌아갔을 때 DetailsFrag 잘 보임 (O)
-// STRING PATH 전달 intent 로 일단 성공(O): DetailsFrag.kt > onActivityResult() [대충 라인 466]
+// v0.33a [RtPicker RecyclerView 제작중]
+
 // 할일:
 // RtPickerActivity 에 RecyclerView 삽입(RcView 구성: RTA 정보+Player) + Selector +  음악 재생..
+
+// selector 로 단일 선택 => DetailsFrag 로 다시 돌아왔을때 정보 받기!
+// rtPicker rcView 열었을 때 현재 선택해놓은 rt 재생? <- 이 기능은 어려우면 굳이 넣지 말것..
 // Activity 간 이동: 우리는 startActivityForResult 니깐 setResult() 로 이동하는게 맞는듯.  (vs SettingsFragment.kt > goBack() 은 새로운 Activity 를 Intent 로 시작하는듯..)
 
 

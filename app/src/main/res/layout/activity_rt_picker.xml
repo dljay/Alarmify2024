@@ -1,42 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presenter.RtPickerActivity">
+    tools:context=".presenter.RtPickerActivity"
+    android:orientation="vertical"
+    android:weightSum="10">
 
-    <TextView
-        android:id="@+id/tvRtPickerActivity_1"
-        android:layout_width="wrap_content"
+    <!--상단 RcView [Song Selector] -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="173dp"
-        android:layout_marginTop="99dp"
-        android:text="TextView" />
+        android:layout_weight="7">
 
-    <Button
-        android:id="@+id/btn_rtPicked"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="54dp"
-        android:text="Ringtone Picked" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcV_RtPicker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
-    <Button
-        android:id="@+id/btn_rtPickCanceled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/btn_rtPicked"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="200dp"
-        android:layout_marginRight="300dp"
-        android:text="Cancel"
-        />
-</RelativeLayout>
+    </LinearLayout>
+
+    <!--하단 Music Player + Title+ AlbumArt -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvRtPickerActivity_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="TextView" />
+
+        <Button
+            android:id="@+id/btn_rtPicked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+
+            android:text="Ringtone Picked" />
+
+        <Button
+            android:id="@+id/btn_rtPickCanceled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/btn_rtPicked"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+
+            android:text="Cancel"
+            />
+    </LinearLayout>
+
+
+</LinearLayout>

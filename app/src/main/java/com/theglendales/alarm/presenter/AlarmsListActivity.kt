@@ -57,11 +57,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.33b [Spinner 제거전]
-// RadioBtn 으로 단일 선택 UI 반영 (O) // selector 로 단일 선택 => DetailsFrag 로 다시 돌아왔을때 정보 받기 (O)
+// v0.33d [Spinner 제거후]
 
+// Spinner 제거하고-> rtPicker 갔다왔을때 변경된 RT 제목 반영해서 보여주기 (O)
+// 신규 알람 생성시, App 설치 후 만들어지는 두개의 Alarm에 대해서도 RT Picker 잘 작동하는듯. Spinner 안 써서 세상 편하긴 함.. (O)
 // 할일:
-// Spinner 제거하고-> rtPicker 갔다왔을때 변경된 RT 제목 반영해서 보여주기.
 // mp3 메타데이터에 Description 도 넣고 DetailsFrag 에서 보여주기
 // 음악 재생
 // RtPickerActivity 에 RecyclerView 삽입(RcView 구성: RTA 정보+Player) + Selector +  음악 재생..

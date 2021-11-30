@@ -279,16 +279,17 @@ class AlarmDetailsFragment : Fragment() {
 
                     if (isNewAlarm) {
                     // 현재 가용 가능한 RT 리스트 (스피너의 드랍다운 메뉴) 갯수를 파악하여 그중 하나 random! 으로 골라주기!
-                        //val availableRtCount= SpinnerAdapter.rtOnDiskList.size
-//                        var rndRtPos = (0..availableRtCount).random()
-//                        if(rndRtPos == availableRtCount && rndRtPos >= 0 ) {rndRtPos = 0 } // ex. 총 갯수가 5개인데 5번이 뽑히면 안되니깐..
+                        val availableRtCount= DiskSearcher.finalRtArtPathList.size
+                        var rndRtPos = (0..availableRtCount).random()
+                        if(rndRtPos == availableRtCount && rndRtPos >= 0 ) {rndRtPos = 0 } // ex. 총 갯수가 5개인데 5번이 뽑히면 안되니깐..
 
-                        //Log.d(TAG, "onCreateView: jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
+                        Log.d(TAG, "onCreateView: jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
+
+                        val randomRtaPath = DiskSearcher.finalRtArtPathList[rndRtPos].audioFilePath
+                        changeAlarmTone(randomRtaPath)
 
                         store.transitioningToNewAlarmDetails().onNext(false)
-                        disposableDialog =
-                            //TimePickerDialogFragment.showTimePicker(alarmsListActivity.supportFragmentManager) <- 기존 timePicker  코드
-                            myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
+                        disposableDialog =myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
 
                     }
 
@@ -414,23 +415,27 @@ class AlarmDetailsFragment : Fragment() {
                 // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! -->
                 val alertSoundPath: String? = rtaPathFromIntent
 
-                logger.debug { "Got ringtone: $alertSoundPath" }
-
-                val alarmtone: Alarmtone = when (alertSoundPath) {
-                    null -> Alarmtone.Silent() // 선택한 alarm 톤이 a)어떤 오류등으로 null 값일때 -> .Silent()
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default() // b)Default 일때
-                    else -> Alarmtone.Sound(alertSoundPath) // 내가 선택한 놈.
-                }
-                logger.debug { "RtPicker- onItemSelected! $alertSoundPath -> $alarmtone" }
-
-                checkPermissions(requireActivity(), listOf(alarmtone))
-
-                modify("Ringtone picker") { prev ->prev.copy(alarmtone = alarmtone, isEnabled = true)}
-                // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! <----
+                // 이제 ringtone 으로 설정 ->
+                changeAlarmTone(alertSoundPath)
                 }
             }
 
         }
+    // 내가 추가한 function
+    private fun changeAlarmTone(alertSoundPath: String?) {
+        logger.debug { "Got ringtone: $alertSoundPath" }
+
+        val alarmtone: Alarmtone = when (alertSoundPath) {
+            null -> Alarmtone.Silent() // 선택한 alarm 톤이 a)어떤 오류등으로 null 값일때 -> .Silent()
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default() // b)Default 일때
+            else -> Alarmtone.Sound(alertSoundPath) // 내가 선택한 놈.
+        }
+        logger.debug { "RtPicker- onItemSelected! $alertSoundPath -> $alarmtone" }
+
+        checkPermissions(requireActivity(), listOf(alarmtone))
+
+        modify("Ringtone picker") { prev ->prev.copy(alarmtone = alarmtone, isEnabled = true)}
+    }
 
 
     override fun onResume() {

@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.theglendales.alarm.R
-import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjadapters.RtPickerAdapter
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -20,7 +19,11 @@ import java.util.ArrayList
 
 
 private const val TAG="RtPickerActivity"
-private const val PICKER_RESULT_KEY_YO="result"
+
+private const val PICKER_RESULT_RT_TITLE="RtTitle"
+private const val PICKER_RESULT_AUDIO_PATH="AudioPath"
+private const val PICKER_RESULT_ART_PATH="ArtPath"
+
 
 class RtPickerActivity : AppCompatActivity() {
 
@@ -62,11 +65,13 @@ class RtPickerActivity : AppCompatActivity() {
 
         //2) LiveData Observe - RtPicker 로 User 가 RingTone 을 골랐을 때 -> a)음악 재생 b)Intent 에 현재 RT 로 설정
         rtPickerVModel.selectedRow.observe(this, { rtWithAlbumArt->
+            // a) 음악 재생
             Log.d(TAG, "onCreate: rtPickerVModel 옵저버!! rtTitle=${rtWithAlbumArt.rtTitle}, \n rtaPath= ${rtWithAlbumArt.audioFilePath}, artPath= ${rtWithAlbumArt.artFilePathStr}")
-            // b) Intent 에 현재 RT 로 설정 (AlarDetailsFrag.kt 로 연결됨)
-            resultIntent.putExtra(PICKER_RESULT_KEY_YO,"String Path is This")
-
-
+            // b) Intent 에 현재 선택된 RT 의 정보담기  (AlarDetailsFrag.kt 로 연결됨) .. RT 계속 바꿀때마다 Intent.putExtra 하는데 overWrite 되겠지?
+            resultIntent.putExtra(PICKER_RESULT_RT_TITLE,rtWithAlbumArt.rtTitle)
+            resultIntent.putExtra(PICKER_RESULT_AUDIO_PATH,rtWithAlbumArt.audioFilePath)
+            resultIntent.putExtra(PICKER_RESULT_ART_PATH,rtWithAlbumArt.artFilePathStr)
+            setResult(RESULT_OK, resultIntent)
         })
 
     //5) RcVAdapter Init
@@ -80,15 +85,15 @@ class RtPickerActivity : AppCompatActivity() {
 
 
     // RT 고르기(O) Btn 눌렀을 때
-        btnRtPicked.setOnClickListener {
-            val intentToOpenThisActivity = intent
-            //val resultIntent = Intent()
-
-            //resultIntent.putExtra(PICKER_RESULT_KEY_YO,"String Path is This")
-
-            setResult(RESULT_OK, resultIntent)
-            finish()
-        }
+//        btnRtPicked.setOnClickListener {
+//            val intentToOpenThisActivity = intent
+//            //val resultIntent = Intent()
+//
+//            //resultIntent.putExtra(PICKER_RESULT_KEY_YO,"String Path is This")
+//
+//            setResult(RESULT_OK, resultIntent)
+//            finish()
+//        }
 
 
     // RT 고르기(X) Cancel Btn 눌렀을 때

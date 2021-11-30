@@ -85,7 +85,10 @@ import java.util.Calendar
  */
 private const val TAG="*AlarmDetailsFragment*"
 private const val REQ_CODE_FOR_RTPICKER = 588 // RTPICKER Intent 관련 (1)
-private const val PICKER_RESULT_KEY="result" // RTPICKER Intent 관련 (2)
+private const val PICKER_RESULT_RT_TITLE="RtTitle" // RTPICKER Intent 관련 (2)
+private const val PICKER_RESULT_AUDIO_PATH="AudioPath" // RTPICKER Intent 관련 (3)
+private const val PICKER_RESULT_ART_PATH="ArtPath" // RTPICKER Intent 관련 (4)
+
 
 class AlarmDetailsFragment : Fragment() {
     // 내가 추가 ->
@@ -462,8 +465,11 @@ class AlarmDetailsFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == REQ_CODE_FOR_RTPICKER) {
             if(resultCode == RESULT_OK) { // RESULT_OK == -1 임!!
-                val rtPathFromRtPickerIntent = data.getStringExtra(PICKER_RESULT_KEY) // 결과 없을때 default Result 값은 'null'
-                Log.d(TAG, "onActivityResult: ----We got our Selected RT Path which is..rtPathFromPickerIntent=$rtPathFromRtPickerIntent ")
+                val rtTitleFromIntent = data.getStringExtra(PICKER_RESULT_RT_TITLE) // 결과 없을때 default Result 값은 'null'
+                val rtaPathFromIntent = data.getStringExtra(PICKER_RESULT_AUDIO_PATH) // 결과 없을때 default Result 값은 'null'
+                val artPathFromIntent = data.getStringExtra(PICKER_RESULT_ART_PATH) // 결과 없을때 default Result 값은 'null'
+
+                Log.d(TAG, "onActivityResult: ----[FROM INTENT] Selected RT_Title=$rtTitleFromIntent, AudioPath=$rtaPathFromIntent, ArtPath=$artPathFromIntent")
             }
 
         }

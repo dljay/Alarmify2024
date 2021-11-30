@@ -57,16 +57,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.33a [RtPicker RecyclerView 제작중]
+// v0.33b [Spinner 제거전]
+// RadioBtn 으로 단일 선택 UI 반영 (O) // selector 로 단일 선택 => DetailsFrag 로 다시 돌아왔을때 정보 받기 (O)
 
 // 할일:
+// Spinner 제거하고-> rtPicker 갔다왔을때 변경된 RT 제목 반영해서 보여주기.
+// mp3 메타데이터에 Description 도 넣고 DetailsFrag 에서 보여주기
+// 음악 재생
 // RtPickerActivity 에 RecyclerView 삽입(RcView 구성: RTA 정보+Player) + Selector +  음악 재생..
 
-// RadioBtn 으로 단일 선택 UI 반영 (O)
-// selector 로 단일 선택 => DetailsFrag 로 다시 돌아왔을때 정보 받기!
-// rtPicker rcView 열었을 때 현재 선택해놓은 rt 재생? <- 이 기능은 어려우면 굳이 넣지 말것..
-// Activity 간 이동: 우리는 startActivityForResult 니깐 setResult() 로 이동하는게 맞는듯.  (vs SettingsFragment.kt > goBack() 은 새로운 Activity 를 Intent 로 시작하는듯..)
 
+// rtPicker rcView 열었을 때 현재 선택해놓은 rt 재생? <- 이 기능은 어려우면 굳이 넣지 말것..
 
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 

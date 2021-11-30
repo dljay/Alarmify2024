@@ -35,6 +35,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -101,8 +102,9 @@ class AlarmDetailsFragment : Fragment() {
         //요일 표시 ChipGroup + TextView
             lateinit var chipGroupDays: ChipGroup
             private val tv_repeatDaysSum by lazy { fragmentView.findViewById(R.id.details_repeat_sum_jj) as TextView }
-        // RtPicker Test
+        // RtPicker 관련
             private val tvRtPicker by lazy { fragmentView.findViewById(R.id.tv_RtPicker_DetailsFrag) as TextView }
+            private val clRtPickerContainer by lazy { fragmentView.findViewById(R.id.cl_RtPicker_Container) as ConstraintLayout} // Ringtone 이라고 써 있는 전체 박스!!
 
 
     // 내가 추가 <-
@@ -202,13 +204,19 @@ class AlarmDetailsFragment : Fragment() {
             }*/
 
 //****** RT 보여주는 Spinner 설정 <------------ *************
-        // RTPicker Test -- >
-        tvRtPicker.setOnClickListener {
-        val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
-        startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
+        // RTPicker -- >
+//        tvRtPicker.setOnClickListener {
+//        val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
+//        startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
+//        }
+            //전체 박스 중 아무데나 눌렀을 때
+        clRtPickerContainer.setOnClickListener {
+            val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
+            startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
         }
 
-        // RtPicker Test <--
+
+        // RtPicker <--
         rowHolder.run {
             this.container.setOnClickListener {
                 modify("onOff") { editor ->

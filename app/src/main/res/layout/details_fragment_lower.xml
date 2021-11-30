@@ -176,6 +176,7 @@
 
         <!-- Ringtone 메뉴 ******* -->
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_RtPicker_Container"
                 android:layout_width="match_parent"
                 android:layout_height="100dp">
                 <!-- A) Ringtone Text + Spinner-->
@@ -227,14 +228,6 @@
 
                 </LinearLayout>
 
-
-
-
-
-
-
-
-
                 <!-- B) Vertical GuideLine-->
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline2"
@@ -245,7 +238,7 @@
 
                 <!-- C) AlbumArt Big-->
                 <LinearLayout
-                    android:id="@+id/linearLayout"
+                    android:id="@+id/ll_albumArt_DetailsFrag"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_margin="5dp"

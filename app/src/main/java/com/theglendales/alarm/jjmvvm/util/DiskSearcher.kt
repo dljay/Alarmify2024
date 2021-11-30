@@ -255,17 +255,17 @@ class DiskSearcher(val context: Context)
 
         }
         //3) Album MetaData (제목, TrId) 찾기. 앨범 아트는 AlarmDetailsFrag 에서 찾아줌. 4) 번에서 이걸 RingtoneClass 로 만들어줌.
-            // 3-a) 제목
+            // 3-a) "제목"
             val rtTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
 
-            // 3-b) TrId 찾기
+            // 3-b) "TrId 찾기"
             //val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
             val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER)
 
             // 3-c) rta File Path
             val audioFilePath = fileReceived.path.toString()
 
-            // 3-d) (앨범설명글 찾기) METADATA_KEY_ALBUMARTIST 에 넣었더니 된다!
+            // 3-d) "앨범설명글" METADATA_KEY_ALBUMARTIST 에 넣었더니 된다!
             val rtDescription = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST) // todo: check.
             Log.d(TAG, "extractMetaDataFromRta: rtDescription= $rtDescription")
 

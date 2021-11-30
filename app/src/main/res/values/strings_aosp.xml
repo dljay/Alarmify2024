@@ -71,8 +71,11 @@
     <!-- Setting labels on Set alarm screen: Select alarm ringtone -->
     <string name="alert">Ringtone</string>
 
-    <!-- 내가 심은. jj- Setting labels on Set alarm screen: Select alarm ringtone -->
-    <string name="alert_description">Description</string>
+    <!-- 내가 심은. jj- About the Ringtone  -->
+    <string name="alert_about">About the Ringtone</string>
+
+    <!-- 내가 심은. Badge 위 글자 jj-->
+    <string name="alert_information">Information</string>
 
     <!-- Setting labels on Set alarm screen: Set time -->
     <string name="time">Time</string>

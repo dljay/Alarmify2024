@@ -255,26 +255,32 @@ class DiskSearcher(val context: Context)
 
         }
         //3) Album MetaData (제목, TrId) 찾기. 앨범 아트는 AlarmDetailsFrag 에서 찾아줌. 4) 번에서 이걸 RingtoneClass 로 만들어줌.
-            // 3-a) "제목"
+            // 3-a) "제목" // METADATA_KEY_TITLE 사용!
             val rtTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
 
-            // 3-b) "TrId 찾기"
+            // 3-b) "TrId 찾기" // METADATA_KEY_COMPOSER 사용!
             //val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
             val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER)
 
             // 3-c) rta File Path
             val audioFilePath = fileReceived.path.toString()
 
-            // 3-d) "앨범설명글" METADATA_KEY_ALBUMARTIST 에 넣었더니 된다!
+            // 3-d) "앨범설명글" METADATA_KEY_ALBUMARTIST 사용
             val rtDescription = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST) // todo: check.
-            Log.d(TAG, "extractMetaDataFromRta: rtDescription= $rtDescription")
+            //Log.d(TAG, "extractMetaDataFromRta: rtDescription= $rtDescription")
 
-            // 3-e) artFile Path(String)
+            // 3-e) "Badge" 관련 String 받기 (EX. Intense, Nature 배지 표시 필요한 놈은 "I,N" 이렇게 입력되어잇음. // METADATA_KEY_ARTIST 사용
+            val badgeString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST)
+            Log.d(TAG, "extractMetaDataFromRta: BadgeString= $badgeString")
+        
+
+            // 3-f) artFile Path(String)
             //todo:  ** 아래 readArtOnDisk() 가 앱 시작과 동시에 실행됨. 다 되었다는 가정하에 여기서 찾지만. Path 가 아직 없는경우에 보완책
             val artFilePath = onDiskArtMap[trIDString] //trIDString & artFilePath 둘 다 nullable String
 
         //4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
-        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileName = fileReceived.name, artFilePathStr = artFilePath, rtDescription = rtDescription) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
+        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileName = fileReceived.name,
+            artFilePathStr = artFilePath, rtDescription = rtDescription, badgeStr = badgeString) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
         Log.d(TAG, "extractMetaDataFromRta: Extracted [onDiskRingtone]=$onDiskRingtone")
         return onDiskRingtone
     }

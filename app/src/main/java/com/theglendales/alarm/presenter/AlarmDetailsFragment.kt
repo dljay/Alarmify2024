@@ -105,6 +105,11 @@ class AlarmDetailsFragment : Fragment() {
             private val tvRtPicker by lazy { fragmentView.findViewById(R.id.tv_RtPicker_DetailsFrag) as TextView }
             private val clRtPickerContainer by lazy { fragmentView.findViewById(R.id.cl_RtPicker_Container) as ConstraintLayout} // Ringtone 이라고 써 있는 전체 박스!!
             private val tvRtDescription by lazy { fragmentView.findViewById(R.id.tv_rt_description_detailsFrag) as TextView }
+        // Badge 관련
+            private val iv_badge1_Intense by lazy {fragmentView.findViewById(R.id.iv_badge1_intense) as ImageView}
+            private val iv_badge2_Gentle by lazy {fragmentView.findViewById(R.id.iv_badge2_gentle) as ImageView}
+            private val iv_badge3_Nature by lazy {fragmentView.findViewById(R.id.iv_badge3_nature) as ImageView}
+            private val iv_badge4_Human by lazy {fragmentView.findViewById(R.id.iv_badge4_human) as ImageView}
 
 
     // 내가 추가 <-
@@ -167,43 +172,6 @@ class AlarmDetailsFragment : Fragment() {
         //View Initializing <-
 
 
-        // Spinner 에서 ringtone 을 골랐을 때 실행될 명령어들->
-
-
-            /*override fun onItemSelected(parent: AdapterView<*>?,view: View?,position: Int,id: Long) {
-
-                val rtSelected = SpinnerAdapter.rtOnDiskList[position] // position -> SpinnerAdapter.kt 에 있는 rtOnDiskList(하드에 저장된 rt 리스트) 로..
-                Log.d(TAG, "onItemSelected: [SPINNER] position=$position, id=$id, title=${rtSelected.rtTitle}, trId= ${rtSelected.trIdStr}, " +
-                        "uri = ${rtSelected.audioFilePath}")
-
-                // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! -->
-                val alertSoundPath: String? = rtSelected.audioFilePath.toString()
-
-
-               logger.debug { "Got ringtone: $alertSoundPath" }
-
-               val alarmtone: Alarmtone = when (alertSoundPath) {
-                   null -> Alarmtone.Silent() // 선택한 alarm 톤이 a)어떤 오류등으로 null 값일때 -> .Silent()
-                   RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString() -> Alarmtone.Default() // b)Default 일때
-                   else -> Alarmtone.Sound(alertSoundPath) // 내가 선택한 놈.
-               }
-               // 테스트중 <-
-
-               logger.debug { "Spinner- onItemSelected! $alertSoundPath -> $alarmtone" }
-
-               checkPermissions(requireActivity(), listOf(alarmtone))
-
-               modify("Ringtone picker") { prev ->
-                   prev.copy(alarmtone = alarmtone, isEnabled = true)
-                }
-                // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! <----
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                Log.d(TAG, "Spinner - onNothingSelected: ... ")
-            }*/
-
-//****** RT 보여주는 Spinner 설정 <------------ *************
         // RTPicker -- >
 //        tvRtPicker.setOnClickListener {
 //        val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
@@ -214,7 +182,6 @@ class AlarmDetailsFragment : Fragment() {
             val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
             startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
         }
-
 
         // RtPicker <--
         rowHolder.run {
@@ -360,9 +327,10 @@ class AlarmDetailsFragment : Fragment() {
 
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
 
-    // a)RT 제목(TextView), b)RT Description, c) Album Art (ImageView)  UI 업데이트
-    private fun updateUiTvsAndAlbumArt(selectedRtFileName: String) {
-        Log.d(TAG, "updateUiTvsAndAlbumArt: called #$#@% selectedRtFileName=$selectedRtFileName")
+    // a)RT 제목(TextView), b)RT Description, c) Album Art (ImageView), d) Badge  UI 업데이트
+    //todo: updateUisForRt 코루틴으로..
+    private fun updateUisForRt(selectedRtFileName: String) {
+        Log.d(TAG, "updateUisForRt: called #$#@% selectedRtFileName=$selectedRtFileName")
         // 2-a) 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
         /** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
 
@@ -375,15 +343,20 @@ class AlarmDetailsFragment : Fragment() {
             val selectedRtForThisAlarm: RtWithAlbumArt = DiskSearcher.finalRtArtPathList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
             val rtTitle = selectedRtForThisAlarm.rtTitle
             val rtDescription = selectedRtForThisAlarm.rtDescription
+            val badgeStr = selectedRtForThisAlarm.badgeStr // ex.
             val artPath = selectedRtForThisAlarm.artFilePathStr
         // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
             mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath)
+        // 2-c) Badge 보여주기
+            val badgeStrList = getBadgesListFromStr(badgeStr) // ex. "I,N,H" 이렇게 metadata 로 받은 놈을 ',' 로 구분하여 String List 로 받음
+            showOrHideBadges(badgeStrList) // 이니셜 따라 Ui 업뎃 (ex. [I,N,H] => Intense, Nature, Human 배지를 Visible 하게 UI 업뎃!
 
-        // 2-c) Rt Title & Description 보여주는 TV 업데이트
+
+        // 2-d) Rt Title & Description 보여주는 TV 업데이트
             tvRtPicker.text = rtTitle
             tvRtDescription.text = rtDescription
-            Log.d(TAG, "updateUiTvsAndAlbumArt: tvRtDescription=$rtDescription")
-        // 2-d) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
+            Log.d(TAG, "updateUisForRt: tvRtDescription=$rtDescription")
+        // 2-e) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
         context?.let {
             GlideApp.with(it).load(artPath).circleCrop()
                 .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -462,7 +435,7 @@ class AlarmDetailsFragment : Fragment() {
 
                     rowHolder.onOff.isChecked = editor.isEnabled
                     //mPreAlarmCheckBox.isChecked = editor.isPrealarm
-
+        //Todo: 아래 요일 String 추출 및 UI 반영은 코루틴으로 처리?
             //****알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
                     mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
                     //tv_repeatDaysSum.text = "Repeat" + editor.daysOfWeek.summary(requireContext())
@@ -493,7 +466,7 @@ class AlarmDetailsFragment : Fragment() {
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: [RT 변경] 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId")
 
-                    updateUiTvsAndAlbumArt(selectedRtFileName.toString())
+                    updateUisForRt(selectedRtFileName.toString())
 
                 })
 
@@ -618,6 +591,37 @@ class AlarmDetailsFragment : Fragment() {
         }
     }
 //*********** 내가 추가한 Utility Method **********
+//1) Badge 보여주기 관련 (밑에 '요일 확인' 과 동일한 메커니즘)
+    private fun getBadgesListFromStr(badgeStrings: String?): List<String>? {
+        //Ex) "I,G,H" => 이걸 받으면=> ',' 쉼표로 나눠서 String List 로 만들고=> 밑에 Activate 에서 => Intense, Gentle, Human 배지들을 visibility=visible 로 바꿔줌.
+        if(!badgeStrings.isNullOrEmpty()) {
+            val badgeStrList: List<String> = badgeStrings.split(",").map {badgeInitial -> badgeInitial.trim()}
+            return badgeStrList
+        } else {
+            return null
+        }
+    }
+    private fun showOrHideBadges(badgeStrList: List<String>?) {
+        // 일단 다 gone 으로 꺼주고 시작 (안 그러면 RtPicker 갔다왔을 떄 기존에 켜진놈이 안 꺼지니께..)
+        // 혹시 이렇게 꺼지는게 눈에 안 좋아보이면 위에서 RtPicker Activity 갈때 꺼줘도 됨..
+        iv_badge1_Intense.visibility = View.GONE
+        iv_badge2_Gentle.visibility = View.GONE
+        iv_badge3_Nature.visibility = View.GONE
+        iv_badge4_Human.visibility = View.GONE
+        // String List 에서 이제 글자따라 다시 visible 시켜주기!
+        Log.d(TAG, "showOrHideBadges: badgeStrList=$badgeStrList")
+        if (badgeStrList != null) {
+            for(i in badgeStrList.indices) {
+                when(badgeStrList[i]) {
+                    "I" -> iv_badge1_Intense.visibility = View.VISIBLE
+                    "G" -> iv_badge2_Gentle.visibility = View.VISIBLE
+                    "N" -> iv_badge3_Nature.visibility = View.VISIBLE
+                    "H" -> iv_badge4_Human.visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+//2) 알람 설정된 요일 확인 관련
     private fun getAlarmSetDaysListFromStr(alarmSetDaysStr: String): List<String> {
     // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split
     val alarmSetDaysStrList: List<String> = alarmSetDaysStr.split(",").map {dayStr -> dayStr.trim()}
@@ -653,23 +657,23 @@ class AlarmDetailsFragment : Fragment() {
     }
     // 선택된 Chip 날들 String 으로 받기.
 
-    private fun createStrListFromSelectedChips() {
-        val selectedChipsDaysList =  mutableListOf<String>()
-
-        chipGroupDays.checkedChipIds.forEach {selectedDay ->
-            when(selectedDay) {
-                R.id._chipSun -> selectedChipsDaysList.add("Sun")
-                R.id._chipMon -> selectedChipsDaysList.add("Mon")
-                R.id._chipTue -> selectedChipsDaysList.add("Tue")
-                R.id._chipWed -> selectedChipsDaysList.add("Wed")
-                R.id._chipThu -> selectedChipsDaysList.add("Thu")
-                R.id._chipFri -> selectedChipsDaysList.add("Fri")
-                R.id._chipSat -> selectedChipsDaysList.add("Sat")
-
-            }
-        }
-        Log.d(TAG, "createStrListFromSelectedChips: selectedChipsDaysList=$selectedChipsDaysList")
-    }
+//    private fun createStrListFromSelectedChips() {
+//        val selectedChipsDaysList =  mutableListOf<String>()
+//
+//        chipGroupDays.checkedChipIds.forEach {selectedDay ->
+//            when(selectedDay) {
+//                R.id._chipSun -> selectedChipsDaysList.add("Sun")
+//                R.id._chipMon -> selectedChipsDaysList.add("Mon")
+//                R.id._chipTue -> selectedChipsDaysList.add("Tue")
+//                R.id._chipWed -> selectedChipsDaysList.add("Wed")
+//                R.id._chipThu -> selectedChipsDaysList.add("Thu")
+//                R.id._chipFri -> selectedChipsDaysList.add("Fri")
+//                R.id._chipSat -> selectedChipsDaysList.add("Sat")
+//
+//            }
+//        }
+//        Log.d(TAG, "createStrListFromSelectedChips: selectedChipsDaysList=$selectedChipsDaysList")
+//    }
     private fun createWhichIntFromTickedChip(dayTickedId: Int): Int {
         return when(dayTickedId) {
             R.id._chipSun -> 6

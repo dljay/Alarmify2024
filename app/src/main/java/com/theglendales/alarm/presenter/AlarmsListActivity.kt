@@ -57,12 +57,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.34a [Spinner 제거후]
+// v0.34c [Spinner 제거후]
 
 // Spinner 제거하고-> rtPicker 갔다왔을때 변경된 RT 제목 반영해서 보여주기 (O)
 // 신규 알람 생성시, App 설치 후 만들어지는 두개의 Alarm에 대해서도 RT Picker 잘 작동하는듯. Spinner 안 써서 세상 편하긴 함.. (O)
 // mp3 메타데이터[AlbumArtist 활용] 에 Description 도 넣고 DetailsFrag 에서 보여주기(O) <- 제법 긴 String 도 소화되네 다행히..
+// [Badge] 를 Metadata Artist 에 "I,G,H" 이런식으로 이니셜로 넣어서 DetailsFrag 에서 보여주는것 까지 성공.
+//문제1) RtPicker 갔다왔을때 기존에 켜졌던 Badge 꺼주기 (ex. dr5 -> dr4 로 RtPicker 로 변경했을 떄 Nature Badge 가 그대로 있음. (O) 해결.
+//문제2) I,G,H 의 경우 중간에 Nature 칸이 띄어서 나옴 -> 일단 View.Gone 으로 해서 해결.(O)
+
 // 할일 ==>
+//badge 와 ChipDays ? 포함 Coroutine 으로 바꿔주기.,
 // A)음악 재생 B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
 
 

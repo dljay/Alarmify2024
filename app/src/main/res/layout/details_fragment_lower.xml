@@ -178,7 +178,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_RtPicker_Container"
                 android:layout_width="match_parent"
-                android:layout_height="100dp">
+                android:layout_height="80dp">
                 <!-- A) Ringtone Text + Spinner-->
 
 
@@ -222,7 +222,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="RT Picker Test"
-                        android:textSize="20sp"
+                        android:textSize="15sp"
                         android:textColor="@color/mat_red">
                     </TextView>
 
@@ -277,10 +277,10 @@
                 android:layout_height="1dip"
                 android:layout_marginTop="3dp"
                 android:background="?android:attr/dividerHorizontal" />
-
+            <!--About the Ringtone -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
@@ -289,7 +289,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="@string/alert_description"/>
+                    android:text="@string/alert_about"/>
 
                 <TextView
                     android:id="@+id/tv_rt_description_detailsFrag"
@@ -297,6 +297,80 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="description placeholder yo.... . .. "/>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dip"
+                android:layout_marginTop="3dp"
+                android:background="?android:attr/dividerHorizontal" />
+
+            <!--Information [TextView] -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_gravity="center|left"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="@string/alert_information"/>
+
+                <!--[Badges] ImageViews-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/iv_badge1_intense"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/badge_1_intense"
+                        android:visibility="gone"/>
+
+                    <ImageView
+                        android:id="@+id/iv_badge2_gentle"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/badge_2_gentle"
+                        android:visibility="gone"/>
+
+                    <ImageView
+                        android:id="@+id/iv_badge3_nature"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/badge_3_nature"
+                        android:visibility="gone"/>
+
+                    <ImageView
+                        android:id="@+id/iv_badge4_human"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="5dp"
+                        android:src="@drawable/badge_4_human"
+                        android:visibility="gone"/>
+
+
+                </LinearLayout>
+
+
+
+
+
 
             </LinearLayout>
 

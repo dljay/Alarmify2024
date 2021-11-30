@@ -10,5 +10,6 @@ data class RtWithAlbumArt(val trIdStr: String?="",
                           val audioFilePath: String?="",
                           var artFilePathStr: String?="",
                           val fileName: String="",
-                          val rtDescription: String?="" ) {
+                          val rtDescription: String?="",
+                          val badgeStr: String?="") {
 }

@@ -5,6 +5,7 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
+        android:id="@+id/ll_entireSingleSlot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -14,21 +15,31 @@
         app:layout_constraintTop_toTopOf="parent"
         android:weightSum="10">
 
+            <!-- 전체 Row 클릭으로만 반응하기 위해 아래 RadioButton focusable/clickable = false 로 지정-->
         <RadioButton
             android:id="@+id/rb_singleSlot_selector"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="false"
+            android:layout_weight="1"/>
 
         <TextView
             android:id="@+id/tv_singleSlot_rtPicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="RTA TITLE"/>
+            android:text="RTA TITLE"
+            android:focusable="false"
+            android:clickable="false"
+            android:layout_weight="6"/>
 
         <ImageView
             android:id="@+id/iv_singleSlot_albumArt"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="false"
+            android:layout_weight="3"/>
 
     </LinearLayout>
 

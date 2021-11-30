@@ -62,6 +62,7 @@ import java.util.Calendar
 // 할일:
 // RtPickerActivity 에 RecyclerView 삽입(RcView 구성: RTA 정보+Player) + Selector +  음악 재생..
 
+// RadioBtn 으로 단일 선택 UI 반영 (O)
 // selector 로 단일 선택 => DetailsFrag 로 다시 돌아왔을때 정보 받기!
 // rtPicker rcView 열었을 때 현재 선택해놓은 rt 재생? <- 이 기능은 어려우면 굳이 넣지 말것..
 // Activity 간 이동: 우리는 startActivityForResult 니깐 setResult() 로 이동하는게 맞는듯.  (vs SettingsFragment.kt > goBack() 은 새로운 Activity 를 Intent 로 시작하는듯..)

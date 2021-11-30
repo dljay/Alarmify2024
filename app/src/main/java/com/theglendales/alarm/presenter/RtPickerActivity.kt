@@ -18,6 +18,7 @@ import java.util.ArrayList
 
 // startActivityForResult 참고: https://youtu.be/AD5qt7xoUU8
 
+
 private const val TAG="RtPickerActivity"
 private const val PICKER_RESULT_KEY_YO="result"
 
@@ -34,6 +35,8 @@ class RtPickerActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val resultIntent = Intent()
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rt_picker)
 
@@ -56,10 +59,14 @@ class RtPickerActivity : AppCompatActivity() {
     //4)  LIVEDATA -> // 참고로 별도로 Release 해줄 필요 없음. if you are using observe method, LiveData will be automatically cleared in onDestroy state.
         //1) ViewModel 생성(RcvVModel)
         val rtPickerVModel = ViewModelProvider(this).get(JjRtPickerVModel::class.java)
-        //2) LiveData Observe - RtPicker 로 User 가 고른 RingTone 에 대해서 액션을 취함.
+
+        //2) LiveData Observe - RtPicker 로 User 가 RingTone 을 골랐을 때 -> a)음악 재생 b)Intent 에 현재 RT 로 설정
         rtPickerVModel.selectedRow.observe(this, { rtWithAlbumArt->
-            Log.d(TAG, "onCreate: rtPickerVModel 옵저버!! rtaPath= ${rtWithAlbumArt.audioFilePath}")
-            //myOnLiveDataFromRcView()
+            Log.d(TAG, "onCreate: rtPickerVModel 옵저버!! rtTitle=${rtWithAlbumArt.rtTitle}, \n rtaPath= ${rtWithAlbumArt.audioFilePath}, artPath= ${rtWithAlbumArt.artFilePathStr}")
+            // b) Intent 에 현재 RT 로 설정 (AlarDetailsFrag.kt 로 연결됨)
+            resultIntent.putExtra(PICKER_RESULT_KEY_YO,"String Path is This")
+
+
         })
 
     //5) RcVAdapter Init
@@ -75,9 +82,9 @@ class RtPickerActivity : AppCompatActivity() {
     // RT 고르기(O) Btn 눌렀을 때
         btnRtPicked.setOnClickListener {
             val intentToOpenThisActivity = intent
-            val resultIntent = Intent()
+            //val resultIntent = Intent()
 
-            resultIntent.putExtra(PICKER_RESULT_KEY_YO,"String Path is This")
+            //resultIntent.putExtra(PICKER_RESULT_KEY_YO,"String Path is This")
 
             setResult(RESULT_OK, resultIntent)
             finish()

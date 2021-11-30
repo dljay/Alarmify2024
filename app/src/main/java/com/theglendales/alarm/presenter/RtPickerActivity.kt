@@ -33,9 +33,6 @@ class RtPickerActivity : AppCompatActivity() {
     lateinit var layoutManager: LinearLayoutManager
     //
 
-    private val btnRtPicked by lazy { findViewById<Button>(R.id.btn_rtPicked) }
-    private val btnRtCancel by lazy { findViewById<Button>(R.id.btn_rtPickCanceled) }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val resultIntent = Intent()
@@ -84,16 +81,6 @@ class RtPickerActivity : AppCompatActivity() {
         rcvAdapter.updateRcV(rtOnDiskList)
 
 
-    // RT 고르기(O) Btn 눌렀을 때
-//        btnRtPicked.setOnClickListener {
-//            val intentToOpenThisActivity = intent
-//            //val resultIntent = Intent()
-//
-//            //resultIntent.putExtra(PICKER_RESULT_KEY_YO,"String Path is This")
-//
-//            setResult(RESULT_OK, resultIntent)
-//            finish()
-//        }
 
 
     // RT 고르기(X) Cancel Btn 눌렀을 때

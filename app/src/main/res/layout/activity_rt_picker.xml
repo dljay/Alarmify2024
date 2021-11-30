@@ -38,25 +38,7 @@
             android:layout_alignParentTop="true"
             android:text="TextView" />
 
-        <Button
-            android:id="@+id/btn_rtPicked"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
 
-            android:text="Ringtone Picked" />
-
-        <Button
-            android:id="@+id/btn_rtPickCanceled"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/btn_rtPicked"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-
-            android:text="Cancel"
-            />
     </LinearLayout>
 
 

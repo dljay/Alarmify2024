@@ -363,49 +363,6 @@ class AlarmsListFragment : Fragment() {
         val view = inflater.inflate(R.layout.list_fragment, container, false)
         val listView = view.findViewById(R.id.list_fragment_list) as ListView
 
-//        lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
-//
-//    //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
-//        //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
-//             // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
-//
-//        if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
-//            Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
-//            // ** diskScan 시작 시점-> ANIM(ON)!
-//            showLottieDialogFrag()
-//            val handler: Handler = Handler(Looper.getMainLooper())
-//            handler.postDelayed({hideLottieAndShowSnackBar()}, 2000) // 2초후에 애니메이션 없애기-> 보통 0.1초 사이에 실 작업은 다 끝나기는 함..
-//
-//
-//            CoroutineScope(Dispatchers.IO).launch {
-//                //lottieAnimCtrl(SHOW_ANIM)
-//                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
-//                myDiskSearcher.readAlbumArtOnDisk()
-//                //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
-//                val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
-//                //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
-//
-//                // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
-//                mySharedPrefManager.saveRtaArtPathList(resultList)
-//
-//                // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
-//                myDiskSearcher.updateList(resultList)
-//
-//                Log.d(TAG, "onCreate: DiskScan DONE..(Hopefully..), resultList = $resultList!")
-//
-//
-//            } // ** diskScan 종료 <--
-//
-//        }
-//
-//        //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
-//        else if(!myDiskSearcher.isDiskScanNeeded()) {
-//            val resultList = mySharedPrefManager.getRtaArtPathList()
-//
-//            Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
-//            myDiskSearcher.updateList(resultList)
-//        }
-
 
     //추가2) <-- DiskSearcher
 

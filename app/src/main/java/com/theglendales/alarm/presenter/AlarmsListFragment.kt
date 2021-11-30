@@ -15,11 +15,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AbsListView
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.AdapterContextMenuInfo
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import androidx.fragment.app.Fragment
 import com.amulyakhare.textdrawable.TextDrawable
 import com.bumptech.glide.load.DataSource
@@ -206,13 +203,19 @@ class AlarmsListFragment : Fragment() {
                 if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
 
                     // ** 리스트에서 하나만 돌려받는것! 절대 dr1 이란 놈이 한 개 이상 있으면 안돼!! **
-                    val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // **todo: Safety Check 실제로 뻑남.
-                    val artPath = defRta1.artFilePathStr
-                    //val artPath = currentRtaArtPathList[0].artFilePathStr // 무조건 리스트 최상단에 위치한 놈의 art path 로..
+                        try{
+                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // **todo: Safety Check 실제로 뻑남.
+                            val artPath = defRta1.artFilePathStr
+                            //val artPath = currentRtaArtPathList[0].artFilePathStr // 무조건 리스트 최상단에 위치한 놈의 art path 로..
 
-                    mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
-                    pathForRowArt = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
-                    Log.d(TAG, "getView: hey man rtTitle=${defRta1.rtTitle}")
+                            mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
+                            pathForRowArt = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
+                            Log.d(TAG, "getView: hey man rtTitle=${defRta1.rtTitle}")
+                        }catch (e: Exception) {
+                            Toast.makeText(requireContext(), "Unable to load default ringtones.",Toast.LENGTH_SHORT).show()
+                            Log.d(TAG, "getView: Unable to load default ringtones. Error=$e")
+                        }
+                    
                 }
             }
             Log.d(TAG, "getView: (2) alarm.id=${alarm.id}, pathForRowArt= $pathForRowArt, alarm.alarmtone= ${alarm.alarmtone}, ")

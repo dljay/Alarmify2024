@@ -57,14 +57,14 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.33d [Spinner 제거후]
+// v0.34a [Spinner 제거후]
 
 // Spinner 제거하고-> rtPicker 갔다왔을때 변경된 RT 제목 반영해서 보여주기 (O)
 // 신규 알람 생성시, App 설치 후 만들어지는 두개의 Alarm에 대해서도 RT Picker 잘 작동하는듯. Spinner 안 써서 세상 편하긴 함.. (O)
-// 할일:
-// mp3 메타데이터에 Description 도 넣고 DetailsFrag 에서 보여주기
-// 음악 재생
-// RtPickerActivity 에 RecyclerView 삽입(RcView 구성: RTA 정보+Player) + Selector +  음악 재생..
+// mp3 메타데이터[AlbumArtist 활용] 에 Description 도 넣고 DetailsFrag 에서 보여주기(O) <- 제법 긴 String 도 소화되네 다행히..
+// 할일 ==>
+// A)음악 재생 B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
+
 
 
 // rtPicker rcView 열었을 때 현재 선택해놓은 rt 재생? <- 이 기능은 어려우면 굳이 넣지 말것..

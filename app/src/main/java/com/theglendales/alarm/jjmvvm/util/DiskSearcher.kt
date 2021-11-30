@@ -274,7 +274,7 @@ class DiskSearcher(val context: Context)
             val artFilePath = onDiskArtMap[trIDString] //trIDString & artFilePath 둘 다 nullable String
 
         //4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
-        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileName = fileReceived.name, artFilePathStr = artFilePath) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
+        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileName = fileReceived.name, artFilePathStr = artFilePath, rtDescription = rtDescription) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
         Log.d(TAG, "extractMetaDataFromRta: Extracted [onDiskRingtone]=$onDiskRingtone")
         return onDiskRingtone
     }

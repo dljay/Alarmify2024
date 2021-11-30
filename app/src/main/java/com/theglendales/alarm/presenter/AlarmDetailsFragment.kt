@@ -53,7 +53,6 @@ import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 import com.theglendales.alarm.jjongadd.TimePickerJjong
@@ -361,9 +360,9 @@ class AlarmDetailsFragment : Fragment() {
 
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
 
-    // RT 제목(TextView) & 그것에 따른 Album Art (ImageView)  UI 업데이트
-    private fun updateUiTvAndAlbumArt(selectedRtFileName: String) {
-        Log.d(TAG, "updateCircleAlbumArt: called #$#@% selectedRtFileName=$selectedRtFileName")
+    // a)RT 제목(TextView), b)RT Description, c) Album Art (ImageView)  UI 업데이트
+    private fun updateUiTvsAndAlbumArt(selectedRtFileName: String) {
+        Log.d(TAG, "updateUiTvsAndAlbumArt: called #$#@% selectedRtFileName=$selectedRtFileName")
         // 2-a) 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
         /** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
 
@@ -375,12 +374,15 @@ class AlarmDetailsFragment : Fragment() {
 
             val selectedRtForThisAlarm: RtWithAlbumArt = DiskSearcher.finalRtArtPathList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
             val rtTitle = selectedRtForThisAlarm.rtTitle
+            val rtDescription = selectedRtForThisAlarm.rtDescription
             val artPath = selectedRtForThisAlarm.artFilePathStr
         // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
             mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath)
 
-        // 2-c) Rt Title 보여주는 TV 업데이트
+        // 2-c) Rt Title & Description 보여주는 TV 업데이트
             tvRtPicker.text = rtTitle
+            tvRtDescription.text = rtDescription
+            Log.d(TAG, "updateUiTvsAndAlbumArt: tvRtDescription=$rtDescription")
         // 2-d) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
         context?.let {
             GlideApp.with(it).load(artPath).circleCrop()
@@ -491,7 +493,7 @@ class AlarmDetailsFragment : Fragment() {
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: [RT 변경] 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId")
 
-                    updateUiTvAndAlbumArt(selectedRtFileName.toString())
+                    updateUiTvsAndAlbumArt(selectedRtFileName.toString())
 
                 })
 

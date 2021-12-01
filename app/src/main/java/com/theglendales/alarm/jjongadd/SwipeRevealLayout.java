@@ -525,7 +525,6 @@ public class SwipeRevealLayout extends ViewGroup {
 
     private void init(Context context, AttributeSet attrs) {
         Log.d(TAG, "(1)init: called. ");
-        
 
         if (attrs != null && context != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(

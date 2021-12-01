@@ -71,6 +71,11 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 /**
@@ -129,7 +134,7 @@ class AlarmDetailsFragment : Fragment() {
     //private val mRingtoneRow by lazy { fragmentView.findViewById(R.id.details_ringtone_row) as LinearLayout }
     //private val mRingtoneSummary by lazy { fragmentView.findViewById(R.id.details_ringtone_summary) as TextView }
     private val mRepeatRow by lazy { fragmentView.findViewById(R.id.details_repeat_row) as LinearLayout }
-    private val mRepeatSummary by lazy { fragmentView.findViewById(R.id.details_repeat_summary) as TextView }
+    //private val mRepeatSummary by lazy { fragmentView.findViewById(R.id.details_repeat_summary) as TextView }
     private val timePickerSpinner by lazy { fragmentView.findViewById(R.id._tPicker_jj_Spinner) as TimePicker }//<-내가 추가 timePicker Spinner
 // PreAlarm & Label 관련. 내가 없앰.
     //private val mPreAlarmRow by lazy {fragmentView.findViewById(R.id.details_prealarm_row) as LinearLayout}
@@ -268,18 +273,21 @@ class AlarmDetailsFragment : Fragment() {
 //        }
     // 설정된 알람(Repeat) ChipGroup 안에서 요일을 선택 -> DaysOfWeek.onChipDayClicked() -> rxjava Single 을 만들고 -> 그것을 editor 가 subscribe!
         chipGroupDays = fragmentView.findViewById(R.id._chipGroupDays)
-        for(i in 0 until chipGroupDays.childCount) {
-            val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
-            chipDay.setOnCheckedChangeListener { _, isChecked ->
-                val whichInt = createWhichIntFromTickedChip(chipDay.id)
+        CoroutineScope(IO).launch {
+            for(i in 0 until chipGroupDays.childCount) {
+                val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
+                chipDay.setOnCheckedChangeListener { _, isChecked ->
+                    val whichInt = createWhichIntFromTickedChip(chipDay.id)
 // ** Subscribe 미리 된 상태에서-> chip 변화 -> onChipDayClicked..
-                val subscribe = editor.firstOrError()
-                    .flatMap { editor -> editor.daysOfWeek.onChipDayClicked(whichInt, isChecked) }
-                    .subscribe { daysOfWeek ->modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
-                        Log.d(TAG,"onCreateView: daysOfWeekJJ_new=$daysOfWeek, whichInt=$whichInt, isChecked=$isChecked")
-                    }
-            }
+                    val subscribe = editor.firstOrError()
+                        .flatMap { editor -> editor.daysOfWeek.onChipDayClicked(whichInt, isChecked) }
+                        .subscribe { daysOfWeek ->modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
+                            Log.d(TAG,"onCreateView: daysOfWeekJJ_new=$daysOfWeek, whichInt=$whichInt, isChecked=$isChecked")
+                        }
+                }
+            }//for loop 여기까지
         }
+
 
 //        mRepeatRow.setOnClickListener {
 //            editor.firstOrError()
@@ -328,7 +336,8 @@ class AlarmDetailsFragment : Fragment() {
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
 
     // a)RT 제목(TextView), b)RT Description, c) Album Art (ImageView), d) Badge  UI 업데이트
-    //todo: updateUisForRt 코루틴으로..
+
+    //코루틴으로 하기에는 막 0.01 초 걸리고 그래서.. 굳이 하기가 좀 그래..
     private fun updateUisForRt(selectedRtFileName: String) {
         Log.d(TAG, "updateUisForRt: called #$#@% selectedRtFileName=$selectedRtFileName")
         // 2-a) 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
@@ -347,7 +356,7 @@ class AlarmDetailsFragment : Fragment() {
             val artPath = selectedRtForThisAlarm.artFilePathStr
         // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
             mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath)
-        // 2-c) Badge 보여주기
+        // 2-c) Badge 보여주기 (너무 빨리 되서. showOrHideBadge() 완료까지 약 0.002 초.. 그냥 코루틴 안할계획임.
             val badgeStrList = getBadgesListFromStr(badgeStr) // ex. "I,N,H" 이렇게 metadata 로 받은 놈을 ',' 로 구분하여 String List 로 받음
             showOrHideBadges(badgeStrList) // 이니셜 따라 Ui 업뎃 (ex. [I,N,H] => Intense, Nature, Human 배지를 Visible 하게 UI 업뎃!
 
@@ -435,16 +444,19 @@ class AlarmDetailsFragment : Fragment() {
 
                     rowHolder.onOff.isChecked = editor.isEnabled
                     //mPreAlarmCheckBox.isChecked = editor.isPrealarm
-        //Todo: 아래 요일 String 추출 및 UI 반영은 코루틴으로 처리?
+
             //****알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
-                    mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
-                    //tv_repeatDaysSum.text = "Repeat" + editor.daysOfWeek.summary(requireContext())
+                    //mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
+
                     val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
-                    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr)
-                    Log.d(TAG, "onResume: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
-                // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
-                    activateChipForAlarmSetDays(alarmSetDaysStrList)
-                //
+                    CoroutineScope(IO).launch {
+                        runChipSama(alarmSetDaysStr)
+                    }
+//                    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr)
+//                    Log.d(TAG, "onResume: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
+//                // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
+//                    activateChipForAlarmSetDays(alarmSetDaysStrList)
+//                //
 
 //                    if (editor.label != mLabel.text.toString()) {
 //                        mLabel.setText(editor.label)
@@ -483,6 +495,7 @@ class AlarmDetailsFragment : Fragment() {
 
         store.transitioningToNewAlarmDetails().onNext(false)
     }
+
 
 
 
@@ -571,6 +584,7 @@ class AlarmDetailsFragment : Fragment() {
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private fun hackRippleAndAnimation() {
+        //Log.d(TAG, "hackRippleAndAnimation: called")
         if (enterTransition is Transition) {
             (enterTransition as Transition).addListener(object : Transition.TransitionListener {
                 override fun onTransitionEnd(transition: Transition?) {
@@ -589,6 +603,7 @@ class AlarmDetailsFragment : Fragment() {
                 override fun onTransitionStart(transition: Transition?) {}
             })
         }
+        //Log.d(TAG, "hackRippleAndAnimation: ")
     }
 //*********** 내가 추가한 Utility Method **********
 //1) Badge 보여주기 관련 (밑에 '요일 확인' 과 동일한 메커니즘)
@@ -624,6 +639,21 @@ class AlarmDetailsFragment : Fragment() {
         Log.d(TAG, "showOrHideBadges: done..")
     }
 //2) 알람 설정된 요일 확인 관련
+    private suspend fun runChipSama(alarmSetDaysStr: String) {
+    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr) // 시간이 걸리는 작업. 여기서 받을때까지 대기.
+    Log.d(TAG, "runChipSama: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
+    // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
+    setChipOnMainThread(alarmSetDaysStrList)
+
+    //
+    }
+    private suspend fun setChipOnMainThread(daysSetList: List<String>) {
+        Log.d(TAG, "setChipOnMainThread: called")
+        withContext(Main) {
+            activateChipForAlarmSetDays(daysSetList)
+        }
+    }
+
     private fun getAlarmSetDaysListFromStr(alarmSetDaysStr: String): List<String> {
     // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split
     val alarmSetDaysStrList: List<String> = alarmSetDaysStr.split(",").map {dayStr -> dayStr.trim()}
@@ -653,9 +683,7 @@ class AlarmDetailsFragment : Fragment() {
                 }
             }
         }
-
-
-
+        Log.d(TAG, "activateChipForAlarmSetDays: done..")
     }
     // 선택된 Chip 날들 String 으로 받기.
 

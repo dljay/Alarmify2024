@@ -57,8 +57,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.34c [Badge/Chip 코루틴 작업 전]
-
+// v0.34e [Badge/Chip 코루틴 작업 후!!]
+// Chip 은 대부분 CoroutineScope(IO) 로 쑤셔넣었음. 다른 버전으로 빼서 GalS20 으로 테스트해보기..
 // 할일 ==>
 //badge 와 ChipDays ? 포함 Coroutine 으로 바꿔주기.,
 // A)음악 재생 B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
@@ -383,7 +383,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     .apply {
                         if (!lollipop()) {
                             this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
-                            //Log.d(TAG, "showList: not lollipop()")
+                            Log.d(TAG, "showList: not lollipop()")
                         }
                     }.replace(R.id.main_fragment_container, listFragment).commitAllowingStateLoss()
         }
@@ -417,6 +417,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     .apply {
                         if (!lollipop()) { //lollipop = SDK 21인듯..
                             //this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
+                            Log.d(TAG, "showDetails: not lollipop")
 
                         }
                     }

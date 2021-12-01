@@ -593,6 +593,7 @@ class AlarmDetailsFragment : Fragment() {
 //*********** 내가 추가한 Utility Method **********
 //1) Badge 보여주기 관련 (밑에 '요일 확인' 과 동일한 메커니즘)
     private fun getBadgesListFromStr(badgeStrings: String?): List<String>? {
+        Log.d(TAG, "getBadgesListFromStr: called.")
         //Ex) "I,G,H" => 이걸 받으면=> ',' 쉼표로 나눠서 String List 로 만들고=> 밑에 Activate 에서 => Intense, Gentle, Human 배지들을 visibility=visible 로 바꿔줌.
         if(!badgeStrings.isNullOrEmpty()) {
             val badgeStrList: List<String> = badgeStrings.split(",").map {badgeInitial -> badgeInitial.trim()}
@@ -620,6 +621,7 @@ class AlarmDetailsFragment : Fragment() {
                 }
             }
         }
+        Log.d(TAG, "showOrHideBadges: done..")
     }
 //2) 알람 설정된 요일 확인 관련
     private fun getAlarmSetDaysListFromStr(alarmSetDaysStr: String): List<String> {

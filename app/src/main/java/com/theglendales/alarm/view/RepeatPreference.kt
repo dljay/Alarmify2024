@@ -41,7 +41,7 @@ fun DaysOfWeek.summaryInNumber(context: Context): List<Int> {
 fun DaysOfWeek.onChipDayClicked(which: Int, isChecked:Boolean): Single<DaysOfWeek> {
     return Single.create { emitter->
         var mutableDays: Int = coded
-        mutableDays = when {
+        mutableDays = when { // 아래에서 or 는 연산이지 '또는' 이 아님..
             isChecked -> {mutableDays or (1 shl which)} // 기존 mutableDays + 선택된 which 의 bitwise 연산으로 새로운 mutableDays 값을 얻음!
                 //Log.d(TAG, "onChipDayClicked: isChecked=[$isChecked] which=$which, 1 shl which= ${1 shl which},mutD or 1shlWhich=${mutableDays or (1 shl which)},  ")}
             else -> {mutableDays and (1 shl which).inv()}

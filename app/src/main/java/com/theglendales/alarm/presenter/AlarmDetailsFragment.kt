@@ -275,16 +275,18 @@ class AlarmDetailsFragment : Fragment() {
             for(i in 0 until chipGroupDays.childCount) {
                 val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
                 chipDay.setOnCheckedChangeListener { _, isChecked ->
-                    val whichInt = createWhichIntFromTickedChip(chipDay.id)
+                    val whichInt = createWhichIntFromTickedChip(chipDay.id) // ex. Sat -> 5번을 받음.
 // ** Subscribe 미리 된 상태에서-> chip 변화 -> onChipDayClicked..
                     val subscribe = editor.firstOrError()
-                        .flatMap { editor -> editor.daysOfWeek.onChipDayClicked(whichInt, isChecked) }
+                        .flatMap { editor -> editor.daysOfWeek.onChipDayClicked(whichInt, isChecked) } //mutableDays: Ex.) 32(토욜만선택 ), 48(금토 선택됐을때)
                         .subscribe { daysOfWeek ->modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
+
                             Log.d(TAG,"onCreateView: daysOfWeekJJ_new=$daysOfWeek, whichInt=$whichInt, isChecked=$isChecked")
                         }
                 }
             }//for loop 여기까지
         }
+
 
 
 //        mRepeatRow.setOnClickListener {

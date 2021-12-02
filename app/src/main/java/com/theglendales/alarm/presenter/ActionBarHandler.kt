@@ -66,15 +66,20 @@ class ActionBarHandler(
         }
 
         val menuItem = menu.findItem(R.id.menu_share)
+        val trashIcon = menu.findItem(R.id.set_alarm_menu_delete_alarm) // 내가 추가. 아래에서 trashIcon 대신 menu.findItem(R.id.... _delete_alarm) 넣어놨더니 계속 뻑나서..
+        // todo: 뒷맛이 좋지는 않음. 일단 이걸로 모든 요일이 선택되어있는 DetailsFrag 열릴 때 뻑나는건 멈추기는 했음.
+
         val sp = MenuItemCompat.getActionProvider(menuItem) as androidx.appcompat.widget.ShareActionProvider
         sp.setShareIntent(intent)
 
+        //DetailsFrag 에서 요일을 Chip 으로 변경할떄마다 여기로 들어오네..
         sub = store.editing().subscribe { edited ->
-            Log.d(TAG, "onCreateOptionsMenu: jj-inside sub=store.editing().subscribe{}")
+            Log.d(TAG, "onCreateOptionsMenu: jj-inside sub=store.editing().subscribe{}. 'edited'=${edited.toString()}")
             val showDelete = edited.isEdited && !edited.isNew
 
-            menu.findItem(R.id.set_alarm_menu_delete_alarm).isVisible = showDelete // 알람 요일설정땜에 여기서 자꾸 뻑나서.,.
-
+            if(trashIcon!=null) { // nullCheck 내가 넣었음.
+                trashIcon.isVisible = showDelete // 알람 요일설정땜에 여기서 자꾸 뻑남. 근데 이유는 findItem 이 null 값여서.. // 원래코드 = menu.findItem(R.id.... _delete_alarm).isVisible = showDelete
+            }
             actionBar.setDisplayHomeAsUpEnabled(edited.isEdited)
         }
 

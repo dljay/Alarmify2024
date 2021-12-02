@@ -41,6 +41,32 @@ data class DaysOfWeek(val coded: Int) { // coded = mutableDays 콘스트럭터. 
         }
 
     }
+    fun toIntListJj(context: Context, showNever: Boolean): List<Int> {
+        Log.d(TAG, "toIntListJj: called. this=$this, coded(Int)=$coded")
+
+        when {
+            coded == 0 && showNever -> return arrayListOf<Int>(-2) // repeat 없음
+            coded == 0 -> return arrayListOf<Int>(-1) // todo: 이게 요일을 어떻게 설정했을때 뜨는건지 모르겠네. (아직까지 한번도 안 뜨네..)
+            // every day
+            coded == 0x7f -> return arrayListOf<Int>(8) // 127? 매일 설정.. 현지화된 언어로 받음. Ex) "Every day" // 내 폰에서는 "매일"
+            // count selected days
+            else -> {
+                val dayCount = (0..6).count { it.isSet() }
+                // short or long form?
+                val dayStrings = when {
+                    dayCount > 1 -> DateFormatSymbols().shortWeekdays
+                    else -> DateFormatSymbols().weekdays
+                }
+                val returningIntList = (0..6).filter { it.isSet() } // 여기서는 [1, 3, 5, 6] 이런값.. //일 = 1 월 = 2 화 = 3 수 = 4  목 = 5 금 = 6 토 = 7
+                    .map { dayIndex: Int -> DAY_MAP[dayIndex] }
+                    //.map { calDay -> dayStrings[calDay] } // 여기서는 [화, 목, 토, 일] 여기!! .getText 가 local 언어로 받음!!
+                    //.joinToString(context.getText(R.string.day_concat))
+                Log.d(TAG, "toIntListJj: returningList[INT]=$returningIntList")
+                return returningIntList // 내가 추가
+            }
+        }
+
+    }
 
     private fun Int.isSet(): Boolean {
         //Log.d(TAG, "isSet: called. coded=$coded")

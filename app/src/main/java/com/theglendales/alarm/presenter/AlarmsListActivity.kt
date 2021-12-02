@@ -57,18 +57,26 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.35a  [요일 local 글자 말고 숫자로 받기 테스트전]
-// 갤S20 에서 DetailsFrag 에서 요일 표시 안되는 문제 -> 요일 글자를 Local 로 받아서 영문작성된 when 문에서 설정이 안되서 그런거였음.
-// DaysOfWeek 에 extension Function 넣어서 숫자로 받아보기 시도중.
+//// v0.36a  [요일 local 글자 말고 IntList 로 받기] (O)
+//- 나름 성공.
+//// 갤S20 에서 DetailsFrag 에서 요일 표시 안되는 문제 -> 요일 글자를 Local 로 받아서 영문작성된 when 문에서 설정이 안되서 그런거였음.
+//// DaysOfWeek 에 extension Function 넣어서 숫자로 받아보기 시도중.
+//
+//// 현재 DetailsFrag 들어갈때마다 ActionBarHandler 가 호출되는데 R.id.휴지통메뉴.isVisible 에서 Crash 남.
+//=> 해결책1)  왜 그런지 연구해볼것. (Coroutine 으로 Chipo 설정을 OnResume 에서 해주고 로딩 순서 꼬여서 그럴수도..)
+//=> 해결책2) ActionBarHanlder.kt > 76 Comment out 해주면 해결은 된다 -> 그러나 ListFrag 복귀했을때 쓰레기통 아이콘 계속 보임 -> 쓰레기통 아예 없애주기?
+//
+//
+//// 할일 ==>
+////badge 와 ChipDays ? 포함 Coroutine 으로 바꿔주기.,
+//// A)음악 재생 B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
+//
+////- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
+//- DetailsFrag 들어갔을때는 밑에 SetAlarm/Ringtone 요 네비게이션 없애기
 
-//badge 와 ChipDays ? 포함 Coroutine 으로 바꿔주기.,
-// A)음악 재생 B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
 
 
 
-// rtPicker rcView 열었을 때 현재 선택해놓은 rt 재생? <- 이 기능은 어려우면 굳이 넣지 말것..
-
-//- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

@@ -29,6 +29,12 @@ fun DaysOfWeek.summary(context: Context): String {
     return toString(context, true)
 }
 
+// 기존 .summary 는 요일을 local string 으로 받아서 (ex. 월,화. Mon, Tue..) Int 로 받기 테스트.
+// 이게 listFrag 에서 요일 표시하는데 영향이 있을지 확인 필요..
+fun DaysOfWeek.summaryInNumber(context: Context): List<Int> {
+    return toIntListJj(context, true)
+}
+
 //Extension Function: ClassName.xxx()
 
 

@@ -73,7 +73,7 @@ class ActionBarHandler(
             Log.d(TAG, "onCreateOptionsMenu: jj-inside sub=store.editing().subscribe{}")
             val showDelete = edited.isEdited && !edited.isNew
 
-            menu.findItem(R.id.set_alarm_menu_delete_alarm).isVisible = showDelete
+            menu.findItem(R.id.set_alarm_menu_delete_alarm).isVisible = showDelete // 알람 요일설정땜에 여기서 자꾸 뻑나서.,.
 
             actionBar.setDisplayHomeAsUpEnabled(edited.isEdited)
         }

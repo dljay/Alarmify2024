@@ -64,7 +64,7 @@ import com.theglendales.alarm.util.Optional
 import com.theglendales.alarm.util.modify
 import com.theglendales.alarm.view.onChipDayClicked
 
-import com.theglendales.alarm.view.summary
+import com.theglendales.alarm.view.summaryInNumber
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -73,9 +73,7 @@ import io.reactivex.disposables.Disposables
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 /**
@@ -448,10 +446,15 @@ class AlarmDetailsFragment : Fragment() {
             //****알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
                     //mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
 
-                    val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
+                    //val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
+
+                // Local 언어 때문에 when(요일이름) 을 작성할수 없어. Int 로 된 Str 을 받는 방법으로 바꿈  ex. [0,3,4] (=월,목,금)
+                //  일 = 1 월 = 2 화 = 3 수 = 4  목 = 5 금 = 6 토 = 7
+                    val alarmSetDaysIntList = editor.daysOfWeek.summaryInNumber(requireContext()) // 내가 만든 summaryInNumber !
                     CoroutineScope(IO).launch {
-                        Log.d(TAG, "onResume: 코루틴 alarmSetDaysStr=$alarmSetDaysStr")
-                        runChipSama(alarmSetDaysStr)
+                        Log.d(TAG, "onResume: 코루틴 alarmSetDaysIntList=$alarmSetDaysIntList")
+                        activateChipFromIntList(alarmSetDaysIntList)
+                        //runChipSama(alarmSetDaysStr)
                     }
 //                    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr)
 //                    Log.d(TAG, "onResume: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
@@ -640,40 +643,58 @@ class AlarmDetailsFragment : Fragment() {
         Log.d(TAG, "showOrHideBadges: done..")
     }
 //2) 알람 설정된 요일 확인 관련
-    private suspend fun runChipSama(alarmSetDaysStr: String) {
-    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr) // 시간이 걸리는 작업. 여기서 받을때까지 대기.
-    Log.d(TAG, "runChipSama: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
-    // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
-    setChipOnMainThread(alarmSetDaysStrList)
-
-    //
-    }
-    private suspend fun setChipOnMainThread(daysSetList: List<String>) {
-        //Log.d(TAG, "setChipOnMainThread: called")
-        withContext(Main) {
-            activateChipForAlarmSetDays(daysSetList)
-        }
-    }
-
-    private fun getAlarmSetDaysListFromStr(alarmSetDaysStr: String): List<String> {
-    // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split
-    val alarmSetDaysStrList: List<String> = alarmSetDaysStr.split(",").map {dayStr -> dayStr.trim()}
-    //Log.d(TAG, "getAlarmSetDaysListFromStr: alarmSetDaysStrList=$alarmSetDaysStrList")
-    return alarmSetDaysStrList
-
-    }
-    // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
-    private fun activateChipForAlarmSetDays(alarmSetDaysStrList: List<String>) {
-        for(i in alarmSetDaysStrList.indices) {
-            when(alarmSetDaysStrList[i]) {
-                "Sun","Sunday" -> chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
-                "Mon", "Monday" -> chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
-                "Tue", "Tuesday" -> chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
-                "Wed", "Wednesday" -> chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
-                "Thu", "Thursday" -> chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
-                "Fri", "Friday" -> chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
-                "Sat", "Saturday" -> chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
-                "Every day" -> {
+//    private suspend fun runChipSama(alarmSetDaysStr: String) {
+//    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr) // 시간이 걸리는 작업. 여기서 받을때까지 대기.
+//    Log.d(TAG, "runChipSama: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
+//    // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
+//    setChipOnMainThread(alarmSetDaysStrList)
+//
+//    //
+//    }
+//    private suspend fun setChipOnMainThread(daysSetList: List<String>) {
+//        //Log.d(TAG, "setChipOnMainThread: called")
+//        withContext(Main) {
+//            activateChipForAlarmSetDays(daysSetList)
+//        }
+//    }
+//
+//    private fun getAlarmSetDaysListFromStr(alarmSetDaysStr: String): List<String> {
+//    // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split 해서 리스트 만듬.
+//    val alarmSetDaysStrList: List<String> = alarmSetDaysStr.split(",").map {dayStr -> dayStr.trim()}
+//    //Log.d(TAG, "getAlarmSetDaysListFromStr: alarmSetDaysStrList=$alarmSetDaysStrList")
+//    return alarmSetDaysStrList
+//
+//    }
+// 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
+//    private fun activateChipForAlarmSetDays(alarmSetDaysStrList: List<String>) {
+//        for(i in alarmSetDaysStrList.indices) {
+//            when(alarmSetDaysStrList[i]) {
+//                "Sun","Sunday" -> chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
+//                "Mon", "Monday" -> chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
+//                "Tue", "Tuesday" -> chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
+//                "Wed", "Wednesday" -> chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
+//                "Thu", "Thursday" -> chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
+//                "Fri", "Friday" -> chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
+//                "Sat", "Saturday" -> chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
+//                "Every day" -> {
+//                    chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
+//                    chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
+//                    chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
+//                    chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
+//                    chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
+//                    chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
+//                    chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
+//                }
+//            }
+//        }
+//        //Log.d(TAG, "activateChipForAlarmSetDays: done.. alarmSetDaysStrList=$alarmSetDaysStrList")
+//    }
+    // 기존에 알람이 설정된 요일을 IntList 로 받음. ex. 월, 수 알람이라면 [2,5] // 토=0, 일=1 ..... 금= 6
+    private fun activateChipFromIntList(alarmSetDaysIntList: List<Int>) {
+        for(i in alarmSetDaysIntList.indices) {
+            when(alarmSetDaysIntList[i]) 
+            {
+                8 -> { // 매일매일..
                     chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
                     chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
                     chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
@@ -682,10 +703,24 @@ class AlarmDetailsFragment : Fragment() {
                     chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
                     chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
                 }
+
+
+                1 -> chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true // 일..
+                2 -> chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
+                3 -> chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
+                4 -> chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
+                5 -> chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
+                6 -> chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true // 금..
+                7 -> chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true // 토..
+                // 요일 설정 안되어있을때는 -2 인데. Chip 들이 default 로 =false 되있으니깐 굳이 설정 필요 없음.
+                else -> {
+                    Log.d(TAG, "activateChipFromIntList: No Repeat..?")}
+
             }
         }
         //Log.d(TAG, "activateChipForAlarmSetDays: done.. alarmSetDaysStrList=$alarmSetDaysStrList")
     }
+
     // 선택된 Chip 날들 String 으로 받기.
 
 //    private fun createStrListFromSelectedChips() {

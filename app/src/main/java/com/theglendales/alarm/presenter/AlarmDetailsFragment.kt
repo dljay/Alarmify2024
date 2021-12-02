@@ -60,6 +60,7 @@ import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.model.Alarmtone
+import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.theglendales.alarm.util.modify
 import com.theglendales.alarm.view.onChipDayClicked
@@ -194,6 +195,7 @@ class AlarmDetailsFragment : Fragment() {
                 }
             }
 
+
             // detailsButton().visibility = View.INVISIBLE
             //daysOfWeek.visibility = View.INVISIBLE
             //label.visibility = View.INVISIBLE
@@ -269,22 +271,34 @@ class AlarmDetailsFragment : Fragment() {
 //        mPreAlarmRow.setOnClickListener {
 //            modify("Pre-alarm") { editor -> editor.copy(isPrealarm = !editor.isPrealarm, isEnabled = true) }
 //        }
-    // 설정된 알람(Repeat) ChipGroup 안에서 요일을 선택 -> DaysOfWeek.onChipDayClicked() -> rxjava Single 을 만들고 -> 그것을 editor 가 subscribe!
+    // 설정된 알람(Repeat) ChipGroup 안에서 요일을 선택 -> DaysOfWeek.onChipDayClicked() -> rxjava Single<DaysOfWeek> 을 만들고 -> 그것을 editor 가 subscribe!
         chipGroupDays = fragmentView.findViewById(R.id._chipGroupDays)
+        
+        
         CoroutineScope(IO).launch {
             for(i in 0 until chipGroupDays.childCount)
             {
+                var oldDaysOfWeek: DaysOfWeek
+                var newDaysOfWeek: DaysOfWeek
+
                 val chipDay: Chip = chipGroupDays.getChildAt(i) as Chip
                 chipDay.setOnCheckedChangeListener { _, isChecked ->
                     val whichInt = createWhichIntFromTickedChip(chipDay.id) // ex. Sat -> 5번을 받음.
 // ** Subscribe 미리 된 상태에서-> chip 변화 -> onChipDayClicked..
-                    val subscribe = editor.firstOrError()
-                        .flatMap { alarmValue -> alarmValue.daysOfWeek.onChipDayClicked(whichInt, isChecked) } //mutableDays: Ex.) 32(토욜만선택 ), 48(금토 선택됐을때)
-                        .subscribe { daysOfWeek ->modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
+
+                    val subscribe = editor.firstOrError().flatMap { alarmValue -> alarmValue.daysOfWeek.onChipDayClicked(whichInt, isChecked) }
+                        .subscribe { daysOfWeek ->
+                            //todo: daysOfWeek 에 변화가 없을때도 굳이 modify->ActionBarHandler.kt 계속 불려져서. 아래 if(alarms.get ... daysOfWeek) 넣어줬음. 면밀한 확인 필요.
+                            if(alarms.getAlarm(alarmId)!!.data.daysOfWeek != daysOfWeek) {
+                                Log.d(TAG, "onCreateView: [daysOfWeek] 정보가 바꼈음. modify 실행하겠음!!")
+                                modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
+                            }
                             Log.d(TAG,"onCreateView: daysOfWeekJJ_new=$daysOfWeek, whichInt=$whichInt, isChecked=$isChecked")
-                        }
-                        //onChipDayClicked 에서는 Chip 선택유무로 받은 mutableDays 값을 이용해서 DaysOfWeek(mutableDays) 을 return..
+                        }//.addToDisposables() 이거 추가? 원문에는 없으나 바뀐 yuriv Github 의 DetailsFrag.kt 에는 있네.
+
+
                 }
+
             }//for loop 여기까지
         }
 

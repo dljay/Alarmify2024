@@ -450,6 +450,7 @@ class AlarmDetailsFragment : Fragment() {
 
                     val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
                     CoroutineScope(IO).launch {
+                        Log.d(TAG, "onResume: 코루틴 alarmSetDaysStr=$alarmSetDaysStr")
                         runChipSama(alarmSetDaysStr)
                     }
 //                    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr)
@@ -648,7 +649,7 @@ class AlarmDetailsFragment : Fragment() {
     //
     }
     private suspend fun setChipOnMainThread(daysSetList: List<String>) {
-        Log.d(TAG, "setChipOnMainThread: called")
+        //Log.d(TAG, "setChipOnMainThread: called")
         withContext(Main) {
             activateChipForAlarmSetDays(daysSetList)
         }
@@ -657,7 +658,7 @@ class AlarmDetailsFragment : Fragment() {
     private fun getAlarmSetDaysListFromStr(alarmSetDaysStr: String): List<String> {
     // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split
     val alarmSetDaysStrList: List<String> = alarmSetDaysStr.split(",").map {dayStr -> dayStr.trim()}
-    Log.d(TAG, "getAlarmSetDaysListFromStr: alarmSetDaysStrList=$alarmSetDaysStrList")
+    //Log.d(TAG, "getAlarmSetDaysListFromStr: alarmSetDaysStrList=$alarmSetDaysStrList")
     return alarmSetDaysStrList
 
     }
@@ -683,7 +684,7 @@ class AlarmDetailsFragment : Fragment() {
                 }
             }
         }
-        Log.d(TAG, "activateChipForAlarmSetDays: done..")
+        //Log.d(TAG, "activateChipForAlarmSetDays: done.. alarmSetDaysStrList=$alarmSetDaysStrList")
     }
     // 선택된 Chip 날들 String 으로 받기.
 

@@ -17,12 +17,12 @@ data class DaysOfWeek(val coded: Int) { // coded = mutableDays 콘스트럭터. 
     val isRepeatSet = coded != 0
 
     fun toString(context: Context, showNever: Boolean): String {
-        //Log.d(TAG, "toString: called. this=$this, coded=$coded")
-        return when {
-            coded == 0 && showNever -> context.getText(R.string.never).toString()
-            coded == 0 -> ""
+        Log.d(TAG, "toString: called. this=$this, coded(Int)=$coded")
+        when {
+            coded == 0 && showNever -> return context.getText(R.string.never).toString()
+            coded == 0 -> return ""
             // every day
-            coded == 0x7f -> return context.getText(R.string.every_day).toString()
+            coded == 0x7f -> return context.getText(R.string.every_day).toString() // 매일 설정.. 현지화된 언어로 받음. Ex) "Every day" // 내 폰에서는 "매일"
             // count selected days
             else -> {
                 val dayCount = (0..6).count { it.isSet() }
@@ -31,11 +31,12 @@ data class DaysOfWeek(val coded: Int) { // coded = mutableDays 콘스트럭터. 
                     dayCount > 1 -> DateFormatSymbols().shortWeekdays
                     else -> DateFormatSymbols().weekdays
                 }
-
-                (0..6).filter { it.isSet() }
-                        .map { dayIndex -> DAY_MAP[dayIndex] }
-                        .map { calDay -> dayStrings[calDay] }
-                        .joinToString(context.getText(R.string.day_concat))
+                val returningStr = (0..6).filter { it.isSet() } // 여기서는 [1, 3, 5, 6] 이런값..
+                    .map { dayIndex: Int -> DAY_MAP[dayIndex] }
+                    .map { calDay -> dayStrings[calDay] }
+                    .joinToString(context.getText(R.string.day_concat)) // 여기서는 [화, 목, 토, 일] 여기!! .getText 가 local 언어로 받음!!
+                Log.d(TAG, "toString: returningStr=$returningStr")
+                return returningStr // 내가 추가
             }
         }
 

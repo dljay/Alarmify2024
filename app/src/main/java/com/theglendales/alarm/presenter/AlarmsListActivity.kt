@@ -57,9 +57,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.34e [Badge/Chip 코루틴 작업 후!!]
-// Chip 은 대부분 CoroutineScope(IO) 로 쑤셔넣었음. 다른 버전으로 빼서 GalS20 으로 테스트해보기..
-// 할일 ==>
+// v0.35a  [요일 local 글자 말고 숫자로 받기 테스트전]
+// 갤S20 에서 DetailsFrag 에서 요일 표시 안되는 문제 -> 요일 글자를 Local 로 받아서 영문작성된 when 문에서 설정이 안되서 그런거였음.
+// DaysOfWeek 에 extension Function 넣어서 숫자로 받아보기 시도중.
+
 //badge 와 ChipDays ? 포함 Coroutine 으로 바꿔주기.,
 // A)음악 재생 B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
 

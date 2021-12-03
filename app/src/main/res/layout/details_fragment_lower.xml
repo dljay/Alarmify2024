@@ -50,9 +50,9 @@
                     android:layout_height="0dp"
                     android:layout_weight="2"
                     android:layout_gravity="center|left"
-
-                    android:paddingEnd="50dp"
-                    app:chipSpacingHorizontal="1dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    app:chipSpacingHorizontal="0dp"
                     app:singleLine="true">
 
                     <com.google.android.material.chip.Chip
@@ -61,6 +61,7 @@
                         android:layout_height="wrap_content"
                         android:checkable="true"
                         android:checked="false"
+
 
                         android:text="S"
                         android:textColor="@color/mat_red"
@@ -129,6 +130,7 @@
                         android:checkable="true"
                         android:checked="false"
 
+                        android:layout_marginEnd="3dp"
                         android:text="S"
                         android:textColor="@color/mat_blue"
                         style="@style/customChipStyle"/>

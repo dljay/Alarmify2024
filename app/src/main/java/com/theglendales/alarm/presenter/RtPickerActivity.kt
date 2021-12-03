@@ -57,14 +57,16 @@ class RtPickerActivity : AppCompatActivity() {
 
         
     //4)  LIVEDATA -> // 참고로 별도로 Release 해줄 필요 없음. if you are using observe method, LiveData will be automatically cleared in onDestroy state.
-        //1) ViewModel 생성(RcvVModel)
+        //1) RtPicker ViewModel
+        // A)생성(RcvVModel)
         val rtPickerVModel = ViewModelProvider(this).get(JjRtPickerVModel::class.java)
 
-        //2) LiveData Observe - RtPicker 로 User 가 RingTone 을 골랐을 때 -> a)음악 재생 b)Intent 에 현재 RT 로 설정
+        // B) LiveData Observe - RtPicker 로 User 가 RingTone 을 골랐을 때 -> a)음악 재생 b)Intent 에 현재 RT 로 설정
         rtPickerVModel.selectedRow.observe(this, { rtWithAlbumArt->
-            // a) 음악 재생
+            // B-1) 음악 재생
+
             Log.d(TAG, "onCreate: rtPickerVModel 옵저버!! rtTitle=${rtWithAlbumArt.rtTitle}, \n rtaPath= ${rtWithAlbumArt.audioFilePath}, artPath= ${rtWithAlbumArt.artFilePathStr}")
-            // b) Intent 에 현재 선택된 RT 의 정보담기  (AlarDetailsFrag.kt 로 연결됨) .. RT 계속 바꿀때마다 Intent.putExtra 하는데 overWrite 되겠지?
+            // B-2) Intent 에 현재 선택된 RT 의 정보담기  (AlarDetailsFrag.kt 로 연결됨) .. RT 계속 바꿀때마다 Intent.putExtra 하는데 overWrite 되겠지?
             resultIntent.putExtra(PICKER_RESULT_RT_TITLE,rtWithAlbumArt.rtTitle)
             resultIntent.putExtra(PICKER_RESULT_AUDIO_PATH,rtWithAlbumArt.audioFilePath)
             resultIntent.putExtra(PICKER_RESULT_ART_PATH,rtWithAlbumArt.artFilePathStr)

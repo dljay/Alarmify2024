@@ -16,6 +16,7 @@ import android.transition.TransitionSet
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.WindowManager
 import android.widget.LinearLayout
 
@@ -57,21 +58,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.36e  [DetailsFrag.kt> modify > ActionBarHandler.kt 호출문제] (O)
-// DetailsFrag 열릴때마다 계속 ActionBarHandler 호출 문제.
-//=> 라인291: daysOfWeek 에 변화가 없을때도 굳이 modify->ActionBarHandler.kt 계속 불려져서. 아래 if(alarms.get ... daysOfWeek) 넣어줬음. 면밀한 확인 필요.
-// DetailsFrag 들어갈때마다 ActionBarHandler 가 호출되는데 ActionBarHandler.kt > R.id.휴지통메뉴.isVisible 에서 Crash 남. (O) 일단 고쳤음.
+//// v0.37a  [RtPickerActivity MusicPlayer 넣기 전]
+
 
 
 // 할일 ==>
 //badge 와 ChipDays ? 포함 Coroutine 으로 바꿔주기.,
-// A)음악 재생 B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
+// A)음악 재생
+// B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
 //
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 //- DetailsFrag 들어갔을때는 밑에 SetAlarm/Ringtone 요 네비게이션 없애기
-
-
-
 
 
 /**
@@ -85,6 +82,7 @@ class AlarmsListActivity : AppCompatActivity() {
     //내가 추가-->
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
+    private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -238,7 +236,7 @@ class AlarmsListActivity : AppCompatActivity() {
 //        mySharedPrefManager.savePlayInfo(defaultPlayInfo)  // default 값은 -10, -10, -10, IDLE
 
         val secondFrag = SecondFragment()
-        val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
+        //val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
         btmNavView.setOnNavigationItemSelectedListener {
             // 1) .setOnNav....Listener() 메써드는 onNavigationxxListener(인터페이스를 implement 한 인자를 람다로 받음)
             //2) OnNavigationItemSelectedListener(인터페이스) 안에는 onNavItemSelected(boolean 리턴 메써드) 하나만 있음. 그래서 override 생략 가능sam..
@@ -347,6 +345,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private fun showList(@NonNull edited: EditedAlarm) {
     //추가->
     Log.d(TAG, "(Line281)showList: jj-called")
+
     //<-추가
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
@@ -392,9 +391,12 @@ class AlarmsListActivity : AppCompatActivity() {
                         }
                     }.replace(R.id.main_fragment_container, listFragment).commitAllowingStateLoss()
         }
+    //내가 추가-> btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
+    btmNavView.visibility =View.VISIBLE
     }
 
     private fun showDetails(@NonNull edited: EditedAlarm) {
+
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
         if (currentFragment is AlarmDetailsFragment) {
@@ -434,6 +436,9 @@ class AlarmsListActivity : AppCompatActivity() {
                     .replace(R.id.main_fragment_container, detailsFragment)
                     .commitAllowingStateLoss()
         }
+        // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
+        btmNavView.visibility =View.GONE
+        //
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

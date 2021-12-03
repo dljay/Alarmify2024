@@ -4,16 +4,17 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.Button
+import android.widget.ImageButton
+import android.widget.RelativeLayout
+import android.widget.SeekBar
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjadapters.RtPickerAdapter
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
-import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -37,8 +38,15 @@ class RtPickerActivity : AppCompatActivity() {
     lateinit var rcView: RecyclerView
     lateinit var layoutManager: LinearLayoutManager
 
-    //Media Player Related
+    //Media Player
     lateinit var mpClassInstance: MyMediaPlayer
+    //SlidingUp Panel (AKA mini Player) UIs
+    lateinit var allBtmSlideLayout: RelativeLayout // 전체를 담고 있는 Btm Layout
+    lateinit var slidingUpPanelLayout: SlidingUpPanelLayout
+    lateinit var imgbtn_Play: ImageButton
+    lateinit var imgbtn_Pause: ImageButton
+    lateinit var seekBar: SeekBar
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +61,24 @@ class RtPickerActivity : AppCompatActivity() {
         // todo: actionBar 꾸미기. 현재 사용중인 actionBar 스타일로 하려면  AlarmListActivity - mActionBarHandler 등 참고. DetailsFrag 는 또 다름 (쓰레기통 표시)
             supportActionBar?.setDisplayHomeAsUpEnabled(true) // null check?
 
-    // 2) xx
+    // 2) SlidingUpPanel (AKA MiniPlayer) UI Initialize 및 onClickListener 장착
+        //a) 하단 전체 Layout & SlidingUpPanel (Upper Ui)
+        slidingUpPanelLayout = findViewById(R.id.id_sldUpPnlRtPickerActivity) // 전체 SlidingUpPanel
+        allBtmSlideLayout = findViewById(R.id.ir_rl_entireSlider) // SlidingUpPanel 중 하단전체
+
+        //b) Play & Pause Button
+        imgbtn_Play = allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_play)
+        imgbtn_Pause = allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_pause)
+        imgbtn_Play.setOnClickListener {
+            //onMiniPlayerPlayClicked()
+            Log.d(TAG, "onCreate: Play Clicked")}
+        imgbtn_Pause.setOnClickListener {
+            //onMiniPlayerPauseClicked()
+            Log.d(TAG, "onCreate: Pause Clicked")}
+        // SeekBar
+        seekBar = allBtmSlideLayout.findViewById(R.id.id_upperUi_Seekbar)
+        // seekBarListenerSetUp()
+        
 
 
     //3) RcView 셋업-->

@@ -4,9 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageButton
-import android.widget.RelativeLayout
-import android.widget.SeekBar
+import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -41,11 +40,21 @@ class RtPickerActivity : AppCompatActivity() {
     //Media Player
     lateinit var mpClassInstance: MyMediaPlayer
     //SlidingUp Panel (AKA mini Player) UIs
-    lateinit var allBtmSlideLayout: RelativeLayout // 전체를 담고 있는 Btm Layout
-    lateinit var slidingUpPanelLayout: SlidingUpPanelLayout
-    lateinit var imgbtn_Play: ImageButton
-    lateinit var imgbtn_Pause: ImageButton
-    lateinit var seekBar: SeekBar
+    lateinit var slidingUpPanelLayout: SlidingUpPanelLayout // SlideUpPanel 전체
+    lateinit var allBtmSlideLayout: RelativeLayout // SlideUpPanel 중 상단(돌출부) 전체
+
+    //SlidingUp Panel 상단  Uis
+    private val imgbtn_Play by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_play) as ImageButton }
+    private val imgbtn_Pause by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_pause) as ImageButton }
+    private val seekBar by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_Seekbar) as SeekBar }
+
+    private val upperUiHolder by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_ll) as LinearLayout }    // 추후 이 부분이 fade out
+    private val tv_upperUi_title by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_tv_title) as TextView }
+
+    private val iv_upperUi_thumbNail by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_coverImage) as ImageView}
+    private val iv_upperUi_ClickArrow by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_clickarrowUp) as ImageView }
+    private val cl_upperUi_entireWindow by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_ConsLayout) as ConstraintLayout }
+    //SlidingUp Panel 하단 Uis ->
 
 
 
@@ -62,21 +71,19 @@ class RtPickerActivity : AppCompatActivity() {
             supportActionBar?.setDisplayHomeAsUpEnabled(true) // null check?
 
     // 2) SlidingUpPanel (AKA MiniPlayer) UI Initialize 및 onClickListener 장착
-        //a) 하단 전체 Layout & SlidingUpPanel (Upper Ui)
+        //a) 전체 SlidingUpPanel & 상단(돌출부) 전체 Layout
         slidingUpPanelLayout = findViewById(R.id.id_sldUpPnlRtPickerActivity) // 전체 SlidingUpPanel
-        allBtmSlideLayout = findViewById(R.id.ir_rl_entireSlider) // SlidingUpPanel 중 하단전체
+        allBtmSlideLayout = findViewById(R.id.ir_rl_entireSlider) // SlidingUpPanel 중 상단(돌출부) 전체
 
-        //b) Play & Pause Button
-        imgbtn_Play = allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_play)
-        imgbtn_Pause = allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_pause)
+        //b) ListenerSetup: Play & Pause Button onClickListener
+
         imgbtn_Play.setOnClickListener {
             //onMiniPlayerPlayClicked()
             Log.d(TAG, "onCreate: Play Clicked")}
         imgbtn_Pause.setOnClickListener {
             //onMiniPlayerPauseClicked()
             Log.d(TAG, "onCreate: Pause Clicked")}
-        // SeekBar
-        seekBar = allBtmSlideLayout.findViewById(R.id.id_upperUi_Seekbar)
+
         // seekBarListenerSetUp()
         
 

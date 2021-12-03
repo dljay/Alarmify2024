@@ -16,7 +16,7 @@
         app:umanoPanelHeight="60dp"
         app:umanoShadowHeight="0dp">
 
-        <!--1st Child 상단 RcView [Song Selector] -->
+        <!--1st Child RcView [Song Selector] -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -28,7 +28,7 @@
 
         </LinearLayout>
 
-        <!--2nd child 하단 Music Player + Title+ AlbumArt -->
+        <!--2nd child Music Player + Title+ AlbumArt -->
         <RelativeLayout
             android:id="@+id/ir_rl_entireSlider"
             android:layout_width="match_parent"

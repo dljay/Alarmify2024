@@ -58,9 +58,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.37a  [RtPickerActivity MusicPlayer 넣기 전]
-
-
+//// v0.37a2  [RtPickerActivity MusicPlayer 넣는중]
+// [RtPickerActivity] 에 Player SlidingUpPanelLayout UI  심기전.
 
 // 할일 ==>
 //badge 와 ChipDays ? 포함 Coroutine 으로 바꿔주기.,

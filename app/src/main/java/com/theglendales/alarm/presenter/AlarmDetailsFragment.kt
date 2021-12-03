@@ -288,11 +288,16 @@ class AlarmDetailsFragment : Fragment() {
 
                     val subscribe = editor.firstOrError().flatMap { alarmValue -> alarmValue.daysOfWeek.onChipDayClicked(whichInt, isChecked) }
                         .subscribe { daysOfWeek ->
-                            //todo: daysOfWeek 에 변화가 없을때도 굳이 modify->ActionBarHandler.kt 계속 불려져서. 아래 if(alarms.get ... daysOfWeek) 넣어줬음. 면밀한 확인 필요.
-                            if(alarms.getAlarm(alarmId)!!.data.daysOfWeek != daysOfWeek) {
-                                Log.d(TAG, "onCreateView: [daysOfWeek] 정보가 바꼈음. modify 실행하겠음!!")
-                                modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
+                            // daysOfWeek 에 변화가 없을때도 굳이 modify->ActionBarHandler.kt 계속 불려져서. 아래 if(alarms.get ... daysOfWeek) 넣어줬음. 면밀한 확인 필요.
+                            val thisAlarm = alarms.getAlarm(alarmId)
+                            if(thisAlarm!=null) {
+                                if(alarms.getAlarm(alarmId)!!.data.daysOfWeek != daysOfWeek) {
+                                    Log.d(TAG, "onCreateView: [daysOfWeek] 요일 정보가 바꼈음. modify 실행하겠음!!")
+                                    modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
+                                }
                             }
+
+
                             Log.d(TAG,"onCreateView: daysOfWeekJJ_new=$daysOfWeek, whichInt=$whichInt, isChecked=$isChecked")
                         }//.addToDisposables() 이거 추가? 원문에는 없으나 바뀐 yuriv Github 의 DetailsFrag.kt 에는 있네.
 

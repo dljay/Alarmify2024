@@ -57,7 +57,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.36d  [DetailsFrag.kt> modify > ActionBarHandler.kt 호출문제] (O)
+//// v0.36e  [DetailsFrag.kt> modify > ActionBarHandler.kt 호출문제] (O)
 // DetailsFrag 열릴때마다 계속 ActionBarHandler 호출 문제.
 //=> 라인291: daysOfWeek 에 변화가 없을때도 굳이 modify->ActionBarHandler.kt 계속 불려져서. 아래 if(alarms.get ... daysOfWeek) 넣어줬음. 면밀한 확인 필요.
 // DetailsFrag 들어갈때마다 ActionBarHandler 가 호출되는데 ActionBarHandler.kt > R.id.휴지통메뉴.isVisible 에서 Crash 남. (O) 일단 고쳤음.

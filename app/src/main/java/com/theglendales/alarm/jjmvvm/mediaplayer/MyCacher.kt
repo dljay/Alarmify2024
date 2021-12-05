@@ -35,7 +35,7 @@ class MyCacher(private val receivedContext: Context, private val cacheDir: File,
             Log.d(TAG, "initCacheVariables: inside simpleCache..")
         }
         // 이게 다 끝나면 더 이상 null 이 없을테니 MyMediaPlayer Instance 로 넘김!
-        mpInstanceReceived.initExoPlayerWithCache()
+        mpInstanceReceived.initExoPlayer(true)
         Log.d(TAG, "initCacheVariables: Ends.. ")
 
     }

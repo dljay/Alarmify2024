@@ -18,15 +18,16 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
-import kotlin.math.sign
 
 // RcView 싱글 Selection 참고: https://stackoverflow.com/questions/28972049/single-selection-in-recyclerview
 
 private const val TAG="RtPickerAdapter"
 class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
                       private val receivedActivity: Activity,
-                      private val rtPickerVModel: JjRtPickerVModel) : RecyclerView.Adapter<RtPickerAdapter.RtPickerVHolder>()
+                      private val rtPickerVModel: JjRtPickerVModel,
+                      private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RtPickerAdapter.RtPickerVHolder>()
 {
     var lastCheckedPos = -1 // CheckBox 로 선택한 RT 의 Pos 기록.
 
@@ -111,10 +112,14 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
             notifyItemChanged(copyOfLastCheckedPos) // 즉 이전에 선택되었던 row 의 RadioBtn 은 모두 False 로
             notifyItemChanged(lastCheckedPos) // 그리고 지금 선택된 row 의 RadioBtn 만 활성화.
 
-        // LiveData 업데이트
+        // LiveData 업데이트 - Intent 에 TrTitle, RTA/ArtFilePath 전달 용도
             if(rtaArtPathList.size > 0 && lastCheckedPos < rtaArtPathList.size) {
-                val rtaArtPath = rtaArtPathList[lastCheckedPos]
-                rtPickerVModel.updateLiveData(rtaArtPath)
+                val rtWithAlbumArtObj = rtaArtPathList[lastCheckedPos]
+                rtPickerVModel.updateLiveData(rtWithAlbumArtObj)
+        // 음악 바로 재생 (여기서 재생 후 STATUS.ENUM 상태에 따라 LiveData 로 전달
+                val rtaFilePath = rtWithAlbumArtObj.audioFilePath
+                mediaPlayer.prepMusicPlayLocal(rtaFilePath, true)
+
             }
 
 

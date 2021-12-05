@@ -38,12 +38,13 @@ class RtPickerActivity : AppCompatActivity() {
     lateinit var layoutManager: LinearLayoutManager
 
     //Media Player
-    lateinit var mpClassInstance: MyMediaPlayer
+    lateinit var mediaPlayer: MyMediaPlayer
     //SlidingUp Panel (AKA mini Player) UIs
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout // SlideUpPanel 전체
     lateinit var allBtmSlideLayout: RelativeLayout // SlideUpPanel 중 상단(돌출부) 전체
 
-    //SlidingUp Panel 상단  Uis
+    //SlidingUp Panel [음악재생 mini player]
+        // a) 상단 Uis
     private val imgbtn_Play by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_play) as ImageButton }
     private val imgbtn_Pause by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_pause) as ImageButton }
     private val seekBar by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_Seekbar) as SeekBar }
@@ -54,7 +55,10 @@ class RtPickerActivity : AppCompatActivity() {
     private val iv_upperUi_thumbNail by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_coverImage) as ImageView}
     private val iv_upperUi_ClickArrow by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_clickarrowUp) as ImageView }
     private val cl_upperUi_entireWindow by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_ConsLayout) as ConstraintLayout }
-    //SlidingUp Panel 하단 Uis ->
+        // b) 하단 Uis
+    private val constLayout_entire by lazy {allBtmSlideLayout.findViewById(R.id.id_lowerUI_entireConsLayout) as ConstraintLayout}
+    private val iv_lowerUi_bigThumbnail by lazy { allBtmSlideLayout.findViewById(R.id.id_lowerUi_iv_bigThumbnail) as ImageView }
+    private val tv_lowerUi_about by lazy { allBtmSlideLayout.findViewById(R.id.id_lowerUi_tv_Description) as TextView }
 
 
 
@@ -141,10 +145,11 @@ class RtPickerActivity : AppCompatActivity() {
                     
                 })
     // 5) Media Player Init
-        mpClassInstance = MyMediaPlayer(this, jjMpViewModel)
+        mediaPlayer = MyMediaPlayer(this, jjMpViewModel)
+        mediaPlayer.initExoPlayer(false) // 우리는 Local RTAs 의 URI 를 받아서 재생할것이므로 Caching 사용 안함(=>False 전달)
 
     //6) RcVAdapter Init
-        rcvAdapter = RtPickerAdapter(ArrayList(), this, rtPickerVModel)
+        rcvAdapter = RtPickerAdapter(ArrayList(), this, rtPickerVModel, mediaPlayer)
         rcView.adapter = rcvAdapter
         rcView.setHasFixedSize(true)
 
@@ -176,18 +181,23 @@ class RtPickerActivity : AppCompatActivity() {
     // Pause 상태에서 ▶  클릭했을 때
     private fun onMiniPlayerPlayClicked()  {
         if(MyMediaPlayer.currentPlayStatus == StatusMp.PAUSED) {
-            mpClassInstance.continueMusic()
+            mediaPlayer.continueMusic()
             showMiniPlayerPauseBtn()
         }
     }
     //  Play 상태에서 ⏸ 클릭 했을 때 -> 음악 Pause 해야함.
     private fun onMiniPlayerPauseClicked() {
         if(MyMediaPlayer.currentPlayStatus == StatusMp.PLAY) {
-            mpClassInstance.pauseMusic()
+            mediaPlayer.pauseMusic()
             showMiniPlayerPlayBtn()
         }
     }
     // BackButton 눌러서 원래 DetailsFrag 로 돌아가면 아래 onPause() & onDestroy() 둘다 불림.
     override fun onPause() {super.onPause()}
-    override fun onDestroy() {super.onDestroy()}
+    override fun onDestroy() {
+        super.onDestroy()
+        //todo: ExoPlayer 아예 없애주기! (release 말고 destroy? 그래야 MyCacher.kt 에서-> mediaPlayer.initExoPlayer(캐슁버전) -> Caching 준비하여 SecondFrag.kt 에서 사용)
+        mediaPlayer.removeHandler()
+        mediaPlayer.releaseExoPlayer()
+    }
 }

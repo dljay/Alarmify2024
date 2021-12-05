@@ -21,10 +21,10 @@ import java.util.*
 
 private const val TAG="MyMediaPlayer"
 
-
+// [ONLINE URL 재생과 RtPicker 두군데서 모두 쓰임- init() 만 다르게 해줌.]
 enum class StatusMp { IDLE, BUFFERING, READY, PLAY, PAUSED, ERROR} // BUFFERING: activateLC(),
 
-class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpViewModel) : Player.Listener {
+class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel) : Player.Listener {
 
     companion object {
         val mp3UrlMap: HashMap<Int, String> = HashMap()
@@ -80,46 +80,76 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     return loadControl
     }
 
-    fun initExoPlayerWithCache() { // MyCacher.kt 에서 호출됨.
-    Log.d(TAG, "initExoPlayerWithCache: starts......")
-    val lcControl = loadControlSetUp()
+    fun initExoPlayer(isCachingNeeded: Boolean) { // MyCacher.kt (url) 와 RtPickerActivity 두군데서 호출됨. == SecondFrag.kt 에서 사용될때는 Caching 되는걸로 사용!
+    // A) SecondFrag 에서 URL 부르는 용도로 사용될때 (MyCacher.kt 에서 init 하면서 그전의 Caching 을 활용하라고 지시!)
+        if(isCachingNeeded) {
+        Log.d(TAG, "initExoPlayer: [Caching]starts......")
+        val lcControl = loadControlSetUp()
 
-    simpleCacheReceived = MyCacher.simpleCache!! // todo: this is dangerous..근데 simpleCacheReceived 를 non-nullable 로 할수는 없구먼 현재는.
-    httpDataSourceFactory = DefaultHttpDataSource.Factory()
-        .setAllowCrossProtocolRedirects(true)
+        simpleCacheReceived = MyCacher.simpleCache!! // todo: this is dangerous..근데 simpleCacheReceived 를 non-nullable 로 할수는 없구먼 현재는.
+        httpDataSourceFactory = DefaultHttpDataSource.Factory()
+            .setAllowCrossProtocolRedirects(true)
 
-    dataSourceFactory = DefaultDataSourceFactory(receivedFragActivity, httpDataSourceFactory)
+        dataSourceFactory = DefaultDataSourceFactory(receivedContext, httpDataSourceFactory)
 
-    // Build data source factory with cache enabled, if data is available in cache it will return immediately,
-    // otherwise it will open a new connection to get the data.
-    cacheDataSourceFactory = CacheDataSource.Factory()
-        .setCache(simpleCacheReceived!!) // simpleCache 를 non-null 타입으로 했으면..
-        .setUpstreamDataSourceFactory(httpDataSourceFactory)
-        .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        // Build data source factory with cache enabled, if data is available in cache it will return immediately,
+        // otherwise it will open a new connection to get the data.
+        cacheDataSourceFactory = CacheDataSource.Factory()
+            .setCache(simpleCacheReceived!!) // simpleCache 를 non-null 타입으로 했으면..
+            .setUpstreamDataSourceFactory(httpDataSourceFactory)
+            .setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
 
-    exoPlayer = SimpleExoPlayer.Builder(receivedFragActivity).setMediaSourceFactory(
-        DefaultMediaSourceFactory(cacheDataSourceFactory)
-    )
-        .setLoadControl(lcControl).build()
+        exoPlayer = SimpleExoPlayer.Builder(receivedContext).setMediaSourceFactory(
+            DefaultMediaSourceFactory(cacheDataSourceFactory)
+        )
+            .setLoadControl(lcControl).build()
 
-    exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
-    exoPlayer.addListener(this)
-    Log.d(TAG, "initExoPlayerWithCache: ends......")
+        exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+        exoPlayer.addListener(this)
+        Log.d(TAG, "initExoPlayer: [Caching] ends......")
+    }
+    // B) LOCAL URI 재생 용도 (RtPicker 에서 사용)
+        else{
+            Log.d(TAG, "initExoPlayer: [LOCAL] .. begins")
+        exoPlayer = SimpleExoPlayer.Builder(receivedContext).build()
+        exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
+        exoPlayer.addListener(this)
+            Log.d(TAG, "initExoPlayer: [LOCAL] .. Ends")
+
+        }
+
     }
 // ***** 실제 재생!
-    private fun prepPlayerWithCache(url:String?, playWhenReady: Boolean) { // Caching 위해 <TYPE:2>
-        //1) to play a single song
-        val mp3Uri = Uri.parse(url)
-        val mediaItem = MediaItem.fromUri(mp3Uri)
+    // 아래 prepMusicPlayLocal & Online 두군데서 불림.
+    private fun prepPlayer(isCachingNeeded: Boolean, sourceLocation:String?, playWhenReady: Boolean) { // Caching & Local Play
+    //1) SecondFrag.kt 에서 URL 재생 용도: to play a single song
+        if(isCachingNeeded) {
 
-        // Build data source factory with cache enabled, if data is available in cache it will return immediately, otherwise it will open a new connection to get the data.
-        val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(mediaItem)
+            val mp3Uri = Uri.parse(sourceLocation)
+            val mediaItem = MediaItem.fromUri(mp3Uri)
 
-        //playerView.player = simpleExoPlayer
-        exoPlayer.setMediaSource(mediaSource, true)
-        exoPlayer.prepare()
+            // Build data source factory with cache enabled, if data is available in cache it will return immediately, otherwise it will open a new connection to get the data.
+            val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(mediaItem)
 
-        exoPlayer.playWhenReady = playWhenReady
+            //playerView.player = simpleExoPlayer
+            exoPlayer.setMediaSource(mediaSource, true)
+            exoPlayer.prepare()
+
+            exoPlayer.playWhenReady = playWhenReady
+        }
+    //2) DetailsFrag>RtPicker 들어가서 Local URI 로 음악 들으려 할 때
+        else {
+            val rtaFileUri = Uri.parse(sourceLocation)
+            val mediaItem = MediaItem.fromUri(rtaFileUri)
+            val mediaSource = ProgressiveMediaSource.Factory(DefaultDataSourceFactory(receivedContext)).createMediaSource(mediaItem)
+
+            exoPlayer.setMediaSource(mediaSource, true)
+            exoPlayer.prepare()
+
+            exoPlayer.playWhenReady = playWhenReady
+
+        }
+
 
     }
     fun releaseExoPlayer() { //todo: 후에 activity ? fragment? onDestroy 에 넣어야 할듯..
@@ -183,8 +213,47 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
 
 // <3> 추가된 코드들--LiveData/Ui 외-------------- >>>>>>>>>
 
-// Called From RcVAdapter> 클릭 ->
-    fun prepareMusicPlay(receivedTrId: Int, playWhenReady: Boolean) {
+    //a) Local URI 리소스를 가지는 음원 플레이 (RtPicker.kt) 에서 사용
+    fun prepMusicPlayLocal(audioFilePath: String?, playWhenReady: Boolean) {
+        removeHandler()
+        setSeekbarToZero()
+
+
+//        // 불량 URL 확인, ErrorOccurred!
+//        val isUrlValid: Boolean = URLUtil.isValidUrl(audioFilePath)
+//
+//        // 1) 잘못된 mp3 url 이면
+//        if(!isUrlValid)
+//        {
+//            Toast.makeText(receivedContext,"Invalid Url error at id: $receivedTrId. Cannot Play Ringtone", Toast.LENGTH_SHORT).show()
+//            Log.d(TAG, "URL-ERROR 1): Invalid Url error at id: $receivedTrId. Cannot Play Ringtone")
+//
+//            GlbVars.errorTrackId = receivedTrId
+//            mpViewModel.updateSongDuration(0)
+//            //setSeekbarToZero()
+//            //1-a) 그런데 그전에 클릭한 다른 트랙을 play OR buffering 중일경우에는 play/buffering 중인 previous 트랙을 멈춤.
+//            if(exoPlayer.isPlaying||exoPlayer.playbackState == Player.STATE_BUFFERING) {
+//                Log.d(TAG, "URL-ERROR 1-a): Invalid Url && 그 전 트랙 playing/buffering 상태였어 .. error at id: $receivedTrId. Cannot Play Ringtone")
+//                exoPlayer.stop() // stop
+//            }
+//
+//        }
+        try{
+            // LOCAL 재생 용도이기 때문에 Caching=false
+            prepPlayer(false, audioFilePath, playWhenReady) // ->  신규클릭의 경우 playWhenReady = true, 재생 중 frag 왔다 다시왔을때는 false
+        }catch(e: IOException) {
+            Toast.makeText(receivedContext, "Unknown error occurred while playing the ringtone: $e", Toast.LENGTH_LONG).show()
+            //GlbVars.errorTrackId = receivedTrId
+            // 위에서 이미 url 에러 -> return 으로 잡아줬지만 혹시 모르니..
+        }
+
+
+
+
+    }
+
+    // b)Online Url 리소스를 가지는 음원 플레이(SecondFrag.kt) 에서 사용:  Called From RcVAdapter> 클릭 ->
+    fun prepMusicPlayOnline(receivedTrId: Int, playWhenReady: Boolean) {
 
         removeHandler()
         setSeekbarToZero()
@@ -196,7 +265,7 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     // 1) 잘못된 mp3 url 이면
     if(!isUrlValid)
     {
-        Toast.makeText(receivedFragActivity,"Invalid Url error at id: $receivedTrId. Cannot Play Ringtone", Toast.LENGTH_SHORT).show()
+        Toast.makeText(receivedContext,"Invalid Url error at id: $receivedTrId. Cannot Play Ringtone", Toast.LENGTH_SHORT).show()
         Log.d(TAG, "URL-ERROR 1): Invalid Url error at id: $receivedTrId. Cannot Play Ringtone")
 
         GlbVars.errorTrackId = receivedTrId
@@ -211,9 +280,9 @@ class MyMediaPlayer(val receivedFragActivity: Context, val mpViewModel: JjMpView
     }
     try{
         // Play 전에 (가능하면) Caching 하기.
-        prepPlayerWithCache(mp3UrlMap[receivedTrId], playWhenReady) // ->  신규클릭의 경우 playWhenReady = true, 재생 중 frag 왔다 다시왔을때는 false
+        prepPlayer(true, mp3UrlMap[receivedTrId], playWhenReady) // ->  신규클릭의 경우 playWhenReady = true, 재생 중 frag 왔다 다시왔을때는 false
     }catch(e: IOException) {
-        Toast.makeText(receivedFragActivity, "Unknown error occurred: $e", Toast.LENGTH_LONG).show()
+        Toast.makeText(receivedContext, "Unknown error occurred: $e", Toast.LENGTH_LONG).show()
         GlbVars.errorTrackId = receivedTrId
         // 위에서 이미 url 에러 -> return 으로 잡아줬지만 혹시 모르니..
     }

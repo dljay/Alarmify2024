@@ -165,20 +165,20 @@ class RtPickerActivity : AppCompatActivity() {
                     // b) VuMeter/Loading Circle 등 UI 컨트롤
                     //VHolderUiHandler.LcVmIvController(StatusEnum)
 
+                //B-2) Seekbar 관련
+                    //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+                    jjMpViewModel.songDuration.observe(this, { dur ->
+                        Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
+                        seekBar.max = dur.toInt()
+
+                    })
+                    //2-D) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+                    jjMpViewModel.currentPosition.observe(this, { playbackPos ->
+                        seekBar.progress = playbackPos.toInt() +200
+                    })
+
                 })
 
-                //B-2) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
-                jjMpViewModel.songDuration.observe(this, { dur ->
-                    Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
-                    //seekBar.max = dur.toInt()
-                    
-                })
-                //2-D) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
-                jjMpViewModel.currentPosition.observe(this, { playbackPos ->
-                    //Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
-                    //seekBar.progress = playbackPos.toInt() +200
-                    
-                })
     // 5) Media Player Init
         mediaPlayer = MyMediaPlayer(this, jjMpViewModel)
         mediaPlayer.initExoPlayer(false) // 우리는 Local RTAs 의 URI 를 받아서 재생할것이므로 Caching 사용 안함(=>False 전달)

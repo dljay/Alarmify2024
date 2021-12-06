@@ -118,7 +118,7 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
                 rtPickerVModel.updateLiveData(rtWithAlbumArtObj)
         // 음악 바로 재생 (여기서 재생 후 STATUS.ENUM 상태에 따라 LiveData 로 전달
                 val rtaFilePath = rtWithAlbumArtObj.audioFilePath
-                mediaPlayer.prepMusicPlayLocal(rtaFilePath, true)
+                mediaPlayer.prepMusicPlayLocalSrc(rtaFilePath, true)
 
             }
 

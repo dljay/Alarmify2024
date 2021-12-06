@@ -231,7 +231,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: 2nd Frag!")
-        // mpClassInstance.releaseExoPlayer()? 여기 아니면 AlarmsListActivity 에다가?
+         mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
 
     }
 
@@ -569,7 +569,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 // 1)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 UI 를 재구성하는 반면,
     private fun reConstructTrUisOnReturn(prevTrId: Int) {
 
-        mpClassInstance.prepMusicPlayOnline(prevTrId, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
+        mpClassInstance.prepMusicPlayOnlineSrc(prevTrId, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
         //VHolderUiHandler.LcVmIvController(StatusMp.PAUSED) -> Doesn't do a shit.
     }
 // 2)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 SlidingPanel UI 를 재구성.

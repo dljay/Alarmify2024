@@ -214,80 +214,57 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
 // <3> 추가된 코드들--LiveData/Ui 외-------------- >>>>>>>>>
 
     //a) Local URI 리소스를 가지는 음원 플레이 (RtPicker.kt) 에서 사용
-    fun prepMusicPlayLocal(audioFilePath: String?, playWhenReady: Boolean) {
+    fun prepMusicPlayLocalSrc(audioFilePath: String?, playWhenReady: Boolean) {
         removeHandler()
         setSeekbarToZero()
 
-
-//        // 불량 URL 확인, ErrorOccurred!
-//        val isUrlValid: Boolean = URLUtil.isValidUrl(audioFilePath)
-//
-//        // 1) 잘못된 mp3 url 이면
-//        if(!isUrlValid)
-//        {
-//            Toast.makeText(receivedContext,"Invalid Url error at id: $receivedTrId. Cannot Play Ringtone", Toast.LENGTH_SHORT).show()
-//            Log.d(TAG, "URL-ERROR 1): Invalid Url error at id: $receivedTrId. Cannot Play Ringtone")
-//
-//            GlbVars.errorTrackId = receivedTrId
-//            mpViewModel.updateSongDuration(0)
-//            //setSeekbarToZero()
-//            //1-a) 그런데 그전에 클릭한 다른 트랙을 play OR buffering 중일경우에는 play/buffering 중인 previous 트랙을 멈춤.
-//            if(exoPlayer.isPlaying||exoPlayer.playbackState == Player.STATE_BUFFERING) {
-//                Log.d(TAG, "URL-ERROR 1-a): Invalid Url && 그 전 트랙 playing/buffering 상태였어 .. error at id: $receivedTrId. Cannot Play Ringtone")
-//                exoPlayer.stop() // stop
-//            }
-//
-//        }
         try{
             // LOCAL 재생 용도이기 때문에 Caching=false
             prepPlayer(false, audioFilePath, playWhenReady) // ->  신규클릭의 경우 playWhenReady = true, 재생 중 frag 왔다 다시왔을때는 false
         }catch(e: IOException) {
-            Toast.makeText(receivedContext, "Unknown error occurred while playing the ringtone: $e", Toast.LENGTH_LONG).show()
+            Toast.makeText(receivedContext, "Unknown error occurred while trying to play the ringtone: $e", Toast.LENGTH_LONG).show()
+            mpViewModel.updateSongDuration(0)
             //GlbVars.errorTrackId = receivedTrId
             // 위에서 이미 url 에러 -> return 으로 잡아줬지만 혹시 모르니..
         }
-
-
-
-
     }
 
     // b)Online Url 리소스를 가지는 음원 플레이(SecondFrag.kt) 에서 사용:  Called From RcVAdapter> 클릭 ->
-    fun prepMusicPlayOnline(receivedTrId: Int, playWhenReady: Boolean) {
+    fun prepMusicPlayOnlineSrc(receivedTrId: Int, playWhenReady: Boolean) {
 
         removeHandler()
         setSeekbarToZero()
 
 
-    // 불량 URL 확인, ErrorOccurred!
-    val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlMap[receivedTrId])
+        // 불량 URL 확인, ErrorOccurred!
+        val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlMap[receivedTrId])
 
-    // 1) 잘못된 mp3 url 이면
-    if(!isUrlValid)
-    {
-        Toast.makeText(receivedContext,"Invalid Url error at id: $receivedTrId. Cannot Play Ringtone", Toast.LENGTH_SHORT).show()
-        Log.d(TAG, "URL-ERROR 1): Invalid Url error at id: $receivedTrId. Cannot Play Ringtone")
+        // 1) 잘못된 mp3 url 이면
+        if(!isUrlValid)
+        {
+            Toast.makeText(receivedContext,"Invalid Url error at id: $receivedTrId. Cannot Play Ringtone", Toast.LENGTH_SHORT).show()
+            Log.d(TAG, "URL-ERROR 1): Invalid Url error at id: $receivedTrId. Cannot Play Ringtone")
 
-        GlbVars.errorTrackId = receivedTrId
-        mpViewModel.updateSongDuration(0)
-        //setSeekbarToZero()
-        //1-a) 그런데 그전에 클릭한 다른 트랙을 play OR buffering 중일경우에는 play/buffering 중인 previous 트랙을 멈춤.
-        if(exoPlayer.isPlaying||exoPlayer.playbackState == Player.STATE_BUFFERING) {
-            Log.d(TAG, "URL-ERROR 1-a): Invalid Url && 그 전 트랙 playing/buffering 상태였어 .. error at id: $receivedTrId. Cannot Play Ringtone")
-            exoPlayer.stop() // stop
+            GlbVars.errorTrackId = receivedTrId
+            mpViewModel.updateSongDuration(0)
+            //setSeekbarToZero()
+            //1-a) 그런데 그전에 클릭한 다른 트랙을 play OR buffering 중일경우에는 play/buffering 중인 previous 트랙을 멈춤.
+            if(exoPlayer.isPlaying||exoPlayer.playbackState == Player.STATE_BUFFERING) {
+                Log.d(TAG, "URL-ERROR 1-a): Invalid Url && 그 전 트랙 playing/buffering 상태였어 .. error at id: $receivedTrId. Cannot Play Ringtone")
+                exoPlayer.stop() // stop
+            }
+
         }
-
+        try{
+            // Play 전에 (가능하면) Caching 하기.
+            prepPlayer(true, mp3UrlMap[receivedTrId], playWhenReady) // ->  신규클릭의 경우 playWhenReady = true, 재생 중 frag 왔다 다시왔을때는 false
+        }catch(e: IOException) {
+            Toast.makeText(receivedContext, "Unknown error occurred: $e", Toast.LENGTH_LONG).show()
+            GlbVars.errorTrackId = receivedTrId
+            // 위에서 이미 url 에러 -> return 으로 잡아줬지만 혹시 모르니..
+        }
+        // 3) 실제 Play >>>>>>>>>>>>>>>>>>>>>>>>>>>>> !! 는 위에 onPlayerStateChanged 에서 핸들링함.
     }
-    try{
-        // Play 전에 (가능하면) Caching 하기.
-        prepPlayer(true, mp3UrlMap[receivedTrId], playWhenReady) // ->  신규클릭의 경우 playWhenReady = true, 재생 중 frag 왔다 다시왔을때는 false
-    }catch(e: IOException) {
-        Toast.makeText(receivedContext, "Unknown error occurred: $e", Toast.LENGTH_LONG).show()
-        GlbVars.errorTrackId = receivedTrId
-        // 위에서 이미 url 에러 -> return 으로 잡아줬지만 혹시 모르니..
-    }
-    // 3) 실제 Play >>>>>>>>>>>>>>>>>>>>>>>>>>>>> !! 는 위에 onPlayerStateChanged 에서 핸들링함.
-}
 // Seekbar related-- >
     fun removeHandler() = handler.removeCallbacks(runnable)
     fun setSeekbarToZero() { // a)새로운 트랙 클릭했을 때 prepareMusicPlay() 에서 실행. b) 2ndFrag 에서 onPause() 에서도 실행됨.

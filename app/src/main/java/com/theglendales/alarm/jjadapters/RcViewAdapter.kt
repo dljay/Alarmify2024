@@ -333,7 +333,7 @@ class RcViewAdapter(
                     enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
                     //1-c 음악 플레이
-                    mediaPlayer.prepMusicPlayOnline(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+                    mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
                 }
             //2) 음악쪽 클릭이든 구매쪽 클릭이든 일단 SecondFrag.kt 에 전달-> 거기서 알아서 판단.
                 //LiveData Feed

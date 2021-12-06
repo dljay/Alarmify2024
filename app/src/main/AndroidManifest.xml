@@ -46,6 +46,7 @@
             android:name=".presenter.RtPickerActivity"
             android:exported="false"
             android:theme="@style/DefaultDarkTheme"
+            android:screenOrientation="portrait"
             android:parentActivityName=".presenter.AlarmsListActivity"/>
         <activity
             android:name=".presenter.SettingsActivity"

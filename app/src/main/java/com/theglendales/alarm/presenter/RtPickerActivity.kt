@@ -1,17 +1,27 @@
 package com.theglendales.alarm.presenter
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
+import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjadapters.RtPickerAdapter
+import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
@@ -75,21 +85,18 @@ class RtPickerActivity : AppCompatActivity() {
             supportActionBar?.setDisplayHomeAsUpEnabled(true) // null check?
 
     // 2) SlidingUpPanel (AKA MiniPlayer) UI Initialize 및 onClickListener 장착
-        //a) 전체 SlidingUpPanel & 상단(돌출부) 전체 Layout
+
+        //a) 전체 SlidingUpPanel
         slidingUpPanelLayout = findViewById(R.id.id_sldUpPnlRtPickerActivity) // 전체 SlidingUpPanel
         allBtmSlideLayout = findViewById(R.id.ir_rl_entireSlider) // SlidingUpPanel 중 상단(돌출부) 전체
+        setUpSlidingPanel()
 
         //b) ListenerSetup: Play & Pause Button onClickListener
 
-        imgbtn_Play.setOnClickListener {
-            //onMiniPlayerPlayClicked()
-            Log.d(TAG, "onCreate: Play Clicked")}
-        imgbtn_Pause.setOnClickListener {
-            //onMiniPlayerPauseClicked()
-            Log.d(TAG, "onCreate: Pause Clicked")}
+        imgbtn_Play.setOnClickListener {onMiniPlayerPlayClicked()}
+        imgbtn_Pause.setOnClickListener {onMiniPlayerPauseClicked()}
 
-        // seekBarListenerSetUp()
-        
+        seekbarListenerSetUp()
 
 
     //3) RcView 셋업-->
@@ -104,14 +111,42 @@ class RtPickerActivity : AppCompatActivity() {
             // A)생성(RcvVModel)
             val rtPickerVModel = ViewModelProvider(this).get(JjRtPickerVModel::class.java)
 
-            // B) Observe - RtPicker 로 User 가 RingTone 을 골랐을 때 => Intent 에 현재 RT 로 설정
+            // B) Observe - RtPicker 로 User 가 RingTone 을 골랐을 때
+
             rtPickerVModel.selectedRow.observe(this, { rtWithAlbumArt->
                 Log.d(TAG, "onCreate: rtPickerVModel 옵저버!! rtTitle=${rtWithAlbumArt.rtTitle}, \n rtaPath= ${rtWithAlbumArt.audioFilePath}, artPath= ${rtWithAlbumArt.artFilePathStr}")
-                // Intent 에 현재 선택된 RT 의 정보담기  (AlarDetailsFrag.kt 로 연결됨) .. RT 계속 바꿀때마다 Intent.putExtra 하는데 overWrite 되는듯.
+            //B-1) Intent 에 현재 선택된 RT 의 정보담기  (AlarDetailsFrag.kt 로 연결됨) .. RT 계속 바꿀때마다 Intent.putExtra 하는데 overWrite 되는듯.
                 resultIntent.putExtra(PICKER_RESULT_RT_TITLE,rtWithAlbumArt.rtTitle)
                 resultIntent.putExtra(PICKER_RESULT_AUDIO_PATH,rtWithAlbumArt.audioFilePath)
                 resultIntent.putExtra(PICKER_RESULT_ART_PATH,rtWithAlbumArt.artFilePathStr)
                 setResult(RESULT_OK, resultIntent)
+            //B-2) 음악 Player 에 UI 업데이트
+                //B-2-a) Sliding Panel 전체
+                // 최초 SlidingPanel 이 HIDDEN(안보이는 상태)면 열어주기. 이미 EXPAND/Collapsed 상태로 보이면 Panel 은 그냥 둠 [.COLLAPSED = (위만) 보이는 상태임!]
+                if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
+                    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED }
+
+                //B-2-b) Sliding Panel - Upper UI
+                    //제목
+                tv_upperUi_title.text = rtWithAlbumArt.rtTitle // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
+                tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
+                    //AlbumCover
+                GlideApp.with(this).load(rtWithAlbumArt.artFilePathStr).centerCrop() //
+                    .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.placeholder).listener(object :
+                        RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                            return false
+                        }
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            return false
+                        }
+                    }).into(iv_upperUi_thumbNail)
+
+                //B-2-c) Sliding Panel -  Lower UI
+                tv_lowerUi_about.text = rtWithAlbumArt.rtDescription
+                iv_lowerUi_bigThumbnail.setImageDrawable(iv_lowerUi_bigThumbnail.drawable) // 현재 상단 UI 앨범아트 고대로 갖고와서 설정.
+
             })
         //(2) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & MyMediaPlayer 그대로 사용 예정.
         // (음악 재생 상태에 따른 플레이어 UI 업데이트) (RT 선택시 음악 재생은 RtPickerAdapter 에서 바로함.)
@@ -163,20 +198,85 @@ class RtPickerActivity : AppCompatActivity() {
     // RT 고르기(X) Cancel Btn 눌렀을 때
 
     }
-    // ===================================== My Functions ==== >
+
+// <1> SlidingPanel 세팅 (펼치기 접기) 관련
+private fun setUpSlidingPanel() {
+
+    slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow) //setDragView = 펼치는 Drag 가능 영역 지정
+    //감춰놓기.
+    slidingUpPanelLayout.panelState =SlidingUpPanelLayout.PanelState.HIDDEN // 일단 클릭전에는 감춰놓기!
+
+
+
+    //slidingUpPanelLayout.anchorPoint = 0.6f //화면의 60% 만 올라오게.  그러나 2nd child 의 height 을 match_parent -> 300dp 로 설정해서 이걸 쓸 필요가 없어짐!
+    //slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.ANCHORED // 위치를 60%로 초기 시작
+    slidingUpPanelLayout.addPanelSlideListener(object :
+        SlidingUpPanelLayout.PanelSlideListener {
+        override fun onPanelSlide(panel: View?, slideOffset: Float) {
+
+            upperUiHolder.alpha =1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
+
+            // 트랙 클릭-> 미니플레이어가 등장! (그 이전에는 offset = -xxx 값임.)
+            //Log.d(TAG, "onPanelSlide: slideOffset= $slideOffset, rcvAdapterInstance.itemCount=${rcvAdapterInstance.itemCount}")
+            val entireListCount = rcvAdapter.itemCount
+            if (slideOffset == 0.0f && GlbVars.clickedTrId == entireListCount) { //마지막 트랙 클릭.
+                rcView.post { // 메인 ui 스레드에서는 다른 업무 처리로 바뻐서 다른 thread (워커스레드?) 를 만들어줌.
+                    rcView.smoothScrollBy(0, 300) //제일 밑 트랙을 300dp 위로 밀어줌.
+                    // todo: 추후 rcView 사이즈 변경될 때 고려 ->정확한 calculation 필요  https://greedy0110.tistory.com/41
+                    Log.d(TAG, "myOnItemClick: 살짝 슬라이드! 마지막 트랙 보이게!")
+
+                }
+            }
+            // 완전히 펼쳐질 때
+            if (!slidingUpPanelLayout.isOverlayed && slideOffset > 0.2f) { //안겹치게 설정된 상태에서 panel 이 열리는 중 (20%만 열리면 바로 모퉁이 감추기!)
+                //Log.d(TAG, "onPanelSlide: Hiding 모퉁이! yo! ")
+                slidingUpPanelLayout.isOverlayed =true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
+            }
+
+        }
+
+        @SuppressLint("ClickableViewAccessibility") // 아래 constLayout_entire.setxx... 이거 장애인 warning 없애기
+        override fun onPanelStateChanged(panel: View?,previousState: SlidingUpPanelLayout.PanelState?,newState: SlidingUpPanelLayout.PanelState?) {
+
+            when (newState) {
+                SlidingUpPanelLayout.PanelState.EXPANDED -> {
+                    //Log.d(TAG, "onPanelStateChanged: Sliding Panel Expanded")
+                    iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)// ↓ arrow 전환 visibility }
+
+                    // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
+                    constLayout_entire.setOnTouchListener { _, _ -> true }
+
+                }
+                SlidingUpPanelLayout.PanelState.COLLAPSED -> {
+                    //Log.d(TAG, "onPanelStateChanged: Sliding Panel Collapsed")
+                    iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
+                    slidingUpPanelLayout.isOverlayed =false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
+                    }
+                }
+            }
+        })
+    }
+    // Sliding Panel 닫기
+    private fun collapseSlidingPanel() {
+        slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+        iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
+        slidingUpPanelLayout.isOverlayed = false //
+
+    }
+// <2> MINI Player 재생/UI 관련 ================>
 
     //MiniPlayer Play/Pause btn UI Update
     // Show Pause Btn
     private fun showMiniPlayerPauseBtn() {
         Log.d(TAG, "showMiniPlayerPauseBtn: show Pause Btn")
-//        imgbtn_Play.visibility = View.GONE
-//        imgbtn_Pause.visibility = View.VISIBLE
+        imgbtn_Play.visibility = View.GONE
+        imgbtn_Pause.visibility = View.VISIBLE
     }
     // Show Play btn
     private fun showMiniPlayerPlayBtn() {
         Log.d(TAG, "showMiniPlayerPlayBtn: show Play Btn")
-//        imgbtn_Play.visibility = View.VISIBLE
-//        imgbtn_Pause.visibility = View.GONE
+        imgbtn_Play.visibility = View.VISIBLE
+        imgbtn_Pause.visibility = View.GONE
     }
     // Pause 상태에서 ▶  클릭했을 때
     private fun onMiniPlayerPlayClicked()  {
@@ -192,7 +292,23 @@ class RtPickerActivity : AppCompatActivity() {
             showMiniPlayerPlayBtn()
         }
     }
-    // BackButton 눌러서 원래 DetailsFrag 로 돌아가면 아래 onPause() & onDestroy() 둘다 불림.
+    //SeekBarListener (유저가 seekbar 를 만졌을 때 반응하는것.)
+    private fun seekbarListenerSetUp(){
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
+            {
+                mediaPlayer.removeHandler() // 새로 추가함.
+                var progressLong = progress.toLong()
+                if(fromUser) mediaPlayer.onSeekBarTouchedYo(progressLong)
+
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
+    }
+
+
+// BackButton 눌러서 원래 DetailsFrag 로 돌아가면 아래 onPause() & onDestroy() 둘다 불림.
     override fun onPause() {super.onPause()}
     override fun onDestroy() {
         super.onDestroy()

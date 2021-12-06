@@ -58,15 +58,13 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.37b  [RtPickerActivity MusicPlayer 넣는중]
-// RtPickerActivity 에 MediaPlayer 사실상 SecondFrag 와 동일하게 심는중 (동일한 클래스, ViewModel, LiveData 등 사용)
-// 대신 Caching 때문에 initPlayer() 와 prepPlayer() 에는 bool 값 옵션을, prepMusicPlayLocal() 을 따로 만들어줌.
-// 일단 음악 재생 잘됨. => release 잘 되는지  SecondFrag 에는 영향 없는지 등 확인하고. UI 반영 할것~~
-// todo: 확인 필요: 별도 LiveModel 안 만든게 걸리는데 => RtPickerActivity 는 끝나면 onDestroy() 가 불린다. 즉 SecondFrag 와 겹칠일 없으니 괜춘?
+//// v0.37c  [RtPickerActivity MusicPlayer 넣는중]
+
+// 확인 필요: 별도 LiveModel 안 만든게 걸리는데 => RtPickerActivity 는 끝나면 onDestroy() 가 불린다. 즉 SecondFrag 와 겹칠일 없으니 괜춘?
 
 // 할일 ==>
 //badge 와 ChipDays ? 포함 Coroutine 으로 바꿔주기.,
-// A)음악 재생
+// A)음악 재생: Seekbar/Badge/하단 Big album art / RtPicker 전체 디자인.
 // B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
 //
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.

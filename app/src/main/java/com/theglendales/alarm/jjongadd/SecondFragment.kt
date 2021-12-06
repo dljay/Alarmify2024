@@ -600,7 +600,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     private fun setUpSlidingPanel() {
 
         Log.d(TAG,"setUpSlidingPanel: slidingUpPanelLayout.isActivated=${slidingUpPanelLayout.isActivated}")
-        slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow)
+        slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow) //setDragView = 펼치는 Drag 가능 영역 지정
 
         // A. 기존에 클릭 후 다른 Frag 갔다 돌아온 경우. (Panel 은 Collapsed 아니면 Expanded 상태 유지중임.)
         if (shouldPanelBeVisible) {

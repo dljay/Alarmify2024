@@ -52,6 +52,7 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjadapters.GlideApp
+import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
@@ -113,7 +114,7 @@ class AlarmDetailsFragment : Fragment() {
             private val iv_badge1_Intense by lazy {fragmentView.findViewById(R.id.iv_badge1_intense) as ImageView}
             private val iv_badge2_Gentle by lazy {fragmentView.findViewById(R.id.iv_badge2_gentle) as ImageView}
             private val iv_badge3_Nature by lazy {fragmentView.findViewById(R.id.iv_badge3_nature) as ImageView}
-            private val iv_badge4_Human by lazy {fragmentView.findViewById(R.id.iv_badge4_human) as ImageView}
+            private val iv_badge4_Human by lazy {fragmentView.findViewById(R.id.iv_badge4_history) as ImageView}
 
 
     // 내가 추가 <-
@@ -372,12 +373,12 @@ class AlarmDetailsFragment : Fragment() {
             val selectedRtForThisAlarm: RtWithAlbumArt = DiskSearcher.finalRtArtPathList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
             val rtTitle = selectedRtForThisAlarm.rtTitle
             val rtDescription = selectedRtForThisAlarm.rtDescription
-            val badgeStr = selectedRtForThisAlarm.badgeStr // ex.
+            val badgeStr = selectedRtForThisAlarm.badgeStr // ex. "I,N,H" -> Intense, Nature, History 뭔 이런식.
             val artPath = selectedRtForThisAlarm.artFilePathStr
         // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
             mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath)
         // 2-c) Badge 보여주기 (너무 빨리 되서. showOrHideBadge() 완료까지 약 0.002 초.. 그냥 코루틴 안할계획임.
-            val badgeStrList = getBadgesListFromStr(badgeStr) // ex. "I,N,H" 이렇게 metadata 로 받은 놈을 ',' 로 구분하여 String List 로 받음
+            val badgeStrList = BadgeSortHelper.getBadgesListFromStr(badgeStr) // ex. "I,N,H" 이렇게 metadata 로 받은 놈을 ',' 로 구분하여 String List 로 받음
             showOrHideBadges(badgeStrList) // 이니셜 따라 Ui 업뎃 (ex. [I,N,H] => Intense, Nature, Human 배지를 Visible 하게 UI 업뎃!
 
 
@@ -633,16 +634,7 @@ class AlarmDetailsFragment : Fragment() {
     }
 //*********** 내가 추가한 Utility Method **********
 //1) Badge 보여주기 관련 (밑에 '요일 확인' 과 동일한 메커니즘)
-    private fun getBadgesListFromStr(badgeStrings: String?): List<String>? {
-        Log.d(TAG, "getBadgesListFromStr: called.")
-        //Ex) "I,G,H" => 이걸 받으면=> ',' 쉼표로 나눠서 String List 로 만들고=> 밑에 Activate 에서 => Intense, Gentle, Human 배지들을 visibility=visible 로 바꿔줌.
-        if(!badgeStrings.isNullOrEmpty()) {
-            val badgeStrList: List<String> = badgeStrings.split(",").map {badgeInitial -> badgeInitial.trim()}
-            return badgeStrList
-        } else {
-            return null
-        }
-    }
+
     private fun showOrHideBadges(badgeStrList: List<String>?) {
         // 일단 다 gone 으로 꺼주고 시작 (안 그러면 RtPicker 갔다왔을 떄 기존에 켜진놈이 안 꺼지니께..)
         // 혹시 이렇게 꺼지는게 눈에 안 좋아보이면 위에서 RtPicker Activity 갈때 꺼줘도 됨..

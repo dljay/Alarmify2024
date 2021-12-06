@@ -62,14 +62,9 @@ import java.util.Calendar
 
 // 확인 필요: 별도 LiveModel 안 만든게 걸리는데 => RtPickerActivity 는 끝나면 onDestroy() 가 불린다. 즉 SecondFrag 와 겹칠일 없으니 괜춘?
 // 할일 ==>
-
-// A)음악 재생:
-// Seekbar(O) - 처음 켰을 때 seekbar.max 끝까지 차고 다시 '0' 에서 시작하는 문제 해결했음( xml 에다 .max =0, progress=0 으로 default 값 써줌.)
-//Badge
-// 하단 Big album art
-// RtPicker 전체 디자인.
+// Badge Redesign: 우선 RT 20종 생성 (Def10개, P10개) // 총 Badge는 8종? 가능? SecondFrag 에도 통일 (Chip 8개 심고. Firebase 에도 'p' 버전으로 업로드 테스트)
 // B)처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
-//
+
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 //- DetailsFrag 들어갔을때는 밑에 SetAlarm/Ringtone 요 네비게이션 없애기
 

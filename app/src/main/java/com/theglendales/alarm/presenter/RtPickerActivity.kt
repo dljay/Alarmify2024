@@ -2,7 +2,6 @@ package com.theglendales.alarm.presenter
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -12,11 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjadapters.GlideApp
@@ -24,6 +19,7 @@ import com.theglendales.alarm.jjadapters.RtPickerAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
+import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -55,20 +51,25 @@ class RtPickerActivity : AppCompatActivity() {
 
     //SlidingUp Panel [음악재생 mini player]
         // a) 상단 Uis
-    private val imgbtn_Play by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_play) as ImageButton }
-    private val imgbtn_Pause by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_pause) as ImageButton }
-    private val seekBar by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_Seekbar) as SeekBar }
+        private val imgbtn_Play by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_play) as ImageButton }
+        private val imgbtn_Pause by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_pause) as ImageButton }
+        private val seekBar by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_Seekbar) as SeekBar }
 
-    private val upperUiHolder by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_ll) as LinearLayout }    // 추후 이 부분이 fade out
-    private val tv_upperUi_title by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_tv_title) as TextView }
+        private val upperUiHolder by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_ll) as LinearLayout }    // 추후 이 부분이 fade out
+        private val tv_upperUi_title by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_tv_title) as TextView }
 
-    private val iv_upperUi_thumbNail by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_coverImage) as ImageView}
-    private val iv_upperUi_ClickArrow by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_clickarrowUp) as ImageView }
-    private val cl_upperUi_entireWindow by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_ConsLayout) as ConstraintLayout }
+        private val iv_upperUi_thumbNail by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_coverImage) as ImageView}
+        private val iv_upperUi_ClickArrow by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_clickarrowUp) as ImageView }
+        private val cl_upperUi_entireWindow by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_ConsLayout) as ConstraintLayout }
         // b) 하단 Uis
-    private val constLayout_entire by lazy {allBtmSlideLayout.findViewById(R.id.id_lowerUI_entireConsLayout) as ConstraintLayout}
-    private val iv_lowerUi_bigThumbnail by lazy { allBtmSlideLayout.findViewById(R.id.id_lowerUi_iv_bigThumbnail) as ImageView }
-    private val tv_lowerUi_about by lazy { allBtmSlideLayout.findViewById(R.id.id_lowerUi_tv_Description) as TextView }
+        private val constLayout_entire by lazy {allBtmSlideLayout.findViewById(R.id.id_lowerUI_entireConsLayout) as ConstraintLayout}
+        private val iv_lowerUi_bigThumbnail by lazy { allBtmSlideLayout.findViewById(R.id.id_lowerUi_iv_bigThumbnail) as ImageView }
+        private val tv_lowerUi_about by lazy { allBtmSlideLayout.findViewById(R.id.id_lowerUi_tv_Description) as TextView }
+        // c) Badges
+        private val iv_badge1_Intense by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge1_Intense) as ImageView}
+        private val iv_badge2_Gentle by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge2_Gentle) as ImageView}
+        private val iv_badge3_Nature by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge3_Nature) as ImageView}
+        private val iv_badge4_Human by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge_4_History) as ImageView}
 
 
 
@@ -131,24 +132,22 @@ class RtPickerActivity : AppCompatActivity() {
                 tv_upperUi_title.text = rtWithAlbumArt.rtTitle // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
                 tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
                     //AlbumCover
-                GlideApp.with(this).load(rtWithAlbumArt.artFilePathStr).centerCrop() //
-                    .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .placeholder(R.drawable.placeholder).listener(object :
-                        RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            return false
-                        }
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            return false
-                        }
-                    }).into(iv_upperUi_thumbNail)
+                val glideBuilder = GlideApp.with(this).load(rtWithAlbumArt.artFilePathStr).centerCrop()
+                    .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).placeholder(R.drawable.placeholder)
+
+                glideBuilder.into(iv_upperUi_thumbNail)
+                glideBuilder.into(iv_lowerUi_bigThumbnail)
 
                 //B-2-c) Sliding Panel -  Lower UI
-                tv_lowerUi_about.text = rtWithAlbumArt.rtDescription
-                iv_lowerUi_bigThumbnail.setImageDrawable(iv_lowerUi_bigThumbnail.drawable) // 현재 상단 UI 앨범아트 고대로 갖고와서 설정.
+                tv_lowerUi_about.text = rtWithAlbumArt.rtDescription // Rt 설명
+                iv_lowerUi_bigThumbnail.setImageDrawable(iv_upperUi_thumbNail.drawable) // AlbumArt 현재 상단 UI 앨범아트 고대로 갖고와서 설정.
+                //Badges
+                val badgeStrRaw = rtWithAlbumArt.badgeStr // ex. "I,N,H" -> Intense, Nature, History 뭔 이런식.
+                val badgeStrList = BadgeSortHelper.getBadgesListFromStr(badgeStrRaw)
+                showOrHideBadges(badgeStrList)
 
             })
-        //(2) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & MyMediaPlayer 그대로 사용 예정.
+    //(2) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & MyMediaPlayer 그대로 사용 예정.
         // (음악 재생 상태에 따른 플레이어 UI 업데이트) (RT 선택시 음악 재생은 RtPickerAdapter 에서 바로함.)
             //A) 생성
             val jjMpViewModel = ViewModelProvider(this).get(JjMpViewModel::class.java)
@@ -305,6 +304,28 @@ private fun setUpSlidingPanel() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+    }
+    // Badge 보여주기
+    private fun showOrHideBadges(badgeStrList: List<String>?) {
+        // 일단 다 gone 으로 꺼주고 시작 (안 그러면 RtPicker 갔다왔을 떄 기존에 켜진놈이 안 꺼지니께..)
+        // 혹시 이렇게 꺼지는게 눈에 안 좋아보이면 위에서 RtPicker Activity 갈때 꺼줘도 됨..
+        iv_badge1_Intense.visibility = View.GONE
+        iv_badge2_Gentle.visibility = View.GONE
+        iv_badge3_Nature.visibility = View.GONE
+        iv_badge4_Human.visibility = View.GONE
+        // String List 에서 이제 글자따라 다시 visible 시켜주기!
+        Log.d(TAG, "showOrHideBadges: badgeStrList=$badgeStrList")
+        if (badgeStrList != null) {
+            for(i in badgeStrList.indices) {
+                when(badgeStrList[i]) {
+                    "I" -> iv_badge1_Intense.visibility = View.VISIBLE
+                    "G" -> iv_badge2_Gentle.visibility = View.VISIBLE
+                    "N" -> iv_badge3_Nature.visibility = View.VISIBLE
+                    "H" -> iv_badge4_Human.visibility = View.VISIBLE
+                }
+            }
+        }
+        Log.d(TAG, "showOrHideBadges: done..")
     }
 
 

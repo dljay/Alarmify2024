@@ -28,7 +28,9 @@
             <SeekBar
                 android:id="@+id/id_upperUi_Seekbar"
                 android:layout_width="match_parent"
-                android:layout_height="10dp">
+                android:layout_height="10dp"
+                android:max="0"
+                android:progress="0">
 
 
             </SeekBar>

@@ -122,9 +122,9 @@ class RtPickerActivity : AppCompatActivity() {
                 setResult(RESULT_OK, resultIntent)
             //B-2) 음악 Player 에 UI 업데이트
                 //B-2-a) Sliding Panel 전체
-                // 최초 SlidingPanel 이 HIDDEN(안보이는 상태)면 열어주기. 이미 EXPAND/Collapsed 상태로 보이면 Panel 은 그냥 둠 [.COLLAPSED = (위만) 보이는 상태임!]
+                // 최초 SlidingPanel 이 HIDDEN(안보이는 상태)면 열어주기.
                 if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
-                    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED }
+                    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED } // 이미 EXPAND/Collapsed 상태로 보이면 Panel 은 그냥 둠 [.COLLAPSED = (위만) 보이는 상태임!]
 
                 //B-2-b) Sliding Panel - Upper UI
                     //제목
@@ -161,8 +161,10 @@ class RtPickerActivity : AppCompatActivity() {
                         StatusMp.PLAY -> {showMiniPlayerPauseBtn()} // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
                         StatusMp.BUFFERING -> {showMiniPlayerPlayBtn()}
                         StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
-                    }
-                    // b) VuMeter/Loading Circle 등 UI 컨트롤
+                        }
+                        //todo: b) VuMeter/Loading Circle 등 UI 컨트롤
+                    })
+
                     //VHolderUiHandler.LcVmIvController(StatusEnum)
 
                 //B-2) Seekbar 관련
@@ -175,9 +177,10 @@ class RtPickerActivity : AppCompatActivity() {
                     //2-D) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
                     jjMpViewModel.currentPosition.observe(this, { playbackPos ->
                         seekBar.progress = playbackPos.toInt() +200
+                        Log.d(TAG, "onCreate: playbackPos=$playbackPos")
                     })
 
-                })
+
 
     // 5) Media Player Init
         mediaPlayer = MyMediaPlayer(this, jjMpViewModel)
@@ -206,10 +209,6 @@ private fun setUpSlidingPanel() {
     //감춰놓기.
     slidingUpPanelLayout.panelState =SlidingUpPanelLayout.PanelState.HIDDEN // 일단 클릭전에는 감춰놓기!
 
-
-
-    //slidingUpPanelLayout.anchorPoint = 0.6f //화면의 60% 만 올라오게.  그러나 2nd child 의 height 을 match_parent -> 300dp 로 설정해서 이걸 쓸 필요가 없어짐!
-    //slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.ANCHORED // 위치를 60%로 초기 시작
     slidingUpPanelLayout.addPanelSlideListener(object :
         SlidingUpPanelLayout.PanelSlideListener {
         override fun onPanelSlide(panel: View?, slideOffset: Float) {
@@ -294,6 +293,7 @@ private fun setUpSlidingPanel() {
     }
     //SeekBarListener (유저가 seekbar 를 만졌을 때 반응하는것.)
     private fun seekbarListenerSetUp(){
+
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
             {

@@ -220,7 +220,7 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
 
         try{
             // LOCAL 재생 용도이기 때문에 Caching=false
-            prepPlayer(false, audioFilePath, playWhenReady) // ->  신규클릭의 경우 playWhenReady = true, 재생 중 frag 왔다 다시왔을때는 false
+            prepPlayer(false, audioFilePath, playWhenReady) // -> playWhenReady = true
         }catch(e: IOException) {
             Toast.makeText(receivedContext, "Unknown error occurred while trying to play the ringtone: $e", Toast.LENGTH_LONG).show()
             mpViewModel.updateSongDuration(0)
@@ -280,11 +280,13 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
 
         runnable = kotlinx.coroutines.Runnable {
             try {
-                //Log.d(TAG, "feedLiveDataCurrentPosition: runnable working")
+                Log.d(TAG, "feedLiveDataCurrentPosition: runnable working")
                 mpViewModel.updateCurrentPosition(exoPlayer.currentPosition) //livedata 로 feed 를 보냄
                 handler.postDelayed(runnable,1000) // 1초에 한번씩
             }catch (e: Exception) {
                 mpViewModel.updateCurrentPosition(0) // 문제 생기면 그냥 '0' 전달.
+                Log.d(TAG, "feedLiveDataCurrentPosition: XXX issue !! Occurred exoPlayer.currentPos=${exoPlayer.currentPosition}")
+
             }
         }
         handler.postDelayed(runnable, 1000) // 최초 실행? 무조건 한번은 실행해줘야함.

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="10dp"
+    app:cardCornerRadius="15dp"
+    android:layout_margin="3dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/dark_gray_jjong"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="55dp">
 
     <LinearLayout
         android:id="@+id/ll_entireSingleSlot"
+        android:background="@drawable/gradient1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_margin="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,9 +25,10 @@
         <RadioButton
             android:id="@+id/rb_singleSlot_selector"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:focusable="false"
             android:clickable="false"
+            android:layout_margin="5dp"
             android:layout_weight="1"/>
 
         <TextView
@@ -29,18 +36,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="RTA TITLE"
+            android:layout_margin="5dp"
+            android:textSize="20sp"
+            android:layout_gravity="center"
             android:focusable="false"
             android:clickable="false"
             android:layout_weight="6"/>
 
         <ImageView
             android:id="@+id/iv_singleSlot_albumArt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="fitCenter"
+            android:layout_margin="5dp"
             android:focusable="false"
             android:clickable="false"
+
             android:layout_weight="3"/>
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

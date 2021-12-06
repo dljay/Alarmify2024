@@ -92,9 +92,7 @@ class AlarmDetailsFragment : Fragment() {
     // 내가 추가 ->
         // 폰에 저장된 ringtone (mp3 or ogg?) 과 앨범쟈켓(png) 을 찾기위해
             private val myDiskSearcher: DiskSearcher by globalInject()
-        // Spinner [Rt 골라주는] -> 없애고 RtPickerActivity 로 대체.
-//            private val spinnerAdapter: SpinnerAdapter by globalInject()
-//            private val spinner: MyCustomSpinner by lazy { fragmentView.findViewById(R.id.id_spinner) as MyCustomSpinner}
+
         // 링톤 옆에 표시되는 앨범 아트
             private val ivRtArtBig: ImageView by lazy { fragmentView.findViewById(R.id.iv_ringtoneArtBig) as ImageView}
 
@@ -115,6 +113,7 @@ class AlarmDetailsFragment : Fragment() {
             private val iv_badge2_Gentle by lazy {fragmentView.findViewById(R.id.iv_badge2_gentle) as ImageView}
             private val iv_badge3_Nature by lazy {fragmentView.findViewById(R.id.iv_badge3_nature) as ImageView}
             private val iv_badge4_Human by lazy {fragmentView.findViewById(R.id.iv_badge4_history) as ImageView}
+        // RtPickerActivity 로 넘어갈 때 현재 지정되어있는 알람 정보를 넘기기 위해..
 
 
     // 내가 추가 <-
@@ -177,14 +176,16 @@ class AlarmDetailsFragment : Fragment() {
         //View Initializing <-
 
 
-        // RTPicker -- >
-//        tvRtPicker.setOnClickListener {
-//        val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
-//        startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
-//        }
-            //전체 박스 중 아무데나 눌렀을 때
+        // RTPicker onClickListener 셋업-- >
+
+            //[Ringtone] 써있는 전체 박스 중 아무데나 눌렀을 때
         clRtPickerContainer.setOnClickListener {
+            //val alarmtoneName = alarms.getAlarm(alarmId)!!.data.alarmtone // <- 이 방식은 RtPicker 에서 Radio로 한번 바꾸고 돌아왔을때 반영이 안됨.
+            //Log.d(TAG, "onCreateView: [RtPicker] 선택 눌렀음. 현재 alarmtoneName=$alarmtoneName")
             val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
+
+            //Intent 로 현재 지정되어있는 RT 이름을 전달 => RtPickerActivity 를 열자마자 Radio(o) 버튼이 선택된 상태로 표시
+
             startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
         }
 
@@ -408,7 +409,7 @@ class AlarmDetailsFragment : Fragment() {
 
 // ***** <==== DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행)
 
-    // Line 179 에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌 -> 이제는 빈 깡통.. 안 씀.
+    // RtActivity에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == REQ_CODE_FOR_RTPICKER) {
             if(resultCode == RESULT_OK) { // RESULT_OK == -1 임!!

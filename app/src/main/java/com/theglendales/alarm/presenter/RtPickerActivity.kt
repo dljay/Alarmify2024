@@ -108,7 +108,7 @@ class RtPickerActivity : AppCompatActivity() {
 
         
     //4)  LIVEDATA -> // 참고로 별도로 Release 해줄 필요 없음. if you are using observe method, LiveData will be automatically cleared in onDestroy state.
-        //(1) RtPicker ViewModel
+        //(가) RtPicker ViewModel
             // A)생성(RcvVModel)
             val rtPickerVModel = ViewModelProvider(this).get(JjRtPickerVModel::class.java)
 
@@ -147,7 +147,7 @@ class RtPickerActivity : AppCompatActivity() {
                 showOrHideBadges(badgeStrList)
 
             })
-    //(2) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & MyMediaPlayer 그대로 사용 예정.
+        //(나) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & MyMediaPlayer 그대로 사용 예정.
         // (음악 재생 상태에 따른 플레이어 UI 업데이트) (RT 선택시 음악 재생은 RtPickerAdapter 에서 바로함.)
             //A) 생성
             val jjMpViewModel = ViewModelProvider(this).get(JjMpViewModel::class.java)
@@ -161,7 +161,7 @@ class RtPickerActivity : AppCompatActivity() {
                         StatusMp.BUFFERING -> {showMiniPlayerPlayBtn()}
                         StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
                         }
-                        //todo: b) VuMeter/Loading Circle 등 UI 컨트롤
+                        // b) VuMeter/Loading Circle 등 UI 컨트롤? 여기서는 필요없을듯..
                     })
 
                     //VHolderUiHandler.LcVmIvController(StatusEnum)
@@ -192,7 +192,14 @@ class RtPickerActivity : AppCompatActivity() {
 
     //7) RcVAdapter 에 보여줄 List<RtWithAlbumArt> 를 제공 (이미 DiskSearcher 에 로딩되어있으니 특별히 기다릴 필요 없지..)
         val rtOnDiskList:  MutableList<RtWithAlbumArt> = DiskSearcher.finalRtArtPathList
-        rcvAdapter.updateRcV(rtOnDiskList)
+        if(!rtOnDiskList.isNullOrEmpty()) {
+            rcvAdapter.updateRcV(rtOnDiskList)
+        }else {
+            Toast.makeText(this, "Error locating ringtone paths.",Toast.LENGTH_SHORT).show()
+        }
+    //8) 기존에 선택해놓았던 Ringtone 으로 Scroll & Radio 버튼 Select
+        //layoutManager.scrollToPositionWithOffset(,60)
+
 
 
 

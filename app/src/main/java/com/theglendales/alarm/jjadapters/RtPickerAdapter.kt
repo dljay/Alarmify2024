@@ -42,6 +42,10 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
         val rowRtTitle = rtaArtPathList[position].rtTitle
 
         holder.tvRtTitle.text = rowRtTitle
+        // 기존에 선택되었던 ringtone 였으면 자동으로 선택된 상태로 표시..
+//        if(rowRtTitle==) {
+//
+//        }
         holder.radioBtn.isChecked = (position == lastCheckedPos) // ex) radioBtn.isChecked= true (만약 현재 lastCheckedPos 값이 설정하는 row 의 BindViewHolder 의 값과 같으면)
 
         //AlbumArt 보여주기

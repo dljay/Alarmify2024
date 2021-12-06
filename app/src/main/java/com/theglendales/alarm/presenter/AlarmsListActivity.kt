@@ -58,7 +58,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.38a  [RtPickerActivity MusicPlayer 넣는중]
+//// v0.38a  [RtPickerActivity MusicPlayer 넣는중]  ok
 
 // 확인 필요: 별도 LiveModel 안 만든게 걸리는데 => RtPickerActivity 는 끝나면 onDestroy() 가 불린다. 즉 SecondFrag 와 겹칠일 없으니 괜춘?
 // 할일 ==>

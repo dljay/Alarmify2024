@@ -34,6 +34,7 @@ private const val TAG="RtPickerActivity"
 private const val PICKER_RESULT_RT_TITLE="RtTitle"
 private const val PICKER_RESULT_AUDIO_PATH="AudioPath"
 private const val PICKER_RESULT_ART_PATH="ArtPath"
+private const val CURRENT_RT_FILENAME_KEY= "currentRtFileName_Key"
 
 
 class RtPickerActivity : AppCompatActivity() {
@@ -74,7 +75,8 @@ class RtPickerActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val resultIntent = Intent()
+
+        val resultIntent = Intent() // 여기서 만들어서 DetailsFrag (AlarmListActivity) 로 되돌릴 intent
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rt_picker)
@@ -199,6 +201,7 @@ class RtPickerActivity : AppCompatActivity() {
         }
     //8) 기존에 선택해놓았던 Ringtone 으로 Scroll & Radio 버튼 Select
         //layoutManager.scrollToPositionWithOffset(,60)
+        rcView.smoothScrollToPosition(4)
 
 
 
@@ -227,6 +230,7 @@ private fun setUpSlidingPanel() {
             if (slideOffset == 0.0f && GlbVars.clickedTrId == entireListCount) { //마지막 트랙 클릭.
                 rcView.post { // 메인 ui 스레드에서는 다른 업무 처리로 바뻐서 다른 thread (워커스레드?) 를 만들어줌.
                     rcView.smoothScrollBy(0, 300) //제일 밑 트랙을 300dp 위로 밀어줌.
+
                     // todo: 추후 rcView 사이즈 변경될 때 고려 ->정확한 calculation 필요  https://greedy0110.tistory.com/41
                     Log.d(TAG, "myOnItemClick: 살짝 슬라이드! 마지막 트랙 보이게!")
 

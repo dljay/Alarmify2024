@@ -86,10 +86,15 @@ private const val REQ_CODE_FOR_RTPICKER = 588 // RTPICKER Intent 관련 (1)
 private const val PICKER_RESULT_RT_TITLE="RtTitle" // RTPICKER Intent 관련 (2)
 private const val PICKER_RESULT_AUDIO_PATH="AudioPath" // RTPICKER Intent 관련 (3)
 private const val PICKER_RESULT_ART_PATH="ArtPath" // RTPICKER Intent 관련 (4)
+private const val CURRENT_RT_FILENAME_KEY= "currentRtFileName_Key"
 
 
 class AlarmDetailsFragment : Fragment() {
+
     // 내가 추가 ->
+        companion object {
+            var detailFragDisplayedRtFileName=""
+        }
         // 폰에 저장된 ringtone (mp3 or ogg?) 과 앨범쟈켓(png) 을 찾기위해
             private val myDiskSearcher: DiskSearcher by globalInject()
 
@@ -176,32 +181,21 @@ class AlarmDetailsFragment : Fragment() {
         //View Initializing <-
 
 
-        // RTPicker onClickListener 셋업-- >
+        // RTPicker onClickListener 셋업-- > 설정시 '현재 설정된 RT 의 File 이름' 이 필요하기에 밑에 line 5xx 'selectedRtFileName' 을 받을때 -> setRtPickerClickListener() 로 해줌.
 
             //[Ringtone] 써있는 전체 박스 중 아무데나 눌렀을 때
         clRtPickerContainer.setOnClickListener {
-            //val alarmtoneName = alarms.getAlarm(alarmId)!!.data.alarmtone // <- 이 방식은 RtPicker 에서 Radio로 한번 바꾸고 돌아왔을때 반영이 안됨.
-            //Log.d(TAG, "onCreateView: [RtPicker] 선택 눌렀음. 현재 alarmtoneName=$alarmtoneName")
+
             val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
-
-            //Intent 로 현재 지정되어있는 RT 이름을 전달 => RtPickerActivity 를 열자마자 Radio(o) 버튼이 선택된 상태로 표시
-
             startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
         }
-
-        // RtPicker <--
+        // RtPicker onClickListener 셋업 <--
         rowHolder.run {
             this.container.setOnClickListener {
                 modify("onOff") { editor ->
                     editor.copy(isEnabled = !editor.isEnabled)
                 }
             }
-
-
-            // detailsButton().visibility = View.INVISIBLE
-            //daysOfWeek.visibility = View.INVISIBLE
-            //label.visibility = View.INVISIBLE
-
 
             lollipop {
                 this.digitalClock.transitionName = "clock$alarmId"
@@ -310,16 +304,6 @@ class AlarmDetailsFragment : Fragment() {
         }
 
 
-
-//        mRepeatRow.setOnClickListener {
-//            editor.firstOrError()
-//                    .flatMap { editor -> editor.daysOfWeek.showDialog(requireContext()) }
-//                    .subscribe { daysOfWeek ->
-//                        modify("Repeat dialog") { prev -> prev.copy(daysOfWeek = daysOfWeek, isEnabled = true) }
-//                        Log.d(TAG, "onCreateView: daysOfWeekJJ_old=$daysOfWeek")
-//                    }
-//        }
-
         class TextWatcherIR : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
@@ -340,10 +324,8 @@ class AlarmDetailsFragment : Fragment() {
     // !!*** APP 설치 중 설정된 알람일 경우 -> 무조건 defaultRta1 로 설정해주고(spinner.setSelection 이용) -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
         if(alarms.getAlarm(alarmId)!!.labelOrDefault!="userCreated") {
             Log.d(TAG, "onCreateView: **THIS ALARM WAS CREATED DURING APP INSTALLATION")
-
 //            spinner.adapter = spinnerAdapter
 //            spinner.setSelection(0,true)
-
             modify("Label") {prev -> prev.copy(label = "userCreated", isEnabled = true)}
         }
 
@@ -409,7 +391,9 @@ class AlarmDetailsFragment : Fragment() {
 
 // ***** <==== DISK 에 있는 파일들(mp3) 찾고 거기서 albumArt 메타데이터 복원하는 프로세스 (코루틴으로 위에서 실행)
 
-    // RtActivity에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌
+    // RtActivity 에서 Ringtone 선택 후 결과값에 대한 처리를 여기서 해줌
+
+    // 위에서 시작한 RtPickerActivity 에 대한 결과값을 아래에서 받음.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == REQ_CODE_FOR_RTPICKER) {
             if(resultCode == RESULT_OK) { // RESULT_OK == -1 임!!
@@ -454,10 +438,6 @@ class AlarmDetailsFragment : Fragment() {
                 .distinctUntilChanged() // DistinctUntilChanged: 중복방 지 ex) Dog-Cat-Cat-Dog => Dog-Cat-Dog
                 .subscribe { editor ->
                     rowHolder.digitalClock.updateTime(Calendar.getInstance().apply {
-                    //old) 기존 Digital Clock 에 설정된 알람 시간을 그대로 보여주는 기능 2줄. (RowHolder 칸을 빌려서 DetailsFrag 에 보여줄 때)
-//                        set(Calendar.HOUR_OF_DAY, editor.hour)
-//                        set(Calendar.MINUTE, editor.minutes)
-
                     //new) ** TimePickerSpinner 에 "기존에 설정된 알람 시간"을 그대로 보여주기!!!! 대성공!!=>
                         timePickerSpinner.hour = editor.hour
                         timePickerSpinner.minute = editor.minutes
@@ -478,17 +458,7 @@ class AlarmDetailsFragment : Fragment() {
                     CoroutineScope(IO).launch {
                         Log.d(TAG, "onResume: 코루틴 alarmSetDaysIntList=$alarmSetDaysIntList")
                         activateChipFromIntList(alarmSetDaysIntList)
-                        //runChipSama(alarmSetDaysStr)
                     }
-//                    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr)
-//                    Log.d(TAG, "onResume: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
-//                // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
-//                    activateChipForAlarmSetDays(alarmSetDaysStrList)
-//                //
-
-//                    if (editor.label != mLabel.text.toString()) {
-//                        mLabel.setText(editor.label)
-//                    }
                 })
     // DetailsFragment 열었을때 '기존 설정 되어있는' & 새로 설정한 알람톤에 대해 반응.
         disposables.add(editor.distinctUntilChanged().observeOn(Schedulers.computation()).map { editor ->
@@ -505,7 +475,7 @@ class AlarmDetailsFragment : Fragment() {
 
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
                     Log.d(TAG, "onResume: [RT 변경] 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId")
-
+                    detailFragDisplayedRtFileName = selectedRtFileName.toString()
                     updateUisForRt(selectedRtFileName.toString())
 
                 })
@@ -657,53 +627,6 @@ class AlarmDetailsFragment : Fragment() {
         }
         Log.d(TAG, "showOrHideBadges: done..")
     }
-//2) 알람 설정된 요일 확인 관련
-//    private suspend fun runChipSama(alarmSetDaysStr: String) {
-//    val alarmSetDaysStrList = getAlarmSetDaysListFromStr(alarmSetDaysStr) // 시간이 걸리는 작업. 여기서 받을때까지 대기.
-//    Log.d(TAG, "runChipSama: 현재 알람 설정된 요일들 String_List=$alarmSetDaysStrList ")
-//    // 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
-//    setChipOnMainThread(alarmSetDaysStrList)
-//
-//    //
-//    }
-//    private suspend fun setChipOnMainThread(daysSetList: List<String>) {
-//        //Log.d(TAG, "setChipOnMainThread: called")
-//        withContext(Main) {
-//            activateChipForAlarmSetDays(daysSetList)
-//        }
-//    }
-//
-//    private fun getAlarmSetDaysListFromStr(alarmSetDaysStr: String): List<String> {
-//    // Ex) "Mon, Tue," 이렇게 생긴 String 을 받아서 ',' 을 기준으로 split 해서 리스트 만듬.
-//    val alarmSetDaysStrList: List<String> = alarmSetDaysStr.split(",").map {dayStr -> dayStr.trim()}
-//    //Log.d(TAG, "getAlarmSetDaysListFromStr: alarmSetDaysStrList=$alarmSetDaysStrList")
-//    return alarmSetDaysStrList
-//
-//    }
-// 기존에 알람이 설정된 요일을 일단 Chip 으로 Selected 표시해주기.
-//    private fun activateChipForAlarmSetDays(alarmSetDaysStrList: List<String>) {
-//        for(i in alarmSetDaysStrList.indices) {
-//            when(alarmSetDaysStrList[i]) {
-//                "Sun","Sunday" -> chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
-//                "Mon", "Monday" -> chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
-//                "Tue", "Tuesday" -> chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
-//                "Wed", "Wednesday" -> chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
-//                "Thu", "Thursday" -> chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
-//                "Fri", "Friday" -> chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
-//                "Sat", "Saturday" -> chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
-//                "Every day" -> {
-//                    chipGroupDays.findViewById<Chip>(R.id._chipSun).isChecked = true
-//                    chipGroupDays.findViewById<Chip>(R.id._chipMon).isChecked = true
-//                    chipGroupDays.findViewById<Chip>(R.id._chipTue).isChecked = true
-//                    chipGroupDays.findViewById<Chip>(R.id._chipWed).isChecked = true
-//                    chipGroupDays.findViewById<Chip>(R.id._chipThu).isChecked = true
-//                    chipGroupDays.findViewById<Chip>(R.id._chipFri).isChecked = true
-//                    chipGroupDays.findViewById<Chip>(R.id._chipSat).isChecked = true
-//                }
-//            }
-//        }
-//        //Log.d(TAG, "activateChipForAlarmSetDays: done.. alarmSetDaysStrList=$alarmSetDaysStrList")
-//    }
     // 기존에 알람이 설정된 요일을 IntList 로 받음. ex. 월, 수 알람이라면 [2,5] // 토=0, 일=1 ..... 금= 6
     private fun activateChipFromIntList(alarmSetDaysIntList: List<Int>) {
         for(i in alarmSetDaysIntList.indices) {

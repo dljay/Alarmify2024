@@ -11,5 +11,7 @@ class JjRtPickerVModel : ViewModel() {
     private val _selectedRow = MutableLiveData<RtWithAlbumArt>() // Private & Mutable
     val selectedRow: LiveData<RtWithAlbumArt> = _selectedRow
 
+
+
     fun updateLiveData(rtWithAlbumArt: RtWithAlbumArt) { _selectedRow.value = rtWithAlbumArt}
 }

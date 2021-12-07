@@ -58,20 +58,16 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.38a  [RtPickerActivity MusicPlayer 넣는중]  ok
+//// v0.38b  [RtPickerActivity MusicPlayer 넣는중]  ok
 
-// 확인 필요: 별도 LiveModel 안 만든게 걸리는데 => RtPickerActivity 는 끝나면 onDestroy() 가 불린다. 즉 SecondFrag 와 겹칠일 없으니 괜춘?
-// 할일 ==>
-
+// [1] Achievements
 // 처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
-// =>
-    //<RtPickerActivity 로 이동할때 현재 Rt의 이름(경로 및 파일명? trkName?) 을 intent 로 동봉시켜서 전달해주기>
-    //- DetailsFrag.kt 라인 184
-    //**1) 가급적 Line504 의 selectedRtFileName 을 subscribe 하는 방법으로 써볼것.  **
-    //2) 잘 안되면 Line505 에 setRtPickerClickListener() 이런식으로 rt 이름 바뀌면 새로운 string 값으로 picker 클릭시 전달->
-    //3) 제일 별로인 방법: 전역 변수 var currentRtaPath ... 를 만들어서 updateUisForRt 나 Line505 에서 전달하는것. (비추..구식..)
-    //
-    //=> 이거 정리되면 RtPickerActivity 에 .putExtra 로 현재 설정되어있는 Rt전달-> 리사이클러 아답터에서 BindViewHolder 에서 자동 선택해주기
+//<RtPickerActivity 로 이동할때 현재 Rt의 이름(경로 및 파일명? trkName?) 을 intent 로 동봉시켜서 전달해주기(X) .. 너무 번잡. RtPickerAdapter.kt>onBindViewHolder 까지 전달하려면 갈길이 멀다..
+// var currentRtaFileName = SelectedRtFilename  으로 companion obj 에 놓고 RtPickerActivity 에서 사용. 제일 단순. 제일 간편..(O)
+
+// 할일 ==>
+// rcView.smoothScroll(pos) <- 여기서 position 을 어떻게 갖고 올지? Ex) RtPickerAdapter.kt > companion obj? vs livedata?
+// radioBtn bindView 로 기존 설정된 놈 (o) 표시 해줬는데. 다른 거 클릭할 떄 풀리게 해야함 -> radioBtnMap [pos, bool] 또 만들어? 근데 sorting 오래 걸림..
 
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.

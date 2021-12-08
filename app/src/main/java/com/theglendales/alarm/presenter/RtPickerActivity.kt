@@ -24,6 +24,11 @@ import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.ArrayList
 
 // startActivityForResult 참고: https://youtu.be/AD5qt7xoUU8
@@ -192,24 +197,34 @@ class RtPickerActivity : AppCompatActivity() {
         rcView.adapter = rcvAdapter
         rcView.setHasFixedSize(true)
 
-    //7) RcVAdapter 에 보여줄 List<RtWithAlbumArt> 를 제공 (이미 DiskSearcher 에 로딩되어있으니 특별히 기다릴 필요 없지..)
+
+    //7-a) RcVAdapter 에 보여줄 List<RtWithAlbumArt> 를 제공 (이미 DiskSearcher 에 로딩되어있으니 특별히 기다릴 필요 없지..)
         val rtOnDiskList:  MutableList<RtWithAlbumArt> = DiskSearcher.finalRtArtPathList
         if(!rtOnDiskList.isNullOrEmpty()) {
             rcvAdapter.updateRcV(rtOnDiskList)
+
+        //7-b) 현재  DetailsFrag 에 설정되어있던 Rt 가, rcView 로 전달하는 리스트(rtOnDiskList) 에서 몇번째 포지션에 있는지 'FileName' 으로 검색 후 => 해당 위치로 smooth Scroll..
+            CoroutineScope(IO).launch {
+                val positionInTheList = getPositionOfCurrentRt(rtOnDiskList)
+                withContext(Main) {
+                    Log.d(TAG, "onCreate: smoothScroll to Pos=$positionInTheList")
+                    rcView.smoothScrollToPosition(positionInTheList) // Smooth Scroll..  이것 혹은! layoutManager.scrollToPositionWithOffset(position, 60)
+                }
+            }
         }else {
             Toast.makeText(this, "Error locating ringtone paths.",Toast.LENGTH_SHORT).show()
         }
-    //8) 기존에 선택해놓았던 Ringtone 으로 Scroll & Radio 버튼 Select
-        //layoutManager.scrollToPositionWithOffset(,60)
-        rcView.smoothScrollToPosition(4)
-
-
-
-
-
-    // RT 고르기(X) Cancel Btn 눌렀을 때
 
     }
+// <0> My Utility Methods
+    private suspend fun getPositionOfCurrentRt(rtOnDiskList: MutableList<RtWithAlbumArt>): Int {
+        // 현재 DetailsFrag 에서 설정되어있는 RT 의 '파일 이름'
+        val rtFileName = AlarmDetailsFragment.detailFragDisplayedRtFileName
+        val index  =  rtOnDiskList.indexOfFirst { rt -> rt.fileName == rtFileName } // 동일한 'FileName'을 갖는 놈의 인덱스를 리스트 에서 찾기
+        Log.d(TAG, "getPositionOfCurrentRt: returning index=$index")
+        return index
+    }
+
 
 // <1> SlidingPanel 세팅 (펼치기 접기) 관련
 private fun setUpSlidingPanel() {

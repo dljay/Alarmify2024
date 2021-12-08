@@ -11,7 +11,6 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -31,7 +30,8 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
                       private val rtPickerVModel: JjRtPickerVModel,
                       private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RtPickerAdapter.RtPickerVHolder>()
 {
-    var lastUserCheckedPos = -1 // CheckBox 로 선택한 RT 의 Pos 기록.
+
+    var lastUserCheckedPos = -1 // RadioBtn 으로 선택한 RT 의 Pos 기록.
     var selectedRadioBtn: RadioButton? = null // user 가 클릭하는 Holder>Linearlayout>RadioButton 을 이 변수에 저장.
 
 // Override Methods
@@ -56,8 +56,9 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
             //rtaArtPathList[position].isRadioBtnChecked = true
             selectedRadioBtn = holderRadioBtn
             selectedRadioBtn!!.isChecked = true
+
         }
-    //B. (앞으로 유저가 클릭하게 될) 전체를 감싸는 linear Layout 에 대한 onClickListener =>
+    //B. (앞으로 유저가 클릭하게 될) 전체를 감싸는 linear Layout 에 대한 onClickListener => (참고: 얼마든지 rcView 를 recycle 해도 클릭하지 앟는 이상 RadioBtn 의 값은 변하지 않음!)
         holder.llEntireRow.setOnClickListener {
             // <0> lastUserCheckedPos 을 업데이트 (이제는 더 이상 -1 이 아니다!!)
                 lastUserCheckedPos = position

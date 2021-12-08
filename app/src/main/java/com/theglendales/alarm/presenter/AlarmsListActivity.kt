@@ -58,14 +58,15 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.38c  [RtPickerActivity MusicPlayer 넣는중]  ok
+//// v0.38d  [RtPickerActivity MusicPlayer 넣는중]  ok
 
 // [1] Achievements
 // var currentRtaFileName = SelectedRtFilename  으로 companion obj 에 놓고 RtPickerActivity 에서 사용. 제일 단순. 제일 간편..(O)
 // 현재 DetailsFrag 에 설정되어있던 Ringtone 의 값을 RtPicker 리싸이클러뷰가 열렸을 때 체크 표시 (Radio Btn). 일단 잘됨.
+// RtPicker RcView 로딩 후 기존 DetailsFrag 에 설정되어있던 RT 위치로 SmoothScroll 성공.
 
 // 할일 ==>
-// rcView.smoothScroll(pos) <- 여기서 position 을 어떻게 갖고 올지? Ex) RtPickerAdapter.kt > companion obj? vs livedata?
+//todo: Rt 갯수 ㅈㄴ게 늘려서 Smooth Scroll 이나 체크 표시 문제 없는지 (특히 RcView 바인딩할 떄).. 확인!
 
 
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..

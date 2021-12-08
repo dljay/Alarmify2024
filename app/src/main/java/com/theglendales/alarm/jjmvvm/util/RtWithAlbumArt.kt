@@ -11,5 +11,6 @@ data class RtWithAlbumArt(val trIdStr: String?="",
                           var artFilePathStr: String?="",
                           val fileName: String="",
                           val rtDescription: String?="",
-                          val badgeStr: String?="") {
+                          val badgeStr: String?="",
+                          var isRadioBtnChecked: Boolean=false) {
 }

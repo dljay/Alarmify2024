@@ -58,16 +58,15 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.38b  [RtPickerActivity MusicPlayer 넣는중]  ok
+//// v0.38c  [RtPickerActivity MusicPlayer 넣는중]  ok
 
 // [1] Achievements
-// 처음 DetailsFrag 에서 -> RtPicker Activity 갔을 때 '현재 설정되어 있는 RT 로 자동 select?'
-//<RtPickerActivity 로 이동할때 현재 Rt의 이름(경로 및 파일명? trkName?) 을 intent 로 동봉시켜서 전달해주기(X) .. 너무 번잡. RtPickerAdapter.kt>onBindViewHolder 까지 전달하려면 갈길이 멀다..
 // var currentRtaFileName = SelectedRtFilename  으로 companion obj 에 놓고 RtPickerActivity 에서 사용. 제일 단순. 제일 간편..(O)
+// 현재 DetailsFrag 에 설정되어있던 Ringtone 의 값을 RtPicker 리싸이클러뷰가 열렸을 때 체크 표시 (Radio Btn). 일단 잘됨.
 
 // 할일 ==>
 // rcView.smoothScroll(pos) <- 여기서 position 을 어떻게 갖고 올지? Ex) RtPickerAdapter.kt > companion obj? vs livedata?
-// radioBtn bindView 로 기존 설정된 놈 (o) 표시 해줬는데. 다른 거 클릭할 떄 풀리게 해야함 -> radioBtnMap [pos, bool] 또 만들어? 근데 sorting 오래 걸림..
+
 
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.

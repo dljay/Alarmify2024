@@ -58,7 +58,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.38d  [RtPickerActivity MusicPlayer 넣는중]  ok
+//// v0.39a  [AlarmValue.kt 에 artPath 넣어주는 방법 시도전?]
+//문제!!:  DetailsFrag 에서 rtPicker -> rt 변경(ex.rt4 -> rt10) -> Cancel 때리고 나옴 -> ListFrag 에서 잠시 변경했던 rt10 albumArt 가 뜬다!
 
 // [1] Achievements
 // var currentRtaFileName = SelectedRtFilename  으로 companion obj 에 놓고 RtPickerActivity 에서 사용. 제일 단순. 제일 간편..(O)

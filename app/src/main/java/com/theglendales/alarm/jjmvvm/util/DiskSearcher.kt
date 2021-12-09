@@ -57,9 +57,9 @@ class DiskSearcher(val context: Context)
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
-    // 2-B) /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <5 미만
-        if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 5) {
-            Log.d(TAG, "isDiskScanNeeded: 2-B)  /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <5 미만")
+    // 2-B) /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <10 미만
+        if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 10) { //todo: defaultRt 갯수 바뀌면. 반영.
+            Log.d(TAG, "isDiskScanNeeded: 2-B)  /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <10 미만")
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
@@ -96,14 +96,20 @@ class DiskSearcher(val context: Context)
 
     //(1)-b  /.AlarmRingTones 에 파일이 없거나, 5개 이하로 있을때 (즉 최초 실행 혹은 문제 발생) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
 
-        if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 5) { //todo: defaulRt 추후 5개 넘으면 숫자 변경.
+        //if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 10) { // 위에 isDiskScanNeeded() 서 체크해주니깐 여기서 if 문 필요 없음.
             Log.d(TAG, "onDiskRtSearcher: NO FILES (or less than 5 files) INSIDE /.AlarmRingTones FOLDER!")
             copyDefaultRtsToPhone(R.raw.defrt1, "defrt01.rta")
             copyDefaultRtsToPhone(R.raw.defrt2,"defrt02.rta")
             copyDefaultRtsToPhone(R.raw.defrt3, "defrt03.rta")
             copyDefaultRtsToPhone(R.raw.defrt4, "defrt04.rta")
             copyDefaultRtsToPhone(R.raw.defrt5, "defrt05.rta")
-            }
+            copyDefaultRtsToPhone(R.raw.defrt6, "defrt06.rta")
+            copyDefaultRtsToPhone(R.raw.defrt7, "defrt07.rta")
+            copyDefaultRtsToPhone(R.raw.defrt8, "defrt08.rta")
+            copyDefaultRtsToPhone(R.raw.defrt9, "defrt09.rta")
+            copyDefaultRtsToPhone(R.raw.defrt10, "defrt10.rta")
+
+          //  }
     //(1)-c: 구입한 파일이 현 폴더에 있는지 한번 더 확인? ...구축해줄곳임. flowchart 참고.
 
     // (2) 이제 폴더에 파일이 있을테니 이것으로 updateList() 로 전달할 ringtone 리스트를 만듬.

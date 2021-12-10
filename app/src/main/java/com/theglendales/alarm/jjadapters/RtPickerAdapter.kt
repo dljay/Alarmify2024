@@ -60,6 +60,7 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
         }
     //B. (앞으로 유저가 클릭하게 될) 전체를 감싸는 linear Layout 에 대한 onClickListener => (참고: 얼마든지 rcView 를 recycle 해도 클릭하지 앟는 이상 RadioBtn 의 값은 변하지 않음!)
         holder.llEntireRow.setOnClickListener {
+            Log.d(TAG, "onBindViewHolder: lastuserCheckedPos=$lastUserCheckedPos")
             // <0> lastUserCheckedPos 을 업데이트 (이제는 더 이상 -1 이 아니다!!)
                 lastUserCheckedPos = position
             // <1> LiveData 업데이트 - Intent 에 TrTitle, RTA/ArtFilePath 전달 용도

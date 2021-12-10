@@ -242,7 +242,7 @@ private fun setUpSlidingPanel() {
             // 트랙 클릭-> 미니플레이어가 등장! (그 이전에는 offset = -xxx 값임.)
             //Log.d(TAG, "onPanelSlide: slideOffset= $slideOffset, rcvAdapterInstance.itemCount=${rcvAdapterInstance.itemCount}")
             val entireListCount = rcvAdapter.itemCount
-            if (slideOffset == 0.0f && GlbVars.clickedTrId == entireListCount) { //마지막 트랙 클릭.
+            if (slideOffset == 0.0f && GlbVars.clickedTrId == entireListCount) { //마지막 rt 가  클릭된 상태
                 rcView.post { // 메인 ui 스레드에서는 다른 업무 처리로 바뻐서 다른 thread (워커스레드?) 를 만들어줌.
                     rcView.smoothScrollBy(0, 300) //제일 밑 트랙을 300dp 위로 밀어줌.
 

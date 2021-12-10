@@ -58,9 +58,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.39b  [AlarmValue.kt 에 artPath variable 을 생성. SQLITE 등 대수술 했음]
+//// v0.39c  [AlarmValue.kt 에 artPath variable 을 생성. SQLITE 등 대수술 했음]
 
 // 할일 ==>
+//ACRA init 해제-> AlarmApplication.kt> //koin.get<BugReporter>().attachToMainThread(this) <- LINE 53, 요거 한줄 comment 처리 했음.
+
 //todo: Rt 갯수 ㅈㄴ게 늘려서 Smooth Scroll 이나 체크 표시 문제 없는지 (특히 RcView 바인딩할 떄).. 확인!
 
 

@@ -50,7 +50,7 @@ class AlarmApplication : Application() {
 
         val koin = startKoin(applicationContext)
 
-        koin.get<BugReporter>().attachToMainThread(this)
+        //koin.get<BugReporter>().attachToMainThread(this)
 
         // must be after sContainer
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)

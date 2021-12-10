@@ -217,7 +217,7 @@ class AlarmsListFragment : Fragment() {
 //                }
 //            }
             Log.d(TAG, "getView: (2) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
-                //Log.d(TAG, "getView: Row 생성중. alarm=$alarm, pathForRowArt=$pathForRowArt")
+
             context?.let {
                 GlideApp.with(it).load(artPathFromAlarmValue).circleCrop() //
                     .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)

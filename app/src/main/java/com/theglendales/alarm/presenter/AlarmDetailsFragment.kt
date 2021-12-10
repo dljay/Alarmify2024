@@ -362,7 +362,7 @@ class AlarmDetailsFragment : Fragment() {
             val badgeStr = selectedRtForThisAlarm.badgeStr // ex. "I,N,H" -> Intense, Nature, History 뭔 이런식.
             val artPath = selectedRtForThisAlarm.artFilePathStr
         // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
-            //mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath)
+            //mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath) <-- SQLITE 로 alarm.artFilePath 저장 가능해져서 필요없음.
         // 2-c) Badge 보여주기 (너무 빨리 되서. showOrHideBadge() 완료까지 약 0.002 초.. 그냥 코루틴 안할계획임.
             val badgeStrList = BadgeSortHelper.getBadgesListFromStr(badgeStr) // ex. "I,N,H" 이렇게 metadata 로 받은 놈을 ',' 로 구분하여 String List 로 받음
             showOrHideBadges(badgeStrList) // 이니셜 따라 Ui 업뎃 (ex. [I,N,H] => Intense, Nature, Human 배지를 Visible 하게 UI 업뎃!
@@ -484,12 +484,6 @@ class AlarmDetailsFragment : Fragment() {
                     updateUisForRt(selectedRtFileName.toString())
 
                 })
-//    // 새로 설정한 ART file path Subscribe - 내가 추가.
-//        disposables.add(editor.distinctUntilChanged().observeOn(Schedulers.computation()).map {editor ->editor.artFilePath}
-//            .observeOn(AndroidSchedulers.mainThread()).subscribe{ selectedArtFileName ->
-//                Log.d(TAG, "onResume: 드디어 artFilePath 를 subscribe 가능하게 된건가.. artFilePath=$selectedArtFileName")
-//
-//        })
 
         //pre-alarm duration, if set to "none", remove the option
         disposables.add(prefs.preAlarmDuration

@@ -24,6 +24,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.util.Log;
 
 import com.theglendales.alarm.logger.Logger;
 
@@ -32,6 +33,7 @@ import com.theglendales.alarm.logger.Logger;
  * some common functionality.
  */
 public class AlarmDatabaseHelper extends SQLiteOpenHelper {
+    private static final String TAG = "AlarmDatabaseHelper.java";
     private static final String DATABASE_NAME = "alarms.db";
     private static final int DATABASE_VERSION = 5;
     private final Logger log;
@@ -43,6 +45,7 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        Log.d(TAG, "onCreate: called.");
         // @formatter:off
         db.execSQL("CREATE TABLE alarms (" +
                 "_id INTEGER PRIMARY KEY," +
@@ -67,6 +70,7 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int currentVersion) {
+        Log.d(TAG, "onUpgrade: called");
         log.d("Upgrading alarms database from version " + oldVersion + " to " + currentVersion
                 + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS alarms");

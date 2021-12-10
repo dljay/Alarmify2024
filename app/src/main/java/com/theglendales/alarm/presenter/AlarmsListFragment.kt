@@ -97,9 +97,6 @@ class AlarmsListFragment : Fragment() {
     private val yesAlarmSat = getYesAlarmDayDrawable("Sat")
 //내가 추가<-
 
-
-
-
     /** changed by [Prefs.listRowLayout] in [onResume]*/
     private var listRowLayoutId = R.layout.list_row_classic
 
@@ -189,34 +186,34 @@ class AlarmsListFragment : Fragment() {
                 rowHolder.detailsButton.transitionName = "detailsButton" + alarm.id
             }
         // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
-            //var pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
-            val artPathFromAlarmValue = alarm.artFilePath // +++
+            var artPathFromAlarmValue = alarm.artFilePath // +++
 
-        // ** Row 의 앨범아트 path가 null => 아이콘 (!) 요걸로 뜰 때 .rtTitle = "dr1"인 놈으로 무조건 설정해주기 (정상적인 상황이라면 앱 Install 후 자동 생성되는 알람 2개 8:30, 9:00 건의 경우만 해당됨)
-//            if(pathForRowArt.isNullOrEmpty()) {
-//                Log.d(TAG, "getView: (1) pathForRowArt=$pathForRowArt, alarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
-//
-//                val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
-//
-//                if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
-//
-//                    // ** 리스트에서 하나만 돌려받는것! 절대 dr1 이란 놈이 한 개 이상 있으면 안돼!! **
-//                        try{
-//                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // **todo: Safety Check 실제로 뻑남.
-//                            val artPath = defRta1.artFilePathStr
-//                            //val artPath = currentRtaArtPathList[0].artFilePathStr // 무조건 리스트 최상단에 위치한 놈의 art path 로..
-//
-//                            mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
-//                            pathForRowArt = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
-//                            Log.d(TAG, "getView: hey man rtTitle=${defRta1.rtTitle}")
-//                        }catch (e: Exception) {
-//                            Toast.makeText(requireContext(), "Unable to load default ringtones.",Toast.LENGTH_SHORT).show()
-//                            Log.d(TAG, "getView: Unable to load default ringtones. Error=$e")
-//                        }
-//
-//                }
-//            }
-            Log.d(TAG, "getView: (2) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
+
+        // ** Row 의 앨범아트 path가 null => 아이콘 (!) 요걸로 뜰 때 defrta01 의 art 로 무조건 설정해주기 (정상적인 상황이라면 앱 Install 후 자동 생성되는 알람 2개 8:30, 9:00 건의 경우만 해당됨)
+            // 맘 같아서는 여기서 alarm.artFilePath 를 지정해주고 싶지만. val 인 관계로. "User  가 링톤을 직접 수정전까지는" 어쩔수없이 여기를 계속 거쳐가게 됨.
+            // User 가 Rt 를 Defrt01 에서 -> 다른걸로 바꾸는 순간. 여기 (1-No Art File Found) 쪽은 걸치지 않는다.
+            // todo: 다소 임시방편 느낌. 대안 1) 그냥 raw>drawable 에 defrta1.art 파일 넣어보고 전달 or 2) 제대로 Alarmtone.kt , Permissions.kt 참고하여 애초 인스톨부터 defrta1.art 의 uri 설정하기.
+            if(artPathFromAlarmValue.isNullOrEmpty()) {
+                Log.d(TAG, "getView: (1-No Art File Found) artPathFromAlarmValue=$artPathFromAlarmValue, \nalarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
+                val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
+
+                if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
+                        try{
+                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // **todo: Safety Check 실제로 뻑남.
+                            val artPath = defRta1.artFilePathStr
+
+                            //mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
+                            artPathFromAlarmValue = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
+                            //alarm.artFilePath = artPath <- 이것도 해줘야되지만. val 여서 안됨, 추후에 Alarmtone.kt 와 Permissions.kt 잘 조져야함..
+
+                        }catch (e: Exception) {
+                            Toast.makeText(requireContext(), "Unable to load default ringtones.",Toast.LENGTH_SHORT).show()
+                            Log.d(TAG, "getView: Unable to load default ringtones. Error=$e")
+                        }
+                 }
+            }
+
+            Log.d(TAG, "getView: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
 
             context?.let {
                 GlideApp.with(it).load(artPathFromAlarmValue).circleCrop() //

@@ -20,6 +20,7 @@ fun Alarmtone.ringtoneManagerString(): Uri? {
         is Alarmtone.Sound -> Uri.parse(this.uriString)
     }
 }
+// 최초 인스톨 후 생성되는 **신규 알람 2개
 private fun getDefaultRtaPath(): String? { // 최초 인스톨 후 생성되는 **신규 알람 2개는** 무조건 defRta1 으로 지정할것! (둘 다 같음!!)
     Log.d(TAG, "getDefaultRta: called!!")
     //val randomNumber = (0..4).random() //

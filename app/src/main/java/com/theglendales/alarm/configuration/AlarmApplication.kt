@@ -67,6 +67,8 @@ class AlarmApplication : Application() {
 // 내가 추가---> DiskSearcher 시행 및 mySharedPref 생성하여 art,rta path 기록해놓기.
         //lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
         // todo: 여기서 첫 install 후 런칭인지 확인 -> SplashScreen? Launch Activity? "Getting our app Ready !" ->
+        // todo: 아래 단계에서 DiskScan-> Defrt01~10.rta 를 쭉 카피를 해줘야 app install 후 생성되는 두개의 알람 (8:30, 9:00) 에 defrt1 이 적용됨.
+        // todo: 인스톨 후에는 여기를 거칠일이 없고, ringtone 구매등으로 rta, art 갯수가 불일치 할때는 listfrag.kt 에서 Disk Scan 이 작동핡것임.
         // todo: 추후 여기서 Permission 관련도 해결해줬으면..
 
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면

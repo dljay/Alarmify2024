@@ -116,7 +116,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
             return defaultActiveRecord.copy(id = id)
         }
     }
-
+// DetailsFrag 에서 변경되는 내용 여기서 반영됨.
     private fun AlarmValue.createContentValues(): ContentValues {
         Log.d(TAG, "createContentValues: called")
         return ContentValues(12).apply {

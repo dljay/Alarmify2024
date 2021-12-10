@@ -254,7 +254,9 @@ class AlarmDetailsFragment : Fragment() {
                         Log.d(TAG, "onCreateView: jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
 
                         val randomRtaPath = DiskSearcher.finalRtArtPathList[rndRtPos].audioFilePath
-                        changeAlarmTone(randomRtaPath)
+                        val randomArtPath = DiskSearcher.finalRtArtPathList[rndRtPos].artFilePathStr
+
+                        changeAlarmTone(randomRtaPath,randomArtPath)
 
                         store.transitioningToNewAlarmDetails().onNext(false)
                         disposableDialog =myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
@@ -337,15 +339,16 @@ class AlarmDetailsFragment : Fragment() {
 
 
 
-// ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행) ===>
+// ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행X) ===> //막 0.01 초 걸리고 그래서.. 코루틴으로 하기가 좀 그래..
 
     // a)RT 제목(TextView), b)RT Description, c) Album Art (ImageView), d) Badge  UI 업데이트
 
-    //코루틴으로 하기에는 막 0.01 초 걸리고 그래서.. 굳이 하기가 좀 그래..
+
     private fun updateUisForRt(selectedRtFileName: String) {
         Log.d(TAG, "updateUisForRt: called #$#@% selectedRtFileName=$selectedRtFileName")
         // 2-a) 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
         /** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
+        // val testDelete = alarms.getAlarm(alarmId)!!.data.alarmtone
 
         val indexOfSelectedRt = DiskSearcher.finalRtArtPathList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == selectedRtFileName }
 
@@ -359,7 +362,7 @@ class AlarmDetailsFragment : Fragment() {
             val badgeStr = selectedRtForThisAlarm.badgeStr // ex. "I,N,H" -> Intense, Nature, History 뭔 이런식.
             val artPath = selectedRtForThisAlarm.artFilePathStr
         // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
-            mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath)
+            //mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath)
         // 2-c) Badge 보여주기 (너무 빨리 되서. showOrHideBadge() 완료까지 약 0.002 초.. 그냥 코루틴 안할계획임.
             val badgeStrList = BadgeSortHelper.getBadgesListFromStr(badgeStr) // ex. "I,N,H" 이렇게 metadata 로 받은 놈을 ',' 로 구분하여 String List 로 받음
             showOrHideBadges(badgeStrList) // 이니셜 따라 Ui 업뎃 (ex. [I,N,H] => Intense, Nature, Human 배지를 Visible 하게 UI 업뎃!
@@ -396,25 +399,28 @@ class AlarmDetailsFragment : Fragment() {
     // 위에서 시작한 RtPickerActivity 에 대한 결과값을 아래에서 받음.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (data != null && requestCode == REQ_CODE_FOR_RTPICKER) {
-            if(resultCode == RESULT_OK) { // RESULT_OK == -1 임!!
-                val rtTitleFromIntent = data.getStringExtra(PICKER_RESULT_RT_TITLE) // 결과 없을때 default Result 값은 'null'
-                val rtaPathFromIntent = data.getStringExtra(PICKER_RESULT_AUDIO_PATH) // 결과 없을때 default Result 값은 'null'
-                val artPathFromIntent = data.getStringExtra(PICKER_RESULT_ART_PATH) // 결과 없을때 default Result 값은 'null'
+            if (resultCode == RESULT_OK) { // RESULT_OK == -1 임!!
+                val rtTitleFromIntent =
+                    data.getStringExtra(PICKER_RESULT_RT_TITLE) // 결과 없을때 default Result 값은 'null'
+                val rtaPathFromIntent =
+                    data.getStringExtra(PICKER_RESULT_AUDIO_PATH) // 결과 없을때 default Result 값은 'null'
+                val artPathFromIntent =
+                    data.getStringExtra(PICKER_RESULT_ART_PATH) // 결과 없을때 default Result 값은 'null'
 
-                Log.d(TAG, "onActivityResult: ----[FROM INTENT] Selected RT_Title=$rtTitleFromIntent, AudioPath=$rtaPathFromIntent, ArtPath=$artPathFromIntent")
+                Log.d(TAG,"onActivityResult: ----[FROM INTENT] Selected RT_Title=$rtTitleFromIntent, AudioPath=$rtaPathFromIntent, ArtPath=$artPathFromIntent")
 
                 // 이제 ringtone 으로 설정 -> 기존 onActivityResult 에 있던 내용들 복붙! -->
                 val alertSoundPath: String? = rtaPathFromIntent
 
-                // 이제 ringtone 으로 설정 ->
-                changeAlarmTone(alertSoundPath)
-                }
+                // 이제 새 ringtone 으로 설정(rtaPath 와 artpath 둘다 넘김) ->
+                changeAlarmTone(alertSoundPath, artPathFromIntent)
             }
-
         }
+
+    }
     // 내가 추가한 function
-    private fun changeAlarmTone(alertSoundPath: String?) {
-        logger.debug { "Got ringtone: $alertSoundPath" }
+    private fun changeAlarmTone(alertSoundPath: String?, artPath: String?) {
+        logger.debug { "Got ringtone: $alertSoundPath and artPath 쫑: $artPath" }
 
         val alarmtone: Alarmtone = when (alertSoundPath) {
             null -> Alarmtone.Silent() // 선택한 alarm 톤이 a)어떤 오류등으로 null 값일때 -> .Silent()
@@ -425,7 +431,7 @@ class AlarmDetailsFragment : Fragment() {
 
         checkPermissions(requireActivity(), listOf(alarmtone))
 
-        modify("Ringtone picker") { prev ->prev.copy(alarmtone = alarmtone, isEnabled = true)}
+        modify("Ringtone picker") { prev ->prev.copy(alarmtone = alarmtone, artFilePath = artPath, isEnabled = true)}
     }
 
 
@@ -434,17 +440,16 @@ class AlarmDetailsFragment : Fragment() {
         super.onResume()
         disposables = CompositeDisposable()
 
-        disposables.add(editor
-                .distinctUntilChanged() // DistinctUntilChanged: 중복방 지 ex) Dog-Cat-Cat-Dog => Dog-Cat-Dog
-                .subscribe { editor ->
-                    rowHolder.digitalClock.updateTime(Calendar.getInstance().apply {
+        disposables.add(editor.distinctUntilChanged().subscribe { editor ->
+            rowHolder.digitalClock.updateTime(Calendar.getInstance().apply {
                     //new) ** TimePickerSpinner 에 "기존에 설정된 알람 시간"을 그대로 보여주기!!!! 대성공!!=>
                         timePickerSpinner.hour = editor.hour
                         timePickerSpinner.minute = editor.minutes
                     })
 
 
-                    rowHolder.onOff.isChecked = editor.isEnabled
+                rowHolder.onOff.isChecked = editor.isEnabled
+
                     //mPreAlarmCheckBox.isChecked = editor.isPrealarm
 
             //****알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
@@ -479,6 +484,12 @@ class AlarmDetailsFragment : Fragment() {
                     updateUisForRt(selectedRtFileName.toString())
 
                 })
+//    // 새로 설정한 ART file path Subscribe - 내가 추가.
+//        disposables.add(editor.distinctUntilChanged().observeOn(Schedulers.computation()).map {editor ->editor.artFilePath}
+//            .observeOn(AndroidSchedulers.mainThread()).subscribe{ selectedArtFileName ->
+//                Log.d(TAG, "onResume: 드디어 artFilePath 를 subscribe 가능하게 된건가.. artFilePath=$selectedArtFileName")
+//
+//        })
 
         //pre-alarm duration, if set to "none", remove the option
         disposables.add(prefs.preAlarmDuration
@@ -487,6 +498,7 @@ class AlarmDetailsFragment : Fragment() {
                     //mPreAlarmRow.visibility = if (value.toInt() == -1) View.GONE else View.VISIBLE
                 })
 
+        //DetailsFrag 에서 뒤로가기 (<-) 눌렀을때도 save 함.
         backButtonSub = store.onBackPressed().subscribe {
             Log.d(TAG, "onResume(Line288): backButtonSub=store.onBackPressed().subscribe{} .. ")
             saveAlarm() }

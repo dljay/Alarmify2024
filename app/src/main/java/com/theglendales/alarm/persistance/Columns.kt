@@ -113,8 +113,17 @@ class Columns : BaseColumns {
          */
         const val DEFAULT_SORT_ORDER = "$HOUR, $MINUTES ASC"
 
+        /**
+         * JJONG added. ArtFilePath 경로 저장 항목.
+         *
+         *
+         * Type: STRING
+         *
+         */
+        const val ART_FILE_PATH = "artfilepath"
+
         @JvmField
-        val ALARM_QUERY_COLUMNS = arrayOf(BaseColumns._ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE, MESSAGE, ALERT, PREALARM, STATE)
+        val ALARM_QUERY_COLUMNS = arrayOf(BaseColumns._ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE, MESSAGE, ALERT, PREALARM, STATE, ART_FILE_PATH)
 
         /**
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT
@@ -131,5 +140,6 @@ class Columns : BaseColumns {
         const val ALARM_ALERT_INDEX = 8
         const val ALARM_PREALARM_INDEX = 9
         const val ALARM_STATE_INDEX = 10
+        const val ALARM_ART_FILE_PATH = 11
     }
 }

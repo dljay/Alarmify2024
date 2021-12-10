@@ -189,38 +189,37 @@ class AlarmsListFragment : Fragment() {
                 rowHolder.detailsButton.transitionName = "detailsButton" + alarm.id
             }
         // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
-            var pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
-            
+            //var pathForRowArt = mySharedPrefManager.getArtPathForAlarm(alarm.id)
+            val artPathFromAlarmValue = alarm.artFilePath // +++
+
         // ** Row 의 앨범아트 path가 null => 아이콘 (!) 요걸로 뜰 때 .rtTitle = "dr1"인 놈으로 무조건 설정해주기 (정상적인 상황이라면 앱 Install 후 자동 생성되는 알람 2개 8:30, 9:00 건의 경우만 해당됨)
-            if(pathForRowArt.isNullOrEmpty()) {
-                Log.d(TAG, "getView: (1) pathForRowArt=$pathForRowArt, alarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
-
-                val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
-
-                if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
-
-                    // ** 리스트에서 하나만 돌려받는것! 절대 dr1 이란 놈이 한 개 이상 있으면 안돼!! **
-                        try{
-                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // **todo: Safety Check 실제로 뻑남.
-                            val artPath = defRta1.artFilePathStr
-                            //val artPath = currentRtaArtPathList[0].artFilePathStr // 무조건 리스트 최상단에 위치한 놈의 art path 로..
-
-                            mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
-                            pathForRowArt = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
-                            Log.d(TAG, "getView: hey man rtTitle=${defRta1.rtTitle}")
-                        }catch (e: Exception) {
-                            Toast.makeText(requireContext(), "Unable to load default ringtones.",Toast.LENGTH_SHORT).show()
-                            Log.d(TAG, "getView: Unable to load default ringtones. Error=$e")
-                        }
-                    
-                }
-            }
-            Log.d(TAG, "getView: (2) alarm.id=${alarm.id}, pathForRowArt= $pathForRowArt, alarm.alarmtone= ${alarm.alarmtone}, ")
-
-
-                Log.d(TAG, "getView: Row 생성중. alarm=$alarm, pathForRowArt=$pathForRowArt")
+//            if(pathForRowArt.isNullOrEmpty()) {
+//                Log.d(TAG, "getView: (1) pathForRowArt=$pathForRowArt, alarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
+//
+//                val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
+//
+//                if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
+//
+//                    // ** 리스트에서 하나만 돌려받는것! 절대 dr1 이란 놈이 한 개 이상 있으면 안돼!! **
+//                        try{
+//                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // **todo: Safety Check 실제로 뻑남.
+//                            val artPath = defRta1.artFilePathStr
+//                            //val artPath = currentRtaArtPathList[0].artFilePathStr // 무조건 리스트 최상단에 위치한 놈의 art path 로..
+//
+//                            mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
+//                            pathForRowArt = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
+//                            Log.d(TAG, "getView: hey man rtTitle=${defRta1.rtTitle}")
+//                        }catch (e: Exception) {
+//                            Toast.makeText(requireContext(), "Unable to load default ringtones.",Toast.LENGTH_SHORT).show()
+//                            Log.d(TAG, "getView: Unable to load default ringtones. Error=$e")
+//                        }
+//
+//                }
+//            }
+            Log.d(TAG, "getView: (2) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
+                //Log.d(TAG, "getView: Row 생성중. alarm=$alarm, pathForRowArt=$pathForRowArt")
             context?.let {
-                GlideApp.with(it).load(pathForRowArt).circleCrop() //
+                GlideApp.with(it).load(artPathFromAlarmValue).circleCrop() //
                     .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.drawable.placeholder).listener(object :
                         RequestListener<Drawable> {

@@ -58,13 +58,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.39a  [AlarmValue.kt 에 artPath 넣어주는 방법 시도전?]
-//문제!!:  DetailsFrag 에서 rtPicker -> rt 변경(ex.rt4 -> rt10) -> Cancel 때리고 나옴 -> ListFrag 에서 잠시 변경했던 rt10 albumArt 가 뜬다!
-
-// [1] Achievements
-// var currentRtaFileName = SelectedRtFilename  으로 companion obj 에 놓고 RtPickerActivity 에서 사용. 제일 단순. 제일 간편..(O)
-// 현재 DetailsFrag 에 설정되어있던 Ringtone 의 값을 RtPicker 리싸이클러뷰가 열렸을 때 체크 표시 (Radio Btn). 일단 잘됨.
-// RtPicker RcView 로딩 후 기존 DetailsFrag 에 설정되어있던 RT 위치로 SmoothScroll 성공.
+//// v0.39b  [AlarmValue.kt 에 artPath variable 을 생성. SQLITE 등 대수술 했음]
 
 // 할일 ==>
 //todo: Rt 갯수 ㅈㄴ게 늘려서 Smooth Scroll 이나 체크 표시 문제 없는지 (특히 RcView 바인딩할 떄).. 확인!
@@ -229,11 +223,11 @@ class AlarmsListActivity : AppCompatActivity() {
         setContentView(R.layout.list_activity)
 
         store
-                .alarms()
-                .take(1)
-                .subscribe { alarms ->
-                    checkPermissions(this, alarms.map { it.alarmtone })
-                }.apply { }
+            .alarms()
+            .take(1)
+            .subscribe { alarms ->
+                checkPermissions(this, alarms.map { it.alarmtone })
+            }.apply { }
 
 // 추가1-A) Second Fragment 관련 -->
     // 2nd Frag 시작과 동시에 일단 SharedPref 파일 자체를 생성해줌. => 일단 사용 안함.
@@ -466,6 +460,7 @@ class AlarmsListActivity : AppCompatActivity() {
      * restores an [EditedAlarm] from SavedInstanceState. Counterpart of [EditedAlarm.writeInto].
      */
     private fun editedAlarmFromSavedInstanceState(savedInstanceState: Bundle): EditedAlarm {
+        Log.d(TAG, "editedAlarmFromSavedInstanceState: jj- artFilePath= ${savedInstanceState.getString("artFilePath")}")
         return EditedAlarm(
                 isNew = savedInstanceState.getBoolean("isNew"),
                 id = savedInstanceState.getInt("id"),
@@ -482,7 +477,8 @@ class AlarmsListActivity : AppCompatActivity() {
                                     label = savedInstanceState.getString("label") ?: "",
                                     isVibrate = true,
                                     state = savedInstanceState.getString("state") ?: "",
-                                    nextTime = Calendar.getInstance()
+                                    nextTime = Calendar.getInstance(),
+                                    artFilePath = savedInstanceState.getString("artFilePath") ?: ""
                             )
                     )
                 } else {
@@ -513,6 +509,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 putString("alarmtone", edited.alarmtone.persistedString)
                 putBoolean("skipping", edited.skipping)
                 putString("state", edited.state)
+                putString("artFilePath", edited.artFilePath)
             }
 
             logger.debug { "Saved state $toWrite" }

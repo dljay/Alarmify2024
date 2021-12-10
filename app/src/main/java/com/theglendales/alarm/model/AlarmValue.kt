@@ -15,6 +15,7 @@ data class AlarmValue(
         val minutes: Int,
         val isPrealarm: Boolean,
         val alarmtone: Alarmtone,
+        val artFilePath: String?, // 내가 추가.
         val isVibrate: Boolean,
         val label: String,
         val daysOfWeek: DaysOfWeek
@@ -66,7 +67,7 @@ data class AlarmValue(
     }
 
     override fun toString(): String {
-        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // alertSoundUri= ${alertSoundUri}, alarmtone=${alarmtone.toString()}, ")
+        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // \nalertSoundUri= ${alertSoundUri}, \nalarmtone=${alarmtone.toString()}, \nartFilePath=$artFilePath")
 
         // 여기서
 //        val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
@@ -89,7 +90,8 @@ data class AlarmValue(
             alarmtone = data.alarmtone,
             isVibrate = data.isVibrate,
             label = data.label,
-            daysOfWeek = data.daysOfWeek
+            daysOfWeek = data.daysOfWeek,
+            artFilePath = data.artFilePath // 내가 추가.
     )
 
     fun withLabel(label: String) = copy(label = label)

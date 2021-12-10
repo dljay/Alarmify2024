@@ -6,6 +6,8 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.util.Log
+import com.theglendales.alarm.configuration.globalInject
+import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.model.AlarmStore
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.model.Alarmtone
@@ -25,6 +27,7 @@ import java.util.Calendar
 private const val TAG="PersistingContainerFactory"
 class PersistingContainerFactory(private val calendars: Calendars, private val mContext: Context) : ContainerFactory {
     private val subscriptions = mutableMapOf<Int, Disposable>()
+    //private val myDiskSearcher: DiskSearcher by globalInject() // 내가 추가
 
     private fun createStore(initial: AlarmValue): AlarmStore {
         class AlarmStoreIR : AlarmStore {
@@ -68,7 +71,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
     }
 
     private fun fromCursor(c: Cursor, calendars: Calendars): AlarmValue {
-        Log.d(TAG, "fromCursor: called!")
+        Log.d(TAG, "fromCursor: called! artFilePath=${c.getString(Columns.ALARM_ART_FILE_PATH)}")
         return AlarmValue(
                 id = c.getInt(Columns.ALARM_ID_INDEX),
                 isEnabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1,
@@ -80,7 +83,9 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                 label = c.getString(Columns.ALARM_MESSAGE_INDEX) ?: "",
                 alarmtone = Alarmtone.fromString(c.getString(Columns.ALARM_ALERT_INDEX)),
                 state = c.getString(Columns.ALARM_STATE_INDEX),
-                nextTime = calendars.now().apply { timeInMillis = c.getLong(Columns.ALARM_TIME_INDEX) }
+                nextTime = calendars.now().apply { timeInMillis = c.getLong(Columns.ALARM_TIME_INDEX) },
+                artFilePath = c.getString(Columns.ALARM_ART_FILE_PATH) ?: ""
+
         )
     }
 
@@ -101,7 +106,8 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                     label = "userCreated", // 내가 추가했음!! App install 시 생성되는 알람과 구분짓기 위해!!
                     alarmtone = Alarmtone.Default(),
                     state = "",
-                    nextTime = now
+                    nextTime = now,
+                    artFilePath = null
             )
 
             //generate a new id
@@ -125,6 +131,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
             put(Columns.PREALARM, isPrealarm)
             put(Columns.ALARM_TIME, nextTime.timeInMillis)
             put(Columns.STATE, state)
+            put(Columns.ART_FILE_PATH, artFilePath)
         }
     }
 }

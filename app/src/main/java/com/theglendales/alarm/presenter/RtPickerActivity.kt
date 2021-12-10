@@ -203,12 +203,13 @@ class RtPickerActivity : AppCompatActivity() {
         if(!rtOnDiskList.isNullOrEmpty()) {
             rcvAdapter.updateRcV(rtOnDiskList)
 
-        //7-b) 현재  DetailsFrag 에 설정되어있던 Rt 가, rcView 로 전달하는 리스트(rtOnDiskList) 에서 몇번째 포지션에 있는지 'FileName' 으로 검색 후 => 해당 위치로 smooth Scroll..
+        //7-b) 현재  DetailsFrag 에 설정되어있던 Rt 가, rcView 로 전달하는 리스트(rtOnDiskList) 에서 몇번째 포지션에 있는지 'FileName' 으로 검색 후
+            // => 해당 위치로 smooth Scroll..
             CoroutineScope(IO).launch {
                 val positionInTheList = getPositionOfCurrentRt(rtOnDiskList)
                 withContext(Main) {
                     Log.d(TAG, "onCreate: smoothScroll to Pos=$positionInTheList")
-                    rcView.smoothScrollToPosition(positionInTheList) // Smooth Scroll..  이것 혹은! layoutManager.scrollToPositionWithOffset(position, 60)
+                    //rcView.smoothScrollToPosition(positionInTheList) // Smooth Scroll..  이것 혹은! layoutManager.scrollToPositionWithOffset(position, 60)
                 }
             }
         }else {

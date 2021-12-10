@@ -45,6 +45,7 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
         val currentRtTitle = rtaArtPathList[position].rtTitle
         val currentRtFileName = rtaArtPathList[position].fileName
         val holderRadioBtn = holder.radioBtn
+        Log.d(TAG, "onBindViewHolder: pos=$position, rtFileName=$currentRtFileName, rtTitle=$currentRtTitle,")
 
         holder.tvRtTitle.text = currentRtTitle
     //A. **[최초 RcView row 생성시 'DefaultFrag' 에서 설정되어있던 Ringtone 의 RadioBtn 체크 표시해주기]**

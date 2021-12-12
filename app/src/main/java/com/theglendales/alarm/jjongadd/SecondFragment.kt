@@ -274,8 +274,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
 
         //Sliding Panel - Upper UI
-        tv_upperUi_title.text = ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
-        tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
+        // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
+        var spaceFifteen="               " // 15칸
+        var spaceTwenty="                    " // 20칸
+        var spaceFifty="                                                 " //50칸 (기존 사용)
+        var spaceSixty="                                                           " //60칸
+        tv_upperUi_title.text = spaceFifteen+ ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
+        if(ringtoneClassFromtheList?.title!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?
+        else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
+        }
 
         //Sliding Panel -  Lower UI
         tv_lowerUi_about.text = ringtoneClassFromtheList?.description

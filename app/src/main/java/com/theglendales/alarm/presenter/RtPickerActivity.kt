@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -62,7 +63,8 @@ class RtPickerActivity : AppCompatActivity() {
         private val seekBar by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_Seekbar) as SeekBar }
 
         private val upperUiHolder by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_ll) as LinearLayout }    // 추후 이 부분이 fade out
-        private val tv_upperUi_title by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_tv_title) as TextView }
+        //private val tv_upperUi_title by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_tv_title) as TextView }
+        lateinit var tv_upperUi_title: TextView // 이놈만 흐르는 Text (Marquee) Fx 위해 lateinit 으로 대체.
 
         private val iv_upperUi_thumbNail by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_coverImage) as ImageView}
         private val iv_upperUi_ClickArrow by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_iv_clickarrowUp) as ImageView }
@@ -99,7 +101,18 @@ class RtPickerActivity : AppCompatActivity() {
         allBtmSlideLayout = findViewById(R.id.ir_rl_entireSlider) // SlidingUpPanel 중 상단(돌출부) 전체
         setUpSlidingPanel()
 
-        //b) ListenerSetup: Play & Pause Button onClickListener
+        //b) 상단 돌출부 제목 TextView 흐르는 텍스트 (Marquee) 효과
+        tv_upperUi_title= allBtmSlideLayout.findViewById(R.id.id_upperUi_tv_title)
+
+        tv_upperUi_title.apply {
+            isSingleLine = true
+            ellipsize = TextUtils.TruncateAt.MARQUEE
+            isSelected = true
+            //text ="Song Title                                           "
+            // text 제목이 일정 수준 이하면 여백을 추가, 추후 title.length < xx => 정확한 카운트 알고리즘.
+        }
+
+        //c) ListenerSetup: Play & Pause Button onClickListener (mini player 상단 돌출부)
 
         imgbtn_Play.setOnClickListener {onMiniPlayerPlayClicked()}
         imgbtn_Pause.setOnClickListener {onMiniPlayerPauseClicked()}
@@ -134,11 +147,20 @@ class RtPickerActivity : AppCompatActivity() {
                 if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
                     slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED } // 이미 EXPAND/Collapsed 상태로 보이면 Panel 은 그냥 둠 [.COLLAPSED = (위만) 보이는 상태임!]
 
-                //B-2-b) Sliding Panel - Upper UI
-                    //제목
-                tv_upperUi_title.text = rtWithAlbumArt.rtTitle // miniPlayer(=Upper Ui) 의 Ringtone Title 변경
-                tv_upperUi_title.append("                                                 ") // 흐르는 text 위해서. todo: 추후에는 글자 크기 계산-> 정확히 공백 더하기
-                    //AlbumCover
+            //B-2-b) Sliding Panel - Upper UI
+                //제목
+
+                    // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
+                    var spaceFifteen="               " // 15칸
+                    var spaceTwenty="                    " // 20칸
+                    var spaceFifty="                                                 " //50칸 (기존 사용)
+                    var spaceSixty="                                                           " //60칸
+                    tv_upperUi_title.text = spaceFifteen+ rtWithAlbumArt.rtTitle // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
+                    if(rtWithAlbumArt.rtTitle!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가]
+                    else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
+                        }
+
+                //AlbumCover
                 val glideBuilder = GlideApp.with(this).load(rtWithAlbumArt.artFilePathStr).centerCrop()
                     .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).placeholder(R.drawable.placeholder)
 

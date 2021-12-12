@@ -58,16 +58,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.39e  [AlarmValue.kt 에 artPath variable 을 생성. SQLITE 등 대수술 했음]
+//// v0.39f  [AlarmValue.kt 에 artPath variable 을 생성. SQLITE 등 대수술 했음]
+
+//1) RtPicker 처음 열었을 떄 리사이클러뷰에서 RadioBtn 2개 이상 Click 되는거 해결 (첫 선택시 lastUserCheckedPos 을 업뎃) (O)
+//2) RtPicker: mini player 안 열린 상태에서 마지막 rcView 트랙 클릭-> 살짝 rcView 위로 밀기.
+//3) 흐르는 Text 제목 글자 (6자 미만) 고려한 spacing -> 흐르는 효과 (Marquee FX)
+
 
 // 할일 ==>
-//ACRA init 해제-> AlarmApplication.kt> //koin.get<BugReporter>().attachToMainThread(this) <- LINE 53, 요거 한줄 comment 처리 했음.
-
-//todo: Rt 갯수 ㅈㄴ게 늘려서 Smooth Scroll 이나 체크 표시 문제 없는지 (특히 RcView 바인딩할 떄).. 확인!
-
-//More todos)
-
+// INSTALL 시 알고리즘! 어려울것 없이 어쨌든 최초 install 알람 2개 생성시  defrt01,0 02 rta/ art 파일을 raw 디렉토리에 넣어놓고 사용 가능하면 베스트 -> listActivity 에서 나머지 rta/art copy 작업
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..
+// Rt 갯수 ㅈㄴ게 늘려서 Smooth Scroll 이나 체크 표시 문제 없는지 (특히 RcView 바인딩할 떄).. 확인!
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 // Badge Redesign: 우선 RT 20종 생성 (Def10개, P10개) // 총 Badge는 8종? 가능? SecondFrag 에도 통일 (Chip 8개 심고. Firebase 에도 'p' 버전으로 업로드 테스트)
 

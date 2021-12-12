@@ -58,20 +58,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.39d  [AlarmValue.kt 에 artPath variable 을 생성. SQLITE 등 대수술 했음]
+//// v0.39e  [AlarmValue.kt 에 artPath variable 을 생성. SQLITE 등 대수술 했음]
 
 // 할일 ==>
 //ACRA init 해제-> AlarmApplication.kt> //koin.get<BugReporter>().attachToMainThread(this) <- LINE 53, 요거 한줄 comment 처리 했음.
 
 //todo: Rt 갯수 ㅈㄴ게 늘려서 Smooth Scroll 이나 체크 표시 문제 없는지 (특히 RcView 바인딩할 떄).. 확인!
-//Issue)
-//- 8:30 d8 설정된 상태 -> DetailsFrag -> RtPicker 실행 -> d7 & d8 둘다 선택되어 있음.
-//- RtPickerActivity.kt 에서 '마지막 rt' 클릭된 상태일 때 mini player가 rcView 밀어주는 것 안됨.. Glbvars.xx 상관 없으니께. (라인 245)
 
+//More todos)
 
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
-//- DetailsFrag 들어갔을때는 밑에 SetAlarm/Ringtone 요 네비게이션 없애기
 // Badge Redesign: 우선 RT 20종 생성 (Def10개, P10개) // 총 Badge는 8종? 가능? SecondFrag 에도 통일 (Chip 8개 심고. Firebase 에도 'p' 버전으로 업로드 테스트)
 
 

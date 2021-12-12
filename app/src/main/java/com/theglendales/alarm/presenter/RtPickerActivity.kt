@@ -202,6 +202,7 @@ class RtPickerActivity : AppCompatActivity() {
         val rtOnDiskList:  MutableList<RtWithAlbumArt> = DiskSearcher.finalRtArtPathList
         if(!rtOnDiskList.isNullOrEmpty()) {
             rcvAdapter.updateRcV(rtOnDiskList)
+            
 
         //7-b) 현재  DetailsFrag 에 설정되어있던 Rt 가, rcView 로 전달하는 리스트(rtOnDiskList) 에서 몇번째 포지션에 있는지 'FileName' 으로 검색 후
             // => 해당 위치로 smooth Scroll..
@@ -209,7 +210,7 @@ class RtPickerActivity : AppCompatActivity() {
                 val positionInTheList = getPositionOfCurrentRt(rtOnDiskList)
                 withContext(Main) {
                     Log.d(TAG, "onCreate: smoothScroll to Pos=$positionInTheList")
-                    //rcView.smoothScrollToPosition(positionInTheList) // Smooth Scroll..  이것 혹은! layoutManager.scrollToPositionWithOffset(position, 60)
+                    layoutManager.scrollToPositionWithOffset(positionInTheList, 60)
                 }
             }
         }else {
@@ -243,7 +244,9 @@ private fun setUpSlidingPanel() {
             // 트랙 클릭-> 미니플레이어가 등장! (그 이전에는 offset = -xxx 값임.)
             //Log.d(TAG, "onPanelSlide: slideOffset= $slideOffset, rcvAdapterInstance.itemCount=${rcvAdapterInstance.itemCount}")
             val entireListCount = rcvAdapter.itemCount
-            if (slideOffset == 0.0f && GlbVars.clickedTrId == entireListCount) { //마지막 rt 가  클릭된 상태
+
+            //rcView 살짝 위로 밀어주기 .. Mini Player 가 열리지 않은 상태에서 마지막 rt 를 선택했을 때
+            if (slideOffset == 0.0f && rcvAdapter.lastUserCheckedPos == rcvAdapter.itemCount-1) {
                 rcView.post { // 메인 ui 스레드에서는 다른 업무 처리로 바뻐서 다른 thread (워커스레드?) 를 만들어줌.
                     rcView.smoothScrollBy(0, 300) //제일 밑 트랙을 300dp 위로 밀어줌.
 

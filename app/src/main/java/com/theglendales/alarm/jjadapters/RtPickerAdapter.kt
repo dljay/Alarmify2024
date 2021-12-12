@@ -53,10 +53,10 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
         if(lastUserCheckedPos==-1 && currentRtFileName== AlarmDetailsFragment.detailFragDisplayedRtFileName) {
             // User 가 한번이라도 다른 RT 를 클릭해서 음악 들어보고 했다면. 이제부터는 DetailsFrag 에서 기존에 설정해놓았떤 RT 의 Radio Box 표시는 무시! (왜냐면 lastUserCheckedPos !=-1 이니깐)
             Log.d(TAG, "onBindViewHolder: activate RadioBox!! currentRtFileName=$currentRtFileName")
-            //ArtPathList 의 해당 포지션에 있는 rtWithAlbumArtObj 의 isRadioBtnChecked variable 을 true 로 변경.
-            //rtaArtPathList[position].isRadioBtnChecked = true
+
             selectedRadioBtn = holderRadioBtn
             selectedRadioBtn!!.isChecked = true
+            lastUserCheckedPos = position
 
         }
     //B. (앞으로 유저가 클릭하게 될) 전체를 감싸는 linear Layout 에 대한 onClickListener => (참고: 얼마든지 rcView 를 recycle 해도 클릭하지 앟는 이상 RadioBtn 의 값은 변하지 않음!)

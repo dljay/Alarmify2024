@@ -58,11 +58,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.39f  [AlarmValue.kt 에 artPath variable 을 생성. SQLITE 등 대수술 했음]
+//// v0.39g  [INSTALL 후 알람 2개 artPath,rtaPath SQL 에 심기-AlarDatabaseHelper.jav (전)]
 
-//1) RtPicker 처음 열었을 떄 리사이클러뷰에서 RadioBtn 2개 이상 Click 되는거 해결 (첫 선택시 lastUserCheckedPos 을 업뎃) (O)
-//2) RtPicker: mini player 안 열린 상태에서 마지막 rcView 트랙 클릭-> 살짝 rcView 위로 밀기.
-//3) 흐르는 Text 제목 글자 (6자 미만) 고려한 spacing -> 흐르는 효과 (Marquee FX)
 
 
 // 할일 ==>
@@ -108,6 +105,7 @@ class AlarmsListActivity : AppCompatActivity() {
         private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore
         {
             Log.d(TAG, "createStore: jj- called")
+
             class UiStoreIR : UiStore {
                 var onBackPressed = PublishSubject.create<String>()
                 var editing: BehaviorSubject<EditedAlarm> = BehaviorSubject.createDefault(edited)
@@ -177,6 +175,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
             return UiStoreIR()
         }
+
         //<---fun createStore
     }
 //<------ Companion Object
@@ -197,8 +196,10 @@ class AlarmsListActivity : AppCompatActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: !!AlarmListActivitiy onCreate() !!! ")
+
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
+
 
         when {
             savedInstanceState != null && savedInstanceState.getInt("version", BuildConfig.VERSION_CODE) == BuildConfig.VERSION_CODE -> {

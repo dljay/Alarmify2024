@@ -106,6 +106,7 @@ class AlarmsListFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         Log.d(TAG, "onAttach: called")
+
         lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
 
         //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)

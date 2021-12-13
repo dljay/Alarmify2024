@@ -35,12 +35,22 @@ class AlarmApplication : Application() {
         private val myDiskSearcher: DiskSearcher by globalInject()
         private val mySharedPrefManager: MySharedPrefManager by globalInject()
         //lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
+        companion object {
+//            var pName=""
+//            fun getPackageName(): String {
+//                return pName
+//            }
+        }
 
     // 내가 추가 <<--
 
 
     override fun onCreate() {
-        Log.d(TAG, "onCreate: !!AlarmApplication onCreate!!!")
+//        val packageName = applicationContext.packageName // todo: 이걸 STATIC 으로 저장? 아니면 ListFrag 에서 바로 받기?
+//        val heyho = "android.resource://" + packageName + R.raw.defrt1
+//        Log.d(TAG, "onCreate: !!AlarmApplication onCreate!!! heyho=$heyho, packageName=$packageName")
+        //pName = applicationContext.packageName
+
         runCatching {
             ViewConfiguration::class.java
                     .getDeclaredField("sHasPermanentMenuKey")

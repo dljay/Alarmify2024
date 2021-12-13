@@ -46,10 +46,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.theglendales.alarm.R
 import com.theglendales.alarm.checkPermissions
-import com.theglendales.alarm.configuration.Layout
-import com.theglendales.alarm.configuration.Prefs
-import com.theglendales.alarm.configuration.globalInject
-import com.theglendales.alarm.configuration.globalLogger
+import com.theglendales.alarm.configuration.*
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
@@ -323,20 +320,17 @@ class AlarmDetailsFragment : Fragment() {
             }
         }
 
-    // !!*** APP 설치 중 설정된 알람일 경우 -> 무조건 defaultRta1 로 설정해주고(spinner.setSelection 이용) -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
+    // DetailsFrag 에서 !!*** APP 설치 중 설정된 알람 파악 ->  -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
         if(alarms.getAlarm(alarmId)!!.labelOrDefault!="userCreated") {
             Log.d(TAG, "onCreateView: **THIS ALARM WAS CREATED DURING APP INSTALLATION")
-//            spinner.adapter = spinnerAdapter
-//            spinner.setSelection(0,true)
+            // *인스톨시 생성된 알람 두개 관련: 이 시점에서는 이미 모든 DefRta/Art 파일이 폰에 Copy 되었다는 가정하에 -> 아래 modify 로 label, alertUri, artUri 를 각 def1,2 로 변경.
             modify("Label") {prev -> prev.copy(label = "userCreated", isEnabled = true)}
+
         }
 
         return view
     }
 // <<<<----------onCreateView
-
-
-
 
 
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행X) ===> //막 0.01 초 걸리고 그래서.. 코루틴으로 하기가 좀 그래..
@@ -361,6 +355,10 @@ class AlarmDetailsFragment : Fragment() {
             val rtDescription = selectedRtForThisAlarm.rtDescription
             val badgeStr = selectedRtForThisAlarm.badgeStr // ex. "I,N,H" -> Intense, Nature, History 뭔 이런식.
             val artPath = selectedRtForThisAlarm.artFilePathStr
+
+            //val pName = AlarmApplication.getPackageName()
+            //val rawImgPath = Uri.parse("android.resource://$pName/drawable/resource_test") // 이걸 Glide 에 넣어주면 raw 폴더에 있는 내가 넣은 png 사진이 뜸..this works..
+
         // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
             //mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath) <-- SQLITE 로 alarm.artFilePath 저장 가능해져서 필요없음.
         // 2-c) Badge 보여주기 (너무 빨리 되서. showOrHideBadge() 완료까지 약 0.002 초.. 그냥 코루틴 안할계획임.
@@ -372,7 +370,7 @@ class AlarmDetailsFragment : Fragment() {
             tvRtPicker.text = rtTitle
             tvRtDescription.text = rtDescription
             Log.d(TAG, "updateUisForRt: tvRtDescription=$rtDescription")
-        // 2-e) 스피너 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
+        // 2-e) Rt Title 옆에 있는 큰 앨범아트 ImageView 에 현재 설정된 rt 보여주기. Glide 시용 (Context 가 nullable 여서 context?.let 으로 시작함)
         context?.let {
             GlideApp.with(it).load(artPath).circleCrop()
                 .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)

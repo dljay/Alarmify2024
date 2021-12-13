@@ -64,8 +64,11 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
         // insert default alarms
         String insertMe = "INSERT INTO alarms " + "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, "
                 + "message, alert, prealarm, state, artfilepath) VALUES ";
-        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '', '', 0, '', '');");
-        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '', '', 0, '', '');");
+        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '', '', 0, '', '');"); // defrta01.art (Raw 폴더에 기본으로 탑재되어 있음.)
+        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '', '', 0, '', '');"); // defrta02.art (Raw 폴더에 기본으로 탑재되어 있음.)
+
+
+
     }
 
     @Override

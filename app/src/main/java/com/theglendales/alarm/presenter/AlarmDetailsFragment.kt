@@ -322,15 +322,12 @@ class AlarmDetailsFragment : Fragment() {
 
     // DetailsFrag 에서 !!*** APP 설치 중 설정된 알람 파악 ->  -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
         val currentAlarms = alarms.getAlarm(alarmId)
-        val currentAlarmsLabel= currentAlarms!!.labelOrDefault
-        if(currentAlarmsLabel !="userCreated") {
-//            when(currentAlarmsLabel) {
-//                "OnInstallAlarm1" -> {
-//                    modify("Label") {prev -> prev.copy(label = "userCreated",isEnabled = true,alarmtone = "xx",artFilePath = "xxy")}}
-//                "OnInstallAlarm2" -> {}
-//            }
+        //val currentAlarmsLabel= currentAlarms!!.labelOrDefault
+        if(currentAlarms!!.labelOrDefault !="userCreated") {
+
     //인스톨시 생성된 알람의 경우 여기서 위처럼 modify 를 통해서 raw/defrt01.mp3 -> storage/../ defrt01.rta 로 변경가능하지만. 번잡스러움. (Alarmtone 클래스 생성 등)
         // updateUisForRt 에서 단순히 .rta 붙여서 DiskSearcher.kt 에 있는 리스트 정보를 받아서 해결토록 함.
+            //todo: 아니면 mySharedPref 에 getRtaPathForFileName 으로 defrt01.rta 경로를 받는 function 만들고 바로 changeAlarmtone 으로 보내기?
             Log.d(TAG, "onCreateView: **MODIFYING ALARMS CREATED DURING APP INSTALLATION")
             // *인스톨시 생성된 알람 두개 관련: 이 시점에서는 이미 모든 DefRta/Art 파일이 폰에 Copy 되었다는 가정하에 -> 아래 modify 로 label, alertUri, artUri 를 각 def1,2 로 변경.
             modify("Label") {prev -> prev.copy(label = "userCreated", isEnabled = true)}
@@ -351,7 +348,7 @@ class AlarmDetailsFragment : Fragment() {
 
         var updatedRtFileName = selectedRtFileName
 
-    //1) 앱 Install 과 동시에 설치된 알람의 경우 파일명에 확장자가 없다!! (raw 의 mp3 를 바로 알람음으로 지정했으므로)
+    //1) **앱 Install 과 동시에 설치된 알람의 경우 파일명에 확장자가 없다!! (raw 의 mp3 를 바로 알람음으로 지정했으므로) // todo: 다소 임시방편 느낌이 있음..
         if(!selectedRtFileName.contains(".rta")) {
             updatedRtFileName = "$selectedRtFileName.rta"
         }

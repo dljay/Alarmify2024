@@ -58,10 +58,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.40h [Install 단계에서 설치되는 알람 설정 변경] - AlarmDatabaseHelper.java
+//// v0.40g [Install 단계에서 설치되는 알람 설정 변경] - AlarmDatabaseHelper.java
 
 //- Rta/Art 는 모두 내장된 파일 사용(raw, drawable) (O)
 //- ListFrag.kt 에서 Scan 전후 Lottie 보여주고 없애기  (이중. Handler + LottieDiskScanDiaFrag.kt>onAnimataionEnd() (O)
+// b)Manifest  에서  allowBackup=false 로 변경. (O)
+// c) Manifest 에서 fullBackupContent=false (없는데 추가했음.) (O)
 
 // 할일 ==>
 

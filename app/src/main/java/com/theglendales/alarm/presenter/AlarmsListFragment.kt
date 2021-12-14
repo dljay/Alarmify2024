@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.AdapterContextMenuInfo
 import androidx.fragment.app.Fragment
+import com.airbnb.lottie.LottieAnimationView
 import com.amulyakhare.textdrawable.TextDrawable
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -74,11 +75,12 @@ class AlarmsListFragment : Fragment() {
     private var timePickerDialogDisposable = Disposables.disposed()
 
 // 내가 추가-->
-    //lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
+    lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
     lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
     private val myTimePickerJjong: TimePickerJjong by globalInject()
+
     //lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
 
     //"알람 선택된 요일" 표시용 동그래미 Text Drawable
@@ -103,6 +105,7 @@ class AlarmsListFragment : Fragment() {
 
         lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
 
+
         //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
         //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (최초 앱 설치 or 신규 다운로드 등.. )
         // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
@@ -112,8 +115,10 @@ class AlarmsListFragment : Fragment() {
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
             // ** diskScan 시작 시점-> ANIM(ON)!
             showLottieDialogFrag()
+            // 2.5초후에 애니메이션 없애기->  loop=false, repeat 없이 보여주기.(lottie_rebuild_rt.xml)
+            // 만약 여기서 handler 문제가 생겨서 안 없어지면 Lottie 다 재생하고( 약 5초) LottieDiskScanDiaFrag.kt > onAnimationEnd 로 DialFrag 자체를 없애줌!
             val handler: Handler = Handler(Looper.getMainLooper())
-            handler.postDelayed({hideLottieAndShowSnackBar()}, 2000) // 2초후에 애니메이션 없애기-> 보통 0.1초 사이에 실 작업은 다 끝나기는 함..
+            handler.postDelayed({hideLottieAndShowSnackBar()}, 2500) // todo: handler 는 올바른 방법이 아니라고 보긴 봤음.. 일단은 잘되네.
 
 
             //CoroutineScope(Dispatchers.IO).launch { <== ** 일부러 코루틴에서 제외-> 그래야 여기서 update SharedPref 등이 끝나고나서 밑에 innerClass>getView 실행됨.
@@ -466,6 +471,7 @@ class AlarmsListFragment : Fragment() {
 // **** 내가 추가한 Utility Methods **
 // 추가 3) Lottie 관련-->
     private fun showLottieDialogFrag() {
+
         lottieDialogFrag.show(requireActivity().supportFragmentManager, lottieDialogFrag.tag)
     }
     private fun hideLottieAndShowSnackBar() {

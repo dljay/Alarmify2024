@@ -58,12 +58,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.40g [Install 단계에서 설치되는 알람 설정 변경] - AlarmDatabaseHelper.java
+//// v0.40h [Install 단계에서 설치되는 알람 설정 변경] - AlarmDatabaseHelper.java
 
-//- 인스톨 후 알람 defrt01.mp3 & defrt02.mp3 로 SQL 에 저장(O)
-//- 인스톨 후 생성 알람은 DetailsFrag 에서 ".rta" 붙여서 정보 보여주는것으로 해결(O) .. 얼른 유저가 RtPicker 로 Ringtone 을 바꾸길 기다릴뿐.
-//- Label 이 InstallAlarm 으로 최초  SQL 에 기입되며 -> DetailsFrag 들어가는 순간 "userCreated" 로 Label 이 변경됨! (O)
 //- Rta/Art 는 모두 내장된 파일 사용(raw, drawable) (O)
+//- ListFrag.kt 에서 Scan 전후 Lottie 보여주고 없애기  (이중. Handler + LottieDiskScanDiaFrag.kt>onAnimataionEnd() (O)
 
 // 할일 ==>
 

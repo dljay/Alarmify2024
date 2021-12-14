@@ -1,15 +1,22 @@
 package com.theglendales.alarm.jjongadd
 
+import android.animation.Animator
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import com.airbnb.lottie.LottieAnimationView
+import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 
 // 싱글톤으로..
+private const val TAG="LottieDiskScanDialogFrag"
 class LottieDiskScanDialogFrag: DialogFragment() {
+
+    lateinit var lottieView: LottieAnimationView
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
         //return super.onCreateView(inflater, container, savedInstanceState)
@@ -28,6 +35,30 @@ class LottieDiskScanDialogFrag: DialogFragment() {
         return inflater.inflate(R.layout.lottie_rebuild_rt, container, false) //xml 로 inflate..
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        lottieView = view.findViewById(R.id.id_lottie_rebuild_rt)
+        lottieView.addAnimatorListener(object : Animator.AnimatorListener{
+            override fun onAnimationStart(animation: Animator?) {
+                Log.d(TAG, "onAnimationStart: started..")
+            }
+
+            override fun onAnimationRepeat(animation: Animator?) {
+                Log.d(TAG, "onAnimationRepeat: Repeated..")
+            }
+
+            override fun onAnimationCancel(animation: Animator?) {
+                Log.d(TAG, "onAnimationCancel: Canceled..")
+            }
+
+            override fun onAnimationEnd(animation: Animator?) {
+                Log.d(TAG, "onAnimationEnd: 끝! 이 Frag 닫는다!")
+                Snackbar.make(requireActivity().findViewById(android.R.id.content), "DISK SCAN- REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
+                dismiss()
+            }
+        })
+    }
+
     companion object {
         fun newInstanceDialogFrag(): LottieDiskScanDialogFrag {
             return LottieDiskScanDialogFrag()
@@ -40,4 +71,6 @@ class LottieDiskScanDialogFrag: DialogFragment() {
         ft.add(this, tag)
         ft.commitAllowingStateLoss()
     }
+
+
 }

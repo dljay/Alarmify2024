@@ -135,6 +135,7 @@ class AlarmsListFragment : Fragment() {
                 // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
                 myDiskSearcher.updateList(resultList)
 
+
                 Log.d(TAG, "onCreate: --------------------------- DiskScan DONE..(Hopefully..)---------- \n\n resultList = $resultList!")
 
 

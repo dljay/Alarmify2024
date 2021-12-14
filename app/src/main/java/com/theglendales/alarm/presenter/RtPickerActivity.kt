@@ -149,7 +149,6 @@ class RtPickerActivity : AppCompatActivity() {
 
             //B-2-b) Sliding Panel - Upper UI
                 //제목
-
                     // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
                     var spaceFifteen="               " // 15칸
                     var spaceTwenty="                    " // 20칸

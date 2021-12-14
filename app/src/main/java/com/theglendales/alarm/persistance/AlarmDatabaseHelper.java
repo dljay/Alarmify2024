@@ -54,7 +54,10 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
 
-        String defart01Path = AlarmApplication.Companion.getDefArtPathStr("d1"); // d1.jpg -> d1 으로 변경.
+        String defart01Path = AlarmApplication.Companion.getDefArtPathStr("d1"); // d1.jpg -> d1 으로 확장자 제외.
+        String defrta01Path = AlarmApplication.Companion.getDefRtaPathStr("dr1"); //
+        String defrta02Path = AlarmApplication.Companion.getDefRtaPathStr("dr2"); //
+        Uri myUri = Uri.parse(defrta01Path);
         //실제 주소=// android.resource://com.theglendales.alarm.debug/drawable/d1
 
 
@@ -78,8 +81,8 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
         // insert default alarms = ** APP 설치시 생성되는 두개!! **
         String insertMe = "INSERT INTO alarms " + "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, "
                 + "message, alert, prealarm, state, artfilepath) VALUES ";
-        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '', 0, '', '" + defart01Path +"');"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
-        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '', 0, '', '" + defart01Path + "');"); // 실제 주소=// android.resource://com.theglendales.alarm.debug/drawable/d1
+        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta01Path +"', 0, '', '" + defart01Path +"');"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
+        db.execSQL(insertMe + "(8, 30, 96, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta02Path +"', 0, '', '" + defart01Path +"');"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
 
 
 

@@ -98,16 +98,17 @@ class DiskSearcher(val context: Context)
 
         //if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 10) { // 위에 isDiskScanNeeded() 서 체크해주니깐 여기서 if 문 필요 없음.
             Log.d(TAG, "onDiskRtSearcher: NO FILES (or less than 5 files) INSIDE /.AlarmRingTones FOLDER!")
-            copyDefaultRtsToPhone(R.raw.defrt1, "defrt01.rta")
-            copyDefaultRtsToPhone(R.raw.defrt2,"defrt02.rta")
-            copyDefaultRtsToPhone(R.raw.defrt3, "defrt03.rta")
-            copyDefaultRtsToPhone(R.raw.defrt4, "defrt04.rta")
-            copyDefaultRtsToPhone(R.raw.defrt5, "defrt05.rta")
-            copyDefaultRtsToPhone(R.raw.defrt6, "defrt06.rta")
-            copyDefaultRtsToPhone(R.raw.defrt7, "defrt07.rta")
-            copyDefaultRtsToPhone(R.raw.defrt8, "defrt08.rta")
-            copyDefaultRtsToPhone(R.raw.defrt9, "defrt09.rta")
+            copyDefaultRtsToPhone(R.raw.defrt01, "defrt01.rta")
+            copyDefaultRtsToPhone(R.raw.defrt02,"defrt02.rta")
+            copyDefaultRtsToPhone(R.raw.defrt03, "defrt03.rta")
+            copyDefaultRtsToPhone(R.raw.defrt04, "defrt04.rta")
+            copyDefaultRtsToPhone(R.raw.defrt05, "defrt05.rta")
+            copyDefaultRtsToPhone(R.raw.defrt06, "defrt06.rta")
+            copyDefaultRtsToPhone(R.raw.defrt07, "defrt07.rta")
+            copyDefaultRtsToPhone(R.raw.defrt08, "defrt08.rta")
+            copyDefaultRtsToPhone(R.raw.defrt09, "defrt09.rta")
             copyDefaultRtsToPhone(R.raw.defrt10, "defrt10.rta")
+        // raw 파일명은 .mp3 로, 폰에는 .rta 로 (.mp3 로 raw 에 넣지 않으면 인스톨 후 생성되는 두 Default 알람의 벨소리가 Notification 에서 소리 안남!)
 
           //  }
     //(1)-c: 구입한 파일이 현 폴더에 있는지 한번 더 확인? ...구축해줄곳임. flowchart 참고.

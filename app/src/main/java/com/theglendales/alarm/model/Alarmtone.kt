@@ -11,7 +11,7 @@ import java.lang.Exception
 private const val TAG="Alarmtone.kt"
 //private val defaultAlarmAlertUri = Settings.System.DEFAULT_ALARM_ALERT_URI.toString()
 //private val defaultAlarmAlertUri = getDefaultRtaPath()
-private val defrta1Path = AlarmApplication.getDefRtaPathStr("defrt1") // .rta 지워줬음!!
+private val defrta1Path = AlarmApplication.getDefRtaPathStr("dr1") // detailsFrag 에서의 파일 이름과 매칭 유의.
 val mySharedPrefManager: MySharedPrefManager by globalInject() // Shared Pref by Koin!!
 
 fun Alarmtone.ringtoneManagerString(): Uri? {
@@ -22,7 +22,7 @@ fun Alarmtone.ringtoneManagerString(): Uri? {
         is Alarmtone.Sound -> Uri.parse(this.uriString)
     }
 }
-// **최초 인스톨 후 생성되는 **신규 알람 2개
+// **최초 인스톨 후 생성되는 **신규 알람 2개 - 기존에 메모리에 띄워놓은 audioFilePath 를 줍줍 했을때.
 //private fun getDefaultRtaPath(): String? { // 최초 인스톨 후 생성되는 **신규 알람 2개는** 무조건 defRta1 으로 지정할것! (둘 다 같음!!)
 //    Log.d(TAG, "getDefaultRta: called!!")
 //    //val randomNumber = (0..4).random() //

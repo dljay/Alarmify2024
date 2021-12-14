@@ -29,7 +29,11 @@ class AlarmApplication : Application() {
             var jjPackageName=""
 
             fun getDefRtaPathStr(rtaName: String): String {
+
                 return ContentResolver.SCHEME_ANDROID_RESOURCE + File.pathSeparator + File.separator + File.separator+ jjPackageName + "/raw/" + rtaName
+                //return "asset" + File.pathSeparator + File.separator + File.separator +File.separator + rtaName + ".mp3" // "asset:///" + "defrt01" + ".rta"
+
+                // File.pathSeparator = ":" , File.separator = "/"
             }
             fun getDefArtPathStr(artName: String): String {
                 return ContentResolver.SCHEME_ANDROID_RESOURCE + File.pathSeparator + File.separator + File.separator+ jjPackageName + "/drawable/" + artName

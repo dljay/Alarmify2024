@@ -12,6 +12,8 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.theglendales.alarm.R
+import com.theglendales.alarm.configuration.AlarmApplication
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
@@ -217,6 +219,8 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
     fun prepMusicPlayLocalSrc(audioFilePath: String?, playWhenReady: Boolean) {
         removeHandler()
         setSeekbarToZero()
+
+
 
         try{
             // LOCAL 재생 용도이기 때문에 Caching=false

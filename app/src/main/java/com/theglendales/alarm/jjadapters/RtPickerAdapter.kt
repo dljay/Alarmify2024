@@ -16,7 +16,10 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.theglendales.alarm.R
+import com.theglendales.alarm.configuration.AlarmApplication
+import com.theglendales.alarm.configuration.AlarmApplication.Companion.getDefArtPathStr
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
@@ -86,6 +89,7 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
             // <3> 음악 바로 재생 (여기서 재생 후 STATUS.ENUM 상태에 따라 LiveData 로 전달
                 val rtaFilePath = rtWithAlbumArtObj.audioFilePath
                 mediaPlayer.prepMusicPlayLocalSrc(rtaFilePath, true)
+
 
         }
 

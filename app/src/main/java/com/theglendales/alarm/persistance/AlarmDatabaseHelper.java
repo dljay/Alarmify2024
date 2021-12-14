@@ -55,10 +55,10 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
 
         String defart01Path = AlarmApplication.Companion.getDefArtPathStr("d1"); // d1.jpg -> d1 으로 확장자 제외.
-        String defrta01Path = AlarmApplication.Companion.getDefRtaPathStr("dr1"); //
-        String defrta02Path = AlarmApplication.Companion.getDefRtaPathStr("dr2"); //
-        Uri myUri = Uri.parse(defrta01Path);
-        //실제 주소=// android.resource://com.theglendales.alarm.debug/drawable/d1
+        String defrta01Path = AlarmApplication.Companion.getDefRtaPathStr("defrt01"); // defrt01.mp3 -> 폰에는 .rta 로 저장!
+        String defrta02Path = AlarmApplication.Companion.getDefRtaPathStr("defrt02"); // .mp3 아니면 Notification 에서 소리 안난다!
+
+
 
 
         //Log.d(TAG, "onCreate: (1)SQL creator's onCreate called-jj. defrta01Path="+defrta01Path); <- defrta1 Path 전달은 Alarmtone.kt 에서 이뤄짐. 여기서는 그 결과값을 받기만 함.

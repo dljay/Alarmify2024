@@ -322,9 +322,15 @@ class AlarmDetailsFragment : Fragment() {
 
     // DetailsFrag 에서 !!*** APP 설치 중 설정된 알람 파악 ->  -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
         val currentAlarms = alarms.getAlarm(alarmId)
-        if(currentAlarms!!.labelOrDefault !="userCreated") {
-            //alarms.getAlarm(alarmId)!!.data.alarmtone
-
+        val currentAlarmsLabel= currentAlarms!!.labelOrDefault
+        if(currentAlarmsLabel !="userCreated") {
+//            when(currentAlarmsLabel) {
+//                "OnInstallAlarm1" -> {
+//                    modify("Label") {prev -> prev.copy(label = "userCreated",isEnabled = true,alarmtone = "xx",artFilePath = "xxy")}}
+//                "OnInstallAlarm2" -> {}
+//            }
+    //인스톨시 생성된 알람의 경우 여기서 위처럼 modify 를 통해서 raw/defrt01.mp3 -> storage/../ defrt01.rta 로 변경가능하지만. 번잡스러움. (Alarmtone 클래스 생성 등)
+        // updateUisForRt 에서 단순히 .rta 붙여서 DiskSearcher.kt 에 있는 리스트 정보를 받아서 해결토록 함.
             Log.d(TAG, "onCreateView: **MODIFYING ALARMS CREATED DURING APP INSTALLATION")
             // *인스톨시 생성된 알람 두개 관련: 이 시점에서는 이미 모든 DefRta/Art 파일이 폰에 Copy 되었다는 가정하에 -> 아래 modify 로 label, alertUri, artUri 를 각 def1,2 로 변경.
             modify("Label") {prev -> prev.copy(label = "userCreated", isEnabled = true)}

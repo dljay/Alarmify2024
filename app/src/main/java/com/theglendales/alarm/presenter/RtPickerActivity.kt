@@ -17,7 +17,6 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjadapters.RtPickerAdapter
-import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
 import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
@@ -243,7 +242,7 @@ class RtPickerActivity : AppCompatActivity() {
     private suspend fun getPositionOfCurrentRt(rtOnDiskList: MutableList<RtWithAlbumArt>): Int {
         // 현재 DetailsFrag 에서 설정되어있는 RT 의 '파일 이름'
         val rtFileName = AlarmDetailsFragment.detailFragDisplayedRtFileName
-        val index  =  rtOnDiskList.indexOfFirst { rt -> rt.fileName == rtFileName } // 동일한 'FileName'을 갖는 놈의 인덱스를 리스트 에서 찾기
+        val index  =  rtOnDiskList.indexOfFirst { rt -> rt.fileNameWithoutExtension == rtFileName } // 동일한 'FileName'을 갖는 놈의 인덱스를 리스트 에서 찾기
         Log.d(TAG, "getPositionOfCurrentRt: returning index=$index")
         return index
     }

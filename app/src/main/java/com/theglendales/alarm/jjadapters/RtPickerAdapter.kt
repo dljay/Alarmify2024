@@ -16,10 +16,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.theglendales.alarm.R
-import com.theglendales.alarm.configuration.AlarmApplication
-import com.theglendales.alarm.configuration.AlarmApplication.Companion.getDefArtPathStr
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
@@ -46,7 +43,7 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
     override fun onBindViewHolder(holder: RtPickerVHolder, position: Int) {
         val currentRtItem = rtaArtPathList[position]
         val currentRtTitle = rtaArtPathList[position].rtTitle
-        val currentRtFileName = rtaArtPathList[position].fileName
+        val currentRtFileName = rtaArtPathList[position].fileNameWithoutExtension
         val holderRadioBtn = holder.radioBtn
         Log.d(TAG, "onBindViewHolder: pos=$position, rtFileName=$currentRtFileName, rtTitle=$currentRtTitle,")
 

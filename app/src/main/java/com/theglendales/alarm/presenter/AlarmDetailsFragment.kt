@@ -344,7 +344,7 @@ class AlarmDetailsFragment : Fragment() {
         /** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
         // val testDelete = alarms.getAlarm(alarmId)!!.data.alarmtone
 
-        val indexOfSelectedRt = DiskSearcher.finalRtArtPathList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == selectedRtFileName }
+        val indexOfSelectedRt = DiskSearcher.finalRtArtPathList.indexOfFirst { rtOnDisk -> rtOnDisk.fileNameWithoutExtension == selectedRtFileName }
 
         if(indexOfSelectedRt!=-1) // 현재 disk 에 있는 rt list 에서 현재 '설정한(or 되어있던)' rt 를 찾았으면 CircleAlbumArt 보여주기.
         {

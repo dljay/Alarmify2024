@@ -322,7 +322,7 @@ class AlarmDetailsFragment : Fragment() {
 
     // DetailsFrag 에서 !!*** APP 설치 중 설정된 알람 파악 ->  -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
         if(alarms.getAlarm(alarmId)!!.labelOrDefault!="userCreated") {
-            Log.d(TAG, "onCreateView: **THIS ALARM WAS CREATED DURING APP INSTALLATION")
+            Log.d(TAG, "onCreateView: **MODIFYING 2 ALARMS CREATED DURING APP INSTALLATION")
             // *인스톨시 생성된 알람 두개 관련: 이 시점에서는 이미 모든 DefRta/Art 파일이 폰에 Copy 되었다는 가정하에 -> 아래 modify 로 label, alertUri, artUri 를 각 def1,2 로 변경.
             modify("Label") {prev -> prev.copy(label = "userCreated", isEnabled = true)}
 

@@ -41,7 +41,8 @@ class AlarmApplication : Application() {
     // 내가 추가 <<--
 
 
-    override fun onCreate() {
+    override fun onCreate()
+    {
 //        val packageName = applicationContext.packageName // todo: 이걸 STATIC 으로 저장? 아니면 ListFrag 에서 바로 받기?
 //        val heyho = "android.resource://" + packageName + R.raw.defrt1
 //        Log.d(TAG, "onCreate: !!AlarmApplication onCreate!!! heyho=$heyho, packageName=$packageName")
@@ -68,52 +69,6 @@ class AlarmApplication : Application() {
         koin.get<BackgroundNotifications>()
 
         createNotificationChannels()
-
-
-// 내가 추가---> DiskSearcher 시행 및 mySharedPref 생성하여 art,rta path 기록해놓기.
-        //lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
-        // todo: 여기서 첫 install 후 런칭인지 확인 -> SplashScreen? Launch Activity? "Getting our app Ready !" ->
-        // todo: 아래 단계에서 DiskScan-> Defrt01~10.rta 를 쭉 카피를 해줘야 app install 후 생성되는 두개의 알람 (8:30, 9:00) 에 defrt1 이 적용됨.
-        // todo: 인스톨 후에는 여기를 거칠일이 없고, ringtone 구매등으로 rta, art 갯수가 불일치 할때는 listfrag.kt 에서 Disk Scan 이 작동핡것임.
-        // todo: 추후 여기서 Permission 관련도 해결해줬으면..
-
-        if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
-            Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
-            // 추후 SPLASH 스크린으로 대체 가능하지만.
-
-
-            // ** diskScan 시작 시점-> ANIM(ON)!
-
-
-                //lottieAnimCtrl(SHOW_ANIM)
-                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
-                myDiskSearcher.readAlbumArtOnDisk()
-                //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
-                val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
-                //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
-
-                // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
-                mySharedPrefManager.saveRtaArtPathList(resultList)
-
-                // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
-                myDiskSearcher.updateList(resultList)
-
-                Log.d(TAG, "onCreate: DiskScan DONE..(Hopefully..), resultList = $resultList!")
-
-
-             // ** diskScan 종료 <--
-
-        }
-        //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
-        else if(!myDiskSearcher.isDiskScanNeeded()) {
-            val resultList = mySharedPrefManager.getRtaArtPathList()
-
-            Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
-            myDiskSearcher.updateList(resultList)
-        }
-// 내가 추가<---
-
-        Log.d(TAG, "onCreate: -----------after DiskSearch/MySharedPref DONE------------\n\n")
 
         // must be started the last, because otherwise we may loose intents from it.
         val alarmsLogger = koin.logger("Alarms")

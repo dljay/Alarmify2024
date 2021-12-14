@@ -110,8 +110,9 @@ class AlarmsListFragment : Fragment() {
         lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
 
         //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
-        //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (우선적으로 rta 파일 갯수와 art 파일 갯수를 비교.)
+        //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (최초 앱 설치 or 신규 다운로드 등.. )
         // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
+        // todo: 여기서 추후 permission 관련된것도 해주기?
 
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
@@ -191,14 +192,13 @@ class AlarmsListFragment : Fragment() {
             var artPathFromAlarmValue = alarm.artFilePath // +++
 
 
-        // ** Row 의 앨범아트 path가 null => 아이콘 (!) 요걸로 뜰 때 defrta01 의 art 로 무조건 설정해주기 (정상적인 상황이라면 앱 Install 후 자동 생성되는 알람 2개 8:30, 9:00 건의 경우만 해당됨)
-            // 맘 같아서는 여기서 alarm.artFilePath 를 지정해주고 싶지만. val 인 관계로. "User  가 링톤을 직접 수정전까지는" 어쩔수없이 여기를 계속 거쳐가게 됨.
-            // User 가 Rt 를 Defrt01 에서 -> 다른걸로 바꾸는 순간. 여기 (1-No Art File Found) 쪽은 걸치지 않는다.
-            // todo: 다소 임시방편 느낌. 대안 1) 그냥 raw>drawable 에 defrta1.art 파일 넣어보고 전달 or 2) 제대로 Alarmtone.kt , Permissions.kt 참고하여 애초 인스톨부터 defrta1.art 의 uri 설정하기.
+        // ** Row 의 앨범아트 path가 비어있을 때. (정상적인 Install 후 SQL 이 잘 진행되었다면 여기를 거쳐가서는 안된다!)
+            // Update: '21.12.14=> 앱 Install 후 생성되는 두개의 알람은 모두 SQL 에서 자동으로 각각 defrt1-2 rta/art 경로를 저장한다! (label: InstallAlarm)
+            // DetailsFrag 를 들어가는 순간
+
             if(artPathFromAlarmValue.isNullOrEmpty()) {
                 Log.d(TAG, "getView: (1-No Art File Found) artPathFromAlarmValue=$artPathFromAlarmValue, \nalarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
                 val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
-
                 if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
                         try{
                             val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // **todo: Safety Check 실제로 뻑남.

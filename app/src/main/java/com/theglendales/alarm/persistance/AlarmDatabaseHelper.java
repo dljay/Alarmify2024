@@ -56,12 +56,10 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
         String defart01Path = AlarmApplication.Companion.getDefArtPathStr("d1"); // d1.jpg -> d1 으로 확장자 제외.
         String defrta01Path = AlarmApplication.Companion.getDefRtaPathStr("defrt01"); // defrt01.mp3 -> 폰에는 .rta 로 저장!
+
+        String defart02Path = AlarmApplication.Companion.getDefArtPathStr("d2"); // d1.jpg -> d1 으로 확장자 제외.
         String defrta02Path = AlarmApplication.Companion.getDefRtaPathStr("defrt02"); // .mp3 아니면 Notification 에서 소리 안난다!
 
-
-
-
-        //Log.d(TAG, "onCreate: (1)SQL creator's onCreate called-jj. defrta01Path="+defrta01Path); <- defrta1 Path 전달은 Alarmtone.kt 에서 이뤄짐. 여기서는 그 결과값을 받기만 함.
         Log.d(TAG, "onCreate: (2)SQL creator's onCreate called-jj. d1.jpg Path="+ defart01Path);
         // @formatter:off
         db.execSQL("CREATE TABLE alarms (" +
@@ -82,8 +80,8 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
         String insertMe = "INSERT INTO alarms " + "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, "
                 + "message, alert, prealarm, state, artfilepath) VALUES ";
         db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta01Path +"', 0, '', '" + defart01Path +"');"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
-        db.execSQL(insertMe + "(8, 30, 96, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta02Path +"', 0, '', '" + defart01Path +"');"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
-
+        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta02Path +"', 0, '', '" + defart02Path +"');"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
+        //31: 주중 , 96 : 주말 only
 
 
 

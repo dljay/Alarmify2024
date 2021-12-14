@@ -63,7 +63,7 @@ import java.util.Calendar
 //- 인스톨 후 알람 defrt01.mp3 & defrt02.mp3 로 SQL 에 저장(O)
 //- Label 이 InstallAlarm 으로 최초  SQL 에 기입되며 -> DetailsFrag 들어가는 순간 "userCreated" 로 Label 이 변경됨! (O)
 //- Rta/Art 는 모두 내장된 파일 사용(raw, drawable) (O)
-
+// issue: APP 설치시 최초 생성된 알람 2개 -> 파일명이 확장자가 없어서 DetailsFrag.kt > updateUi 에서 안 걸리는 문제.
 
 // 할일 ==>
 //- raw 에 있는 Defrt1 DetailsFrag 들어갔을 때 정보 안 뜸 (About the Ringtone, Info)

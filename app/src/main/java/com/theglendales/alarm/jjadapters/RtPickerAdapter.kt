@@ -43,7 +43,7 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
     override fun onBindViewHolder(holder: RtPickerVHolder, position: Int) {
         val currentRtItem = rtaArtPathList[position]
         val currentRtTitle = rtaArtPathList[position].rtTitle
-        val currentRtFileName = rtaArtPathList[position].fileNameWithoutExtension
+        val currentRtFileName = rtaArtPathList[position].fileName
         val holderRadioBtn = holder.radioBtn
         Log.d(TAG, "onBindViewHolder: pos=$position, rtFileName=$currentRtFileName, rtTitle=$currentRtTitle,")
 

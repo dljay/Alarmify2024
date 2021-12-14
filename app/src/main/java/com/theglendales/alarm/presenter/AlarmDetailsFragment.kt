@@ -321,8 +321,11 @@ class AlarmDetailsFragment : Fragment() {
         }
 
     // DetailsFrag 에서 !!*** APP 설치 중 설정된 알람 파악 ->  -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
-        if(alarms.getAlarm(alarmId)!!.labelOrDefault!="userCreated") {
-            Log.d(TAG, "onCreateView: **MODIFYING 2 ALARMS CREATED DURING APP INSTALLATION")
+        val currentAlarms = alarms.getAlarm(alarmId)
+        if(currentAlarms!!.labelOrDefault !="userCreated") {
+            //alarms.getAlarm(alarmId)!!.data.alarmtone
+
+            Log.d(TAG, "onCreateView: **MODIFYING ALARMS CREATED DURING APP INSTALLATION")
             // *인스톨시 생성된 알람 두개 관련: 이 시점에서는 이미 모든 DefRta/Art 파일이 폰에 Copy 되었다는 가정하에 -> 아래 modify 로 label, alertUri, artUri 를 각 def1,2 로 변경.
             modify("Label") {prev -> prev.copy(label = "userCreated", isEnabled = true)}
 
@@ -339,13 +342,17 @@ class AlarmDetailsFragment : Fragment() {
 
 
     private fun updateUisForRt(selectedRtFileName: String) {
-        Log.d(TAG, "updateUisForRt: called #$#@% selectedRtFileName=$selectedRtFileName")
-        // 2-a) 기존에 설정되어있는 링톤과 동일한 "파일명"을 가진 Rt 의 위치(index) 를 리스트에서 찾아서-> Spinner 에 세팅해주기.
+
+        var updatedRtFileName = selectedRtFileName
+
+    //1) 앱 Install 과 동시에 설치된 알람의 경우 파일명에 확장자가 없다!! (raw 의 mp3 를 바로 알람음으로 지정했으므로)
+        if(!selectedRtFileName.contains(".rta")) {
+            updatedRtFileName = "$selectedRtFileName.rta"
+        }
+        Log.d(TAG, "updateUisForRt: called #$#@% selectedRtFileName=$selectedRtFileName, updatedRtFileName=$updatedRtFileName")
+    //2) 그 외 user 가 일반적으로 지정한 알람음의 경우>
+        val indexOfSelectedRt = DiskSearcher.finalRtArtPathList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == updatedRtFileName }
         /** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
-        // val testDelete = alarms.getAlarm(alarmId)!!.data.alarmtone
-
-        val indexOfSelectedRt = DiskSearcher.finalRtArtPathList.indexOfFirst { rtOnDisk -> rtOnDisk.fileNameWithoutExtension == selectedRtFileName }
-
         if(indexOfSelectedRt!=-1) // 현재 disk 에 있는 rt list 에서 현재 '설정한(or 되어있던)' rt 를 찾았으면 CircleAlbumArt 보여주기.
         {
             //Log.d(TAG, "updateCircleAlbumArt: indexOfSelectedRt=$indexOfSelectedRt, selectedRtForThisAlarm=${SpinnerAdapter.rtOnDiskList[indexOfSelectedRt]}")
@@ -356,8 +363,7 @@ class AlarmDetailsFragment : Fragment() {
             val badgeStr = selectedRtForThisAlarm.badgeStr // ex. "I,N,H" -> Intense, Nature, History 뭔 이런식.
             val artPath = selectedRtForThisAlarm.artFilePathStr
 
-            //val pName = AlarmApplication.getPackageName()
-            //val rawImgPath = Uri.parse("android.resource://$pName/drawable/resource_test") // 이걸 Glide 에 넣어주면 raw 폴더에 있는 내가 넣은 png 사진이 뜸..this works..
+
 
         // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
             //mySharedPrefManager.saveArtPathForAlarm(alarmId, artPath) <-- SQLITE 로 alarm.artFilePath 저장 가능해져서 필요없음.

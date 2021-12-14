@@ -79,7 +79,7 @@ class DiskSearcher(val context: Context)
 
         if(artPathEmptyList.isNotEmpty()) { //(즉 artPathEmptyList 안 갯수가 > 0)
                 for(i in 0 until artPathEmptyList.size) { //todo: 여기 for loop 은 단순 모니터링 용. 없애도 됨.
-                    Log.d(TAG, "isDiskScanNeeded: 다음 파일의 artFilePathStr 은 비어있음!! = ${artPathEmptyList[i].fileNameWithoutExtension}")
+                    Log.d(TAG, "isDiskScanNeeded: 다음 파일의 artFilePathStr 은 비어있음!! = ${artPathEmptyList[i].fileName}")
                 }
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
@@ -285,7 +285,7 @@ class DiskSearcher(val context: Context)
             val artFilePath = onDiskArtMap[trIDString] //trIDString & artFilePath 둘 다 nullable String
 
         //4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
-        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileNameWithoutExtension = fileReceived.nameWithoutExtension,
+        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileName = fileReceived.name,
             artFilePathStr = artFilePath, rtDescription = rtDescription, badgeStr = badgeString) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
         Log.d(TAG, "extractMetaDataFromRta: Extracted [onDiskRingtone]=$onDiskRingtone")
         return onDiskRingtone

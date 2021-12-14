@@ -38,18 +38,12 @@ import com.theglendales.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
-import com.theglendales.alarm.jjongadd.SwipeRevealLayout
 import com.theglendales.alarm.jjongadd.TimePickerJjong
-import com.theglendales.alarm.model.Alarmtone
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.ArrayList
 import java.util.Calendar
 
@@ -201,7 +195,7 @@ class AlarmsListFragment : Fragment() {
                 val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
                 if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
                         try{
-                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.fileNameWithoutExtension=="defrt01" }.single() // **todo: Safety Check 실제로 뻑남.
+                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.fileName=="defrt01" }.single() // **todo: Safety Check 실제로 뻑남.
                             val artPath: String? = defRta1.artFilePathStr
 
                             //mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!

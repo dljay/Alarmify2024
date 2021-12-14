@@ -17,6 +17,7 @@
 
 package com.theglendales.alarm.persistance;
 
+import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.util.Log;
 
+import com.theglendales.alarm.configuration.AlarmApplication;
 import com.theglendales.alarm.logger.Logger;
 
 /**
@@ -33,7 +35,11 @@ import com.theglendales.alarm.logger.Logger;
  * some common functionality.
  */
 public class AlarmDatabaseHelper extends SQLiteOpenHelper {
+
+    // 내가 추가 -->
+    private static final String ON_APP_INSTALL_LABEL = "InstallAlarm";
     private static final String TAG = "AlarmDatabaseHelper.java";
+    // 내가 추가 <--
     private static final String DATABASE_NAME = "alarms.db";
     private static final int DATABASE_VERSION = 5;
     private final Logger log;
@@ -43,9 +49,17 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
         this.log = log;
     }
 
+    @SuppressLint("SQLiteString")
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.d(TAG, "onCreate: called.");
+
+
+        String defart01Path = AlarmApplication.Companion.getDefArtPathStr("d1"); // d1.jpg -> d1 으로 변경.
+        //실제 주소=// android.resource://com.theglendales.alarm.debug/drawable/d1
+
+
+        //Log.d(TAG, "onCreate: (1)SQL creator's onCreate called-jj. defrta01Path="+defrta01Path); <- defrta1 Path 전달은 Alarmtone.kt 에서 이뤄짐. 여기서는 그 결과값을 받기만 함.
+        Log.d(TAG, "onCreate: (2)SQL creator's onCreate called-jj. d1.jpg Path="+ defart01Path);
         // @formatter:off
         db.execSQL("CREATE TABLE alarms (" +
                 "_id INTEGER PRIMARY KEY," +
@@ -55,17 +69,18 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
                 "alarmtime INTEGER, " +
                 "enabled INTEGER, " +
                 "vibrate INTEGER, " +
-                "message TEXT, " +
-                "alert TEXT, " +
+                "message TEXT, " + // message = Label => 위의 ON_APP_INSTALL_LABEL 넣어줄 예정.
+                "alert TEXT, " + // alaert = raw 폴더에 있는 defrt1.rta 경로 저장될 예정
                 "prealarm INTEGER, " +
                 "state STRING," +
-                "artfilepath STRING);");
+                "artfilepath TEXT);"); // artfilePath= drawables 폴더에 있는 d1.jpg 경로 저장될 예정
         // @formatter:on
-        // insert default alarms
+        // insert default alarms = ** APP 설치시 생성되는 두개!! **
         String insertMe = "INSERT INTO alarms " + "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, "
                 + "message, alert, prealarm, state, artfilepath) VALUES ";
-        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '', '', 0, '', '');"); // defrta01.art (Raw 폴더에 기본으로 탑재되어 있음.)
-        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '', '', 0, '', '');"); // defrta02.art (Raw 폴더에 기본으로 탑재되어 있음.)
+        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '', 0, '', '" + defart01Path +"');"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
+        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '', 0, '', '" + defart01Path + "');"); // 실제 주소=// android.resource://com.theglendales.alarm.debug/drawable/d1
+
 
 
 

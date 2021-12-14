@@ -1,32 +1,22 @@
 package com.theglendales.alarm.configuration
 
-import android.app.Activity
 import android.app.Application
-import android.content.Context
-import android.os.Handler
-import android.os.Looper
+import android.content.ContentResolver
+import android.net.Uri
 import android.util.Log
 import android.view.ViewConfiguration
-import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 import com.theglendales.alarm.alert.BackgroundNotifications
 import com.theglendales.alarm.background.AlertServicePusher
-import com.theglendales.alarm.bugreports.BugReporter
 import com.theglendales.alarm.createNotificationChannels
-import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
 import com.theglendales.alarm.model.Alarms
 import com.theglendales.alarm.model.AlarmsScheduler
 import com.theglendales.alarm.presenter.ScheduledReceiver
 import com.theglendales.alarm.presenter.ToastPresenter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import java.io.File
 
 
 private const val TAG="AlarmApplication"
@@ -34,12 +24,16 @@ class AlarmApplication : Application() {
     // 내가 추가-->> 앱 install 후 최초 시행!-> 하자마자 diskSearcher->mySharedPref 에 rta/art path 를 올려놓기 위해서 -> 그 뒤에 default 알람 (아침 8시30분.주말 9시 설정)
         private val myDiskSearcher: DiskSearcher by globalInject()
         private val mySharedPrefManager: MySharedPrefManager by globalInject()
-        //lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
+
         companion object {
-//            var pName=""
-//            fun getPackageName(): String {
-//                return pName
-//            }
+            var jjPackageName=""
+
+            fun getDefRtaPathStr(rtaName: String): String {
+                return ContentResolver.SCHEME_ANDROID_RESOURCE + File.pathSeparator + File.separator + File.separator+ jjPackageName + "/raw/" + rtaName
+            }
+            fun getDefArtPathStr(artName: String): String {
+                return ContentResolver.SCHEME_ANDROID_RESOURCE + File.pathSeparator + File.separator + File.separator+ jjPackageName + "/drawable/" + artName
+            }
         }
 
     // 내가 추가 <<--
@@ -49,7 +43,7 @@ class AlarmApplication : Application() {
 //        val packageName = applicationContext.packageName // todo: 이걸 STATIC 으로 저장? 아니면 ListFrag 에서 바로 받기?
 //        val heyho = "android.resource://" + packageName + R.raw.defrt1
 //        Log.d(TAG, "onCreate: !!AlarmApplication onCreate!!! heyho=$heyho, packageName=$packageName")
-        //pName = applicationContext.packageName
+        jjPackageName = applicationContext.packageName
 
         runCatching {
             ViewConfiguration::class.java

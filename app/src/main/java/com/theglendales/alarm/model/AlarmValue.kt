@@ -28,7 +28,7 @@ data class AlarmValue(
 
     // If the database alert is null or it failed to parse, use the
     // default alert.
-    // ** +FAB 버튼으로 알람 생성할때만 적용되는듯 ** (!!app 인스톨 후 생성되는 2개 말고..)
+    // **!! +FAB 버튼으로 알람 생성할때만 적용되는듯 ** (!!app 인스톨 후 생성되는 2개 말고..)
     @Deprecated("TODO move to where it is used")
     val alertSoundUri: Uri by lazy {
         when (alarmtone) {
@@ -68,7 +68,7 @@ data class AlarmValue(
     }
 
     override fun toString(): String {
-        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // \nalertSoundUri= ${alertSoundUri}, \nalarmtone=${alarmtone.toString()}, \nartFilePath=$artFilePath")
+        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // \nalertSoundUri= ${alertSoundUri}, \nalarmtone=${alarmtone.toString()}, \nartFilePath=$artFilePath \nlabel=$label")
 
         // 여기서
 //        val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()

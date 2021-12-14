@@ -58,16 +58,18 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.39g  [INSTALL 후 알람 2개 artPath,rtaPath SQL 에 심기-AlarDatabaseHelper.jav (전)]
+//// v0.40b [Install 단계에서 설치되는 알람 설정 변경] - AlarmDatabaseHelper.java
 
+
+//- Label 이 InstallAlarm 으로 최초  SQL 에 기입되며 -> DetailsFrag 들어가는 순간 "userCreated" 로 Label 이 변경됨! (O)
+//- Rta/Art 는 모두 내장된 파일 사용(raw, drawable) (O)
 
 
 // 할일 ==>
-// INSTALL 시 알고리즘! 어려울것 없이 어쨌든 최초 install 알람 2개 생성시  defrt01,0 02 rta/ art 파일을 raw 디렉토리에 넣어놓고 사용 가능하면 베스트 -> listActivity 에서 나머지 rta/art copy 작업
+//- raw 에 있는 Defrt1 DetailsFrag 들어갔을 때 정보 안 뜸 (About the Ringtone, Info)
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..
-// Rt 갯수 ㅈㄴ게 늘려서 Smooth Scroll 이나 체크 표시 문제 없는지 (특히 RcView 바인딩할 떄).. 확인!
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
-// Badge Redesign: 우선 RT 20종 생성 (Def10개, P10개) // 총 Badge는 8종? 가능? SecondFrag 에도 통일 (Chip 8개 심고. Firebase 에도 'p' 버전으로 업로드 테스트)
+
 
 
 /**

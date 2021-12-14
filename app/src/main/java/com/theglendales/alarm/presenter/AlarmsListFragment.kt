@@ -201,7 +201,7 @@ class AlarmsListFragment : Fragment() {
                 if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
                         try{
                             val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.rtTitle=="dr1" }.single() // **todo: Safety Check 실제로 뻑남.
-                            val artPath = defRta1.artFilePathStr
+                            val artPath: String? = defRta1.artFilePathStr
 
                             //mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
                             artPathFromAlarmValue = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!

@@ -187,6 +187,7 @@ class RtPickerActivity : AppCompatActivity() {
                         StatusMp.PLAY -> {showMiniPlayerPauseBtn()} // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
                         StatusMp.BUFFERING -> {showMiniPlayerPlayBtn()}
                         StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
+                        StatusMp.PAUSED -> {showMiniPlayerPlayBtn()}
                         }
                         // b) VuMeter/Loading Circle 등 UI 컨트롤? 여기서는 필요없을듯..
                     })
@@ -380,7 +381,13 @@ private fun setUpSlidingPanel() {
 
 
 // BackButton 눌러서 원래 DetailsFrag 로 돌아가면 아래 onPause() & onDestroy() 둘다 불림.
-    override fun onPause() {super.onPause()}
+    override fun onPause() {
+        super.onPause()
+    //1) 현재 음악이 재생중이든 아니든 (재생중이 아니었으면 어차피 pauseMusic() 은 의미가 없음)
+        mediaPlayer.pauseMusic() // a)일단 PAUSE 때리고
+        mediaPlayer.removeHandler() // b)handler 없애기
+    // 최소한 여기서 재생중이던 음악 재생 pause, 아이콘 변경만?
+    }
     override fun onDestroy() {
         super.onDestroy()
         //todo: ExoPlayer 아예 없애주기! (release 말고 destroy? 그래야 MyCacher.kt 에서-> mediaPlayer.initExoPlayer(캐슁버전) -> Caching 준비하여 SecondFrag.kt 에서 사용)

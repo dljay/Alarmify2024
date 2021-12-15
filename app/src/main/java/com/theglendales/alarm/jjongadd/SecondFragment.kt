@@ -226,7 +226,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         super.onPause()
         Log.d(TAG, "onPause: 2nd Frag!")
         collapseSlidingPanel()
-        //1) 현재 음악이 재생중이든 아니든
+        //1) 현재 음악이 재생중이든 아니든 (재생중이 아니었으면 어차피 pauseMusic() 은 의미가 없음)
             mpClassInstance.pauseMusic() // a)일단 PAUSE 때리고
             mpClassInstance.removeHandler() // b)handler 없애기
         Log.d(TAG, "onPause: GlbVars 정보: CurrentTrId=${GlbVars.clickedTrId}")

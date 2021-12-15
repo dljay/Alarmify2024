@@ -186,7 +186,7 @@ class RtPickerActivity : AppCompatActivity() {
                     when(StatusEnum) {
                         StatusMp.PLAY -> {showMiniPlayerPauseBtn()} // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
                         StatusMp.BUFFERING -> {showMiniPlayerPlayBtn()}
-                        StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
+                        StatusMp.ERROR -> {showMiniPlayerPlayBtn()}//
                         StatusMp.PAUSED -> {showMiniPlayerPlayBtn()}
                         }
                         // b) VuMeter/Loading Circle 등 UI 컨트롤? 여기서는 필요없을듯..

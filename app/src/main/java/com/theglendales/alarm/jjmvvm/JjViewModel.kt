@@ -19,22 +19,36 @@ class JjViewModel : ViewModel() {
 //livedata
 //    private val _liveRtList = MutableLiveData<MutableList<RingtoneClass>>() // Private& Mutable LiveData
 //    val liveRtList: LiveData<MutableList<RingtoneClass>> = _liveRtList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
+
     private val _liveTaskQSnapShot = MutableLiveData<Task<QuerySnapshot>>() // Private& Mutable LiveData
-    val liveTaskQSnapShot: LiveData<Task<QuerySnapshot>> = _liveTaskQSnapShot // Public but! Immutable (즉 이놈은 언제나= _liveRtList. Mirror...)
+    val liveTaskQSnapShot: LiveData<Task<QuerySnapshot>> = _liveTaskQSnapShot // 이놈을 SecondFrag 에서 Observe => Public but! Immutable (즉 이놈은 언제나= _liveRtList. Mirror...)
+
+//    private val _liveChipTaskQSnapShot = MutableLiveData<Task<QuerySnapshot>>() // Private& Mutable LiveData
+//    val liveChipTaskQSnapShot: LiveData<Task<QuerySnapshot>> = _liveChipTaskQSnapShot // 이놈을 SecondFrag 에서 Observe => Public but! Immutable (즉 이놈은 언제나= _liveRtList. Mirror...)
 
     init {
         loadFromFireBase()
     }
-//Return LiveData!
+//1) 기본 Firebase 로딩 관련
+    //Return LiveData!
     fun getRtLiveDataObserver(): LiveData<Task<QuerySnapshot>> {
         return liveTaskQSnapShot
     }
-// load from Fb! -
+    // load from Fb! -
     fun loadFromFireBase()  {
         val qSnapShot= firebaseRepoInstance.getPostList() // Returns- Task<QuerySnapshot>
         _liveTaskQSnapShot.postValue(qSnapShot)
-
     }
+//2) Chip Tag 로 Sorting 되는 결과물 받기 관련.
+//    fun getChipSortedObserver(): LiveData<Task<QuerySnapshot>> {
+//        return liveChipTaskQSnapShot
+//    }
+//
+//    fun loadFromFireBaseWithChip(tagsList: MutableList<String>) {
+//        val chipQSnapShot = firebaseRepoInstance.sortSingleOrMultipleTags(tagsList)
+//        _liveChipTaskQSnapShot.postValue(chipQSnapShot)
+//    }
+
 
 //    fun loadFromFireBase() // todo: 1)Task 를 return. 2)JjFbRepository.kt 로 별도로 옮기기?
 //    {

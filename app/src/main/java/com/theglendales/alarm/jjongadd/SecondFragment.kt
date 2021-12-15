@@ -33,6 +33,7 @@ import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
@@ -54,7 +55,7 @@ private const val TAG = "SecondFragment"
 
 class SecondFragment : androidx.fragment.app.Fragment() {
 
-    //var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
+
 //    var iapInstance = MyIAPHelper(this,null, ArrayList())
 
     //SharedPreference 저장 관련 (Koin  으로 대체!) ==> 일단 사용 안함.
@@ -108,6 +109,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // 다른 frag 나 밖에 갔다왔을때 -> 기존 rcV 의 클릭해놓은 트랙을 기억하기 위해.
     var isEverythingReady = false // a) 최초 rcV 열어서 모든게 준비되면 =true, b) 다른 frag 로 나갔다왔을 때 reconstructXX() 다 끝나면 true.
 
+    //Firebase 관련
+    private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
+    lateinit var jjFirebaseVModel: JjViewModel
+    var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
+
     // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
         //Log.d(TAG, "onCreate: jj-called..")
@@ -120,11 +126,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //        Log.d(TAG, "onActivityCreated: jj-2ndFrag Activity!!Created!!")
 //    }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
 
         Log.d(TAG, "onCreateView: jj- lineNumberTest.. ")
@@ -189,9 +191,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //GlbVars.seekbarProgress = playbackPos.toInt() +200
                 //GlbVars.playbackPos = playbackPos
                 })
+        //3) Firebase ViewModel Initialize
+        jjFirebaseVModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
 
 
-        //3) RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
+        //4) RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
 
@@ -375,7 +379,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         for (i in 0 until chipGroup.childCount) {
             val chip: Chip = chipGroup.getChildAt(i) as Chip
             chip.setOnCheckedChangeListener { buttonView, isChecked ->
-                //createStringListFromChips()
+                createStringListFromChips()
                 when (isChecked) {
                     true -> {
                         chip.isChipIconVisible = false
@@ -383,11 +387,65 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
                     false -> {
                         chip.isChipIconVisible = true
-                        //backToFullRtList()
+                        backToFullRtList()
                     }
                 }
             }
         }
+    }
+    // Chip Related #2 (Listener Setup & Sending a Request to FbRepoClass.)
+    private fun createStringListFromChips() {
+        val tagsList = mutableListOf<String>()
+        val natureTag ="Nature"
+        val cityTag ="City"
+        val intenseTag ="Intense"
+        val vintageTag ="Vintage"
+        val weaponsTag ="Weapons"
+        val peacefulTag="Calm"
+
+        chipGroup.checkedChipIds.forEach {
+
+            when(it) {
+                R.id.id_chip1_nature -> tagsList.add(natureTag)
+                R.id.id_chip2_city -> tagsList.add(cityTag)
+                R.id.id_chip3_intense -> tagsList.add(intenseTag)
+                R.id.id_chip4_vintage -> tagsList.add(vintageTag)
+                R.id.id_chip5_weapons -> tagsList.add(weaponsTag)
+                R.id.id_chip6_calm -> tagsList.add(peacefulTag)
+            }
+        }
+        Log.d(TAG, "createStringListFromChips: tagsList= $tagsList")
+
+        if(tagsList.isNotEmpty()) {
+            myIsChipChecked= true // pull to refresh  했을 때 이 값을 근거로..
+            sendRequestToFbRepo(tagsList)
+        }else if(tagsList.isEmpty()) { // 체크 된 chip 이 하나도 없음!
+            myIsChipChecked= false
+        }
+    }
+     //위에 Chip 이 선택된 항목(string list)을 여기로 전달.
+    private fun sendRequestToFbRepo(tagsList: MutableList<String>) {
+         var tagOnlyRtClassList: MutableList<RingtoneClass> = ArrayList()
+
+         firebaseRepoInstance.sortSingleOrMultipleTags(tagsList).addOnCompleteListener {
+             if (it.isSuccessful) {
+
+                 tagOnlyRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
+                 rcvAdapterInstance.updateRecyclerView(tagOnlyRtClassList)
+
+                 //Log.d(TAG, "sendRequestToFbRepo: Success. Showing items including 'A.N.Y' of the tags: $tagsList")
+                 Log.d(TAG, "sendRequestToFbRepo: tagOnlyRtClassList.size=${tagOnlyRtClassList.size}, 내용: $tagOnlyRtClassList")
+
+             } else {
+                 Log.d(TAG, "sendRequestToFbRepo: ERROR!!- Exception message: ${it.exception!!.message}")
+             }
+         }
+
+    }
+    private fun backToFullRtList() {
+        rcvAdapterInstance.updateRecyclerView(fullRtClassList)
+        mySmoothScroll()
+
     }
 
     //lottieAnimation Controller = 로딩:0 번, 인터넷에러:1번, 정상:2번(lottie 를 감춰!)
@@ -435,9 +493,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
 
         //2. If we have internet connectivity, then call FireStore!
-        val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
+        //val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
         //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
-        jjViewModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
+        jjFirebaseVModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
             //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
             it.addOnCompleteListener {
                 if (it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
@@ -456,7 +514,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     // 우선 lottie Loading animation-stop!!
                     lottieAnimController(2) //stop!
 
-                    val fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
+                    fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
                     // Update Recycler View
                     updateResultOnRcView(fullRtClassList)
                     // Update MediaPlayer.kt

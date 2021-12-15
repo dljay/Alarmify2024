@@ -58,12 +58,14 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.40g [Install 단계에서 설치되는 알람 설정 변경] - AlarmDatabaseHelper.java
+//// v0.40h
+// Achievements
+//a) 켜자마자 SecondFrag -> 음악 재생 -> ListFrag 로  -> 다시 SEcondFrag>SecondFrag.kt>Line 283 Null Error. => 해결(O)
+//b) 켜자마자 SecondFrag -> 음악 재생 -> 메뉴 버튼(음악 멈춤)-> (app in Background) -> 돌아왔을 떄 Pause 버튼 보임 => 해결 (O)
 
-//- Rta/Art 는 모두 내장된 파일 사용(raw, drawable) (O)
-//- ListFrag.kt 에서 Scan 전후 Lottie 보여주고 없애기  (이중. Handler + LottieDiskScanDiaFrag.kt>onAnimataionEnd() (O)
-// b)Manifest  에서  allowBackup=false 로 변경. (O)
-// c) Manifest 에서 fullBackupContent=false (없는데 추가했음.) (O)
+// Issue
+// - RtPicker -> 음악 Play-> Background 됐을 때 음악 계속 재생.
+
 
 // 할일 ==>
 

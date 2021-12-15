@@ -62,6 +62,7 @@
                     android:layout_marginBottom="5dp"
                     android:padding="5dp"
                     android:src="@drawable/songs_cover"
+                    android:visibility="invisible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/id_upperUi_iv_clickarrowUp"
                     app:layout_constraintTop_toTopOf="parent"

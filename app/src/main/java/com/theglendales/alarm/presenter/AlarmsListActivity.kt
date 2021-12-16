@@ -69,6 +69,14 @@ import java.util.Calendar
 // build.gradle 에서 debuggable= false 로 해줬음
 // versionCode = 30702, versionName = "3.07.02"
 
+//Issues)
+//- 가격 Null 뜨는 문제-> Generate Signed Bundle APK 로 직접 Install-> 가격 스크롤하면 뜨기는 함. // 반면 Emulator 에서 실행-> 무조건 null 로 나오네..
+//- 스크롤해서 Bind 하기전에는 가격 null 뜨는 문제..
+//- 결제 쪽 한번 클릭 할려고 눌렀다가 스크롤 쓱싹 했더니 VuMeter 활성화됐음! (노래는 플레이한적도 없는데)
+//
+//todos
+//- myIAP <-> RCV 라이브데이터로 한번 조져보기?
+//.. 추후 Firebase Bug 알림이! (이름 기억 안나네..)
 
 
 // 할일 ==>

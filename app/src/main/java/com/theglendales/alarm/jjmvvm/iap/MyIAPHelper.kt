@@ -160,6 +160,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
     }
     //##<E>  A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() ==> (finally..) rcvAdapter.updateRcView!
     private fun refreshItemsPriceMap() {
+        Log.d(TAG, "refreshItemsPriceMap: called")
         val itemNameList = ArrayList<String>()
 
         if(!itemIDsMap.isNullOrEmpty())
@@ -176,7 +177,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
                     for (skuDetails in mySkuDetailsListYo) {
 
                         itemPricesMap[skuDetails.sku] = skuDetails.price// itemPricesMap[iapName] = 가격. ex) itemPricesMap[p1]= 1000
-                        //Log.d(TAG,"E) refreshItemsPriceMap: a) item title=${skuDetails.title} b)item price= ${skuDetails.price}, c)item sku= ${skuDetails.sku}")
+                        Log.d(TAG,"E) refreshItemsPriceMap: a) item title=${skuDetails.title} b)item price= ${skuDetails.price}, c)item sku= ${skuDetails.sku}")
                         // logd 결과 예시: a) item title=p1 b)item price= ₩1,000, c)item sku= p1
                     }
                 }

@@ -227,6 +227,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "onResume: 2nd Frag!")
         // 아래 onPause() 에서 save 한 '기존 재생 정보' 는 observeAndLoadFirebase() 에서 로딩하기로.
 
+        //DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서 신중한 접근 필요. 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.
+//        //B) 현재 Sync = Multi 다운로드가 진행중 && 인터넷이 되는 상태면 btmSheet_Multi 다시 보여주기!
+//        if(MyDownloader.isSyncInProcess && myNetworkCheckerInstance.isNetWorkAvailable())
+//        {
+//            BtmSht_Sync.showBtmSyncDialog(this)
+//
+//        }
+//        //C) 현재 Single 다운로드가 진행중 && 인터넷이 되는상태면 btmSheet_Single 다시 보여주기!
+//        else if(MyDownloader.isSingleDNLDInProcess && myNetworkCheckerInstance.isNetWorkAvailable()) {
+//            MyDownloader.btmShtSingleDNLDInstance.showBtmSingleDNLDSheet(this)
+//        }
+
     }
     override fun onPause() {
         super.onPause()

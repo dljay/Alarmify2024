@@ -108,9 +108,9 @@ class AlarmsListFragment : Fragment() {
         Log.d(TAG, "onAttach: called")
 
         lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
-        myPermHandler = MyPermissionHandler(requireActivity())
 
-        // todo: 여기서 추후 permission 관련된것도 해주기?
+
+
 
 
     //최초 Data INSTALL -----------------
@@ -475,10 +475,7 @@ class AlarmsListFragment : Fragment() {
                 .forEach { menu.removeItem(it) }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        myPermHandler.onRequestPermissionsResult(requestCode,permissions, grantResults)
-    }
+
 // <--- override Functions
 
 // **** 내가 추가한 Utility Methods **

@@ -89,7 +89,7 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
             listToBeJudged.clear()
             // Permission 요청: Write Permission 체크 진행 ->그리고 여기서 바로 다운로드로 진행..
             Log.d(TAG, "MultiDownloadOrNot: ##for loop 종료! finalList.size=${finalList.size}")
-            permHandler.permissionToWrite(finalList) //
+            permHandler.permissionToWriteOnDNLD(finalList) //
 
         }
         //C-2) 최초 Sync 작업 수행할게 없거나(끝났으면) myQryPurchListSize=0 (클릭해서 한개 구매할 때 일로 옴)
@@ -117,7 +117,7 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
         }
 
         // Permission 요청: Write Permission 체크 진행 ->그리고 여기서 바로 다운로드로 진행..
-        permHandler.permissionToWrite(finalList)
+        permHandler.permissionToWriteOnDNLD(finalList)
     }
 
     // <1-b> MyIapHelper.kt 에서 호출!로 시작-> Delete!

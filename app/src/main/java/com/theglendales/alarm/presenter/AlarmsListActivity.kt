@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.transition.ChangeBounds
@@ -21,6 +22,7 @@ import android.view.WindowManager
 import android.widget.LinearLayout
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.NotificationSettings
@@ -43,6 +45,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_Sync
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyDownloader
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
@@ -58,10 +64,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.51a Permission & IAP & Download 동시 준비 [파일 복붙만 완료]
+//// v0.51a Permission & IAP & Download 동시 준비
 // (이 세가지가 다 엮여있어서.. 어쩔수 없음..)
+// AlarmListActivity 에서 최초 Launch 했을 때 Permission Check -> BtmSheet (벤치휭~) -> Settings 까지 가는것 다 해줌.. (O)
 
 // 할일 ==>
+// todo: AlarmListActivity - onResume () 에서 기존에 DNLD BTM SHEET 없애준거등 처리..
 // todo: 기존 Permissions.kt 와 중복되는지 확인..
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
@@ -80,6 +88,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
     private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
+    private val myPermHandler = MyPermissionHandler(this)
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -251,20 +260,24 @@ class AlarmsListActivity : AppCompatActivity() {
             true
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
+    // 추가: Permission 검사 (App 최초 설치시 반드시 거치며, no 했을때는 벤치휭~ BtmSheet 계속 뜬다. yes 하면 그다음부터는 안 뜸.)
+        myPermHandler.permissionToWriteOnInitialLaunch()
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
 
-    fun jjSetCurrentFragment(receivedFragment: Fragment) =
-        supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
-
+    fun jjSetCurrentFragment(receivedFragment: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
             replace(R.id.main_fragment_container, receivedFragment)
             commit()
             Log.d(TAG, "jjSetCurrentFragment: ..... ")
         }
 
-// <--추가 1-B)
 
+override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    myPermHandler.onRequestPermissionsResult(requestCode,permissions, grantResults)
+    }
+// <--추가 1-B)
 
 
 
@@ -283,11 +296,23 @@ class AlarmsListActivity : AppCompatActivity() {
 // ** 추가 <--
     }
 
+
     override fun onResume() {
         Log.d(TAG, "onResume: jj-called")
         super.onResume()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         NotificationSettings().checkSettings(this)
+
+    //Permission 관련
+        // A) Permission 을 허용하라는 btmSheet 을 보여준뒤 복귀했을때!
+        if(BtmSheetPermission.isAdded) {
+            if (ContextCompat.checkSelfPermission(this.applicationContext,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            { // user 가 settings>app>perm 에서 허용해줬으면
+                BtmSheetPermission.removePermBtmSheetAndResume() // btmSheet 을 없애줌! Perm 허용 안되었으면 (Cancel 누를때까지) BtmSheet 유지!
+            }
+        }
+
     }
 
     override fun onStop() {

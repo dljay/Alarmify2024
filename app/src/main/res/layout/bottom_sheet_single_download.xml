@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="20dp">
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:lottie_rawRes="@raw/lottie_single_download_anim"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true">
+
+    </com.airbnb.lottie.LottieAnimationView>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/id_dnld_linearPrgsBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_margin="5dp"
+
+        android:scaleY="2"
+        android:max="100"
+        android:indeterminate="false"
+        app:trackThickness="5dp"
+        app:trackCornerRadius="20dp"
+        app:indicatorColor="@color/design_default_color_primary_dark">
+
+    </com.google.android.material.progressindicator.LinearProgressIndicator>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="4sp"
+        android:layout_marginTop="10dp"
+        android:text="DOWNLOADING PURCHASED ITEM.."
+        android:textAlignment="viewStart"
+        android:textSize="16sp" />
+
+
+
+</LinearLayout>

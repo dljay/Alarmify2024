@@ -173,6 +173,8 @@ dependencies {
     implementation("com.amulyakhare:com.amulyakhare.textdrawable:1.0.1")
     // Swipe Reveal Layout (ListView 에서 Swipe 할 수 있게 하는 3rd party)
     implementation("com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1")
+    //Billing Client (IAP related!)
+    implementation ("com.android.billingclient:billing-ktx:3.0.3")
 
 
 }

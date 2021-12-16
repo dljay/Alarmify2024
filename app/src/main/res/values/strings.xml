@@ -25,6 +25,9 @@
     <string name="chip5_weapons">Weapons</string>
     <string name="chip6_calm">Calm</string>
 
+    <!--Permission 내가 추가 -->
+    <string name="bottomSheet_Message1">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again.\n\nHitting <b>CANCEL</b> will dismiss your purchase and disable restoring previously purchased ringtones.</string>
+
     <string-array name="fade_in_time_sec_values" tools:ignore="MissingTranslation">
         <item>1</item>
         <item>10</item>

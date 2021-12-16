@@ -15,6 +15,7 @@ import com.theglendales.alarm.bugreports.BugReporter
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
@@ -139,6 +140,7 @@ fun startKoin(context: Context): Koin {
         single<DiskSearcher> { DiskSearcher(context = context)}
         single<SpinnerAdapter> { SpinnerAdapter(context = context) }
         single<TimePickerJjong> {TimePickerJjong()}
+
         // 내가 추가 <--
 
         factory(named("volumePreferenceDemo")) {

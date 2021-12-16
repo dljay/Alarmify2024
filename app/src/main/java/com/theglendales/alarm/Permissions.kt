@@ -38,6 +38,7 @@ fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
                         .setMessage(activity.getString(R.string.permissions_external_storage_text, unplayable.joinToString(", ")))
                         .setPositiveButton(android.R.string.ok) { _, _ ->
                             activity.requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 3)
+                            //todo: 내가 설치해놓은 PemissionHandler.kt 와 중복일수도..
                         }
                         .setNegativeButton(android.R.string.cancel, null)
                         .show()

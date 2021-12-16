@@ -38,6 +38,7 @@ import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.jjadapters.GlideApp
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
@@ -77,8 +78,11 @@ class AlarmsListFragment : Fragment() {
 // 내가 추가-->
     lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
     lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
+    lateinit var myPermHandler: MyPermissionHandler
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
+
+
     private val myTimePickerJjong: TimePickerJjong by globalInject()
 
     //lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
@@ -104,12 +108,15 @@ class AlarmsListFragment : Fragment() {
         Log.d(TAG, "onAttach: called")
 
         lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
+        myPermHandler = MyPermissionHandler(requireActivity())
 
-
-        //추가2) DiskSearcher --> rta .art 파일 핸들링 작업 (앱 시작과 동시에)
-        //1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (최초 앱 설치 or 신규 다운로드 등.. )
-        // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
         // todo: 여기서 추후 permission 관련된것도 해주기?
+
+
+    //최초 Data INSTALL -----------------
+        // 1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (최초 앱 설치 or 신규 다운로드 등.. )
+        // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
+
 
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")

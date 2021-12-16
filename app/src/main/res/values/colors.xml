@@ -19,6 +19,7 @@
     <color name="gray_light_highlight_1">#ECECEC</color>
     <color name="light_gray_jjong">#AEABAB</color>
     <color name="dark_gray_jjong">#3D3D3D</color>
+    <color name="myDividerColor">#CFCDCD</color>
     <!-- JJONG added-->
     <color name="ampm_off">#ff404040</color>
     <color name="ampm_on">#ffffffff</color>

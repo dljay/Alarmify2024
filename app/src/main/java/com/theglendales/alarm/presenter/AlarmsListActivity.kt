@@ -64,8 +64,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.51c Permission & IAP & Download 동시 준비
-// google-services.json 에서 package name 을 다 com.theglenxxxx.alarm 으로 바꿔줌. apk, signed bundle 모두 잘 만들어지는데 Play Store 에서 upload 시 Sign 안되었다고 뜸.
+//// v0.51d Permission & IAP & Download 동시 준비 [진행중]
+
 // build.gradle 에서 debuggable= false 로 해주기 전
 // (이 세가지가 다 엮여있어서.. 어쩔수 없음..)
 // MyIAPHelper.kt > Base64 key 드디어 PlayConsole 에서 복붙했음!!

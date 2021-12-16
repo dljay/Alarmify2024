@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.android.billingclient.api.Purchase
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -21,6 +22,7 @@ import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
+import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 //import com.theglendales.alarm.jjiap.MyIAPHelper
 import io.gresse.hugo.vumeterlibrary.VuMeterView
@@ -73,8 +75,7 @@ class RcViewAdapter(
 
 
 
-        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, " +
-                "pos: $position // Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
+        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position // Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
                 "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
     //트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
         // 1) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트&VuMeter 생성
@@ -89,26 +90,21 @@ class RcViewAdapter(
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
 
         //IAP 관련
-
-//        holder.tv3_Price.text = MyIAPHelper.itemPricesMap[currentTrIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
+        holder.tv3_Price.text = MyIAPHelper.itemPricesMap[currentTrIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
 
         //Purchase Stat True or False
-//        when(MyIAPHelper.purchaseStatsMap[currentTrId]) {
-//            true -> {// Show "Purchased" icon
-//                holder.iv_PurchasedTrue.visibility = View.VISIBLE
-//                holder.iv_PurchasedFalse.visibility = View.GONE
-//            }
-//            false -> {// Show "GET THIS" icon
-//                holder.iv_PurchasedTrue.visibility = View.GONE
-//                holder.iv_PurchasedFalse.visibility = View.VISIBLE
-//            }
-//            else -> {
-//                Toast.makeText(receivedActivity, "Error Displaying Purchased Items", Toast.LENGTH_SHORT).show()}
-//        }
-
-
-
-
+        when(MyIAPHelper.purchaseStatsMap[currentTrId]) {
+            true -> {// Show "Purchased" icon
+                holder.iv_PurchasedTrue.visibility = View.VISIBLE
+                holder.iv_PurchasedFalse.visibility = View.GONE
+            }
+            false -> {// Show "GET THIS" icon
+                holder.iv_PurchasedTrue.visibility = View.GONE
+                holder.iv_PurchasedFalse.visibility = View.VISIBLE
+            }
+            else -> {
+                Toast.makeText(receivedActivity, "Error Displaying Purchased Items", Toast.LENGTH_SHORT).show()}
+        }
         GlideApp.with(receivedActivity).load(currentItem.imageURL).centerCrop()
             .error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
@@ -119,7 +115,7 @@ class RcViewAdapter(
                 // (여러 ViewHolder 를 로딩중인데) 현재 로딩한 View 에 Glide 가 이미지를 성공적으로 넣었다면.
                 override fun onResourceReady(resource: Drawable?,model: Any?,target: Target<Drawable>?
                     ,dataSource: DataSource?,isFirstResource: Boolean): Boolean {
-                    Log.d(TAG,"onResourceReady: Glide loading success! trId: $currentTrId, Position: $position") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                    Log.d(TAG,"onResourceReady: Glide loading success! trId: $currentTrId, Position= ${holder.adapterPosition}") // debug 결과 절대 순.차.적으로 진행되지는 않음!
 
                     // //Glide 가 로딩되기전 클릭하는 상황에 대응하기 위해 -> 열려있는 miniPlayer의 thumbnail에 필요한 사진과 현재 glide로 로딩된 사진의 동일한지 trId로 확인 후
                     if (currentTrId == GlbVars.clickedTrId) {

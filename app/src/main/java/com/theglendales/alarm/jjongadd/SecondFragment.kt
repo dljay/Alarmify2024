@@ -39,6 +39,7 @@ import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
+import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
@@ -55,8 +56,9 @@ private const val TAG = "SecondFragment"
 
 class SecondFragment : androidx.fragment.app.Fragment() {
 
+    //IAP
+    lateinit var iapInstance: MyIAPHelper
 
-//    var iapInstance = MyIAPHelper(this,null, ArrayList())
 
     //SharedPreference 저장 관련 (Koin  으로 대체!) ==> 일단 사용 안함.
     //val mySharedPrefManager: MySharedPrefManager by globalInject()
@@ -505,7 +507,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
 
         //2. If we have internet connectivity, then call FireStore!
-        //val jjViewModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
+
         //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
         jjFirebaseVModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
             //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
@@ -514,9 +516,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
 
 
-                    // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
-//                    iapInstance = MyIAPHelper(this, rcvAdapterInstance, fullRtClassList) //reInitialize
-//                    iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
+                     //IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
+                    iapInstance = MyIAPHelper(requireActivity(), null, ArrayList()) //공갈 Initialize
+
 
                     // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
                     if (swipeRefreshLayout.isRefreshing) {
@@ -527,7 +529,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     lottieAnimController(2) //stop!
 
                     fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
-                    // Update Recycler View
+                    // Update Recycler View + IAP
                     updateResultOnRcView(fullRtClassList)
                     // Update MediaPlayer.kt
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
@@ -804,8 +806,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
 
-//                iapInstance = MyIAPHelper(this, rcvAdapterInstance, fullRtClassList) //reInitialize
-//                iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
+                iapInstance = MyIAPHelper(requireActivity(), rcvAdapterInstance, fullRtClassList) //reInitialize
+                iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
 
         // Update MediaPlayer.kt
 //                mpClassInstance.createMp3UrlMap(fullRtClassList)

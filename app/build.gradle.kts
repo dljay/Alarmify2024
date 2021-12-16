@@ -83,6 +83,7 @@ android {
             applicationIdSuffix = ".debug"
         }
         getByName("release") {
+            isDebuggable=false
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.txt")
             buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")

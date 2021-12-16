@@ -416,7 +416,8 @@ class MyIAPHelper(private val receivedActivity: Activity,
             //for new play console
             //To get key go to Developer Console > Select your app > Monetize > Monetization setup
                 //todo: Get a new key!
-            val base64Key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg48/gRjvvuyUoa4j/LoiLbStVFqfofhMfnfpxAt5yHiuwJBQRGLXoO1Anf7BNGctaVZJqwYVAdWQ3qy7ZfVXcGfDUk6fKtWbs84o8ZjaHN5N514ebcUPgHx1SpAW7o3QmNKticcT4ckEFIfTNQ3I2zblJh8V4fu7cgUNujLV/UmdMB3DKf/F7ewNVdrHJW1/RLsLVNPP7D6cuMccj82e2ILOLFmE0uUgsZglubVu0JL/MZHXSuMfa2L4ofuT6x+bY1rALawwiZMFhN6JjP7wYB+BE/yXkh+frm6YGLiU+URgnExXF5X6zb8au65HO2L9L8vu8FYVOtWAC79610FIZwIDAQAB"
+            val base64Key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjxP65hcVxu3nM/XR89EoZzEwK1itdhPcTOT+itC6Guf5omQLHe3A4cDLlTSjZqoNMy3jzNK7mSiPG8NRTa6waHaaHx3fxatR4Or8KeS8WzFNQsKbFz2OCt3kTRQ5lUuoIvyjj+VjEv9XwyPrFRb8Lxq47KqHnjiJyeBcXznLXD//4YOsTaTp2dBxuLXjJQEzkp4EPgvhNh6BE+bX+SvXRPc3x3dghqAUtdaoM3C77QgCnRc94nYnWyXyQqqX2PvEX3KNKM//nQbKtJbNUB/NpKlzodiY3WdFMVNS3ySw9S9irikhDv7jOQ1OnI+dzKMLCeQIRTxqFHB2RxkqpzOHtQIDAQAB"
+
             Security.verifyPurchase(base64Key, signedData, signature)
         } catch (e: IOException) {
             false

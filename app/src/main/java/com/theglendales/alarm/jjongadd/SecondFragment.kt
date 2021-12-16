@@ -107,7 +107,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var tv_lowerUi_about: TextView // { findViewById<TextView>(R.id.id_lowerUi_tv_Description) }
 
     // listfrag 가거나 나갔다왔을 때 관련.
-    var isEverythingReady = false // a) 최초 rcV 열어서 모든게 준비되면 =true, b) 다른 frag 로 나갔다왔을 때 reconstructXX() 다 끝나면 true.
+    var isFireBaseFetchDone = false // a) 최초 rcV 열어서 모든게 준비되면 =true, b) 다른 frag 로 나갔다왔을 때 reconstructXX() 다 끝나면 true.
     var currentClickedTrId = -1
 
     //Firebase 관련
@@ -117,8 +117,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
-        isEverythingReady=false // ListFrag 갔을 때 이 값이 계속 true 로 있길래. 여기서 false 로 해줌. -> fb 로딩 끝나면 true 로 변함.
-        Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isEverythingReady, currentClickedTrId=$currentClickedTrId")
+        isFireBaseFetchDone=false // ListFrag 갔을 때 이 값이 계속 true 로 있길래. 여기서 false 로 해줌. -> fb 로딩 끝나면 true 로 변함.
+        Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isFireBaseFetchDone, currentClickedTrId=$currentClickedTrId")
         super.onCreate(savedInstanceState)
 
     }
@@ -154,8 +154,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달. [!! 기존 클릭해놓은 트랙이 있으면 ListFrag 갔다왔을때 자동으로 그전 track 값을 (fb 로딩전에) 호출하는 문제있음!!] -> isEverythingReady 로 해결함.
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
                 currentClickedTrId = viewAndTrIdClassInstance.trId
-                Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}, \n isEverythingReady=$isEverythingReady, currentClickedTrId=$currentClickedTrId")
-                if(isEverythingReady) { // Firebaes 로 데이터 fetching 이 다 끝나면 이 값이 = true 가 된다.
+                Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}, \n isFireBaseFetchDone=$isFireBaseFetchDone, currentClickedTrId=$currentClickedTrId")
+                if(isFireBaseFetchDone) { // Firebase 로 데이터 fetching 이 다 끝나면 이 값이 = true 가 된다.
                     myOnLiveDataFromRCV(viewAndTrIdClassInstance)
 
                 }
@@ -227,7 +227,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "onResume: 2nd Frag!")
         // 아래 onPause() 에서 save 한 '기존 재생 정보' 는 observeAndLoadFirebase() 에서 로딩하기로.
 
-        //DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서 신중한 접근 필요. 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.
+    //todo: DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서 신중한 접근 필요. 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.
 //        //B) 현재 Sync = Multi 다운로드가 진행중 && 인터넷이 되는 상태면 btmSheet_Multi 다시 보여주기!
 //        if(MyDownloader.isSyncInProcess && myNetworkCheckerInstance.isNetWorkAvailable())
 //        {
@@ -243,7 +243,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onPause() {
         super.onPause()
         Log.d(TAG, "onPause: 2nd Frag!")
-        collapseSlidingPanel()
+        //collapseSlidingPanel()
         //1) 현재 음악이 재생중이든 아니든 (재생중이 아니었으면 어차피 pauseMusic() 은 의미가 없음)
             mpClassInstance.pauseMusic() // a)일단 PAUSE 때리고
             mpClassInstance.removeHandler() // b)handler 없애기
@@ -305,11 +305,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
         val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
-        Log.d(TAG, "myOnLiveDataReceived: called. rtClassFromtheList= $ringtoneClassFromtheList")
+
         val ivInside_Rc = viewAndTrId.view.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
+        Log.d(TAG, "myOnLiveDataReceived: called. .. 1)ivInside_Rc=$ivInside_Rc, 2)rtClassFromtheList= $ringtoneClassFromtheList")
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
 
-        //Sliding Panel - Upper UI
+    //Sliding Panel - Upper UI
         // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
         var spaceFifteen="               " // 15칸
         var spaceTwenty="                    " // 20칸
@@ -320,7 +321,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
         }
 
-        //Sliding Panel -  Lower UI
+    //Sliding Panel -  Lower UI
         tv_lowerUi_about.text = ringtoneClassFromtheList?.description
         //
         when (viewAndTrId.view.id) {
@@ -329,7 +330,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                 //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
                 if (ivInside_Rc != null) { // 사실 RcView 가 제대로 setup 되어있으면 무조건 null 이 아님! RcView 클릭한 부분에 View 가 로딩된 상태 (사진 로딩 상태 x)
-
+                    Log.d(TAG, "myOnLiveDataFromRCV: ivInside_Rc not null. ivInside_Rc=$ivInside_Rc")
                     iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
                     iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
                 }
@@ -533,7 +534,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                 // 아무 트랙도 클릭 안한 상태
                     if(GlbVars.clickedTrId == -1 || currentClickedTrId == -1) {
-                        isEverythingReady = true // 이제는 rcV 를 클릭하면 그에 대해 대응할 준비가 되어있음.
+                        isFireBaseFetchDone = true // 이제는 rcV 를 클릭하면 그에 대해 대응할 준비가 되어있음.
                     }
 
                 // 다른 frag 갔다가 돌아왔을 때 (or 새로고침) 했을 때- 다음의 reConstructXX() 가 다 완료되면 isEverythingReady = true 가 된다.
@@ -671,7 +672,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     private fun reConstructTrUisOnReturn(prevTrId: Int) {
 
         mpClassInstance.prepMusicPlayOnlineSrc(prevTrId, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
-        isEverythingReady = true
+        isFireBaseFetchDone = true
 
     }
 // 2)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 SlidingPanel UI 를 재구성.

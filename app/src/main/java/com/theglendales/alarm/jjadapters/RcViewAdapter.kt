@@ -112,26 +112,30 @@ class RcViewAdapter(
         GlideApp.with(receivedActivity).load(currentItem.imageURL).centerCrop()
             .error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
+                override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
                     Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
-                    return false
-                }
+                    return false}
 
                 // (여러 ViewHolder 를 로딩중인데) 현재 로딩한 View 에 Glide 가 이미지를 성공적으로 넣었다면.
                 override fun onResourceReady(resource: Drawable?,model: Any?,target: Target<Drawable>?
                     ,dataSource: DataSource?,isFirstResource: Boolean): Boolean {
                     Log.d(TAG,"onResourceReady: Glide loading success! trId: $currentTrId, Position: $position") // debug 결과 절대 순.차.적으로 진행되지는 않음!
 
-                    // rcView 의 이미지 로딩전에 일찍 click 했을 때 -> 열려있는 miniPlayer의 thumbnail에 필요한 사진과 현재 glide로 로딩된 사진의 동일한지 trId로 확인 후
+                    // //Glide 가 로딩되기전 클릭하는 상황에 대응하기 위해 -> 열려있는 miniPlayer의 thumbnail에 필요한 사진과 현재 glide로 로딩된 사진의 동일한지 trId로 확인 후
                     if (currentTrId == GlbVars.clickedTrId) {
-                        //Log.d(TAG, "onResourceReady: Early clicked!! Setting up image for MiniPlayer's upper/lower ui ")
-//                        iv_upperUi_thumbNail.setImageDrawable(resource)
-//                        iv_lowerUi_bigThumbnail.setImageDrawable(resource)
+                        Log.d(TAG, "onResourceReady: (Possible) Early Click!! Setting up image for MiniPlayer's upper/lower ui ")
+
+                    //1안 - 예전 방법
+                        val iv_upperUi_thumbNail = receivedActivity.findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)
+                        val iv_lowerUi_bigThumbnail = receivedActivity.findViewById<ImageView>(R.id.id_lowerUi_iv_bigThumbnail)
+                        iv_upperUi_thumbNail.setImageDrawable(resource)
+                        iv_lowerUi_bigThumbnail.setImageDrawable(resource)
+
+                    //2안 - 라이브 데이터 사용하여 한번 더 전달) -> 아래 iv_ThumbNail 에 들어가는건 아래 .into 에서 이뤄지므로.. 이건 안된다! (X) <- 그냥 지워버려..
+//                        val vHolderAndTrId = ViewAndTrIdClass(holder.rl_Including_tv1_2, currentTrId)
+//                        rcViewModel.updateLiveData(vHolderAndTrId) 지워라!!
+
+
                     }
 
                     return false
@@ -282,10 +286,14 @@ class RcViewAdapter(
 
         val tv1_Title: TextView = myXmlToViewObject.findViewById(R.id.id_tvTitle)
         val tv2_ShortDescription: TextView = myXmlToViewObject.findViewById(R.id.id_tvTags)
-        val rl_Including_tv1_2: RelativeLayout =
-            myXmlToViewObject.findViewById(R.id.id_rL_including_title_description)
+        val rl_Including_tv1_2: RelativeLayout = myXmlToViewObject.findViewById(R.id.id_rL_including_title_description)
 
-        // 3) 오른쪽 FREE,GET THIS 칸
+        // 3) 왼쪽 - 제일 왼쪽 AlbumArt 및 vuMeter/LoadingCircle 영역
+        val iv_Thumbnail: ImageView = myXmlToViewObject.findViewById(R.id.id_ivThumbnail)
+        val vuMeterView: VuMeterView = myXmlToViewObject.findViewById(R.id.id_vumeter)
+        val loadingCircle: ProgressBar = myXmlToViewObject.findViewById(R.id.id_progressCircle)
+
+        // 4) 오른쪽 FREE,GET THIS 칸
         val cl_entire_purchase: ConstraintLayout =
             myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
         val tv3_Price: TextView = myXmlToViewObject.findViewById(R.id.id_tvPrice)
@@ -293,9 +301,7 @@ class RcViewAdapter(
         val iv_PurchasedTrue: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_True)
         //var tv4_GetThis: TextView = myXmlToViewObject.findViewById(R.id.id_tvGetThis)
 
-        val iv_Thumbnail: ImageView = myXmlToViewObject.findViewById(R.id.id_ivThumbnail)
-        val vuMeterView: VuMeterView = myXmlToViewObject.findViewById(R.id.id_vumeter)
-        val loadingCircle: ProgressBar = myXmlToViewObject.findViewById(R.id.id_progressCircle)
+
 
         var holderTrId: Int = -10 // 처음엔 의미없는 -10 값을 갖지만, onBindView 에서 제대로 holder.id 로 설정됨.
         // 아래 trackId 를 없애고 이걸로 사용 가능.
@@ -314,8 +320,7 @@ class RcViewAdapter(
         override fun onClick(v: View?) {
 
             val clickedView = v
-            val clickedPosition =
-                adapterPosition // todo: 이것도. 위에 holderTrId 처럼 holderPosition 으로 설정후 onBindViewHolder 에서 제대로 position 값 입력 가능. -> smoothScrollToPos()과 연계 사용?
+            val clickedPosition =adapterPosition // todo: 이것도. 위에 holderTrId 처럼 holderPosition 으로 설정후 onBindViewHolder 에서 제대로 position 값 입력 가능. -> smoothScrollToPos()과 연계 사용?
 
             isRVClicked = true // 이거 안쓰이는것 같음..  Recycle View 를 누른적이 있으면 true (혹시나 미리 누를수도 있으므로)
 

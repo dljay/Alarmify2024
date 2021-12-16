@@ -69,6 +69,7 @@ import java.util.Calendar
 // AlarmListActivity 에서 최초 Launch 했을 때 Permission Check -> BtmSheet (벤치휭~) -> Settings 까지 가는것 다 해줌.. (O)
 
 // 할일 ==>
+// 트랙 클릭-> 로딩 완료전에 SlidingPanel Expand -> 빈칸-> 이후 자동으로 안 채워짐 (RT10 처럼 용량 큰 놈 클릭했을 때 특히..)
 // todo: AlarmListActivity - onResume () 에서 기존에 DNLD BTM SHEET 없애준거등 처리..
 // todo: 기존 Permissions.kt 와 중복되는지 확인..
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..

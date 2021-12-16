@@ -153,7 +153,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달.
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
                 Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}, isEverythingReady=$isEverythingReady")
-                if(isEverythingReady) {
+                if(isEverythingReady) { // Firebaes 로 데이터 fetching 이 다 끝나면 이 값이 = true 가 된다.
                     myOnLiveDataFromRCV(viewAndTrIdClassInstance)
 
                 }
@@ -237,7 +237,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         //2) 최종적으로 선택해놓은 트랙 아이디
 
-        //isEverythingReady = false // ListFragment 로 이동> 아예 Fragment 가 사라짐. 다시 돌아왔을 때는 Fragment 가 재생성.. 이게 true 여야 jjRcViewModel 이 반응함.
 
         //3) 다시 돌아왔을 때 Slide 의 upperUi 에서 빨간색 앨범커버가 보였다 다른 앨범으로 교체되는 현상을 막기 위해.
 
@@ -289,7 +288,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
 
     private fun myOnLiveDataFromRCV(viewAndTrId: ViewAndTrIdClass) {
-        //if(!isEverythingReady) { return } // LiveData 가
+
 
         val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
         Log.d(TAG, "myOnLiveDataReceived: called. rtClassFromtheList= $ringtoneClassFromtheList")
@@ -524,7 +523,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
 
                 // 다른 frag 갔다가 돌아왔을 때 (or 새로고침) 했을 때- 다음의 reConstructXX() 가 다 완료되면 isEverythingReady = true 가 된다.
-                    if (GlbVars.clickedTrId > 0) { // todo: 이중장치 추가? onSavedInstance 등?
+                    else if (GlbVars.clickedTrId > 0) { // todo: 이중장치 추가? onSavedInstance 등?
                         Log.d(TAG, "observeAndLoadFireBase: GlbVars.clickedTrId= ${GlbVars.clickedTrId}")
                         // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
                         mySmoothScroll()
@@ -679,8 +678,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             if(ringtoneClassFromtheList?.title!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?
             else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
             }
-
-
 
         //Sliding Panel -  Lower UI
             tv_lowerUi_about.text = ringtoneClassFromtheList?.description

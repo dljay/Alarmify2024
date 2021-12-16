@@ -61,7 +61,7 @@
                     android:layout_height="55dp"
                     android:layout_marginBottom="5dp"
                     android:padding="5dp"
-                    android:src="@drawable/songs_cover"
+
 
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/id_upperUi_iv_clickarrowUp"
@@ -156,7 +156,7 @@
                 android:layout_height="100dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:src="@drawable/songs_cover"
+
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 

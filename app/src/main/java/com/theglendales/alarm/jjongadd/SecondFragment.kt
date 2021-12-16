@@ -108,6 +108,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     // listfrag 가거나 나갔다왔을 때 관련.
     var isEverythingReady = false // a) 최초 rcV 열어서 모든게 준비되면 =true, b) 다른 frag 로 나갔다왔을 때 reconstructXX() 다 끝나면 true.
+    var currentClickedTrId = -1
 
     //Firebase 관련
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
@@ -116,8 +117,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
-        isEverythingReady=false // ListFrag 갔을 때 이 값이 계속 true 로 있길래. 여기서 false 로 해줌.
-        Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isEverythingReady")
+        isEverythingReady=false // ListFrag 갔을 때 이 값이 계속 true 로 있길래. 여기서 false 로 해줌. -> fb 로딩 끝나면 true 로 변함.
+        Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isEverythingReady, currentClickedTrId=$currentClickedTrId")
         super.onCreate(savedInstanceState)
 
     }
@@ -150,9 +151,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
 
         //2) LiveData Observe
-            //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달.
+            //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달. [!! 기존 클릭해놓은 트랙이 있으면 ListFrag 갔다왔을때 자동으로 그전 track 값을 (fb 로딩전에) 호출하는 문제있음!!] -> isEverythingReady 로 해결함.
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
-                Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}, isEverythingReady=$isEverythingReady")
+                currentClickedTrId = viewAndTrIdClassInstance.trId
+                Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}, \n isEverythingReady=$isEverythingReady, currentClickedTrId=$currentClickedTrId")
                 if(isEverythingReady) { // Firebaes 로 데이터 fetching 이 다 끝나면 이 값이 = true 가 된다.
                     myOnLiveDataFromRCV(viewAndTrIdClassInstance)
 
@@ -518,13 +520,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
 
                 // 아무 트랙도 클릭 안한 상태
-                    if(GlbVars.clickedTrId == -1) {
+                    if(GlbVars.clickedTrId == -1 || currentClickedTrId == -1) {
                         isEverythingReady = true // 이제는 rcV 를 클릭하면 그에 대해 대응할 준비가 되어있음.
                     }
 
                 // 다른 frag 갔다가 돌아왔을 때 (or 새로고침) 했을 때- 다음의 reConstructXX() 가 다 완료되면 isEverythingReady = true 가 된다.
-                    else if (GlbVars.clickedTrId > 0) { // todo: 이중장치 추가? onSavedInstance 등?
-                        Log.d(TAG, "observeAndLoadFireBase: GlbVars.clickedTrId= ${GlbVars.clickedTrId}")
+                    else if (GlbVars.clickedTrId > 0|| currentClickedTrId >0) { // 이중장치로 currentClickedTrId 추가함. 꼭 필요는 없긴 해..사실..
+                        Log.d(TAG, "observeAndLoadFireBase: GlbVars.clickedTrId= ${GlbVars.clickedTrId}, currentClickedTrId=$currentClickedTrId")
                         // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
                         mySmoothScroll()
                         // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.

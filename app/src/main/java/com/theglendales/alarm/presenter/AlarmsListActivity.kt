@@ -58,11 +58,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.50a
-// Chip Sorting 은 okay 해제 했을 때 원복까지. 심지어 ListFrag 갔다와도 Chip Hilight 가 살아있고 그것을 반영한 RcView 가 보임. Interesting..Nice..
+//// v0.50c
+// SecondFrag.kt 에 currentClickedTrId 추가 (ListFrag 갔다올 때 GlbVar.trID 보강용도로 사용)
 
-// Issue
-// - 0.40a 에 이어서 SecondFrag 에서 음악 재생-> miniplayer Expanded 다 보이게 해놓고-> listFrag 갔다오면 -> 빨갱이 등장! 사라짐! -> 이거 visibility= Invisible 로 해놓을것
 
 
 // 할일 ==>

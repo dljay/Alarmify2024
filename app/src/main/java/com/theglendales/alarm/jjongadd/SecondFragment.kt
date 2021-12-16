@@ -106,7 +106,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var iv_lowerUi_bigThumbnail: ImageView // {findViewById<ImageView>(R.id.id_lowerUi_iv_bigThumbnail)}
     lateinit var tv_lowerUi_about: TextView // { findViewById<TextView>(R.id.id_lowerUi_tv_Description) }
 
-    // 다른 frag 나 밖에 갔다왔을때 -> 기존 rcV 의 클릭해놓은 트랙을 기억하기 위해.
+    // listfrag 가거나 나갔다왔을 때 관련.
     var isEverythingReady = false // a) 최초 rcV 열어서 모든게 준비되면 =true, b) 다른 frag 로 나갔다왔을 때 reconstructXX() 다 끝나면 true.
 
     //Firebase 관련
@@ -116,7 +116,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
-        //Log.d(TAG, "onCreate: jj-called..")
+        isEverythingReady=false // ListFrag 갔을 때 이 값이 계속 true 로 있길래. 여기서 false 로 해줌.
+        Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isEverythingReady")
         super.onCreate(savedInstanceState)
 
     }
@@ -127,9 +128,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //    }
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View {
-        // Inflate the layout for this fragment
 
-        Log.d(TAG, "onCreateView: jj- lineNumberTest.. ")
+        // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_second, container, false)
         return view
     }
@@ -152,7 +152,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //2) LiveData Observe
             //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달.
             jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
-                Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}")
+                Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}, isEverythingReady=$isEverythingReady")
                 if(isEverythingReady) {
                     myOnLiveDataFromRCV(viewAndTrIdClassInstance)
 
@@ -237,12 +237,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         //2) 최종적으로 선택해놓은 트랙 아이디
 
-        isEverythingReady = false // 다시 돌아왔을 때 이게 true 여야 jjRcViewModel 이 반응함.
+        //isEverythingReady = false // ListFragment 로 이동> 아예 Fragment 가 사라짐. 다시 돌아왔을 때는 Fragment 가 재생성.. 이게 true 여야 jjRcViewModel 이 반응함.
 
         //3) 다시 돌아왔을 때 Slide 의 upperUi 에서 빨간색 앨범커버가 보였다 다른 앨범으로 교체되는 현상을 막기 위해.
-         if(iv_upperUi_thumbNail.visibility == View.VISIBLE) {
-             iv_upperUi_thumbNail.visibility == View.INVISIBLE
-         }
+
 
 
         //3) 그리고 나서 save current play data to SharedPref using gson.
@@ -255,6 +253,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
          mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
 
     }
+
+
 
 // ===================================== My Functions ==== >
 
@@ -289,7 +289,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
 
     private fun myOnLiveDataFromRCV(viewAndTrId: ViewAndTrIdClass) {
-
+        //if(!isEverythingReady) { return } // LiveData 가
 
         val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
         Log.d(TAG, "myOnLiveDataReceived: called. rtClassFromtheList= $ringtoneClassFromtheList")
@@ -316,9 +316,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                 //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
                 if (ivInside_Rc != null) { // 사실 RcView 가 제대로 setup 되어있으면 무조건 null 이 아님! RcView 클릭한 부분에 View 가 로딩된 상태 (사진 로딩 상태 x)
-                    if(iv_upperUi_thumbNail.visibility==View.INVISIBLE) {
-                        iv_upperUi_thumbNail.visibility = View.VISIBLE
-                    }
+
                     iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
                     iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
                 }
@@ -688,9 +686,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             tv_lowerUi_about.text = ringtoneClassFromtheList?.description
             iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
         //Sliding Panel - Upper UI
-            if(iv_upperUi_thumbNail.visibility == View.INVISIBLE) {
-                iv_upperUi_thumbNail.visibility = View.VISIBLE
-            }
             iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
 
             setUpSlidingPanel()

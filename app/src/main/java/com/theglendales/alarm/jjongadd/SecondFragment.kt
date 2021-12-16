@@ -347,7 +347,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG, "myOnItemClick: You probably clicked FREE or GET This")
                 Toast.makeText(this.context, "Clicked Purchase Button for ${viewAndTrId.trId}",Toast.LENGTH_SHORT).show()
                 // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
-                //                iapInstance.myOnPurchaseClicked(trackId)
+                iapInstance.myOnPurchaseClicked(viewAndTrId.trId)
             }
 
         }

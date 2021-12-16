@@ -64,12 +64,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//// v0.51d Permission & IAP & Download 동시 준비 [진행중]
+// v0.51d Permission & IAP & Download 동시 준비 [진행중]
 
-// build.gradle 에서 debuggable= false 로 해주기 전
-// (이 세가지가 다 엮여있어서.. 어쩔수 없음..)
-// MyIAPHelper.kt > Base64 key 드디어 PlayConsole 에서 복붙했음!!
-// AlarmListActivity 에서 최초 Launch 했을 때 Permission Check -> BtmSheet (벤치휭~) -> Settings 까지 가는것 다 해줌.. (O)
+// build.gradle 에서 debuggable= false 로 해줬음
+// versionCode = 30702, versionName = "3.07.02"
+
+
 
 // 할일 ==>
 // 트랙 클릭-> 로딩 완료전에 SlidingPanel Expand -> 빈칸-> 이후 자동으로 안 채워짐 (RT10 처럼 용량 큰 놈 클릭했을 때 특히..)

@@ -61,8 +61,6 @@ import java.util.Calendar
 //// v0.50c
 // SecondFrag.kt 에 currentClickedTrId 추가 (ListFrag 갔다올 때 GlbVar.trID 보강용도로 사용)
 
-
-
 // 할일 ==>
 
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..

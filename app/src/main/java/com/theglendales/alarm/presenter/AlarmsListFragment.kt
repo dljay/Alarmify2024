@@ -475,6 +475,12 @@ class AlarmsListFragment : Fragment() {
                 .forEach { menu.removeItem(it) }
     }
 
+    override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        myPermHandler.onRequestPermissionsResult(requestCode,permissions, grantResults)
+    }
+// <--- override Functions
+
 // **** 내가 추가한 Utility Methods **
 // 추가 3) Lottie 관련-->
     private fun showLottieDialogFrag() {

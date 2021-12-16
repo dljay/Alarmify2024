@@ -61,8 +61,6 @@ import java.util.Calendar
 //// v0.51a Permission & IAP & Download 동시 준비 [파일 복붙만 완료]
 // (이 세가지가 다 엮여있어서.. 어쩔수 없음..)
 
-
-
 // 할일 ==>
 // todo: 기존 Permissions.kt 와 중복되는지 확인..
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..

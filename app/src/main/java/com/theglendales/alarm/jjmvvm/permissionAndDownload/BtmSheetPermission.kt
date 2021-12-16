@@ -44,31 +44,13 @@ object BtmSheetPermission : BottomSheetDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         //return super.onCreateDialog(savedInstanceState)
-//        if(this.isAdded) {
-//            Log.d(TAG, "showBottomDialog: frag already added yo!!")
-//            val emptyDialog: Dialog = Dialog(receivedAct)
-//            return emptyDialog
-//        }
-        Log.d(TAG, "onCreateDialog: .. ")
 
-//        val ft: FragmentTransaction = fragmentManager!!.beginTransaction()
-//        val prevFragment: Fragment? = fragmentManager!!.findFragmentByTag("myShitzYo")
-//        if(prevFragment!=null) {
-//            Log.d(TAG, "onCreateDialog: not null") //
-//        }else if(prevFragment==null) {
-//            Log.d(TAG, "onCreateDialog: null..")
-//        }
+        Log.d(TAG, "onCreateDialog: .. ")
 
         val btmSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
         btmSheetDialog.behavior.isDraggable = false
-//        btmSheetDialog.setOnShowListener {
-//        // Bottom Sheet Dialog 가 보여졌을때 어떤 설정을 할지 여기서 지정.
-//        }
         return btmSheetDialog
     }
-    //    fun shouldRemoveBtmDialog(): Boolean {
-//
-//    }
     fun showBtmPermDialog(calledActivity: Activity) {
         myContext = calledActivity as FragmentActivity
         Log.d(TAG, "showBottomDialog: Starts!")

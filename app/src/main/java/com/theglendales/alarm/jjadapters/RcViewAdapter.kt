@@ -75,6 +75,7 @@ class RcViewAdapter(
 
 
         Log.d(TAG, "onBindViewHolder: holder TrId= ${holder.holderTrId}, currentTrIapName= $currentTrIapName")
+        Log.d(TAG, "onBindViewHolder: Purchased Stats Map=${MyIAPHelper.purchaseStatsMap[currentTrId]} ")
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " +
 //                "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
@@ -321,20 +322,24 @@ class RcViewAdapter(
 
             isRVClicked = true // 이거 안쓰이는것 같음..  Recycle View 를 누른적이 있으면 true (혹시나 미리 누를수도 있으므로)
 
-            GlbVars.clickedTrId = holderTrId
-            Log.d(TAG,"*****************************onClick: Global.clTrId: ${GlbVars.clickedTrId}, holderTrId: $holderTrId ****************")
 
 
-            if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null) { // To avoid possible mistake when we delete the item but click it
+
+            if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null)
+            { // To avoid possible mistake when we delete the item but click it
                 val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
 
             //1) 하이라이트, 음악 재생은 "클릭 영역이 구매쪽 제외한 전체 영역일 때만!!" (Rl_including_tv1_2 영역)
                 if(v.id == R.id.id_rL_including_title_description) {
-                    //1-a) 하이라이트 작동
+                    //1-a)
+                    GlbVars.clickedTrId = holderTrId
+                    Log.d(TAG,"*****************************onClick-To Play MUSIC: Global.clTrId: ${GlbVars.clickedTrId}, holderTrId: $holderTrId ****************")
+
+                    //1-b) 하이라이트 작동
                     disableHLAll() // 모든 하이라이트를 끄고
                     enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
-                    //1-c 음악 플레이
+                    //1-c) 음악 플레이
                     mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
                 }
             //2) 음악쪽 클릭이든 구매쪽 클릭이든 일단 SecondFrag.kt 에 전달-> 거기서 알아서 판단.

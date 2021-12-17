@@ -80,7 +80,7 @@ android {
         getByName("debug") {
             isTestCoverageEnabled = true
             buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
-            applicationIdSuffix = ".debug"
+            //applicationIdSuffix = ".debug"
         }
         getByName("release") {
             isDebuggable=false

@@ -69,6 +69,7 @@ import java.util.Calendar
 // issue
 // Android Studio -> APK 추출 -> EMULATOR 설치 & PLAY (O) => 가격 잘 뜬다!
 // Android Studio -> EMULATOR (X) / 가격 null 표시로 뜬다. (+ MyIAPHelper 에서 "The user has never ver 산적이 없으면.."
+// => Debug 로 열어서 package 이름 달라서 그랬음!! -> build.gradle(app) 에 가서  buildTypes>debug> applicationSuffix 없앴음!!!
 
 //minor issues)
 //- RT2 결제 쪽 한번 클릭->Cancel -> 위아래 스크롤 쓱싹 -> VuMeter 활성화됐음! (노래는 플레이한적도 없는데)

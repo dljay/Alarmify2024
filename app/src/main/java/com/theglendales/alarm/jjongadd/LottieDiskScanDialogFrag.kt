@@ -19,6 +19,7 @@ class LottieDiskScanDialogFrag: DialogFragment() {
     lateinit var lottieView: LottieAnimationView
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
+        Log.d(TAG, "onCreateView: called")
         //return super.onCreateView(inflater, container, savedInstanceState)
     // 위치 설정
         //dialog?.window?.setGravity(Gravity.CENTER_HORIZONTAL)

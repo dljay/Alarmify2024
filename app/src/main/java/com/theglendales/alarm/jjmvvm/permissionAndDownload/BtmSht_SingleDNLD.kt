@@ -43,8 +43,6 @@ class BtmSht_SingleDNLD : BottomSheetDialogFragment() {
         return btmSheetDialog
     }
 
-
-
     fun showBtmSingleDNLDSheet(calledActivity: Activity) {
         myContext = calledActivity as FragmentActivity
         Log.d(TAG, "showBottomDialog: Starts!")
@@ -58,7 +56,7 @@ class BtmSht_SingleDNLD : BottomSheetDialogFragment() {
     }
 
     fun removeSingleDNLDBtmSheet() {
-
+        Log.d(TAG, "removeSingleDNLDBtmSheet: called!")
         this.apply {
             if(isAdded) { //1) BottomSheet 이 화면에 보이거나 존재하는 상태?. (isAdded=true) if the fragment is currently added to its activity.
                 Log.d(TAG, "removeBtmSheet_SINLGE DOWNLOAD: Dismiss BOTTOM Sheet- 없앨놈 있음! ^^ (OO)")
@@ -72,6 +70,7 @@ class BtmSht_SingleDNLD : BottomSheetDialogFragment() {
     }
     //Linear Progress Indicator(aka the new ProgressBar) Animation Related
     fun animateLPI(progressReceived: Int, durationMs: Long) { // LPI = Linear Progress Indicator
+        Log.d(TAG, "animateLPI: called!")
         objAnim = ObjectAnimator.ofInt(linearPrgsIndicator,"progress",progressReceived)
         objAnim.setAutoCancel(true) // todo.. hmm.. test?
         objAnim.duration = durationMs

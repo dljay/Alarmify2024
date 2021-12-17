@@ -8,6 +8,7 @@ import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentActivity
 import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import kotlinx.coroutines.*
@@ -370,11 +371,12 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
         //showDNLDProgress(downloadID,trackID)
         CoroutineScope(Dispatchers.IO).launch {
 
-            receivedActivity.runOnUiThread {
+            receivedActivity.runOnUiThread { //21.12.17 에 ruOnUiThread 만 추가.
                 openBtmShtSingleDNLD()
             }
 
             isSingleDNLDInProcess = true
+
             val isStillDNLDING = getResultFromSingleDNLD(downloadID, trackID, fileNameAndFullPath) // (1) showDNLDCoroutine 시작->
             withContext(Dispatchers.Main) {
                 if(!isStillDNLDING) {
@@ -449,6 +451,7 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
                     // 다운이 (최초로) STATUS_RUNNING 이 되면 animation 을 20~40 % 중 랜덤 value 로 올리는 animation 실행.
                     if(!animInitialBool && status == DownloadManager.STATUS_RUNNING) { //status running = 2
                         val randomPrgrsValue = (20..40).random() // 20~40 중 random value.
+                        Log.d(TAG, "getResultFromSingleDNLD: Line454 (animatLPI 부르기 직전! status= STATUS_RUNNING)")
                         btmShtSingleDNLDInstance.animateLPI(randomPrgrsValue,5000) // 애니메이션이 차는 속도 5초.
                         animInitialBool = true
 

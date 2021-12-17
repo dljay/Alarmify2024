@@ -517,7 +517,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
                      //IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
-                    iapInstance = MyIAPHelper(requireActivity(), null, ArrayList()) //공갈 Initialize
+
 
 
                     // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
@@ -529,10 +529,16 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     lottieAnimController(2) //stop!
 
                     fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
-                    // Update Recycler View + IAP
-                    updateResultOnRcView(fullRtClassList)
-                    // Update MediaPlayer.kt
+
+                // IAP
+                    iapInstance = MyIAPHelper(requireActivity(), rcvAdapterInstance, fullRtClassList) //공갈 Initialize
+                    iapInstance.refreshItemIdsAndMp3UrlMap()
+                // Update MediaPlayer.kt
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
+                // Update Recycler View
+                    //updateResultOnRcView(fullRtClassList)
+                    rcvAdapterInstance.updateRingToneMap(fullRtClassList)
+
 
                 // 아무 트랙도 클릭 안한 상태
                     if(GlbVars.clickedTrId == -1 || currentClickedTrId == -1) {
@@ -800,23 +806,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
 
-    fun updateResultOnRcView(fullRtClassList: MutableList<RingtoneClass>) {
+    /*fun updateResultOnRcView(fullRtClassList: MutableList<RingtoneClass>) {
         Log.d(TAG, "showResult: 5) called..Finally! ")
 
 
-        // IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
-
-                iapInstance = MyIAPHelper(requireActivity(), rcvAdapterInstance, fullRtClassList) //reInitialize
-                iapInstance.refreshItemIdsAndMp3UrlMap() // !!!!!!!!!!!!!!여기서 일련의 과정을 거쳐서 rcView 화면 onBindView 까지 해줌!!
-
-        // Update MediaPlayer.kt
-//                mpClassInstance.createMp3UrlMap(fullRtClassList)
-        // Update Recycler View
-        rcvAdapterInstance.updateRecyclerView(fullRtClassList) // todo: 추후 // comment 시킬것. MyIAPHelper.kt 에서 해주기로 함!
         rcvAdapterInstance.updateRingToneMap(fullRtClassList)// todo: 이 map 안 쓰이는것 같은데 흐음.. (우리는 Map 기반이므로 list 정보를 -> 모두 Map 으로 업데이트!)
 
 
-    }
+    }*/
 
 
 }

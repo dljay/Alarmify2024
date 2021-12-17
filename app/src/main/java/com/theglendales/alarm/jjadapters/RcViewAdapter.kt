@@ -105,7 +105,7 @@ class RcViewAdapter(
                 holder.iv_PurchasedFalse.visibility = View.VISIBLE
             }
             else -> {
-                Toast.makeText(receivedActivity, "Error Displaying Purchased Items", Toast.LENGTH_SHORT).show()}
+                Toast.makeText(receivedActivity, "Error Displaying Purchased Item for trId=$currentTrId", Toast.LENGTH_SHORT).show()}
         }
         GlideApp.with(receivedActivity).load(currentItem.imageURL).centerCrop()
             .error(R.drawable.errordisplay)
@@ -292,8 +292,7 @@ class RcViewAdapter(
         val loadingCircle: ProgressBar = myXmlToViewObject.findViewById(R.id.id_progressCircle)
 
         // 4) 오른쪽 FREE,GET THIS 칸
-        val cl_entire_purchase: ConstraintLayout =
-            myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
+        val cl_entire_purchase: ConstraintLayout =myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
         val tv3_Price: TextView = myXmlToViewObject.findViewById(R.id.id_tvPrice)
         val iv_PurchasedFalse: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_False)
         val iv_PurchasedTrue: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_True)

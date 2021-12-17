@@ -64,18 +64,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v0.51d Permission & IAP & Download 동시 준비 [진행중]
+// v3.07.03 [APK 추출해서 Emulator  에서 실행 -> 가격 잘 보임] (O)
 
-// build.gradle 에서 debuggable= false 로 해줬음
-// versionCode = 30702, versionName = "3.07.02"
+// issue
+// Android Studio -> APK 추출 -> EMULATOR 설치 & PLAY (O) => 가격 잘 뜬다!
+// Android Studio -> EMULATOR (X) / 가격 null 표시로 뜬다. (+ MyIAPHelper 에서 "The user has never ver 산적이 없으면.."
 
-//Issues)
-//- 가격 Null 뜨는 문제-> Generate Signed Bundle APK 로 직접 Install-> 가격 스크롤하면 뜨기는 함. // 반면 Emulator 에서 실행-> 무조건 null 로 나오네..
-//- 스크롤해서 Bind 하기전에는 가격 null 뜨는 문제..
-//- 결제 쪽 한번 클릭 할려고 눌렀다가 스크롤 쓱싹 했더니 VuMeter 활성화됐음! (노래는 플레이한적도 없는데)
+//minor issues)
+//- RT2 결제 쪽 한번 클릭->Cancel -> 위아래 스크롤 쓱싹 -> VuMeter 활성화됐음! (노래는 플레이한적도 없는데)
 //
 //todos
-//- myIAP <-> RCV 라이브데이터로 한번 조져보기?
+//- myIAP <-> RCV 라이브데이터로 한번 조져보기?. MAP 을 너무 사용함..상호 의존 (SecondFrag <-> MyIap MAP <-> MediaPlayer MAP<->RCV MAP 의존도 줄이기)
 //.. 추후 Firebase Bug 알림이! (이름 기억 안나네..)
 
 

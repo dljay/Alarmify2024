@@ -64,16 +64,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.03 [APK 추출해서 Emulator  에서 실행 -> 가격 잘 보임] (O)
+// v3.07.03a [다운로드 Fragment 수술전]
 
 // issue
-// Android Studio -> APK 추출 -> EMULATOR 설치 & PLAY (O) => 가격 잘 뜬다!
-// Android Studio -> EMULATOR (X) / 가격 null 표시로 뜬다. (+ MyIAPHelper 에서 "The user has never ver 산적이 없으면.."
-// => Debug 로 열어서 package 이름 달라서 그랬음!! -> build.gradle(app) 에 가서  buildTypes>debug> applicationSuffix 없앴음!!!
+//- Single 다운로드에서 fragment 띄우는것으로 자꾸 crash. List/DetailFrag 에서 다른 dialogFrag 등 띄울 때 어떻게했는지 참고해보기.
 
-//minor issues)
-//- RT2 결제 쪽 한번 클릭->Cancel -> 위아래 스크롤 쓱싹 -> VuMeter 활성화됐음! (노래는 플레이한적도 없는데)
-//
 //todos
 //- myIAP <-> RCV 라이브데이터로 한번 조져보기?. MAP 을 너무 사용함..상호 의존 (SecondFrag <-> MyIap MAP <-> MediaPlayer MAP<->RCV MAP 의존도 줄이기)
 //.. 추후 Firebase Bug 알림이! (이름 기억 안나네..)

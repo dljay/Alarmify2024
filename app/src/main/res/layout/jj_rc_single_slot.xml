@@ -143,6 +143,7 @@
                 android:layout_marginBottom="8dp"
                 android:src="@drawable/purchased_false_1"
                 android:visibility="visible"
+                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

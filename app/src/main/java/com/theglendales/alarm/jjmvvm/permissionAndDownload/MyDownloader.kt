@@ -370,7 +370,9 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
         //showDNLDProgress(downloadID,trackID)
         CoroutineScope(Dispatchers.IO).launch {
 
-            openBtmShtSingleDNLD()
+            receivedActivity.runOnUiThread {
+                openBtmShtSingleDNLD()
+            }
 
             isSingleDNLDInProcess = true
             val isStillDNLDING = getResultFromSingleDNLD(downloadID, trackID, fileNameAndFullPath) // (1) showDNLDCoroutine 시작->

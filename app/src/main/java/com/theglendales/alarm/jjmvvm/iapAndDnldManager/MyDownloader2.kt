@@ -15,6 +15,7 @@ import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_SingleDNLD
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_Sync
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
@@ -234,10 +235,17 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
         Log.d(TAG, "singleFileDNLD: Begins. ItemToDownload=$itemToDownload")
     // 일단 Permission Check
         permHandler.permissionForSingleDNLD(itemToDownload)
-    // todo: Permission 이
+    // todo: Permission 이 문제 없는지..
         val fileNameAndFullPath = itemToDownload.filePathAndName
         val trackID = itemToDownload.trackID
-        val fileNameToSaveOnDisk = File(fileNameAndFullPath).name
+        val fileName = File(fileNameAndFullPath).name
+        val testXXTitle = "TestTitle"
+
+    // RtWithAlbumArtObj 으로 변환 후 일단 ViewModel 에 전달 -> SecondFrag 에서 DNLD BottomFrag UI 준비 //todo: 여기서 제대로..
+        val dnldAsRtObj = RtWithAlbumArt(trIdStr = trackID.toString(), rtTitle = testXXTitle, audioFilePath = fileNameAndFullPath,
+                        fileName = fileName, rtDescription ="", badgeStr = "", isRadioBtnChecked = false)
+        dnldViewModel.updateDNLDRtObj(dnldAsRtObj)
+
 
     //download URL // todo: URL 변경
 
@@ -261,7 +269,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
         dnlRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE) // 다운 중에만 표시 todo: NEXUS 5X API30 에뮬레이터에서 표시 안됨.
         // 내 app 의 Main Storage>android/data/com.xx.downloadtest1/files/안에 .AlarmRingTones라는 폴더를 만들고! 그 안에 file 저장! hidden 상태임!
-        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones",fileNameToSaveOnDisk)
+        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones",fileName) // * 경로설정.
         //get download service, and enqueue file
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         // 다운로드 & 완료 알림(BroadCast) 관련: 1)식별 id 생성 2)Broadcast 등록.
@@ -272,14 +280,12 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
     // Download Progress -> ViewModel (LiveData) -> SecondFrag 로 전달됨.
         CoroutineScope(Dispatchers.IO).launch {
 
-//            receivedActivity.runOnUiThread { //21.12.17 에 ruOnUiThread 만 추가.
-//                openBtmShtSingleDNLD()
-//            }
+
 
             isSingleDNLDInProcess = true
 
             // 아래 getResult..() 에서 다운로드 중일때는 계속 Loop 돌다가. 다운이 끝나면 False or Success Status (INT) 를 보냄.
-            val dnldResult = getResultFromSingleDNLD(downloadID, trackID, fileNameAndFullPath)
+            val dnldResult = getResultFromSingleDNLD(downloadID, dnldAsRtObj)
             // 아래 getResult..() 여기서 whileLoop 안에 있으면서 ViewModel LiveData 로 콜백->SecondFrag->UI 업뎃.
             withContext(Dispatchers.Main) {
                 when(dnldResult) {
@@ -304,7 +310,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
     }
 
-    private fun getResultFromSingleDNLD(dnldID: Long, trId: Int, filePathAndName: String): Int  {
+    private fun getResultFromSingleDNLD(dnldID: Long, dnldAsRtObj: RtWithAlbumArt): Int  {
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
         var isStillDownloading = true
@@ -313,6 +319,8 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
         var animFortyNSixtyBool = false // progress 가 40~60 사이일 때 animation
         var animSixtyEightyBool = false // 60~80 구간
         var animEightyOrHigher = false // 80 이상*/
+        var prevPrgrsValue: Int = -1
+        var myDownloadProgress: Int = 0
 
         while (isStillDownloading)
         {
@@ -325,7 +333,20 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
                 val bytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
                 val totalBytesToDNLD = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-                val myDownloadProgress = ((bytesDownloadedSoFar * 100L)/totalBytesToDNLD).toInt() // changed from *100 to *99
+                myDownloadProgress = ((bytesDownloadedSoFar * 100L)/totalBytesToDNLD).toInt() // changed from *100 to *99
+
+                if(prevPrgrsValue.toString() != myDownloadProgress.toString()) {
+                    Log.d(TAG, "getResultFromSingleDNLD: (Before) prevValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
+                    prevPrgrsValue = myDownloadProgress
+                    Log.d(TAG, "getResultFromSingleDNLD: (After) prevValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
+                    //todo: 왜 이게 계속 업뎃되는지 이해가 안되네..
+                    dnldViewModel.updateDNLDProgressLive(prevPrgrsValue) // 어쨌든 updateDNLDProgressLive(myDownloadProgress) 로 했을때는 눈에 보이는 myDnldPrgrs 값이 변해도
+                // val myDnldPrgrs= ((bytes..)..toInt() 여기서 새로운 memory 를 가진 obj 값을 'val' 의 값으로 만들어주니깐! 계속 업데이트됨!
+                }
+
+
+
+
 
                 // 다운로드 성공으로 완료(.STATUS_SUCCESSFUL) 후 보고까지 시간차가 나는 경우가 종종 있음. 그래서 파일 사이즈 체크를 실행하여 btmSht 없애주도록 해봄.
 
@@ -333,7 +354,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
               //  val bytesWrittenOnPhone = File(filePathAndName) // 이거 다운 시작하자마자도 다운받아야할 전체 사이즈 뜨고 그래서 그냥 안 쓰기로..
 
                 if(myDownloadProgress > 99) { //todo: 간혹 다운 다 됐음에도 Status.Pause 에 한참 머무는 경우가 있어서. 미리 이걸로 체크. 다운 안됐는데 뜰수도 있음. Firebase 링크에서는 안될수도..
-                    //todo: Double Check! 다운 진짜 완료됐는지!!
+                    //todo: Double Check! 다운 진짜 완료됐는지!! 디스크에 있는 파일사이즈 체크. 이거 예전에 넣어놓은 이유가 다 있겠징.
                     val currentTime= Calendar.getInstance().time
                     Log.d(TAG, "getResultFromSingleDNLD: [다운로드 완료] @@@@@@myDownloadProgress=${myDownloadProgress}, time:$currentTime")
                     isStillDownloading = false // 이제 While loop 에서 벗어나자!
@@ -360,7 +381,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                     }
 
                     DownloadManager.STATUS_FAILED -> { //16
-                        Log.d(TAG, "getResultFromSingleDNLD: STATUS FAILED / trkId=$trId")
+                        Log.d(TAG, "getResultFromSingleDNLD: STATUS FAILED / trkId=${dnldAsRtObj.trIdStr}")
                         Toast.makeText(receivedActivity,"Download Failed. Please check your internet connection.",Toast.LENGTH_LONG).show()
 //                        btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet() // 아래 while loop 밖에도 있지만. 혹시 모르니 여기서도 btm Sheet 닫기 넣어줌.
                         resultCode = DownloadManager.STATUS_FAILED // 16
@@ -368,7 +389,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                         isStillDownloading = false
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> { //8.  ** 굉장한 Delay 가 있음. 실 다운로드가 끝나고도 10~15초 이상 걸린뒤 여기에 들어옴.
-                        Log.d(TAG, "getResultFromSingleDNLD: STATUS SUCCESSFUL, Progress= $myDownloadProgress, TRK ID=$trId")
+                        Log.d(TAG, "getResultFromSingleDNLD: STATUS SUCCESSFUL, Progress= $myDownloadProgress, TRK ID=trkId=${dnldAsRtObj.trIdStr}")
                         dnldViewModel.updateDNLDStatusLive(8)
                         resultCode = DownloadManager.STATUS_SUCCESSFUL // 8
                         isStillDownloading = false

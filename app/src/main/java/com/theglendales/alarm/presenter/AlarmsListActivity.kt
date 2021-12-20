@@ -64,7 +64,20 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.03b [다운로드 Fragment 수술전-MyDownloader2 생성 및 LiveData 로 교체]
+// v3.07.03c [다운로드 Fragment 수술전-MyDownloader2 생성 및 LiveData 로 교체]
+//*********** 원복 AlarmListFrag 에서 "원복" 으로 검색
+//1) Download- DialogFragment 에서 RtWithAlbumArt Object 로 정보 전달 및 UI 구현.
+//- 다운로드 과정이 NEXUS 5X API 30 에서 안 보이는 문제.
+//- 우선 IAP 과정에서 곡 제목도 같이 받아야함. -> DownloadableItem 수정이 불가피.
+//- MyIAPHelper2.kt> refreshItemIdsAndMp3UrlMap() > currentRtList 로도 Title 받을 수 있음. MAP 최대한 없애고 List 활용?
+//- 그냥 RingtoneClass 로 조져볼순 없었을까?  왜 죄다 MAP  을 썼지... rcView 땜에 그랬네. 왜냐하면 price 는 우리가 db 에 저장할수 없었으니께..
+//
+//2) Permission 한줄로 써도 괜찮을지 확인.
+//
+//3) 이거 다 끝남녀 secondFrag Line 390, 575 복귀 ("원복") 으로 검색 -> IAP 다시 설정..휴.
+//https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3
+//4) MyIapHelper1 지워주기.
+//...
 
 // issue
 // 궁극적으로는 Fragment 처리 관련 모두 SecondFrag <-> JjDNLDViewModel <-> MyDownloader 얘네가 알아서 해야 함..
@@ -76,9 +89,10 @@ import java.util.Calendar
 
 
 // 할일 ==>
-// 트랙 클릭-> 로딩 완료전에 SlidingPanel Expand -> 빈칸-> 이후 자동으로 안 채워짐 (RT10 처럼 용량 큰 놈 클릭했을 때 특히..)
+
 // todo: AlarmListActivity - onResume () 에서 기존에 DNLD BTM SHEET 없애준거등 처리..
 // todo: 기존 Permissions.kt 와 중복되는지 확인..
+// fb bug 알림이
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
 

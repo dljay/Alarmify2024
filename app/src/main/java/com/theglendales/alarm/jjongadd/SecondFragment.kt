@@ -210,32 +210,37 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //GlbVars.seekbarProgress = playbackPos.toInt() +200
                 //GlbVars.playbackPos = playbackPos
                 })
-            //2-C-가) DNLD:
+            //2-C-가) DNLD: RtWithAlbumArt Obj 받기 (이걸로 UI 갱신)
+            jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {
+                rtWithAlbumArtObj ->
+                Log.d(TAG, "onViewCreated: trId= ${rtWithAlbumArtObj.trIdStr}, received rtObj = $rtWithAlbumArtObj")
+            })
+
+            //2-C-나) DNLD: Status Observe.
             jjDNLDViewModel.dnldStatus.observe(viewLifecycleOwner, {
                 dnldStatusInt ->
 
                 Log.d(TAG, "onViewCreated: current DNLD Status is=$dnldStatusInt")
                 when(dnldStatusInt) {
                     DownloadManager.STATUS_PENDING -> {
-
+                        Log.d(TAG, "onViewCreated: DNLD PEDNING ")
                     }
                     DownloadManager.STATUS_RUNNING -> {
                     }
                     DownloadManager.STATUS_PAUSED -> {
                     }
                     DownloadManager.STATUS_FAILED -> {
+                        Log.d(TAG, "onViewCreated: !!!! DNLD FAILED (XX) !!!!! ")
                     }
                     DownloadManager.STATUS_SUCCESSFUL-> {
-
+                        Log.d(TAG, "onViewCreated: DNLD SUCCESS (O)  ")
                     }
 
             }
             })
             //2-C-나 DNLD:
-            jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, {
-                    dnldPrgrs ->
-                Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
-                //todo:
+            jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, { dnldPrgrs ->
+                Log.d(TAG, "onViewCreated: dnldPrgrs=$dnldPrgrs")
             })
         //3) Firebase ViewModel Initialize
 

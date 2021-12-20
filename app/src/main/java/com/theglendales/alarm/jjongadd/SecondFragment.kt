@@ -217,8 +217,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             })
 
             //2-C-나) DNLD: Status Observe.
-            jjDNLDViewModel.dnldStatus.observe(viewLifecycleOwner, {
-                dnldStatusInt ->
+            jjDNLDViewModel.dnldStatus.observe(viewLifecycleOwner, {dnldStatusInt ->
 
                 Log.d(TAG, "onViewCreated: current DNLD Status is=$dnldStatusInt")
                 when(dnldStatusInt) {
@@ -239,8 +238,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
             })
             //2-C-나 DNLD:
-            jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, { dnldPrgrs ->
-                Log.d(TAG, "onViewCreated: dnldPrgrs=$dnldPrgrs")
+            jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, {dnldPrgrs ->
+                Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
+
             })
         //3) Firebase ViewModel Initialize
 

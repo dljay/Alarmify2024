@@ -320,7 +320,8 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
         var animSixtyEightyBool = false // 60~80 구간
         var animEightyOrHigher = false // 80 이상*/
         var prevPrgrsValue: Int = -1
-        var myDownloadProgress: Int = 0
+
+//        var myDownloadProgress: Int = 0
 
         while (isStillDownloading)
         {
@@ -333,16 +334,19 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
                 val bytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
                 val totalBytesToDNLD = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-                myDownloadProgress = ((bytesDownloadedSoFar * 100L)/totalBytesToDNLD).toInt() // changed from *100 to *99
+                val myDownloadProgress = ((bytesDownloadedSoFar * 100L)/totalBytesToDNLD).toInt() // changed from *100 to *99
 
-                if(prevPrgrsValue.toString() != myDownloadProgress.toString()) {
+                // progress 가 변했을때만 ViewModel 에 전달!
+                if(prevPrgrsValue != myDownloadProgress) {
                     Log.d(TAG, "getResultFromSingleDNLD: (Before) prevValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
                     prevPrgrsValue = myDownloadProgress
                     Log.d(TAG, "getResultFromSingleDNLD: (After) prevValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
-                    //todo: 왜 이게 계속 업뎃되는지 이해가 안되네..
-                    dnldViewModel.updateDNLDProgressLive(prevPrgrsValue) // 어쨌든 updateDNLDProgressLive(myDownloadProgress) 로 했을때는 눈에 보이는 myDnldPrgrs 값이 변해도
-                // val myDnldPrgrs= ((bytes..)..toInt() 여기서 새로운 memory 를 가진 obj 값을 'val' 의 값으로 만들어주니깐! 계속 업데이트됨!
+
+                    dnldViewModel.updateDNLDProgressLive(prevPrgrsValue)
+
                 }
+
+
 
 
 
@@ -371,13 +375,13 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                         }
                     DownloadManager.STATUS_RUNNING -> { //2
                         dnldViewModel.updateDNLDStatusLive(2)
-                        dnldViewModel.updateDNLDProgressLive(myDownloadProgress)
+                        //dnldViewModel.updateDNLDProgressLive(myDownloadProgress)
                         //Log.d(TAG, "getResultFromSingleDNLD: STATUS RUNNING, **bytesDownloadedSoFar=$bytesDownloadedSoFar, **totalBytesToDNLD=$totalBytesToDNLD / Progress= $myDownloadProgress,  trkId=$trId")
                     }
                     DownloadManager.STATUS_PAUSED -> { // 4. RUNNING 으로 다운이 다 된 다음에도 PAUSED 에 한참 들어와있다가-> STATUS_SUCCESSFUL 로 이동.
                         //Log.d(TAG, "getResultFromSingleDNLD: STATUS PAUSED, **bytesDownloadedSoFar=$bytesDownloadedSoFar, **totalBytesToDNLD=$totalBytesToDNLD  / trkId=$trId")
                         dnldViewModel.updateDNLDStatusLive(4)
-                        dnldViewModel.updateDNLDProgressLive(myDownloadProgress)
+                        //dnldViewModel.updateDNLDProgressLive(myDownloadProgress)
                     }
 
                     DownloadManager.STATUS_FAILED -> { //16

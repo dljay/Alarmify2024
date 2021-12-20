@@ -283,7 +283,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
 override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    myPermHandler.onRequestPermissionsResult(requestCode,permissions, grantResults)
+    myPermHandler.onRequestPermissionsResult(requestCode,permissions, grantResults) //MyPermissionHanlder.kt> onReqPerResult() 로 넘어감.
     }
 // <--추가 1-B)
 

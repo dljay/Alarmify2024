@@ -18,7 +18,7 @@ import com.theglendales.alarm.model.ringtoneManagerString
 fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
     if (Build.VERSION.SDK_INT >= 23 && activity.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
         val logger: Logger by globalLogger("checkPermissions")
-
+        // 재생 불가한 링톤이 있는지 여기서 확인하는듯.
         val unplayable = tones
                 .filter { alarmtone ->
                     runCatching {
@@ -31,7 +31,7 @@ fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
                         ringtone.getTitle(activity) ?: "null"
                     }.getOrDefault("null")
                 }
-
+        //재생 불가한 링톤이 있으면.. Request Permission
         if (unplayable.isNotEmpty()) {
             try {
                 AlertDialog.Builder(activity).setTitle(activity.getString(R.string.alert))

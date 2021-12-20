@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
-import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_SingleDNLD
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_Sync
@@ -24,7 +23,7 @@ import kotlin.collections.ArrayList
 private const val TAG="MyDownloader2"
 
 
-enum class StatusDNLD { PENDING, PAUSED, RUNNING, FAILED, SUCCESSFUL} // BUFFERING: activateLC(),
+enum class StatusDNLD { IDLE, PENDING, PAUSED, RUNNING, FAILED, SUCCESSFUL} // BUFFERING: activateLC(),
 
 data class DownloadableItem(val trackID: Int=0, val filePathAndName:String="") {
     override fun toString(): String
@@ -51,6 +50,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
     private var fileNameGlbVar =""
 
     private val myDiskSearcher: DiskSearcher by globalInject()
+
     val permHandler = MyPermissionHandler(receivedActivity)
     val btmShtMultiObj = BtmSht_Sync
 
@@ -58,82 +58,10 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
     private val listToBeJudged= mutableListOf<DownloadableItem>()
 
 
-    // <1-a> MyIapHelper.kt 에서 호출!로 시작-> 여기서 B)정상 구매인지 C) 디스크에 파일이 있는지 확인, 2)없으면 Perm Check-> Download!
-    fun multiDownloadOrNot(downloadableItem: DownloadableItem, keepTheFile: Boolean) {
-
-        //A) MyIAPHelper.kt>downloadHandler() 에서 전달 받은 DownloadableItem 은 "심판 대상이므로" 일단 리스트에 add.
-        listToBeJudged.add(downloadableItem)
-        Log.d(TAG, "MultiDownloadOrNot: listToBeJudged.size=${listToBeJudged.size}, itemTobeJudged[TrkId]=${downloadableItem.trackID}")
-
-        //B) 근데 구매건수(myQueryPurchases.size) 에는 포함되어 있지만 (어떤 이유로) "불량 구매"여서 디스크에서 삭제되어야 하는 경우. 삭제 실행.
-        if(!keepTheFile) {
-            Log.d(TAG, "MultiDownloadOrNot: XX trackId=${downloadableItem.trackID} (는)  구매한적이 없거나(어떤 연유로 불량 구매). 디스크에 있으면 삭제..")
-            myDiskSearcher.deleteFromDisk(downloadableItem)
-        }
-        //C) 계속 진행되다 여기서 전달받은 갯수가 드디어 myQryPurchListSize 와 같으면 (=queryPurchases.size) 다운받을지 말지 심판 시작!
-        //C-1) 최초 실행시 Sync 작업: 기존 구매내역 확인 후 파일 다운받을지 말지 정하기.
-        if(listToBeJudged.size == MyIAPHelper.myQryPurchListSize) // listTobeJudged(처리 전달 받은 아이템 숫자) = 구입 내역 목록 아이템 갯수
-        //todo: 만약 이 size 가 일치하지 않는 경우 반드시 대비 필요!!할까..?
-        {
-            val finalList = mutableListOf<DownloadableItem>()
-            for (i in 0 until listToBeJudged.size) // until 은 마지막 숫자 제외!! => i in 0 until 3 => 0,1,2 까지.
-            {
-                //Log.d(TAG, "downloadOrNotJudge: inside 'for loop!!'")
-                val filePath =  listToBeJudged[i].filePathAndName
-                val fileName = File(filePath).name
-
-                if(myDiskSearcher.checkDuplicatedFileOnDisk(filePath)) { // 파일이 이미 디스크에 있는 상태
-                    //ultimateListToPass.remove(downloadableItem) // true if the element has been successfully removed; false if it was not present in the collection.
-                    Log.d(TAG, "MultiDownloadOrNot: [i]=$i, listToBeJudged.size=${listToBeJudged.size} // OO: $fileName 가(이) 이미 디스크에 있어서 다운 필요 없음. 경로: '$filePath")
-                }
-                else if(!myDiskSearcher.checkDuplicatedFileOnDisk(filePath)) {
-
-                    finalList.add(listToBeJudged[i])
-                    Log.d(TAG, "MultiDownloadOrNot: @@ finalList.size=${finalList.size} // @@ XX: $fileName (은) 디스크에 없어서 다음 파일을 다운받아야함=$filePath")
-                }
-            }
-            //D) 최종으로 for loop 이 끝나고 정리된 리스트를 전달!
-            // 이제 기존/현재의 구매건(들)에 대한 정리가 끝났을테니.초기화.
-            MyIAPHelper.myQryPurchListSize = 0
-            listToBeJudged.clear()
-            // Permission 요청: Write Permission 체크 진행 ->그리고 여기서 바로 다운로드로 진행..
-            Log.d(TAG, "MultiDownloadOrNot: ##for loop 종료! finalList.size=${finalList.size}")
-            permHandler.permissionToWriteOnDNLD(finalList) //
-
-        }
-        //C-2) 최초 Sync 작업 수행할게 없거나(끝났으면) myQryPurchListSize=0 (클릭해서 한개 구매할 때 일로 옴)
-
-    }
-    fun singleDownloadOrNot(downloadableItem: DownloadableItem, keepTheFile: Boolean) {
-
-        Log.d(TAG, "SingleDownloadOrNot: listToBeJudged.size=${listToBeJudged.size}, itemTobeJudged[TrkId]=${downloadableItem.trackID}")
-
-        if(!keepTheFile) {
-            Log.d(TAG, "SingleDownloadOrNot: XX trackId=${downloadableItem.trackID} (는)  구매한적이 없거나(어떤 연유로 불량 구매). 디스크에 있으면 삭제..")
-            myDiskSearcher.deleteFromDisk(downloadableItem)
-            // todo : add return?
-        }
-        val finalList = mutableListOf<DownloadableItem>()
-        val filePath =  downloadableItem.filePathAndName
-        val fileName = File(filePath).name
-
-        if(myDiskSearcher.checkDuplicatedFileOnDisk(filePath)) { // 파일이 이미 디스크에 있는 상태
-            Log.d(TAG, "SingleDownloadOrNot:  $fileName 가(이) 이미 디스크에 있어서 다운 필요 없음 XX. 경로: '$filePath")
-        }
-        else if(!myDiskSearcher.checkDuplicatedFileOnDisk(filePath)) {
-            finalList.add(downloadableItem)
-            Log.d(TAG, "SingleDownloadOrNot:  $fileName (은) 디스크에 없어서 다음 파일을 다운받아야함 OO filepath=$filePath")
-        }
-
-        // Permission 요청: Write Permission 체크 진행 ->그리고 여기서 바로 다운로드로 진행..
-        permHandler.permissionToWriteOnDNLD(finalList)
-    }
-
     // <1-b> MyIapHelper.kt 에서 호출!로 시작-> Delete!
 
-
     // <2>
-    //********MULTIPLE File Dnld ---------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//********MULTIPLE File Dnld ---------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     class DownloadInfoContainer(val dnldID: Long=0, val trkId: Int=0, val fileNameAndPath: String ="")
 
     fun multipleFileDNLD(needToSyncListReceived: MutableList<DownloadableItem>) {
@@ -301,24 +229,27 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
 // <----------***MULTIPLE File Dnld <<<<<<<<<<<<----------------
 
-    //********Single File Dnld **************
-    fun singleFileDNLD(itemToDownloadable: DownloadableItem) {
+//********Single File Dnld **************
+    fun singleFileDNLD(itemToDownload: DownloadableItem) {
+        Log.d(TAG, "singleFileDNLD: Begins. ItemToDownload=$itemToDownload")
+    // 일단 Permission Check
+        permHandler.permissionForSingleDNLD(itemToDownload)
+    // todo: Permission 이
+        val fileNameAndFullPath = itemToDownload.filePathAndName
+        val trackID = itemToDownload.trackID
+        val fileNameToSaveOnDisk = File(fileNameAndFullPath).name
 
-        val fileNameAndFullPath = itemToDownloadable.filePathAndName
-        val trackID = itemToDownloadable.trackID
-        val fileNametoSaveOnDisk = File(fileNameAndFullPath).name
+    //download URL // todo: URL 변경
 
-        //download request
-        val mp3UrlToDownload = MyMediaPlayer.mp3UrlMap[trackID]
-        //val mp3UrlToDownload = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-        // 우선 URL valid 한지 체크
+        val mp3UrlToDownload="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" // 16,15,14,12 링크 사용했음.
+    // 우선 URL valid 한지 체크
         val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlToDownload)
         if(!isUrlValid) {
             Log.d(TAG, "singleFileDNLD: DOWNLOAD ERROR. INVALID URL!")
             Toast.makeText(receivedActivity,"DOWNLOAD ERROR. INVALID URL!", Toast.LENGTH_LONG).show()
             return
         }
-
+    //Donwload Prep
         Log.d(TAG, "singleFileDNLD: %%%%%%%%%%% WE'll FINALLY DOWNLOAD THIS trId=$trackID %%%%%%%%%%%")
         Log.d(TAG, "singleFileDNLD: %%%%%%%%%%% WE'll FINALLY DOWNLOAD THIS URL= $mp3UrlToDownload %%%%%%%%%%%")
         val dnlRequest = DownloadManager.Request(Uri.parse(mp3UrlToDownload))
@@ -326,62 +257,62 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
         dnlRequest.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
         dnlRequest.setTitle("Download")
         dnlRequest.setDescription("Downloading Your Purchased Ringtone...")
-        dnlRequest.allowScanningByMediaScanner() // Starting in Q, this value is ignored. Files downloaded to directories owned
-        // by applications (e.g. Context.getExternalFilesDir(String)) will not be scanned by MediaScanner and the rest will be scanned.
-        //dnlRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_ONLY_COMPLETION) // 다운 완료되면 표시
-        dnlRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE) // 다운 중에만 표시
-        // 다운로드 경로 설정
-        // 1) File Explorer 등을 켰을때 Downloads 라고 뜨는 public directory 에 등록
-        //dnlRequest.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "${System.currentTimeMillis()}")
-        // 2) Main Storage 에 폴더를 생성 (ex.MyTest0413) 후 그곳에 파일 저장.
-//        dnlRequest.setDestinationInExternalPublicDir("/myTest0413", "${System.currentTimeMillis()}")
-        // 3) 내 app 의 Main Storage>android/data/com.xx.downloadtest1/files/안에 .AlarmRingTones라는 폴더를 만들고! 그 안에 file 저장! hidden 상태임!
-        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones",fileNametoSaveOnDisk)
+        dnlRequest.allowScanningByMediaScanner() // Starting in Q, this value is ignored. Files downloaded to directories owned by applications (e.g. Context.getExternalFilesDir(String)) will not be scanned by MediaScanner and the rest will be scanned.
 
+        dnlRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE) // 다운 중에만 표시 todo: NEXUS 5X API30 에뮬레이터에서 표시 안됨.
+        // 내 app 의 Main Storage>android/data/com.xx.downloadtest1/files/안에 .AlarmRingTones라는 폴더를 만들고! 그 안에 file 저장! hidden 상태임!
+        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones",fileNameToSaveOnDisk)
         //get download service, and enqueue file
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
         // 다운로드 & 완료 알림(BroadCast) 관련: 1)식별 id 생성 2)Broadcast 등록.
         val downloadID = dnlManager.enqueue(dnlRequest) // 이 코드는 두가지 역할을 함.
         //1) Enqueue a new download. The download will start automatically once the download manager is ready to execute it and connectivity is available.
         // 2)추후 다운로드 완료후-> broadcast 받을것이고-> 여기서 만든 id(LONG) 로 판독 예정!
 
-        // Download Progress 위해.
-        //downloadAttemptCount+=1 //추후 filesToDNLDCount 와 동일하게
-        //showDNLDProgress(downloadID,trackID)
+    // Download Progress -> ViewModel (LiveData) -> SecondFrag 로 전달됨.
         CoroutineScope(Dispatchers.IO).launch {
 
-            receivedActivity.runOnUiThread { //21.12.17 에 ruOnUiThread 만 추가.
-                openBtmShtSingleDNLD()
-            }
+//            receivedActivity.runOnUiThread { //21.12.17 에 ruOnUiThread 만 추가.
+//                openBtmShtSingleDNLD()
+//            }
 
             isSingleDNLDInProcess = true
 
-            val isStillDNLDING = getResultFromSingleDNLD(downloadID, trackID, fileNameAndFullPath) // (1) showDNLDCoroutine 시작->
+            // 아래 getResult..() 에서 다운로드 중일때는 계속 Loop 돌다가. 다운이 끝나면 False or Success Status (INT) 를 보냄.
+            val dnldResult = getResultFromSingleDNLD(downloadID, trackID, fileNameAndFullPath)
+            // 아래 getResult..() 여기서 whileLoop 안에 있으면서 ViewModel LiveData 로 콜백->SecondFrag->UI 업뎃.
             withContext(Dispatchers.Main) {
-                if(!isStillDNLDING) {
-                    Log.d(TAG, "^^^^^^^^^^^singleFileDNLD: INSIDE COROUTINE. isStillDNLDING=$isStillDNLDING")
-                    runOnUiThread {
-                        btmShtSingleDNLDInstance.animateLPI(100,1) //  그래프 만땅!
+                when(dnldResult) {
+                    DownloadManager.STATUS_FAILED -> {
+                        Log.d(TAG, "singleFileDNLD: Failed to Download -_- dnldResult=$dnldResult" )
+                        // livedata 로 fail 보내기.
                     }
-                    delay(1000)
-                    btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet() // 혹시 몰라서 또 넣어줬음. 이중장치.
-                    isSingleDNLDInProcess = false
+                    DownloadManager.STATUS_SUCCESSFUL -> {
+                        val currentTime= Calendar.getInstance().time
+                        Log.d(TAG, "singleFileDNLD: Download result success! dnldResult=$dnldResult, current Time=$currentTime ")
+                    }
                 }
+
+//                        btmShtSingleDNLDInstance.animateLPI(100,1) //  그래프 만땅!
+//                    delay(1000)
+//                    btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet() // 혹시 몰라서 또 넣어줬음. 이중장치.
+//                    isSingleDNLDInProcess = false
+
             }
         }
         Log.d(TAG, "singleFileDNLD: DLND ID= $downloadID, trackId=$trackID")
 
     }
 
-    private fun getResultFromSingleDNLD(dnldID: Long, trId: Int, filePathAndName: String):Boolean {
+    private fun getResultFromSingleDNLD(dnldID: Long, trId: Int, filePathAndName: String): Int  {
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
         var isStillDownloading = true
-        var animInitialBool = false // 시작하자마자 20~40 % 까지(random) 는 무조건 animation 실행.
+        var resultCode = -44 //Default 로 -44 고 다운 성공시(8) 실패시(16) 을 return
+        /*var animInitialBool = false // 시작하자마자 20~40 % 까지(random) 는 무조건 animation 실행.
         var animFortyNSixtyBool = false // progress 가 40~60 사이일 때 animation
         var animSixtyEightyBool = false // 60~80 구간
-        var animEightyOrHigher = false // 80 이상
+        var animEightyOrHigher = false // 80 이상*/
 
         while (isStillDownloading)
         {
@@ -389,93 +320,65 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
             query.setFilterById(dnldID)
             val cursor = dnlManager.query(query)
 
-            if(cursor.moveToFirst()){
-                val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
-                when(status) {
-                    DownloadManager.STATUS_PENDING -> {
-                        Log.d(TAG, "showDNLDProgress: STATUS PENDING / trkId=$trId")}
-                    DownloadManager.STATUS_PAUSED -> {
-                        //Log.d(TAG, "showDNLDProgress: STATUS PAUSED / trkId=$trId")
+            if(cursor.moveToFirst())
+            {
+
+                val bytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                val totalBytesToDNLD = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+                val myDownloadProgress = ((bytesDownloadedSoFar * 100L)/totalBytesToDNLD).toInt() // changed from *100 to *99
+
+                // 다운로드 성공으로 완료(.STATUS_SUCCESSFUL) 후 보고까지 시간차가 나는 경우가 종종 있음. 그래서 파일 사이즈 체크를 실행하여 btmSht 없애주도록 해봄.
+
+                // bytesWrittenOnPhone: 파일 사이즈 체크 (다운로드 중) 폰에 Write 되고 있는 실물 파일 사이즈 체크  (사실상 bytesDownloadedSoFar 과 일치해야함.)
+              //  val bytesWrittenOnPhone = File(filePathAndName) // 이거 다운 시작하자마자도 다운받아야할 전체 사이즈 뜨고 그래서 그냥 안 쓰기로..
+
+                if(myDownloadProgress > 99) { //todo: 간혹 다운 다 됐음에도 Status.Pause 에 한참 머무는 경우가 있어서. 미리 이걸로 체크. 다운 안됐는데 뜰수도 있음. Firebase 링크에서는 안될수도..
+                    //todo: Double Check! 다운 진짜 완료됐는지!!
+                    val currentTime= Calendar.getInstance().time
+                    Log.d(TAG, "getResultFromSingleDNLD: [다운로드 완료] @@@@@@myDownloadProgress=${myDownloadProgress}, time:$currentTime")
+                    isStillDownloading = false // 이제 While loop 에서 벗어나자!
+                    resultCode = DownloadManager.STATUS_SUCCESSFUL // 8
+                }
+
+                val statusInt = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) // Status.xx 가 더 있음. 더 연구해볼것..
+                when(statusInt) {
+
+                    DownloadManager.STATUS_PENDING -> { //1
+                        //Log.d(TAG, "getResultFromSingleDNLD: STATUS PENDING / trkId=$trId")
+                        dnldViewModel.updateDNLDStatusLive(1)
+                        // todo : dnldViewModel 로 RtWithAlbumARt 로 만들어서 보내기!!! 그리고 여기에 무조건 맞추기!!
+                        }
+                    DownloadManager.STATUS_RUNNING -> { //2
+                        dnldViewModel.updateDNLDStatusLive(2)
+                        dnldViewModel.updateDNLDProgressLive(myDownloadProgress)
+                        //Log.d(TAG, "getResultFromSingleDNLD: STATUS RUNNING, **bytesDownloadedSoFar=$bytesDownloadedSoFar, **totalBytesToDNLD=$totalBytesToDNLD / Progress= $myDownloadProgress,  trkId=$trId")
                     }
-                    DownloadManager.STATUS_RUNNING -> {
-                        // Log.d(TAG, "showDNLDProgress: STATUS RUNNING / trkId=$trId")
+                    DownloadManager.STATUS_PAUSED -> { // 4. RUNNING 으로 다운이 다 된 다음에도 PAUSED 에 한참 들어와있다가-> STATUS_SUCCESSFUL 로 이동.
+                        //Log.d(TAG, "getResultFromSingleDNLD: STATUS PAUSED, **bytesDownloadedSoFar=$bytesDownloadedSoFar, **totalBytesToDNLD=$totalBytesToDNLD  / trkId=$trId")
+                        dnldViewModel.updateDNLDStatusLive(4)
+                        dnldViewModel.updateDNLDProgressLive(myDownloadProgress)
                     }
-                    DownloadManager.STATUS_FAILED -> {
-                        Log.d(TAG, "showDNLDProgress: STATUS FAILED / trkId=$trId")
-                        Toast.makeText(receivedActivity,"Download Failed. Please check your internet connection.",
-                            Toast.LENGTH_LONG).show()
-                        btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet() // 아래 while loop 밖에도 있지만. 혹시 모르니 여기서도 btm Sheet 닫기 넣어줌.
-                        isSingleDNLDInProcess = false
+
+                    DownloadManager.STATUS_FAILED -> { //16
+                        Log.d(TAG, "getResultFromSingleDNLD: STATUS FAILED / trkId=$trId")
+                        Toast.makeText(receivedActivity,"Download Failed. Please check your internet connection.",Toast.LENGTH_LONG).show()
+//                        btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet() // 아래 while loop 밖에도 있지만. 혹시 모르니 여기서도 btm Sheet 닫기 넣어줌.
+                        resultCode = DownloadManager.STATUS_FAILED // 16
+                        dnldViewModel.updateDNLDStatusLive(16)
+                        isStillDownloading = false
                     }
-                    DownloadManager.STATUS_SUCCESSFUL -> {
-                        Log.d(TAG, "showDNLDProgress: STATUS SUCCESSFUL, TRK ID=$trId")
-                        //btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet() // 아래 while loop 밖에도 있지만. 혹시 모르니 여기서도 btm Sheet 닫기 넣어줌.
+                    DownloadManager.STATUS_SUCCESSFUL -> { //8.  ** 굉장한 Delay 가 있음. 실 다운로드가 끝나고도 10~15초 이상 걸린뒤 여기에 들어옴.
+                        Log.d(TAG, "getResultFromSingleDNLD: STATUS SUCCESSFUL, Progress= $myDownloadProgress, TRK ID=$trId")
+                        dnldViewModel.updateDNLDStatusLive(8)
+                        resultCode = DownloadManager.STATUS_SUCCESSFUL // 8
                         isStillDownloading = false
                     }
                 }
-                val bytesDownloaded = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
-                val bytesTotal = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
-                val myDownloadProgress = ((bytesDownloaded * 100L)/bytesTotal).toInt() // changed from *100 to *99
-
-                // 다운로드 완료 후 보고까지 시간차가 나는 경우가 종종 있음. 그래서 파일 사이즈 체크를 실행하여 btmSht 없애주도록 해봄.
-                //파일 사이즈 체크 // 나름 10 초 안팎으로 들어오는 듯. 나름 reliable .. receiver 와 함께 download complete 으로 인지해도 reliable 할지.. 모니터링 필요.
-                val fileSizeCheck = File(filePathAndName)
-                if(fileSizeCheck.length().toInt() == bytesTotal) { // 다운받은 파일크기 == 전체 파일 크기 <- 이건 다운 완료 후 10초내로 응답하는 듯..나름 reliable..?
-                    val currentTime= Calendar.getInstance().time
-                    Log.d(TAG, "getResultFromSingleDNLD: @@@@@@fileSizeCheck.length=${fileSizeCheck.length()}, time:$currentTime")
-                    isStillDownloading = false
-                }
-
-                runOnUiThread {
-                    //Log.d(TAG, "sumTotalDNLDSize: TRK ID=$trId, dnldID=$dnldID, bytes_soFar=$bytesDownloaded, bytes_total= $bytesTotal, progress:$myDownloadProgress")
-                    // 다운이 (최초로) STATUS_RUNNING 이 되면 animation 을 20~40 % 중 랜덤 value 로 올리는 animation 실행.
-                    if(!animInitialBool && status == DownloadManager.STATUS_RUNNING) { //status running = 2
-                        val randomPrgrsValue = (20..40).random() // 20~40 중 random value.
-                        Log.d(TAG, "getResultFromSingleDNLD: Line454 (animatLPI 부르기 직전! status= STATUS_RUNNING)")
-                        btmShtSingleDNLDInstance.animateLPI(randomPrgrsValue,5000) // 애니메이션이 차는 속도 5초.
-                        animInitialBool = true
-
-                        Log.d(TAG, "getResultFromSingleDNLD: initialAnimation! 'Actual Prgrs'=$myDownloadProgress, randomValue=$randomPrgrsValue, status=$status")
-                    }
-
-                    if(!animFortyNSixtyBool && myDownloadProgress > 40 && myDownloadProgress <60) { // 40~60 구간 animation
-                        if(btmShtSingleDNLDInstance.isAnimationRunning()) { // 그 전 혹은 현재의 animation 이 작동중이면..그냥 return
-                            //Log.d(TAG, "getResultFromDNLD: (40-60) Whatever the Animation Is Running Already!! Current Progress=$myDownloadProgress")
-                            return@runOnUiThread
-                        }
-                        val randomDuration = (2000L..5000L).random()
-                        btmShtSingleDNLDInstance.animateLPI(myDownloadProgress, randomDuration)
-                        animFortyNSixtyBool = true
-                        Log.d(TAG, "getResultFromSingleDNLD: animFortyNSixtyBool=$animFortyNSixtyBool, 'Actual Prgrs'=$myDownloadProgress, randomDur=$randomDuration")
-                    }
-                    if(!animSixtyEightyBool && myDownloadProgress >= 60 && myDownloadProgress <80) { // 40~60 구간 animation
-                        if(btmShtSingleDNLDInstance.isAnimationRunning()) {
-                            //Log.d(TAG, "getResultFromDNLD: (60-80) Whatever the Animation Is Running Already!! Current Progress=$myDownloadProgress")
-                            return@runOnUiThread
-                        }
-                        val randomDuration = (2000L..5000L).random()
-                        btmShtSingleDNLDInstance.animateLPI(myDownloadProgress, randomDuration)
-                        animSixtyEightyBool = true
-                        Log.d(TAG, "getResultFromSingleDNLD: animSixtyEightyBool=$animSixtyEightyBool, 'Actual Prgrs'=$myDownloadProgress, randomDur=$randomDuration")
-                    }
-                    if(!animEightyOrHigher && myDownloadProgress >= 80) { // 80 구간 animation
-                        if(btmShtSingleDNLDInstance.isAnimationRunning()) {
-                            //    Log.d(TAG, "getResultFromDNLD: (80-) Whatever the Animation Is Running Already!! Current Progress=$myDownloadProgress")
-                            return@runOnUiThread
-                        }
-                        val randomDuration = (3000L..6000L).random()
-                        btmShtSingleDNLDInstance.animateLPI(myDownloadProgress, randomDuration)
-                        animEightyOrHigher = true
-                        Log.d(TAG, "getResultFromSingleDNLD: animEightyOrHigherBool=$animEightyOrHigher, 'Actual Prgrs'=$myDownloadProgress, randomDur=$randomDuration")
-                    }
-
-                }
-
                 cursor.close()
             }
 
-        }
-        return isStillDownloading // downloading 이 끝나면 bool 값은 false 로 되어있음.
+        } // whileLoop  여기까지.
+        return resultCode // downloading 이 끝나면 bool 값은 false 로 되어있음.
     }
 
     //*********Bottom Sheets ***********

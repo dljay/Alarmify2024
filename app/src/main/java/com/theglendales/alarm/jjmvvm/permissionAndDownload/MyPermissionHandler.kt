@@ -1,8 +1,6 @@
 package com.theglendales.alarm.jjmvvm.permissionAndDownload
 
 import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
@@ -60,27 +58,24 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
 
         }
     }
+    fun permissionForSingleDNLD(receivedDownloadableItem: DownloadableItem) {
+        Log.d(TAG, "permissionForSingleDNLD: Downloadable Item =$receivedDownloadableItem")
 
-    //1-b> Permission to Write 신규 다운로드 or 앱 재설치시 기존에 '구매해놓은' RT 를 다운받아야될 때.)
-    fun permissionToWriteOnDNLD(receivedDownloadableList: MutableList<DownloadableItem>) { // called from: MyDownloader.kt>preDownloadPrep()
-        needToDownloadList = receivedDownloadableList
-        Log.d(TAG, "permissionToWriteOnDNLD: needToDownloadList.size = ${needToDownloadList.size}, contents=$needToDownloadList")
-
-        Log.d(TAG, "permissionToWriteOnDNLD: API higher >>>than 23. API LVL= ${Build.VERSION.SDK_INT}")
+        Log.d(TAG, "permissionForSingleDNLD: API higher >>>than 23. API LVL= ${Build.VERSION.SDK_INT}")
         if (ContextCompat.checkSelfPermission(receivedActivity.applicationContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
         { // 1) 권한 허용 안된 상태
             if (ActivityCompat.shouldShowRequestPermissionRationale(receivedActivity,android.Manifest.permission.WRITE_EXTERNAL_STORAGE))// 이전 거부한적있으면 should..()가 true 반환
             {// 1-a) 이전에 한번 거부한적이 있는경우 showBottomDialog() 함수를 실행
-                Log.d(TAG, "permissionToWriteOnDNLD: 1-a) 이전에 한번 거부한적이 있다.")
+                Log.d(TAG, "permissionForSingleDNLD: 1-a) 이전에 한번 거부한적이 있다.")
 
                 // bottomSheet 두번 뜨는것 방지위해 다음 코드를 넣었음!
 
                 val fm = myBtmShtObjInst.fragmentManager
                 if(fm==null) {
-                    Log.d(TAG, "permissionToWriteOnDNLD: fm is null==bottomSheet NOT(XX) displayed or prepared!!!!")
+                    Log.d(TAG, "permissionForSingleDNLD: fm is null==bottomSheet NOT(XX) displayed or prepared!!!!")
                 }
                 if(fm!=null) { // BottomSheet 이 display 된 상태.
-                    Log.d(TAG, "permissionToWriteOnDNLD: fm not null..something is(OO) displayed already")
+                    Log.d(TAG, "permissionForSingleDNLD: fm not null..something is(OO) displayed already")
                     val fragTransaction = fm.beginTransaction()
                     fm.executePendingTransactions()
                     //fm 에서의 onCreateView/Dialog() 작용은 Asynchronous 기 때문에. <-요기 executePending() 을 통해서 다 실행(?)한 후.에.야 밑에 .isAdded 에 걸림.
@@ -88,16 +83,61 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
 
                 if(!myBtmShtObjInst.isAdded) {//아무것도 display 안된 상태.
                     myBtmShtObjInst.showBtmPermDialog(receivedActivity)
-                    Log.d(TAG, "permissionToWriteOnDNLD: ***DISPLAY BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
+                    Log.d(TAG, "permissionForSingleDNLD: ***DISPLAY BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
                 }
 
             } else { // 1-b) 최초로 권한 요청!
                 //권한 요청
-                Log.d(TAG, "permissionToWriteOnDNLD: 1-b) 처음으로 권한 요청드립니다!!")
+                Log.d(TAG, "permissionForSingleDNLD: 1-b) 처음으로 권한 요청드립니다!!")
                 reqPermToWrite()
             }
         } else { // 2) 이미 권한 허용이 된 상태
-            Log.d(TAG, "permissionToWriteOnDNLD: 2) 이미 권한이 허용된 상태!")
+            Log.d(TAG, "permissionForSingleDNLD: 2) 이미 권한이 허용된 상태!")
+            /*myBtmShtObjInst.removePermBtmSheetAndResume()
+            val myDownloaderInstance = MyDownloader(receivedActivity) // todo: 이렇게하면 결국  MyDownloader() 를 두개 만들어주니..memory issue.
+                myDownloaderInstance.singleFileDNLD(receivedDownloadableItem)*/
+        }
+
+    }
+
+
+    //1-b> Permission to Write 신규 다운로드 or 앱 재설치시 기존에 '구매해놓은' RT 를 다운받아야될 때.)
+    fun permissionForMultipleDNLD(receivedDownloadableList: MutableList<DownloadableItem>) { // called from: MyDownloader.kt>preDownloadPrep()
+        needToDownloadList = receivedDownloadableList
+        Log.d(TAG, "permissionForMultipleDNLD: needToDownloadList.size = ${needToDownloadList.size}, contents=$needToDownloadList")
+
+        Log.d(TAG, "permissionForMultipleDNLD: API higher >>>than 23. API LVL= ${Build.VERSION.SDK_INT}")
+        if (ContextCompat.checkSelfPermission(receivedActivity.applicationContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED)
+        { // 1) 권한 허용 안된 상태
+            if (ActivityCompat.shouldShowRequestPermissionRationale(receivedActivity,android.Manifest.permission.WRITE_EXTERNAL_STORAGE))// 이전 거부한적있으면 should..()가 true 반환
+            {// 1-a) 이전에 한번 거부한적이 있는경우 showBottomDialog() 함수를 실행
+                Log.d(TAG, "permissionForMultipleDNLD: 1-a) 이전에 한번 거부한적이 있다.")
+
+                // bottomSheet 두번 뜨는것 방지위해 다음 코드를 넣었음!
+
+                val fm = myBtmShtObjInst.fragmentManager
+                if(fm==null) {
+                    Log.d(TAG, "permissionForMultipleDNLD: fm is null==bottomSheet NOT(XX) displayed or prepared!!!!")
+                }
+                if(fm!=null) { // BottomSheet 이 display 된 상태.
+                    Log.d(TAG, "permissionForMultipleDNLD: fm not null..something is(OO) displayed already")
+                    val fragTransaction = fm.beginTransaction()
+                    fm.executePendingTransactions()
+                    //fm 에서의 onCreateView/Dialog() 작용은 Asynchronous 기 때문에. <-요기 executePending() 을 통해서 다 실행(?)한 후.에.야 밑에 .isAdded 에 걸림.
+                }
+
+                if(!myBtmShtObjInst.isAdded) {//아무것도 display 안된 상태.
+                    myBtmShtObjInst.showBtmPermDialog(receivedActivity)
+                    Log.d(TAG, "permissionForMultipleDNLD: ***DISPLAY BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
+                }
+
+            } else { // 1-b) 최초로 권한 요청!
+                //권한 요청
+                Log.d(TAG, "permissionForMultipleDNLD: 1-b) 처음으로 권한 요청드립니다!!")
+                reqPermToWrite()
+            }
+        } else { // 2) 이미 권한 허용이 된 상태
+            Log.d(TAG, "permissionForMultipleDNLD: 2) 이미 권한이 허용된 상태!")
             myBtmShtObjInst.removePermBtmSheetAndResume()
             val myDownloaderInstance = MyDownloader(receivedActivity) // todo: 이렇게하면 결국  MyDownloader() 를 두개 만들어주니..memory issue.
 

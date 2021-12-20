@@ -2,6 +2,7 @@ package com.theglendales.alarm.jjongadd
 
 //import android.app.Fragment
 import android.annotation.SuppressLint
+import android.app.DownloadManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.Build
@@ -40,12 +41,14 @@ import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjFirebaseViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
-import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
+
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloader2
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelper2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
+import java.io.File
 
 //Coroutines
 
@@ -60,7 +63,7 @@ private const val TAG = "SecondFragment"
 class SecondFragment : androidx.fragment.app.Fragment() {
 
     //IAP
-    lateinit var iapInstance: MyIAPHelper
+    //lateinit var iapInstance: MyIAPHelper
     lateinit var iapInstance2: MyIAPHelper2
     //Downloader
     lateinit var myDownloader2: MyDownloader2
@@ -209,9 +212,24 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 })
             //2-C-가) DNLD:
             jjDNLDViewModel.dnldStatus.observe(viewLifecycleOwner, {
-                dnldStatus ->
-                Log.d(TAG, "onViewCreated: current DNLD Status is=$dnldStatus")
-                //todo: When 절
+                dnldStatusInt ->
+
+                Log.d(TAG, "onViewCreated: current DNLD Status is=$dnldStatusInt")
+                when(dnldStatusInt) {
+                    DownloadManager.STATUS_PENDING -> {
+
+                    }
+                    DownloadManager.STATUS_RUNNING -> {
+                    }
+                    DownloadManager.STATUS_PAUSED -> {
+                    }
+                    DownloadManager.STATUS_FAILED -> {
+                    }
+                    DownloadManager.STATUS_SUCCESSFUL-> {
+
+                    }
+
+            }
             })
             //2-C-나 DNLD:
             jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, {
@@ -368,8 +386,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG, "myOnItemClick: You probably clicked FREE or GET This")
                 Toast.makeText(this.context, "Clicked Purchase Button for ${viewAndTrId.trId}",Toast.LENGTH_SHORT).show()
                 // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
-                //iapInstance.myOnPurchaseClicked(viewAndTrId.trId)
-                iapInstance2.myOnPurchaseClicked(viewAndTrId.trId)
+
+                //iapInstance2.myOnPurchaseClicked(viewAndTrId.trId) // todo: 다운로드 테스트 후 복귀시켜놔야함. 원복
+                // 아무거나 다운로드 테스트
+                val testName="testFile"
+                val fileNameFullPath = requireActivity().getExternalFilesDir(null)!!
+                    .absolutePath + "/.AlarmRingTones" + File.separator + testName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
+                val testDownloadable = DownloadableItem(777,fileNameFullPath)
+                myDownloader2.singleFileDNLD(testDownloadable)
             }
 
         }
@@ -548,15 +572,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
 
                 // IAP
-                    /*iapInstance = MyIAPHelper(requireActivity(), rcvAdapterInstance, fullRtClassList) //공갈 Initialize
-                    iapInstance.refreshItemIdsAndMp3UrlMap() // 이후 -> initIAP() 쭉쭉..*/
+                    //iapInstance2.refreshItemIdsAndMp3UrlMap(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) ** todo: 원복
 
-                    iapInstance2.refreshItemIdsAndMp3UrlMap(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** 여기서 fullRtClassList 를 rcV 에 전달 **
                 // Update MediaPlayer.kt
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
                 // Update RcV's RT MAP
                     rcvAdapterInstance.updateRingToneMap(fullRtClassList) //updateRcV 와는 별개로 추후 ListFrag 갔다왔을 때 UI 업뎃을 위해 사용.
-
+                    rcvAdapterInstance.refreshRecyclerView(fullRtClassList)
 
 
                 // 아무 트랙도 클릭 안한 상태

@@ -76,12 +76,12 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                         for (p in queryPurchases)
                         {
                             val trackID = getKeyFromMap(itemIDsMap, p.sku) // p.sku = "productId" = p1, p2...
-                            //Log.d(TAG, "onBillingSetupFinished: index=$index")
+                            //val trackTitle = currentRtList.filter {  } currentRtList 통해서 받을수있지만 연산시간이 많이 걸리니 차라리 MAP 을 사용? MAP 을 안 썼음 좋겠는데..
+
                             //if purchase found. 구입 내역이 있는! item 만 나옴 (ex. 현재 21/06/4에는 rt1, rt2 만 여기에 해당됨..)
                             if (trackID > -1)
                             {
-//                                var myTestPurchJSonObj = JSONObject(p.originalJson) //MYTEST!! PurchaseState 확인 위해!
-//                                Log.d(TAG, "TESTING!!: $myTestPurchJSonObj ") //MYTEST!!
+
                                 purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
 
                                 // ********************************기존 구매건
@@ -141,6 +141,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     fun refreshItemIdsAndMp3UrlMap(newRtList: MutableList<RingtoneClass>) { // 새로 받은 ringToneList 로 itemIDsMap 을 수정/업뎃해줌. initIAP() 에서 호출됨.
         currentRtList.clear()
         currentRtList = newRtList
+
 
         Log.d(TAG, "A) refreshItemIdsMap: begins!")
         for (i in currentRtList.indices) {
@@ -441,17 +442,20 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         // 확장자 이름은 혹시 모르니 mp3 대신 rta (ring tone audio)로 변경!.
         val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
             .absolutePath + "/.AlarmRingTones" + File.separator + fileNameShort +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
-
         val downloadableItem = DownloadableItem(trId, fileNameAndFullPath)
-        if(singlePurchase) { // 단독 구매건. (sync 와 무관하고 app 에서 한개 샀을 때)
-            Log.d(TAG, "downloadHandlerBridge: SINGLE PURCHASE!!")
-            myDownloaderInstance.singleDownloadOrNot(downloadableItem, keepTheFile)
+
+        if(!keepTheFile && myDiskSearcher.checkDuplicatedFileOnDisk(downloadableItem.filePathAndName)) { 
+            // (잘못된 구매 사유 등으로) Keep 할 필요 없는 파일인데 디스크에 있을경우 삭제!
+            Log.d(TAG, "downloadHandlerBridge: !![WARNING] Deleting this File!!=${downloadableItem.filePathAndName}")
+                myDiskSearcher.deleteFromDisk(downloadableItem)
+        }
+        else if(singlePurchase && keepTheFile) { // 정상 단독 구매건 다운로드 (sync 와 무관하고 app 에서 한개 샀을 때)
+            Log.d(TAG, "downloadHandlerBridge: ***SINGLE PURCHASE!!")
+            myDownloaderInstance.singleFileDNLD(downloadableItem)
             return
-        } else if(!singlePurchase) {
-            myDownloaderInstance.multiDownloadOrNot(downloadableItem, keepTheFile) //todo: Move this shit.. 앱 최초 실행시 파일 정리.. 초기화.. (구매한 놈 있는지 확인.. 없어야될 놈 있으면 삭제 등..)
         }
 
-        Log.d(TAG, "downloadHandlerBridge: ########### myQryPurchListSize=${myQryPurchListSize},trackId= $trId, toDownloadItem=$downloadableItem")
+        //Log.d(TAG, "downloadHandlerBridge: ########### myQryPurchListSize=${myQryPurchListSize},trackId= $trId, toDownloadItem=$downloadableItem")
 
     }
 

@@ -392,10 +392,13 @@ class DiskSearcher(val context: Context)
         val trId=  downloadableItem.trackID
         val fileNameFull = downloadableItem.filePathAndName
         val fileToDelete = File(fileNameFull)
-
+        
+        
         if(fileToDelete.exists()) {
             fileToDelete.delete()
             Log.d(TAG, "deleteFromDisk: *****Deleting trId=$trId, fileToDelete=$fileToDelete")
+        } else if(!fileToDelete.exists()) {
+            Log.d(TAG, "deleteFromDisk: Such Filie doesn't exist on the drive. FileName= $fileToDelete")
         }
 
     }

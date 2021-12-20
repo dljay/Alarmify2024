@@ -11,8 +11,8 @@ import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 
-private const val TAG="JjViewModel"
-class JjViewModel : ViewModel() {
+private const val TAG="JjFirebaseViewModel"
+class JjFirebaseViewModel : ViewModel() {
     private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 아래 줄 대체!! 성공!
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
     var fullRtClassList: MutableList<RingtoneClass> = ArrayList()

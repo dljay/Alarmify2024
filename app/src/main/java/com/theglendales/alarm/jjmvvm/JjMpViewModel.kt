@@ -22,18 +22,18 @@ class JjMpViewModel: ViewModel() {
     private val _currentPosition = MutableLiveData<Long>()
     val currentPosition: LiveData<Long> = _currentPosition
 
-    // 1) StatusMP ENUM=> 아래는 MyMediaPlayer 에서 전달받음. 그 후 전달받은 Status 는 _mpStatus 로 옮겨지고 SecondFrag 의 jjMpViewModel 이 이것을 Observe 하고 있음
+    // 가) StatusMP ENUM=> 아래는 MyMediaPlayer 에서 전달받음. 그 후 전달받은 Status 는 _mpStatus 로 옮겨지고 SecondFrag 의 jjMpViewModel 이 이것을 Observe 하고 있음
     fun updateStatusMpLiveData(statusReceived: StatusMp) {
         Log.d(TAG, "updateStatusMpLiveData: called")
         _mpStatus.value = statusReceived
     }
-    //2-A) 재생할 곡 길이 업데이트 (exoPlayer.duration)
+    //나-A) 재생할 곡 길이 업데이트 (exoPlayer.duration)
     fun updateSongDuration(durationReceived: Long) {
         Log.d(TAG, "updateSongDuration: called")
         _songDuration.value = durationReceived
 
     }
-    //2-B) 재생중인 포지션 업데이트 (exoPlayer.currentPosition(Long))
+    //나-B) 재생중인 포지션 업데이트 (exoPlayer.currentPosition(Long))
     fun updateCurrentPosition(positionReceived: Long) {
         Log.d(TAG, "updatedCurrentPosition: positionReceived= $positionReceived")
         _currentPosition.value = positionReceived

@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
 
 private const val TAG="MyPermissionHandler"
 class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnRequestPermissionsResultCallback
@@ -138,9 +139,10 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
                 }
                 else if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED){
                     Log.d(TAG, "onRequestPermissionsResult: PERMISSION_DENIED (or BACKGROUND clicked.)")
+                    //todo: LiveData -> SecondFrag 로 "Permission Denied" 되었음 전달?
                     if(!myBtmShtObjInst.isAdded) {//아무것도 display 안된 상태.
                         Log.d(TAG, "permissionToWrite: ***DISPLAY 벤치휭~ BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
-                        myBtmShtObjInst.showBtmPermDialog(receivedActivity)
+                        myBtmShtObjInst.showBtmPermDialog(receivedActivity) //Settings & Cancel 갈 수 있는 BottomFrag
 
                     }
 

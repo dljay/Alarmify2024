@@ -1,29 +1,32 @@
-package com.theglendales.alarm.jjmvvm.iap
+package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 
 import android.app.Activity
 import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import com.android.billingclient.api.*
+import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.RingtoneClass
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
+import com.theglendales.alarm.jjmvvm.iap.Security
 
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyDownloader
+import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import java.io.File
 import java.io.IOException
 
-private const val TAG="MyIAPHelper"
-
-class MyIAPHelper(private val receivedActivity: Activity,
-                  private val rcvAdapterInstance: RcViewAdapter?,
-                  private val receivedRingtoneClassList: MutableList<RingtoneClass>) : PurchasesUpdatedListener
+private const val TAG="MyIAPHelper2"
+class MyIAPHelper2(private val receivedActivity: Activity,
+                   private val rcvAdapterInstance: RcViewAdapter?,
+                   private val myDownloaderInstance: MyDownloader2) :  PurchasesUpdatedListener
 {
+    var currentRtList: MutableList<RingtoneClass> = ArrayList()
+
     //Map containing IDs of Products (will replace 'purchaseItemIDsList')
     val itemIDsMap: HashMap<Int,String> = HashMap() // <trackID, productID> ex) <1,p1> <2,p2> ...
     val downloadUrlMap: HashMap<Int, String> = HashMap() // <trackID, mp3URL> ex) <1, http://xxx.xxx> ....
 
-    private val myDownloaderInstance = MyDownloader(receivedActivity) //여기서부터 Instance 체인.. MyIap->MyDownloader->PermHandler->MyBottomSheet.
+
+    private val myDiskSearcher: DiskSearcher by globalInject()
 
     // download 필요한 item 들 목록
 
@@ -40,7 +43,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
 
     private var billingClient: BillingClient? = null
 
-    //## <B> A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.updateRcView!
+    //## <B> A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.refreshRcView()!
     private fun initIAP() // Check which items are in purchase list and which are not in purchase list -> 끝나면 rcView 를 update 해야함..
     {
         Log.d(TAG, "B) initIAP: init starts")
@@ -109,11 +112,11 @@ class MyIAPHelper(private val receivedActivity: Activity,
                                 .absolutePath + "/.AlarmRingTones" + File.separator + fileNameShort +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
 
                             //todo: 다음을 구매 안한 상품들에 대해서 매번 해줘야 한다는 것= too CPU expensive..
-                            if(myDownloaderInstance.checkDuplicatedFileOnDisk(fileNameAndFullPath)) { // 혹시나..구매한적도 없는데 만약 디스크에 있으면
+                            if(myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) { // 혹시나..구매한적도 없는데 만약 디스크에 있으면
                                 // 디스크에서 삭제
                                 Log.d(TAG, "onBillingSetupFinished: $fileNameShort 는(은) 산 놈도 아닌데 하드에 있음. 지워야함!! ")
                                 val downloadableItem = DownloadableItem(k, fileNameAndFullPath)
-                                myDownloaderInstance.deleteFromDisk(downloadableItem) // DiskSearcher 로 대체
+                                myDiskSearcher.deleteFromDisk(downloadableItem)
                             }
 
                         }}
@@ -134,16 +137,19 @@ class MyIAPHelper(private val receivedActivity: Activity,
         })
         Log.d(TAG, "initIAP: finished..")
     }
-    //## <A> A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.updateRcView!
-    fun refreshItemIdsAndMp3UrlMap() { // 새로 받은 ringToneList 로 itemIDsMap 을 수정/업뎃해줌. initIAP() 에서 호출됨.
+    //## <A> A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.refreshRcView()!
+    fun refreshItemIdsAndMp3UrlMap(newRtList: MutableList<RingtoneClass>) { // 새로 받은 ringToneList 로 itemIDsMap 을 수정/업뎃해줌. initIAP() 에서 호출됨.
+        currentRtList.clear()
+        currentRtList = newRtList
+
         Log.d(TAG, "A) refreshItemIdsMap: begins!")
-        for (i in receivedRingtoneClassList.indices) {
-            itemIDsMap[receivedRingtoneClassList[i].id] = receivedRingtoneClassList[i].iapName //ex) itemIDsMap[1=trackID] = p1 // [id, iapName]
-            downloadUrlMap[receivedRingtoneClassList[i].id] = receivedRingtoneClassList[i].mp3URL //ex) itemIDsMap[1=trackID] = p1
+        for (i in currentRtList.indices) {
+            itemIDsMap[currentRtList[i].id] = currentRtList[i].iapName //ex) itemIDsMap[1=trackID] = p1
+            downloadUrlMap[currentRtList[i].id] = currentRtList[i].mp3URL //ex) itemIDsMap[1=trackID] = http://www.xxxxx
         }
         initIAP()
     }
-    //##<D>  A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.updateRcView!
+    //##<D>  A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.refreshRcView()!
     private fun refreshPurchaseStatsMap() { //Refresh PurchaseStatsMap from the result of refreshItemIdsMap()
 
         Log.d(TAG, "D) refreshPurchaseStatsMap: begins!")
@@ -159,7 +165,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
     private fun checkPurchasedItemOnDisk(trackId: Int) { // 산놈이면 확실히 다운로드. 안샀거나 취소했으면 반드시 삭제!
 
     }
-    //##<E>  A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() ==> (finally..) rcvAdapter.updateRcView!
+    //##<E>  A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() ==> (finally..) rcvAdapter.refreshRcView()!
     private fun refreshItemsPriceMap() {
         Log.d(TAG, "refreshItemsPriceMap: called")
         val itemNameList = ArrayList<String>()
@@ -182,12 +188,12 @@ class MyIAPHelper(private val receivedActivity: Activity,
                         // logd 결과 예시: a) item title=p1 b)item price= ₩1,000, c)item sku= p1
                     }
                 }
-                rcvAdapterInstance!!.refreshRecyclerView(receivedRingtoneClassList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
+                rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
             }
         } else {
             Log.d(TAG, "E) refreshItemsPriceMap: itemIdsMap is null or empty..")
             Toast.makeText(receivedActivity, "Error Loading Billing Info: Error stage <E>", Toast.LENGTH_SHORT).show()
-            rcvAdapterInstance!!.refreshRecyclerView(receivedRingtoneClassList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
+            rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
         }
 
     }
@@ -209,7 +215,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
             itemIDsMap[trackID]?.let { initiatePurchase(it) } // 계속 이렇게 wrap.. 왜냐면 String? 형태니깐.
 
         } else {
-            billingClient = BillingClient.newBuilder(receivedActivity).enablePendingPurchases().setListener(this@MyIAPHelper).build()
+            billingClient = BillingClient.newBuilder(receivedActivity).enablePendingPurchases().setListener(this@MyIAPHelper2).build()
             billingClient!!.startConnection(object : BillingClientStateListener {
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -353,6 +359,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
                                 // ############################## 신규 구매건
                                 refreshPurchaseStatsMap() // onBindView 에서 여기에 의존!
                                 rcvAdapterInstance!!.notifyDataSetChanged()
+                                // 왜냐면 단순히 refreshRecyclerView(list) 방식으로는 (차이가 없으므로) (구매여부 ImageView) UI 업뎃 안된다.
                             }
                         }
                     }
@@ -417,7 +424,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
             // To get key go to Developer Console > Select your app > Development Tools > Services & APIs.
             //for new play console
             //To get key go to Developer Console > Select your app > Monetize > Monetization setup
-                //todo: Get a new key!
+            //todo: Get a new key!
             val base64Key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjxP65hcVxu3nM/XR89EoZzEwK1itdhPcTOT+itC6Guf5omQLHe3A4cDLlTSjZqoNMy3jzNK7mSiPG8NRTa6waHaaHx3fxatR4Or8KeS8WzFNQsKbFz2OCt3kTRQ5lUuoIvyjj+VjEv9XwyPrFRb8Lxq47KqHnjiJyeBcXznLXD//4YOsTaTp2dBxuLXjJQEzkp4EPgvhNh6BE+bX+SvXRPc3x3dghqAUtdaoM3C77QgCnRc94nYnWyXyQqqX2PvEX3KNKM//nQbKtJbNUB/NpKlzodiY3WdFMVNS3ySw9S9irikhDv7jOQ1OnI+dzKMLCeQIRTxqFHB2RxkqpzOHtQIDAQAB"
 
             Security.verifyPurchase(base64Key, signedData, signature)
@@ -430,7 +437,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
     // 이전 (신규) 구매건에 대해서 처리-> single/multiDownloadOrNot() 에서 file 디스크에 있는지 체크 및 download 할지 여부를 정함.
     private fun downloadHandlerBridge(trId: Int, keepTheFile: Boolean,singlePurchase: Boolean) {
         //Log.d(TAG, "downloadHandlerBridge: <<<MyDownloader.Kt 로 임무 전달!!> trackId= $trId")
-        val fileNameShort = itemIDsMap[trId] // Map 에서 "p1," "p2" 등 productId 를 return
+        val fileNameShort = itemIDsMap[trId] // p1, p2 등 productId 를 return
         // 확장자 이름은 혹시 모르니 mp3 대신 rta (ring tone audio)로 변경!.
         val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
             .absolutePath + "/.AlarmRingTones" + File.separator + fileNameShort +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
@@ -438,10 +445,10 @@ class MyIAPHelper(private val receivedActivity: Activity,
         val downloadableItem = DownloadableItem(trId, fileNameAndFullPath)
         if(singlePurchase) { // 단독 구매건. (sync 와 무관하고 app 에서 한개 샀을 때)
             Log.d(TAG, "downloadHandlerBridge: SINGLE PURCHASE!!")
-            myDownloaderInstance.singleDownloadOrNot(downloadableItem, keepTheFile) //todo: LiveData 로 대체
+            myDownloaderInstance.singleDownloadOrNot(downloadableItem, keepTheFile)
             return
         } else if(!singlePurchase) {
-            myDownloaderInstance.multiDownloadOrNot(downloadableItem, keepTheFile) // todo: LiveData 로 대체. 앱 최초 실행시 파일 정리.. 초기화.. (구매한 놈 있는지 확인.. 없어야될 놈 있으면 삭제 등..)
+            myDownloaderInstance.multiDownloadOrNot(downloadableItem, keepTheFile) //todo: Move this shit.. 앱 최초 실행시 파일 정리.. 초기화.. (구매한 놈 있는지 확인.. 없어야될 놈 있으면 삭제 등..)
         }
 
         Log.d(TAG, "downloadHandlerBridge: ########### myQryPurchListSize=${myQryPurchListSize},trackId= $trId, toDownloadItem=$downloadableItem")

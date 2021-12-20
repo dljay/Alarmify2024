@@ -1,4 +1,4 @@
-package com.theglendales.alarm.jjmvvm.permissionAndDownload
+package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 
 import android.app.Activity
 import android.app.DownloadManager
@@ -8,27 +8,33 @@ import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
+import com.theglendales.alarm.configuration.globalInject
+import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
 import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_SingleDNLD
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_Sync
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
+import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
-//todo: 불량/끊긴 다운로드인지도 체크 필요.?
+private const val TAG="MyDownloader2"
 
-private const val TAG="MyDownloader"
 
-/*data class DownloadableItem(val trackID: Int=0, val filePathAndName:String="") {
+enum class StatusDNLD { PENDING, PAUSED, RUNNING, FAILED, SUCCESSFUL} // BUFFERING: activateLC(),
+
+data class DownloadableItem(val trackID: Int=0, val filePathAndName:String="") {
     override fun toString(): String
     {
         return "DownloadItemClass: trackId=$trackID, fileName=$filePathAndName"
     }
-}*/
+}
 
-class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity() {
+
+class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: JjDNLDViewModel) : AppCompatActivity() {
 
     companion object {
         var isSyncInProcess: Boolean = false // onResume()/onPause() 등에서 현재도 다운중인지 확인 위해 사용.
@@ -44,10 +50,9 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
     private var receivedTrackId: Int = -10
     private var fileNameGlbVar =""
 
+    private val myDiskSearcher: DiskSearcher by globalInject()
     val permHandler = MyPermissionHandler(receivedActivity)
     val btmShtMultiObj = BtmSht_Sync
-
-
 
 
     private val listToBeJudged= mutableListOf<DownloadableItem>()
@@ -63,7 +68,7 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
         //B) 근데 구매건수(myQueryPurchases.size) 에는 포함되어 있지만 (어떤 이유로) "불량 구매"여서 디스크에서 삭제되어야 하는 경우. 삭제 실행.
         if(!keepTheFile) {
             Log.d(TAG, "MultiDownloadOrNot: XX trackId=${downloadableItem.trackID} (는)  구매한적이 없거나(어떤 연유로 불량 구매). 디스크에 있으면 삭제..")
-            deleteFromDisk(downloadableItem)
+            myDiskSearcher.deleteFromDisk(downloadableItem)
         }
         //C) 계속 진행되다 여기서 전달받은 갯수가 드디어 myQryPurchListSize 와 같으면 (=queryPurchases.size) 다운받을지 말지 심판 시작!
         //C-1) 최초 실행시 Sync 작업: 기존 구매내역 확인 후 파일 다운받을지 말지 정하기.
@@ -77,11 +82,11 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
                 val filePath =  listToBeJudged[i].filePathAndName
                 val fileName = File(filePath).name
 
-                if(checkDuplicatedFileOnDisk(filePath)) { // 파일이 이미 디스크에 있는 상태
+                if(myDiskSearcher.checkDuplicatedFileOnDisk(filePath)) { // 파일이 이미 디스크에 있는 상태
                     //ultimateListToPass.remove(downloadableItem) // true if the element has been successfully removed; false if it was not present in the collection.
                     Log.d(TAG, "MultiDownloadOrNot: [i]=$i, listToBeJudged.size=${listToBeJudged.size} // OO: $fileName 가(이) 이미 디스크에 있어서 다운 필요 없음. 경로: '$filePath")
                 }
-                else if(!checkDuplicatedFileOnDisk(filePath)) {
+                else if(!myDiskSearcher.checkDuplicatedFileOnDisk(filePath)) {
 
                     finalList.add(listToBeJudged[i])
                     Log.d(TAG, "MultiDownloadOrNot: @@ finalList.size=${finalList.size} // @@ XX: $fileName (은) 디스크에 없어서 다음 파일을 다운받아야함=$filePath")
@@ -105,17 +110,17 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
 
         if(!keepTheFile) {
             Log.d(TAG, "SingleDownloadOrNot: XX trackId=${downloadableItem.trackID} (는)  구매한적이 없거나(어떤 연유로 불량 구매). 디스크에 있으면 삭제..")
-            deleteFromDisk(downloadableItem)
+            myDiskSearcher.deleteFromDisk(downloadableItem)
             // todo : add return?
         }
         val finalList = mutableListOf<DownloadableItem>()
         val filePath =  downloadableItem.filePathAndName
         val fileName = File(filePath).name
 
-        if(checkDuplicatedFileOnDisk(filePath)) { // 파일이 이미 디스크에 있는 상태
+        if(myDiskSearcher.checkDuplicatedFileOnDisk(filePath)) { // 파일이 이미 디스크에 있는 상태
             Log.d(TAG, "SingleDownloadOrNot:  $fileName 가(이) 이미 디스크에 있어서 다운 필요 없음 XX. 경로: '$filePath")
         }
-        else if(!checkDuplicatedFileOnDisk(filePath)) {
+        else if(!myDiskSearcher.checkDuplicatedFileOnDisk(filePath)) {
             finalList.add(downloadableItem)
             Log.d(TAG, "SingleDownloadOrNot:  $fileName (은) 디스크에 없어서 다음 파일을 다운받아야함 OO filepath=$filePath")
         }
@@ -125,39 +130,9 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
     }
 
     // <1-b> MyIapHelper.kt 에서 호출!로 시작-> Delete!
-    fun deleteFromDisk(downloadableItem: DownloadableItem) {
-        val trId=  downloadableItem.trackID
-        val fileNameFull = downloadableItem.filePathAndName
-        val fileToDelete = File(fileNameFull)
 
-        if(fileToDelete.exists()) {
-            fileToDelete.delete()
-            Log.d(TAG, "deleteFromDisk: *****Deleting trId=$trId, fileToDelete=$fileToDelete")
-        }
-
-    }
 
     // <2>
-    fun checkDuplicatedFileOnDisk (filePathAndName: String): Boolean { //다운로드 받기 전 이미 Disk 에 File 이 있는지 체크.
-        //val destPath : String= receivedActivitiy.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones"
-        //Toast.makeText(this,"${destPath.toString()}",Toast.LENGTH_LONG).show()
-        //Log.d(TAG, "checkDuplicatedFileOnDisk: begins!!")
-
-        val fileToCheck = File(filePathAndName)
-        return if(fileToCheck.isFile) { //true if and only if the file denoted by this abstract pathname exists and is a normal file; false otherwise
-
-            Log.d(TAG, "checkDuplicatedFileOnDisk: \"File ${fileToCheck.name} exists\"")
-            //Toast.makeText(receivedActivity,"File ${fileToCheck.name} exists", Toast.LENGTH_LONG).show()
-            // todo: 파일은 있지만 혹시나 불량 파일인지도 확인? (중간에 다운로드 끊기는 등)
-            true
-        }else{
-            Log.d(TAG, "checkDuplicatedFileOnDisk: \"File ${fileToCheck.name} DOES NOT!!XX exist!!\"")
-            //Toast.makeText(receivedActivity,"File ${fileToCheck.name} does not exist!!", Toast.LENGTH_SHORT).show()
-            false
-
-        }
-    }
-
     //********MULTIPLE File Dnld ---------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     class DownloadInfoContainer(val dnldID: Long=0, val trkId: Int=0, val fileNameAndPath: String ="")
 

@@ -64,9 +64,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.03a [다운로드 Fragment 수술전]
+// v3.07.03b [다운로드 Fragment 수술전-MyDownloader2 생성 및 LiveData 로 교체]
 
 // issue
+// 궁극적으로는 Fragment 처리 관련 모두 SecondFrag <-> JjDNLDViewModel <-> MyDownloader 얘네가 알아서 해야 함..
 //- Single 다운로드에서 fragment 띄우는것으로 자꾸 crash. List/DetailFrag 에서 다른 dialogFrag 등 띄울 때 어떻게했는지 참고해보기.
 
 //todos

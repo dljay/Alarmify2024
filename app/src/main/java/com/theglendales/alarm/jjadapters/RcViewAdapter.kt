@@ -23,6 +23,7 @@ import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelper2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 //import com.theglendales.alarm.jjiap.MyIAPHelper
 import io.gresse.hugo.vumeterlibrary.VuMeterView
@@ -75,7 +76,7 @@ class RcViewAdapter(
 
 
         Log.d(TAG, "onBindViewHolder: holder TrId= ${holder.holderTrId}, currentTrIapName= $currentTrIapName")
-        Log.d(TAG, "onBindViewHolder: Purchased Stats Map=${MyIAPHelper.purchaseStatsMap[currentTrId]} ")
+        Log.d(TAG, "onBindViewHolder: Purchased Stats Map=${MyIAPHelper2.purchaseStatsMap[currentTrId]} ")
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " +
 //                "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
@@ -93,10 +94,10 @@ class RcViewAdapter(
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
 
         //IAP 관련
-        holder.tv3_Price.text = MyIAPHelper.itemPricesMap[currentTrIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
+        holder.tv3_Price.text = MyIAPHelper2.itemPricesMap[currentTrIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
 
         //Purchase Stat True or False
-        when(MyIAPHelper.purchaseStatsMap[currentTrId]) {
+        when(MyIAPHelper2.purchaseStatsMap[currentTrId]) {
             true -> {// Show "Purchased" icon
                 holder.iv_PurchasedTrue.visibility = View.VISIBLE
                 holder.iv_PurchasedFalse.visibility = View.GONE
@@ -217,13 +218,13 @@ class RcViewAdapter(
         return currentRtList.size
     }
 
-    fun updateRecyclerView(newList: MutableList<RingtoneClass>) {
-        //Log.d(TAG, "updateRecyclerView: @@@@@@@@ currentRtList.size (BEFORE): ${currentRtList.size}")
+    fun refreshRecyclerView(newList: MutableList<RingtoneClass>) {
+        //Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (BEFORE): ${currentRtList.size}")
         val oldList = currentRtList
 
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(MyDiffCallbackClass(oldList, newList))
         currentRtList = newList
-        Log.d(TAG, "updateRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${currentRtList.size}")
+        Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${currentRtList.size}")
         //updateRingToneMap(receivedList)//이건 내가 추가
         diffResult.dispatchUpdatesTo(this)
         //enableHighlightOnTrId(GlbVars.clickedTrId)

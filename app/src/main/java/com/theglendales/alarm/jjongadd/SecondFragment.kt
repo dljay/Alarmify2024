@@ -34,12 +34,15 @@ import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
+import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
-import com.theglendales.alarm.jjmvvm.JjViewModel
+import com.theglendales.alarm.jjmvvm.JjFirebaseViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloader2
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelper2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
@@ -58,6 +61,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     //IAP
     lateinit var iapInstance: MyIAPHelper
+    lateinit var iapInstance2: MyIAPHelper2
+    //Downloader
+    lateinit var myDownloader2: MyDownloader2
 
 
     //SharedPreference 저장 관련 (Koin  으로 대체!) ==> 일단 사용 안함.
@@ -114,7 +120,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     //Firebase 관련
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
-    lateinit var jjFirebaseVModel: JjViewModel
+    lateinit var jjFirebaseVModel: JjFirebaseViewModel
     var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
 
     // Basic overridden functions -- >
@@ -145,12 +151,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
         layoutManager = LinearLayoutManager(context)
         rcView.layoutManager = layoutManager
+
+
     //  LIVEDATA ->
-        //1) ViewModel 2종 생성(RcvVModel/MediaPlayerVModel)
+        //1) ViewModel 3종 생성(RcvVModel/MediaPlayerVModel)
             //1-A)  *** JjRcvViewModel 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
             val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
             //1-B) jjMpViewModel 생성
             val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
+            //1-C) jjMyDownloaderViewModel 생성
+            val jjDNLDViewModel = ViewModelProvider(requireActivity()).get(JjDNLDViewModel::class.java)
+            //1-D) jjFirebaseVModel Init
+            jjFirebaseVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)
 
         //2) LiveData Observe
             //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달. [!! 기존 클릭해놓은 트랙이 있으면 ListFrag 갔다왔을때 자동으로 그전 track 값을 (fb 로딩전에) 호출하는 문제있음!!] -> isEverythingReady 로 해결함.
@@ -164,7 +176,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //**SHARED PREF 저장용 **
                 //playInfo.trackID = viewAndTrIdClassInstance.trId
             })
-            //2-B) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
+            //2-B-가) MP: MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
                 Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
                 // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
@@ -180,14 +192,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //playInfo.songStatusMp = StatusEnum
                 })
 
-            //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+            //2-B-나) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.songDuration.observe(viewLifecycleOwner, { dur ->
                 Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
                 seekBar.max = dur.toInt()
                 // c) **GlbVar 저장용 **
                 //GlbVars.seekBarMax = dur.toInt()
             })
-            //2-D) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+            //2-B-다) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.currentPosition.observe(viewLifecycleOwner, { playbackPos ->
                 //Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
                     seekBar.progress = playbackPos.toInt() +200
@@ -195,13 +207,29 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //GlbVars.seekbarProgress = playbackPos.toInt() +200
                 //GlbVars.playbackPos = playbackPos
                 })
+            //2-C-가) DNLD:
+            jjDNLDViewModel.dnldStatus.observe(viewLifecycleOwner, {
+                dnldStatus ->
+                Log.d(TAG, "onViewCreated: current DNLD Status is=$dnldStatus")
+                //todo: When 절
+            })
+            //2-C-나 DNLD:
+            jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, {
+                    dnldPrgrs ->
+                Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
+                //todo:
+            })
         //3) Firebase ViewModel Initialize
-        jjFirebaseVModel = ViewModelProvider(requireActivity()).get(JjViewModel::class.java)
 
 
-        //4) RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
+        //4) IAP ViewModel
+
+
+        //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
+            myDownloader2 = activity?.let {MyDownloader2(it,jjDNLDViewModel)}!!
+            iapInstance2 = MyIAPHelper2(requireActivity(), rcvAdapterInstance, myDownloader2)
 
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance
@@ -252,11 +280,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "onPause: GlbVars 정보: CurrentTrId=${GlbVars.clickedTrId}")
 
         //2) 최종적으로 선택해놓은 트랙 아이디
-
-
         //3) 다시 돌아왔을 때 Slide 의 upperUi 에서 빨간색 앨범커버가 보였다 다른 앨범으로 교체되는 현상을 막기 위해.
-
-
 
         //3) 그리고 나서 save current play data to SharedPref using gson.
         //mySharedPrefManager.savePlayInfo(playInfo)
@@ -304,10 +328,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
 
     private fun myOnLiveDataFromRCV(viewAndTrId: ViewAndTrIdClass) {
-
-
         val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
-
         val ivInside_Rc = viewAndTrId.view.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
         Log.d(TAG, "myOnLiveDataReceived: called. .. 1)ivInside_Rc=$ivInside_Rc, 2)rtClassFromtheList= $ringtoneClassFromtheList")
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
@@ -347,7 +368,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG, "myOnItemClick: You probably clicked FREE or GET This")
                 Toast.makeText(this.context, "Clicked Purchase Button for ${viewAndTrId.trId}",Toast.LENGTH_SHORT).show()
                 // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
-                iapInstance.myOnPurchaseClicked(viewAndTrId.trId)
+                //iapInstance.myOnPurchaseClicked(viewAndTrId.trId)
+                iapInstance2.myOnPurchaseClicked(viewAndTrId.trId)
             }
 
         }
@@ -364,10 +386,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     ConnectivityManager.NetworkCallback() {
                     override fun onAvailable(network: Network) {
                         //Connection is gained.
-                        Log.d(
-                            TAG,
-                            "onAvailable: Internet available: OOOOOOOOOOOOOOOOOOOOO "
-                        ) //최초 앱 실행시에도 (인터넷이 되니깐) 여기 log 가 작동됨.
+                        Log.d(TAG,"onAvailable: Internet available: OOOOOOOOOOOOOOOOOOOOO ") //최초 앱 실행시에도 (인터넷이 되니깐) 여기 log 가 작동됨.
 
                         Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() } // MainThread 에서만 실행해야함. 이거 없으면 크래쉬! (Cannot invoke observe on a backgroudn thread)
                         // 참고: Normally observe(..) and observeForever(..) should be called from the main thread because their
@@ -445,7 +464,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
              if (it.isSuccessful) {
 
                  tagOnlyRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
-                 rcvAdapterInstance.updateRecyclerView(tagOnlyRtClassList)
+                 rcvAdapterInstance.refreshRecyclerView(tagOnlyRtClassList)
 
                  //Log.d(TAG, "sendRequestToFbRepo: Success. Showing items including 'A.N.Y' of the tags: $tagsList")
                  Log.d(TAG, "sendRequestToFbRepo: tagOnlyRtClassList.size=${tagOnlyRtClassList.size}, 내용: $tagOnlyRtClassList")
@@ -457,7 +476,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     }
     private fun backToFullRtList() {
-        rcvAdapterInstance.updateRecyclerView(fullRtClassList)
+        rcvAdapterInstance.refreshRecyclerView(fullRtClassList)
         mySmoothScroll()
 
     }
@@ -516,8 +535,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
 
 
-                     //IAP related: Initialize IAP and send instance <- 이게 시간이 젤 오래걸리는듯.
-
 
 
                     // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
@@ -531,13 +548,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
 
                 // IAP
-                    iapInstance = MyIAPHelper(requireActivity(), rcvAdapterInstance, fullRtClassList) //공갈 Initialize
-                    iapInstance.refreshItemIdsAndMp3UrlMap()
+                    /*iapInstance = MyIAPHelper(requireActivity(), rcvAdapterInstance, fullRtClassList) //공갈 Initialize
+                    iapInstance.refreshItemIdsAndMp3UrlMap() // 이후 -> initIAP() 쭉쭉..*/
+
+                    iapInstance2.refreshItemIdsAndMp3UrlMap(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** 여기서 fullRtClassList 를 rcV 에 전달 **
                 // Update MediaPlayer.kt
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
-                // Update Recycler View
-                    //updateResultOnRcView(fullRtClassList)
-                    rcvAdapterInstance.updateRingToneMap(fullRtClassList)
+                // Update RcV's RT MAP
+                    rcvAdapterInstance.updateRingToneMap(fullRtClassList) //updateRcV 와는 별개로 추후 ListFrag 갔다왔을 때 UI 업뎃을 위해 사용.
+
 
 
                 // 아무 트랙도 클릭 안한 상태
@@ -557,19 +576,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                          //4) Update RcV UI! (VuMeter 등)
                         reConstructTrUisOnReturn(GlbVars.clickedTrId)
                     }
-                    //  mySharedPrefManager.getPlayInfo() 사용했을 때 (사용 안 함)
-//                    val prevPlayInfo = mySharedPrefManager.getPlayInfo()
-//                    // A) 재생중인 트랙이 있었음
-//                    if(prevPlayInfo.trackID >0) {
-//                        // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
-//                        mySmoothScroll()
-//                        // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.
-//                        val prevSelectedVHolder = RcViewAdapter.viewHolderMap[prevPlayInfo.trackID]
-//                        // 3) Fill in the previous selected track info to MINIPlayer!!!
-//                        reConstructSLPanelTextOnReturn(prevSelectedVHolder, prevPlayInfo.trackID)
-//                        // 4) Update RcV UI! (VuMeter 등)
-//                        reConstructTrUisOnReturn(prevPlayInfo)
-//                    }
                 } else { // 에러났을 때
                     lottieAnimController(1)
                     Toast.makeText(

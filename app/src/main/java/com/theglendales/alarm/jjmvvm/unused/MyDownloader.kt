@@ -1,4 +1,4 @@
-package com.theglendales.alarm.jjmvvm.permissionAndDownload
+package com.theglendales.alarm.jjmvvm.unused
 
 import android.app.Activity
 import android.app.DownloadManager
@@ -8,9 +8,10 @@ import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
+
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.*

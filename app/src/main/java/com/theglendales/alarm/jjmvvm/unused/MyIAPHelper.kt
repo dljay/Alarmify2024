@@ -1,4 +1,4 @@
-package com.theglendales.alarm.jjmvvm.iap
+package com.theglendales.alarm.jjmvvm.unused
 
 import android.app.Activity
 import android.content.SharedPreferences
@@ -8,8 +8,9 @@ import com.android.billingclient.api.*
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.Security
 
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyDownloader
+
 import java.io.File
 import java.io.IOException
 

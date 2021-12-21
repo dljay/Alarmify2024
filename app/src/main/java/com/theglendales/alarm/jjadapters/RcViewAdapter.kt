@@ -22,7 +22,7 @@ import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
-import com.theglendales.alarm.jjmvvm.iap.MyIAPHelper
+
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelper2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 //import com.theglendales.alarm.jjiap.MyIAPHelper

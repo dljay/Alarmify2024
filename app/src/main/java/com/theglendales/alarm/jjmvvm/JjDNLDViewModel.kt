@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.StatusDNLD
+
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 
 private const val TAG="JjDNLDViewModel"

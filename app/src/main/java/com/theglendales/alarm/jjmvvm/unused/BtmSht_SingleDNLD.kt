@@ -1,4 +1,4 @@
-package com.theglendales.alarm.jjmvvm.permissionAndDownload
+package com.theglendales.alarm.jjmvvm.unused
 
 import android.animation.ObjectAnimator
 import android.app.Activity

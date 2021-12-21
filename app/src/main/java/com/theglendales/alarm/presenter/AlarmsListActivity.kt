@@ -46,8 +46,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_Sync
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyDownloader
+
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import io.reactivex.annotations.NonNull
@@ -285,7 +284,12 @@ class AlarmsListActivity : AppCompatActivity() {
             // we don't write return true in the lambda function, it will always return the last line of that function
         }
     // 추가: Permission 검사 (App 최초 설치시 반드시 거치며, no 했을때는 벤치휭~ BtmSheet 계속 뜬다. yes 하면 그다음부터는 안 뜸.)
-        myPermHandler.permissionToWriteOnInitialLaunch()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 Write, DOWNLOAD 에 특별한 Permission 필요 없는듯?
+            Log.d(TAG, "onCreate: Permission Check. Build Ver=${Build.VERSION.SDK_INT}")
+
+            myPermHandler.permissionToWriteOnInitialLaunch() //
+        }
+
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->

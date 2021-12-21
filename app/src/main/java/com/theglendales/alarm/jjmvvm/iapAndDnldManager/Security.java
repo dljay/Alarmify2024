@@ -1,4 +1,4 @@
-package com.theglendales.alarm.jjmvvm.iap;
+package com.theglendales.alarm.jjmvvm.iapAndDnldManager;
 
 import android.text.TextUtils;
 import android.util.Base64;

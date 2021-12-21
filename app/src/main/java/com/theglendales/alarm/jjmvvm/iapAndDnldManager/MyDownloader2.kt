@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
@@ -11,9 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_SingleDNLD
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSht_Sync
+
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
+import com.theglendales.alarm.jjmvvm.unused.BtmSht_SingleDNLD
+import com.theglendales.alarm.jjmvvm.unused.BtmSht_Sync
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 import kotlinx.coroutines.*
@@ -24,7 +26,7 @@ import kotlin.collections.ArrayList
 private const val TAG="MyDownloader2"
 
 
-enum class StatusDNLD { IDLE, PENDING, PAUSED, RUNNING, FAILED, SUCCESSFUL} // BUFFERING: activateLC(),
+
 
 data class DownloadableItem(val trackID: Int=0, val filePathAndName:String="") {
     override fun toString(): String
@@ -234,8 +236,11 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
     fun singleFileDNLD(itemToDownload: DownloadableItem) {
         Log.d(TAG, "singleFileDNLD: Begins. ItemToDownload=$itemToDownload")
     // 일단 Permission Check
-        permHandler.permissionForSingleDNLD(itemToDownload)
-    // todo: Permission 이 문제 없는지..
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 DONWLOAD 에 특별한 Permission 필요 없음.
+//            permHandler.permissionForSingleDNLD(itemToDownload) // 필요없는듯. 에러도 안남.. API25 에서 잘됨.
+//        }
+
+
         val fileNameAndFullPath = itemToDownload.filePathAndName
         val trackID = itemToDownload.trackID
         val fileName = File(fileNameAndFullPath).name
@@ -279,9 +284,6 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
     // Download Progress -> ViewModel (LiveData) -> SecondFrag 로 전달됨.
         CoroutineScope(Dispatchers.IO).launch {
-
-
-
             isSingleDNLDInProcess = true
 
             // 아래 getResult..() 에서 다운로드 중일때는 계속 Loop 돌다가. 다운이 끝나면 False or Success Status (INT) 를 보냄.

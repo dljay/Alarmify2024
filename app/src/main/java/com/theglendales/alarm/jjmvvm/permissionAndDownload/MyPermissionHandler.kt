@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
+import com.theglendales.alarm.jjmvvm.unused.MyDownloader
 
 private const val TAG="MyPermissionHandler"
 class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnRequestPermissionsResultCallback

@@ -140,7 +140,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
         Log.d(TAG, "A) refreshItemIdsMap: begins!")
         for (i in receivedRingtoneClassList.indices) {
             itemIDsMap[receivedRingtoneClassList[i].id] = receivedRingtoneClassList[i].iapName //ex) itemIDsMap[1=trackID] = p1 // [id, iapName]
-            downloadUrlMap[receivedRingtoneClassList[i].id] = receivedRingtoneClassList[i].mp3URL //ex) itemIDsMap[1=trackID] = p1
+            //downloadUrlMap[receivedRingtoneClassList[i].id] = receivedRingtoneClassList[i].mp3URL //ex) itemIDsMap[1=trackID] = p1
         }
         initIAP()
     }

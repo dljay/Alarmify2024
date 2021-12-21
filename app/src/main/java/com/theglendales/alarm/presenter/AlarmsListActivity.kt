@@ -63,21 +63,18 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.03e [다운로드 Fragment 수술전-MyDownloader2 생성 및 LiveData 로 교체]
+// v3.07.04a [IAP 원복 전. MyIAP 의 Companion Obj - MAP 제거 전]
+//
+//1> SecondFrag 에서 IAP 를 다시 "원복" 시키기 -> IAP로 SingleDNLD 잘되는지 테스트.
+//- 가장 큰 관건은 MyIAP2 -> MyDownloader2 로 DNLD() 전달할 떄 "RtWithAlbumArt" 로 전달하기.
+//-> 모든 MAP 없애고 -> RtWithAlbuMArt 에 .isPurchased(boo), price(Float) 등 항목 추가. 최초값은 병신였다가 -> MyIAPHelper 에서 채워주고 ->
+//rcvAdapter 로 전달 -> rcvAdapter 는 이제 static map 쓸 필요없이 List 하나로 조질수 있다.
+//=> MyDownloader2 에서 LiveData 보낼때도 RtWithAlbumart 로 제목과, trid 등 보내주잖아..
+//
+//2> 이후 Multi DNLD 진행 : AlarmList Activity 런칭-> iap 를 SharedPref 로 확인 -> Multiple DNLD 진행
+//3> myiaphelper1 외 지워주기..
+//
 
-// issue
-//...
-//0) 동일한 방식으로 statusInt 값이 변했을때만 업뎃..
-//// 다운로드 후 -> ListFrag 갔다-> SecondFrag 다시 오면 linearPrgs lateinit 초기화 안된 문제 (LiveData 가 호출하니깐!!)
-//=> onDestroy() 에서 ViewModel 강제로 Clear!
-//
-//1) Download- DialogFragment 에서 RtWithAlbumArt Object 로 정보 전달 및 UI 구현.
-//- 다운로드 과정이 NEXUS 5X API 30 에서 안 보이는 문제.
-//- 우선 IAP 과정에서 곡 제목도 같이 받아야함. -> DownloadableItem 수정이 불가피.
-//- MyIAPHelper2.kt> refreshItemIdsAndMp3UrlMap() > currentRtList 로도 Title 받을 수 있음. MAP 최대한 없애고 List 활용?
-//- 그냥 RingtoneClass 로 조져볼순 없었을까?  왜 죄다 MAP  을 썼지... rcView 땜에 그랬네. 왜냐하면 price 는 우리가 db 에 저장할수 없었으니께..
-//
-//2) Permission 한줄로 써도 괜찮을지 확인.
 //
 //3) 이거 다 끝남녀 secondFrag Line 390, 575 복귀 ("원복") 으로 검색 -> IAP 다시 설정..휴.
 //https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3

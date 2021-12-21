@@ -21,8 +21,8 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     var currentRtList: MutableList<RingtoneClass> = ArrayList()
 
     //Map containing IDs of Products (will replace 'purchaseItemIDsList')
-    val itemIDsMap: HashMap<Int,String> = HashMap() // <trackID, productID> ex) <1,p1> <2,p2> ...
-    val downloadUrlMap: HashMap<Int, String> = HashMap() // <trackID, mp3URL> ex) <1, http://xxx.xxx> ....
+    val itemIDsMap: HashMap<Int,String> = HashMap() // <trackID, productID> ex) <1,p1> <2,p2> ... productID = 결국엔 rtList 의 .iapName 과 같음.
+    private val downloadUrlMap: HashMap<Int, String> = HashMap() // <trackID, mp3URL> ex) <1, http://xxx.xxx> ....
 
 
     private val myDiskSearcher: DiskSearcher by globalInject()
@@ -74,8 +74,11 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                         //check item in purchase list. 구매 상태인 물품에 대해서! status check! 한번 더 확인. 문제없으면 true 로..
                         for (p in queryPurchases)
                         {
-                            val trackID = getKeyFromMap(itemIDsMap, p.sku) // p.sku = "productId" = p1, p2...
-                            //val trackTitle = currentRtList.filter {  } currentRtList 통해서 받을수있지만 연산시간이 많이 걸리니 차라리 MAP 을 사용? MAP 을 안 썼음 좋겠는데..
+                            val trackID = getKeyFromMap(itemIDsMap, p.sku) // p.sku = "productId" = p1, p2... => 한마디로 p.sku = rtList.iapName ..//수술가능(O) getTrIdFromRtList(p.sku)
+                            //val trackTitle = currentRtList.single {  } currentRtList 통해서 받을수있지만 연산시간이 많이 걸리니 차라리 MAP 을 사용? MAP 을 안 썼음 좋겠는데..
+                            //
+                            //수술가능(O) currentRtList.single { rtObj -> rtObj.iapName == p.sku } // .single: Returns the single element matching predicate, or throws exception No or More than..
+                            // ex) list.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.iapName == p.sku}.
 
                             //if purchase found. 구입 내역이 있는! item 만 나옴 (ex. 현재 21/06/4에는 rt1, rt2 만 여기에 해당됨..)
                             if (trackID > -1)
@@ -100,12 +103,13 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                             }
                         }
                         //C-2) (기존) 구매안된 물품들(굉장히 다수겠지..)에 대해서는 SharedPref 에 false 로 표시!. //items that are not found in purchase list mark false
-                        //indexOf returns -1 when item is not in foundlist
-                        itemIDsMap.forEach { (k,v) -> if(purchaseFound.indexOf(k) == -1) { // itemIDsMap 에서 "구매한목록(purchaseFound)" 에 없는 놈들은 다 false 로!
-                            savePurchaseItemBoolValueToPref(v, false)
-                            Log.d(TAG, "C-2) ₥₥₥ onBillingSetupFinished: trackId=$k 물품(상품 이름은=$v)은 purchaseFound 에 없음! 고로 false 로 SharedPref 에 저장됨! ")
+                        //indexOf returns -1 when item is not in foundlist. 리스트에 없으면 -1 반환.
+                        // 수술가능(O) currentRtList.forEach { if(purchaseFound.indexOf(currentRtList[i].trID)  { savePurchaseItemBoolValueToPref(currnetRtList[i].iapName, false)
+                        itemIDsMap.forEach { (trId,iapName) -> if(purchaseFound.indexOf(trId) == -1) { // itemIDsMap 에서 "구매한목록(purchaseFound)" 에 없는 놈들은 다 false 로!
+                            savePurchaseItemBoolValueToPref(iapName, false)
+                            Log.d(TAG, "C-2) ₥₥₥ onBillingSetupFinished: trackId=$trId 물품(상품 이름은=$iapName)은 purchaseFound 에 없음! 고로 false 로 SharedPref 에 저장됨! ")
 
-                            val fileNameShort = itemIDsMap[k] // p1, p2 등 productId 를 return
+                            val fileNameShort = itemIDsMap[trId] // p1, p2 등 productId 를 return
                             // 확장자 이름은 혹시 모르니 mp3 대신 rta (ring tone audio)로 변경!.
                             val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
                                 .absolutePath + "/.AlarmRingTones" + File.separator + fileNameShort +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
@@ -114,7 +118,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                             if(myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) { // 혹시나..구매한적도 없는데 만약 디스크에 있으면
                                 // 디스크에서 삭제
                                 Log.d(TAG, "onBillingSetupFinished: $fileNameShort 는(은) 산 놈도 아닌데 하드에 있음. 지워야함!! ")
-                                val downloadableItem = DownloadableItem(k, fileNameAndFullPath)
+                                val downloadableItem = DownloadableItem(trId, fileNameAndFullPath)
                                 myDiskSearcher.deleteFromDisk(downloadableItem)
                             }
 
@@ -123,6 +127,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                     }
                     // C-3) 애당초 구매건이 하나도 없으면. 모두 false!
                     else {
+                        // 수술가능(O) currentRtList.forEach { {..... savePurchaseItemBoolValueToPref(currnetRtList[i].iapName, false)
                         itemIDsMap.forEach { (_,v) -> savePurchaseItemBoolValueToPref(v, false)} // MAP iteration.
                         Log.d(TAG, "C-3) ☺ onBillingSetupFinished:  The User has never ever 산적이 없으면 일로 오는듯! (queryPurchase.size 가 0 이란 뜻..?)")
                     }
@@ -145,7 +150,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         Log.d(TAG, "A) refreshItemIdsMap: begins!")
         for (i in currentRtList.indices) {
             itemIDsMap[currentRtList[i].id] = currentRtList[i].iapName //ex) itemIDsMap[1=trackID] = p1
-            downloadUrlMap[currentRtList[i].id] = currentRtList[i].mp3URL //ex) itemIDsMap[1=trackID] = http://www.xxxxx
+            //downloadUrlMap[currentRtList[i].id] = currentRtList[i].mp3URL //ex) itemIDsMap[1=trackID] = http://www.xxxxx <-- todo: 이거 안 쓰이는듯. 지워도 괜춘..?
         }
         initIAP()
     }
@@ -155,6 +160,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         Log.d(TAG, "D) refreshPurchaseStatsMap: begins!")
         for (product in itemIDsMap) { //product = pair = <TrackId,iapName> = <1,p1>
             purchaseStatsMap[product.key] = getPurchaseItemBoolValueFromPref(product.value) // ex) purchaseStatsMap[track id 1번] = true 구매되었을 경우.
+            // 수술가능(O) : for (i in currentRtList.indices) { currentRtList[i].isPurchased = getPurch...Pref(currentRtList[i].iapName}
             //Log.d(TAG, "D) refreshPurchaseStatsMap: purchase stat of trackId: ${product.key} = ${getPurchaseItemBoolValueFromPref(product.value)}  ")
 
             // 어차피 Fire 베이스 refresh 될 때 위에서 download/delete 실행해줄테니 여기서 굳이 체크할 필요 없음. fun checkPurchasedItemOnDisk(trackid) ..

@@ -216,12 +216,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //GlbVars.seekbarProgress = playbackPos.toInt() +200
                 //GlbVars.playbackPos = playbackPos
                 })
-        //DNLD ViewMODEL Observe
+        //DNLD ViewMODEL Observe //한번 btmSht_SingleDnld Frag 를 보여준뒤-> ListFrag -> SecondFrag 복귀 했을 때 아래 LiveData 가 후루루룩 다 불리는 문제 => onDestroy() 에서 강제 VModel Clear 해줬음!
+
             //2-C-가) DNLD: RtWithAlbumArt Obj 받기 (UI 갱신: DNLD Dialogue 열어주기)
             jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {rtWithAlbumArtObj ->
                 Log.d(TAG, "onViewCreated: trId= ${rtWithAlbumArtObj.trIdStr}, received rtObj = $rtWithAlbumArtObj")
                 // Show BtmSht_SingleDNLD Frag
-                btmSht_SingleDnld.show(requireActivity().supportFragmentManager, btmSht_SingleDnld.tag)
+                btmSht_SingleDnld.show(requireActivity().supportFragmentManager, btmSht_SingleDnld.tag) // <-- listFrag 갔다 복귀했을 때 다시 DNLDFrag 열어주는 문제때문에 없앰.
+                //todo: viewmodel 에 getCurrentRtObj() 만들고 -> 다운로드중인 RT 제목 + 그래픽 보여주기?
+                
             })
 
             //2-C-나) DNLD: Status Observe. (UI 갱신: 종료[성공 or Fail])
@@ -229,7 +232,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                 Log.d(TAG, "onViewCreated: current DNLD Status is=$dnldStatusInt")
                 when(dnldStatusInt) {
-                    DownloadManager.STATUS_PENDING -> {}//1
+                    DownloadManager.STATUS_PENDING -> {} //1
                     DownloadManager.STATUS_RUNNING -> {}//2
                     DownloadManager.STATUS_PAUSED -> {}//4
                     DownloadManager.STATUS_FAILED -> {//16
@@ -242,7 +245,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         Log.d(TAG, "onViewCreated: Observer: DNLD SUCCESS (O)  ")
                         // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
                         btmSht_SingleDnld.animateLPI(100,1) //  그래프 만땅!
-
                         btmSht_SingleDnld.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
                     }
                     else -> {btmSht_SingleDnld.removeBtmSheetAfterOneSec()
@@ -326,6 +328,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: 2nd Frag!")
          mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
+         requireActivity().viewModelStore.clear()// ListFrag 로 갈때는 그냥 ViewModel Clear 해줌 -> 다시 복귀했을 때 생쑈 없애기 위해..
 
     }
 

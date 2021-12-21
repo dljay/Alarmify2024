@@ -64,9 +64,14 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.03c [다운로드 Fragment 수술전-MyDownloader2 생성 및 LiveData 로 교체]
+// v3.07.03e [다운로드 Fragment 수술전-MyDownloader2 생성 및 LiveData 로 교체]
 
-// 0) BtmSht_SingleDNLD2 구현. 보이는데까지 성공..
+// issue
+//...
+//0) 동일한 방식으로 statusInt 값이 변했을때만 업뎃..
+//// 다운로드 후 -> ListFrag 갔다-> SecondFrag 다시 오면 linearPrgs lateinit 초기화 안된 문제 (LiveData 가 호출하니깐!!)
+//=> onDestroy() 에서 ViewModel 강제로 Clear!
+//
 //1) Download- DialogFragment 에서 RtWithAlbumArt Object 로 정보 전달 및 UI 구현.
 //- 다운로드 과정이 NEXUS 5X API 30 에서 안 보이는 문제.
 //- 우선 IAP 과정에서 곡 제목도 같이 받아야함. -> DownloadableItem 수정이 불가피.
@@ -78,11 +83,7 @@ import java.util.Calendar
 //3) 이거 다 끝남녀 secondFrag Line 390, 575 복귀 ("원복") 으로 검색 -> IAP 다시 설정..휴.
 //https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3
 //4) MyIapHelper1 지워주기.
-//...
-
-// issue
-// 궁극적으로는 Fragment 처리 관련 모두 SecondFrag <-> JjDNLDViewModel <-> MyDownloader 얘네가 알아서 해야 함..
-//- Single 다운로드에서 fragment 띄우는것으로 자꾸 crash. List/DetailFrag 에서 다른 dialogFrag 등 띄울 때 어떻게했는지 참고해보기.
+//5) 현재 MyDownloader2 에서 DNLD_prgrs 로 쓰는 값을 Firebase 에서 적용했을때도 문제 없을지 확인 필요! (total 값을 못 받았던걸로 기억..)
 
 //todos
 //- myIAP <-> RCV 라이브데이터로 한번 조져보기?. MAP 을 너무 사용함..상호 의존 (SecondFrag <-> MyIap MAP <-> MediaPlayer MAP<->RCV MAP 의존도 줄이기)

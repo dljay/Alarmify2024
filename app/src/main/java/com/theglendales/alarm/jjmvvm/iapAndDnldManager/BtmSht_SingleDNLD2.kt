@@ -27,36 +27,50 @@ class BtmSht_SingleDNLD2 : BottomSheetDialogFragment() {
     lateinit var objAnim: ObjectAnimator
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
-        Log.d(TAG, "onCreateView: BtmSht_Single_DNLD2_Called")
+        Log.d(TAG, "onCreateView: BtmSht_Single_DNLD2_Called!")
         val v: View = inflater.inflate(R.layout.bottom_sheet_single_download, container, false) // 우리가 만든 Bottom Sheet xml 파일.
-
-
         return v
         //return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.d(TAG, "onViewCreated: called!")
+    // 이 Btm Frag 에 대한 설정
+        this.apply {
+            setStyle(STYLE_NORMAL, R.style.BottomSheetDialogStyle)
+            isCancelable = false // 배경 클릭 금지.
+        }
     // always initialize other view here!! onCreateView 에서는 'v' 가 proper 하게 init 되지 않아서 뻑나는 경우가 있음
         linearPrgsIndicator = view.findViewById(R.id.id_dnld_linearPrgsBar)
-        //linearPrgsIndicator.progress = 0 // 다음 다운로드를 위해 Prgrs 를 '0' 으로 초기화.
+        linearPrgsIndicator.progress = 0 // 다음 다운로드를 위해 Prgrs 를 '0' 으로 초기화.
         objAnim = ObjectAnimator.ofInt(linearPrgsIndicator,"progress", 0) // 최초 progress 는 0으로 초기화.
+
+
     }
 // Show & Remove -->
     override fun show(manager: FragmentManager, tag: String?) {
         //super.show(manager, tag)
-        val ft = manager.beginTransaction()
-        ft.add(this, tag)
-        ft.commitAllowingStateLoss()
+        if(isAdded) {
+            Log.d(TAG, "show: Already showing BtmSheetFrag. return!")
+            return
+        } else {
+            Log.d(TAG, "show: Show BtmSheetFrag now. There's (presumably) nothing showing. ")
+            val ft = manager.beginTransaction()
+            ft.add(this, tag)
+            ft.commitAllowingStateLoss()
+        }
+        
     }
     fun removeBtmSheetAfterOneSec() {
-        Log.d(TAG, "remove: called!")
+        Log.d(TAG, "removeBtmSheetAfterOneSec: called!")
         this.apply {
             if(isAdded) { //1) BottomSheet 이 화면에 보이거나 존재하는 상태?. (isAdded=true) if the fragment is currently added to its activity.
-                Log.d(TAG, "remove: Dismiss BOTTOM Sheet- 없앨놈 있음! ^^ (OO)")
+                Log.d(TAG, "removeBtmSheetAfterOneSec: Dismiss BOTTOM Sheet- 없앨놈 있음! ^^ (OO)")
 
                 Handler(Looper.getMainLooper()).postDelayed(
-                    {// This method will be executed once the timer is over
+                    {// This method will be executed once the 다운로드 is over
+                        if(!this::linearPrgsIndicator.isInitialized) { linearPrgsIndicator.progress = 0 } // prgrsBar 0 값으로. 혹시 몰라서 init 확인 if 문에 넣어놨음.
                         isCancelable = true
                         dismiss() // close.. settings 에서 permission 을 주고 app 을 다시 열었을 때 bottom Sheet (Fragment) 자체가 없으므로 여기서 에러남!! 그래서 if(isAdded) 추가했음!
                     },
@@ -72,6 +86,11 @@ class BtmSht_SingleDNLD2 : BottomSheetDialogFragment() {
 // Animation
     fun animateLPI(progressReceived: Int, durationMs: Long) { // LPI = Linear Progress Indicator
         Log.d(TAG, "animateLPI: called!")
+    // 우선 objAnim 이나, linearPrgsIndicator 가 Init 이 안됐으면 바로 종료
+        if(!this::linearPrgsIndicator.isInitialized||!this::objAnim.isInitialized) {
+        Log.d(TAG, "prepAnim: linearPrgsBar or ObjAnim not initialized yet. return!")
+        return
+        }
         objAnim = ObjectAnimator.ofInt(linearPrgsIndicator,"progress",progressReceived). apply {
             setAutoCancel(true)
             duration = durationMs
@@ -83,8 +102,14 @@ class BtmSht_SingleDNLD2 : BottomSheetDialogFragment() {
         return objAnim.isRunning 
     }
     fun prepAnim(prgrsReceived: Int) {
+        // 우선 objAnim 이나, linearPrgsIndicator 가 Init 이 안됐으면 바로 종료
+        if(!this::linearPrgsIndicator.isInitialized||!this::objAnim.isInitialized) {
+            Log.d(TAG, "prepAnim: linearPrgsBar or ObjAnim not initialized yet. return!")
+            return
+
+        }
         if(isAnimationRunning()) {
-            Log.d(TAG, "prepAnim: Animation is already running! No more action is needed!")
+            Log.d(TAG, "prepAnim: Animation is already running!")
             return
         }
         Log.d(TAG, "prepAnim: PrgrsReceived=$prgrsReceived ")

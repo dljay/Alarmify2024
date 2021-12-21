@@ -249,7 +249,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
     //download URL // todo: URL 변경
 
-        val mp3UrlToDownload="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3" // 16,15,14,12 링크 사용했음.
+        val mp3UrlToDownload="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" // 16,15,14,12,11 링크 사용했음.
     // 우선 URL valid 한지 체크
         val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlToDownload)
         if(!isUrlValid) {
@@ -286,7 +286,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
             // 아래 getResult..() 에서 다운로드 중일때는 계속 Loop 돌다가. 다운이 끝나면 False or Success Status (INT) 를 보냄.
             val dnldResult = getResultFromSingleDNLD(downloadID, dnldAsRtObj)
-            // 아래 getResult..() 여기서 whileLoop 안에 있으면서 ViewModel LiveData 로 콜백->SecondFrag->UI 업뎃.
+            // 아래 getResult..() 여기서 다 LiveData->SecondFrag 로 콜백해주지만. 혹시 몰라서 넣어놓음.
             withContext(Dispatchers.Main) {
                 when(dnldResult) {
                     DownloadManager.STATUS_FAILED -> {
@@ -299,12 +299,6 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                         dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_SUCCESSFUL)
                     }
                 }
-
-//                        btmShtSingleDNLDInstance.animateLPI(100,1) //  그래프 만땅!
-//                    delay(1000)
-//                    btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet() // 혹시 몰라서 또 넣어줬음. 이중장치.
-//                    isSingleDNLDInProcess = false
-
             }
         }
         Log.d(TAG, "singleFileDNLD: DLND ID= $downloadID, trackId=$trackID")
@@ -373,9 +367,10 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                     dnldViewModel.updateDNLDStatusLive(statusInt)
                 }
 
+
                 when(statusInt) {
 
-                    DownloadManager.STATUS_PENDING -> {} //1
+                    DownloadManager.STATUS_PENDING -> {} //1, 참고로 이거 제끼고 바로 running 으로 가는 경우도 많음.
                     DownloadManager.STATUS_RUNNING -> {} //2
                     DownloadManager.STATUS_PAUSED -> {} // 4. RUNNING 으로 다운이 다 된 다음에도 PAUSED 에 한참 들어와있다가-> STATUS_SUCCESSFUL 로 이동.
                     DownloadManager.STATUS_FAILED -> { //16

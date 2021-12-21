@@ -21,8 +21,6 @@ class BtmSht_SingleDNLD : BottomSheetDialogFragment() {
     lateinit var linearPrgsIndicator : LinearProgressIndicator
     lateinit var objAnim: ObjectAnimator
 
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
         Log.d(TAG, "onCreateView: BottomSheet_Single Download! ")

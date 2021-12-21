@@ -68,7 +68,7 @@ class BtmSht_SingleDNLD : BottomSheetDialogFragment() {
 
         }
     }
-    //Linear Progress Indicator(aka the new ProgressBar) Animation Related
+//Linear Progress Indicator(aka the new ProgressBar) Animation Related
     fun animateLPI(progressReceived: Int, durationMs: Long) { // LPI = Linear Progress Indicator
         Log.d(TAG, "animateLPI: called!")
         objAnim = ObjectAnimator.ofInt(linearPrgsIndicator,"progress",progressReceived)
@@ -76,6 +76,7 @@ class BtmSht_SingleDNLD : BottomSheetDialogFragment() {
         objAnim.duration = durationMs
         objAnim.start()
     }
+
     fun isAnimationRunning(): Boolean = objAnim.isRunning
 
 

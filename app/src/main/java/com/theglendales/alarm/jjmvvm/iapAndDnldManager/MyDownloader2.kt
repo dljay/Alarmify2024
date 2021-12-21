@@ -291,11 +291,12 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                 when(dnldResult) {
                     DownloadManager.STATUS_FAILED -> {
                         Log.d(TAG, "singleFileDNLD: Failed to Download -_- dnldResult=$dnldResult" )
-                        // livedata 로 fail 보내기.
+                        dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_FAILED)
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> {
                         val currentTime= Calendar.getInstance().time
                         Log.d(TAG, "singleFileDNLD: Download result success! dnldResult=$dnldResult, current Time=$currentTime ")
+                        dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_SUCCESSFUL)
                     }
                 }
 
@@ -319,7 +320,8 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
         var animFortyNSixtyBool = false // progress 가 40~60 사이일 때 animation
         var animSixtyEightyBool = false // 60~80 구간
         var animEightyOrHigher = false // 80 이상*/
-        var prevPrgrsValue: Int = -1
+        var prevPrgrsValue: Int = -77 // progress 가 변했을때만 ViewModel 에 전달!
+        var prevStatusValue = -77 // Status 가 변했을때만 ViewModel 에 전달!
 
 //        var myDownloadProgress: Int = 0
 
@@ -343,13 +345,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                     Log.d(TAG, "getResultFromSingleDNLD: (After) prevValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
 
                     dnldViewModel.updateDNLDProgressLive(prevPrgrsValue)
-
                 }
-
-
-
-
-
 
 
                 // 다운로드 성공으로 완료(.STATUS_SUCCESSFUL) 후 보고까지 시간차가 나는 경우가 종종 있음. 그래서 파일 사이즈 체크를 실행하여 btmSht 없애주도록 해봄.
@@ -357,46 +353,45 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                 // bytesWrittenOnPhone: 파일 사이즈 체크 (다운로드 중) 폰에 Write 되고 있는 실물 파일 사이즈 체크  (사실상 bytesDownloadedSoFar 과 일치해야함.)
               //  val bytesWrittenOnPhone = File(filePathAndName) // 이거 다운 시작하자마자도 다운받아야할 전체 사이즈 뜨고 그래서 그냥 안 쓰기로..
 
-                if(myDownloadProgress > 99) { //todo: 간혹 다운 다 됐음에도 Status.Pause 에 한참 머무는 경우가 있어서. 미리 이걸로 체크. 다운 안됐는데 뜰수도 있음. Firebase 링크에서는 안될수도..
+                if(myDownloadProgress >= 98) { //todo: 간혹 다운 다 됐음에도 Status.Pause 에 한참 머무는 경우가 있어서. 미리 이걸로 체크. 다운 안됐는데 뜰수도 있음. Firebase 링크에서는 안될수도..
                     //todo: Double Check! 다운 진짜 완료됐는지!! 디스크에 있는 파일사이즈 체크. 이거 예전에 넣어놓은 이유가 다 있겠징.
                     val currentTime= Calendar.getInstance().time
                     Log.d(TAG, "getResultFromSingleDNLD: [다운로드 완료] @@@@@@myDownloadProgress=${myDownloadProgress}, time:$currentTime")
                     isStillDownloading = false // 이제 While loop 에서 벗어나자!
                     resultCode = DownloadManager.STATUS_SUCCESSFUL // 8
+                    dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_SUCCESSFUL)
+                    break // escape from While Loop!
                 }
 
                 val statusInt = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) // Status.xx 가 더 있음. 더 연구해볼것..
+            // Status 가 변했을때만 ViewModel 에 전달.
+                if(prevStatusValue != statusInt) {
+                    Log.d(TAG, "getResultFromSingleDNLD: (Before) prevStatusValue=$prevStatusValue, statusInt=$statusInt")
+                    prevStatusValue = statusInt
+                    Log.d(TAG, "getResultFromSingleDNLD: (After) prevStatusValue=$prevStatusValue, statusInt=$statusInt")
+
+                    dnldViewModel.updateDNLDStatusLive(statusInt)
+                }
+
                 when(statusInt) {
 
-                    DownloadManager.STATUS_PENDING -> { //1
-                        //Log.d(TAG, "getResultFromSingleDNLD: STATUS PENDING / trkId=$trId")
-                        dnldViewModel.updateDNLDStatusLive(1)
-                        // todo : dnldViewModel 로 RtWithAlbumARt 로 만들어서 보내기!!! 그리고 여기에 무조건 맞추기!!
-                        }
-                    DownloadManager.STATUS_RUNNING -> { //2
-                        dnldViewModel.updateDNLDStatusLive(2)
-                        //dnldViewModel.updateDNLDProgressLive(myDownloadProgress)
-                        //Log.d(TAG, "getResultFromSingleDNLD: STATUS RUNNING, **bytesDownloadedSoFar=$bytesDownloadedSoFar, **totalBytesToDNLD=$totalBytesToDNLD / Progress= $myDownloadProgress,  trkId=$trId")
-                    }
-                    DownloadManager.STATUS_PAUSED -> { // 4. RUNNING 으로 다운이 다 된 다음에도 PAUSED 에 한참 들어와있다가-> STATUS_SUCCESSFUL 로 이동.
-                        //Log.d(TAG, "getResultFromSingleDNLD: STATUS PAUSED, **bytesDownloadedSoFar=$bytesDownloadedSoFar, **totalBytesToDNLD=$totalBytesToDNLD  / trkId=$trId")
-                        dnldViewModel.updateDNLDStatusLive(4)
-                        //dnldViewModel.updateDNLDProgressLive(myDownloadProgress)
-                    }
-
+                    DownloadManager.STATUS_PENDING -> {} //1
+                    DownloadManager.STATUS_RUNNING -> {} //2
+                    DownloadManager.STATUS_PAUSED -> {} // 4. RUNNING 으로 다운이 다 된 다음에도 PAUSED 에 한참 들어와있다가-> STATUS_SUCCESSFUL 로 이동.
                     DownloadManager.STATUS_FAILED -> { //16
                         Log.d(TAG, "getResultFromSingleDNLD: STATUS FAILED / trkId=${dnldAsRtObj.trIdStr}")
                         Toast.makeText(receivedActivity,"Download Failed. Please check your internet connection.",Toast.LENGTH_LONG).show()
-//                        btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet() // 아래 while loop 밖에도 있지만. 혹시 모르니 여기서도 btm Sheet 닫기 넣어줌.
-                        resultCode = DownloadManager.STATUS_FAILED // 16
+                        //resultCode = DownloadManager.STATUS_FAILED // 16 <- 불필요
                         dnldViewModel.updateDNLDStatusLive(16)
                         isStillDownloading = false
+                        break
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> { //8.  ** 굉장한 Delay 가 있음. 실 다운로드가 끝나고도 10~15초 이상 걸린뒤 여기에 들어옴.
                         Log.d(TAG, "getResultFromSingleDNLD: STATUS SUCCESSFUL, Progress= $myDownloadProgress, TRK ID=trkId=${dnldAsRtObj.trIdStr}")
                         dnldViewModel.updateDNLDStatusLive(8)
-                        resultCode = DownloadManager.STATUS_SUCCESSFUL // 8
+                        //resultCode = DownloadManager.STATUS_SUCCESSFUL // 8  <- 불필요
                         isStillDownloading = false
+                        break
                     }
                 }
                 cursor.close()

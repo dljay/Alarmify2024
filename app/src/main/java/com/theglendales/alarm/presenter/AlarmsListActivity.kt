@@ -65,7 +65,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 // v3.07.03c [다운로드 Fragment 수술전-MyDownloader2 생성 및 LiveData 로 교체]
-//*********** 원복 AlarmListFrag 에서 "원복" 으로 검색
+
+// 0) BtmSht_SingleDNLD2 구현. 보이는데까지 성공..
 //1) Download- DialogFragment 에서 RtWithAlbumArt Object 로 정보 전달 및 UI 구현.
 //- 다운로드 과정이 NEXUS 5X API 30 에서 안 보이는 문제.
 //- 우선 IAP 과정에서 곡 제목도 같이 받아야함. -> DownloadableItem 수정이 불가피.

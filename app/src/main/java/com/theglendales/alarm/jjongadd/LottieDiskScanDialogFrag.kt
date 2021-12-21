@@ -16,6 +16,12 @@ import com.theglendales.alarm.R
 private const val TAG="LottieDiskScanDialogFrag"
 class LottieDiskScanDialogFrag: DialogFragment() {
 
+    companion object {// Singleton 으로 사용하기 위해.
+    fun newInstanceDialogFrag(): LottieDiskScanDialogFrag {
+        return LottieDiskScanDialogFrag()
+        }
+    }
+
     lateinit var lottieView: LottieAnimationView
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
@@ -60,11 +66,7 @@ class LottieDiskScanDialogFrag: DialogFragment() {
         })
     }
 
-    companion object {
-        fun newInstanceDialogFrag(): LottieDiskScanDialogFrag {
-            return LottieDiskScanDialogFrag()
-        }
-    }
+
 
     override fun show(manager: FragmentManager, tag: String?) {
         //super.show(manager, tag)

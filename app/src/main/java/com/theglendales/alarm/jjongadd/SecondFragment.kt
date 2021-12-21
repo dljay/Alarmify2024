@@ -41,6 +41,7 @@ import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjFirebaseViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.BtmSht_SingleDNLD2
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
 
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloader2
@@ -65,8 +66,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //IAP
     //lateinit var iapInstance: MyIAPHelper
     lateinit var iapInstance2: MyIAPHelper2
-    //Downloader
+    //Download 관련
     lateinit var myDownloader2: MyDownloader2
+    lateinit var btmSht_SingleDnld: BtmSht_SingleDNLD2
+
 
 
     //SharedPreference 저장 관련 (Koin  으로 대체!) ==> 일단 사용 안함.
@@ -150,10 +153,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         Log.d(TAG, "onViewCreated: jj- begins..")
         super.onViewCreated(view, savedInstanceState)
-        //RcView-->
+    //RcView-->
         rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
         layoutManager = LinearLayoutManager(context)
         rcView.layoutManager = layoutManager
+    //BtmSht_SingleDnld init (싱글톤으로)
+        btmSht_SingleDnld = BtmSht_SingleDNLD2.newInstance()
 
 
     //  LIVEDATA ->
@@ -179,6 +184,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //**SHARED PREF 저장용 **
                 //playInfo.trackID = viewAndTrIdClassInstance.trId
             })
+        //Media Player ViewMODEL Observe
             //2-B-가) MP: MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
                 Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
@@ -210,37 +216,44 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //GlbVars.seekbarProgress = playbackPos.toInt() +200
                 //GlbVars.playbackPos = playbackPos
                 })
-            //2-C-가) DNLD: RtWithAlbumArt Obj 받기 (이걸로 UI 갱신)
-            jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {
-                rtWithAlbumArtObj ->
+        //DNLD ViewMODEL Observe
+            //2-C-가) DNLD: RtWithAlbumArt Obj 받기 (UI 갱신: DNLD Dialogue 열어주기)
+            jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {rtWithAlbumArtObj ->
                 Log.d(TAG, "onViewCreated: trId= ${rtWithAlbumArtObj.trIdStr}, received rtObj = $rtWithAlbumArtObj")
+                // Show BtmSht_SingleDNLD Frag
+                btmSht_SingleDnld.show(requireActivity().supportFragmentManager, btmSht_SingleDnld.tag)
             })
 
-            //2-C-나) DNLD: Status Observe.
+            //2-C-나) DNLD: Status Observe. (UI 갱신: 종료[성공 or Fail])
             jjDNLDViewModel.dnldStatus.observe(viewLifecycleOwner, {dnldStatusInt ->
 
                 Log.d(TAG, "onViewCreated: current DNLD Status is=$dnldStatusInt")
                 when(dnldStatusInt) {
-                    DownloadManager.STATUS_PENDING -> {
-                        Log.d(TAG, "onViewCreated: DNLD PEDNING ")
+                    DownloadManager.STATUS_PENDING -> {}//1
+                    DownloadManager.STATUS_RUNNING -> {}//2
+                    DownloadManager.STATUS_PAUSED -> {}//4
+                    DownloadManager.STATUS_FAILED -> {//16
+                        Log.d(TAG, "onViewCreated: Observer: !!!! DNLD FAILED (XX) !!!!! ")
+                        //remove BTMSHEET & Show Warning Snackbar
+                        btmSht_SingleDnld.removeBtmSheetAfterOneSec()
+                        Snackbar.make(requireActivity().findViewById(android.R.id.content),"Download Failed. Please check your network connectivity",Snackbar.LENGTH_LONG).show()
                     }
-                    DownloadManager.STATUS_RUNNING -> {
+                    DownloadManager.STATUS_SUCCESSFUL-> {//8
+                        Log.d(TAG, "onViewCreated: Observer: DNLD SUCCESS (O)  ")
+                        // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
+                        btmSht_SingleDnld.animateLPI(100,1) //  그래프 만땅!
+
+                        btmSht_SingleDnld.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
                     }
-                    DownloadManager.STATUS_PAUSED -> {
-                    }
-                    DownloadManager.STATUS_FAILED -> {
-                        Log.d(TAG, "onViewCreated: !!!! DNLD FAILED (XX) !!!!! ")
-                    }
-                    DownloadManager.STATUS_SUCCESSFUL-> {
-                        Log.d(TAG, "onViewCreated: DNLD SUCCESS (O)  ")
-                    }
+                    else -> {btmSht_SingleDnld.removeBtmSheetAfterOneSec()
+                        Snackbar.make(requireActivity().findViewById(android.R.id.content),"Unknown Download Status received. Status Code=$dnldStatusInt",Snackbar.LENGTH_LONG).show()}
 
             }
             })
-            //2-C-나 DNLD:
+            //2-C-나 DNLD: (UI 갱신: Prgrs 애니메이션 보여주기)
             jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, {dnldPrgrs ->
                 Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
-
+                btmSht_SingleDnld.prepAnim(dnldPrgrs) // 여기서 prgrs 확인 및 기존 Animation 작동중인지 확인 후 Progress Bar Animation 작동.
             })
         //3) Firebase ViewModel Initialize
 

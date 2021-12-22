@@ -45,7 +45,6 @@ class DiskSearcher(val context: Context)
         if(!alarmRtDir.exists()) {alarmRtDir.mkdir()} // <A> /.AlarmRingTones 폴더가 존재하지 않는다. -> 폴더 생성
         if(!artDir.exists()) {artDir.mkdir()} // <B> /.AlbumArt 폴더가 존재하지 않는다.
 
-
         // SharedPref (RtaArtPathList.xml)에서 돌려받는 list 는 Disk 에 저장되어있는 RtWithAlbumArt object 들의 정보를 담고 있음.
         val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
 
@@ -93,7 +92,7 @@ class DiskSearcher(val context: Context)
     fun onDiskRtSearcher(): MutableList<RtWithAlbumArt>
     {
         onDiskRingtoneList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.
-
+        //todo: Defrt 갯수 바뀌면 아래 .size <10 변경해야함.
     //(1)-b  /.AlarmRingTones 에 Defrt 파일이 없거나, 10개 미만으로 있을때 (즉 최초 실행 혹은 어떤 연유로 defrta 파일 갯수가 부족) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
             val listOfDefrtFiles = alarmRtDir.listFiles { dir, name -> name.contains("defrt")  } // 파일 이름에 "defrt" 를 포함하는 놈들을 List 로 받아서. 그 갯수 확인.
                 if(!listOfDefrtFiles.isNullOrEmpty() && listOfDefrtFiles.size <10) {

@@ -60,7 +60,9 @@ class LottieDiskScanDialogFrag: DialogFragment() {
 
             override fun onAnimationEnd(animation: Animator?) {
                 Log.d(TAG, "onAnimationEnd: 끝! 이 Frag 닫는다!")
-                Snackbar.make(requireActivity().findViewById(android.R.id.content), "DISK SCAN- REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
+                if(activity!=null) {
+                    Snackbar.make(requireActivity().findViewById(android.R.id.content), "DISK SCAN- REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
+                }
                 dismiss()
             }
         })
@@ -70,6 +72,10 @@ class LottieDiskScanDialogFrag: DialogFragment() {
 
     override fun show(manager: FragmentManager, tag: String?) {
         //super.show(manager, tag)
+        if(isAdded) {
+            Log.d(TAG, "show: Already Showing Lottie Anim. Return!")
+            return
+        }
         val ft = manager.beginTransaction()
         ft.add(this, tag)
         ft.commitAllowingStateLoss()

@@ -17,6 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.AdapterContextMenuInfo
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import com.airbnb.lottie.LottieAnimationView
 import com.amulyakhare.textdrawable.TextDrawable
@@ -76,7 +77,7 @@ class AlarmsListFragment : Fragment() {
     private var timePickerDialogDisposable = Disposables.disposed()
 
 // 내가 추가-->
-    lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
+    //lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
     lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
     lateinit var myPermHandler: MyPermissionHandler
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
@@ -95,6 +96,8 @@ class AlarmsListFragment : Fragment() {
     private val yesAlarmThu = getYesAlarmDayDrawable("T")
     private val yesAlarmFri = getYesAlarmDayDrawable("F")
     private val yesAlarmSat = getYesAlarmDayDrawable("Sat")
+
+    private var isLottiePlayedOnce = false
 //내가 추가<-
 
     /** changed by [Prefs.listRowLayout] in [onResume]*/
@@ -110,10 +113,7 @@ class AlarmsListFragment : Fragment() {
         lottieDialogFrag = LottieDiskScanDialogFrag.newInstanceDialogFrag()
 
 
-
-
-
-    //최초 Data INSTALL 및 신규다운로드, rta 나 art 파일이 삭제되었을때. -----------------
+    //최초 Data INSTALL 및 신규다운로드 후 listFrag 시작 / rta 나 art 파일이 삭제& 갯수 매칭 안될때. -----------------
         // 1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (최초 앱 설치 or 신규 다운로드 등.. )
         // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
@@ -155,7 +155,13 @@ class AlarmsListFragment : Fragment() {
 
             Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
             myDiskSearcher.updateList(resultList)
+
         }
+        //todo: isMissingPurchasedFiles() check -> DNLD -> SnackBar
+        //1-a. isDiskScanNeeded -> false -> Lottie Anim (X)
+        //1-b. isDiskScanNeeded -> true -> Lottie Anim (O)
+        //2-a. isMissingPurchasedFiles -> false -> Snackbar: Rebuilding DB Completed.
+        //2-b. isMissingPurchasedFiles -> true -> Lottie Anim (O)--재생중이면 생략 -> download -> Snackbar: Recovering.. please restart later.
     }
 
 // ## Inner Class ##
@@ -480,12 +486,20 @@ class AlarmsListFragment : Fragment() {
 // **** 내가 추가한 Utility Methods **
 // 추가 3) Lottie 관련-->
     private fun showLottieDialogFrag() {
-        lottieDialogFrag.show(requireActivity().supportFragmentManager, lottieDialogFrag.tag)
+        Log.d(TAG, "showLottieDialogFrag: isLottiePlayedOnce=$isLottiePlayedOnce")
+        if(!isLottiePlayedOnce) {
+            lottieDialogFrag.show(requireActivity().supportFragmentManager, lottieDialogFrag.tag) // 이 ListFrag 시작 후 재생된적이 없으면..
+            isLottiePlayedOnce = true // 어차피 다른 Frag 로 가는순간 이 Frag 는 Destroy 된다. (배경화면 나가는건 그냥 pause)./
+        }
+
     }
     private fun hideLottieAndShowSnackBar() {
         if(lottieDialogFrag.isAdded) {
             lottieDialogFrag.dismissAllowingStateLoss()
-            Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
+            if(activity != null) {
+                Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
+            }
+
         }
     }
 

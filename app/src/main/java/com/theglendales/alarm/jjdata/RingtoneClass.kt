@@ -26,6 +26,7 @@ data class RingtoneClass(val title: String="", val tags: String="", val descript
         if(title != other.title) return false
         if(description != other.description) return false
         if(tags != other.tags) return false
+        //todo: iapName 등 없는 부분 추가?
 
 
         // 4) 모두 통과하면 return true!

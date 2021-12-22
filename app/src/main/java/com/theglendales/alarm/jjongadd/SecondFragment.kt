@@ -408,13 +408,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Toast.makeText(this.context, "Clicked Purchase Button for ${viewAndTrId.trId}",Toast.LENGTH_SHORT).show()
                 // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
 
-                //iapInstance2.myOnPurchaseClicked(viewAndTrId.trId) // todo: 다운로드 테스트 후 복귀시켜놔야함. 원복
+                iapInstance2.myOnPurchaseClicked(viewAndTrId.trId) // todo: 다운로드 테스트 후 복귀시켜놔야함. 원복
                 // 아무거나 다운로드 테스트
-                val testName="testFile"
-                val fileNameFullPath = requireActivity().getExternalFilesDir(null)!!
-                    .absolutePath + "/.AlarmRingTones" + File.separator + testName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
-                val testDownloadable = DownloadableItem(777,fileNameFullPath)
-                myDownloader2.singleFileDNLD(testDownloadable)
+//                val testName="testFile"
+//                val fileNameFullPath = requireActivity().getExternalFilesDir(null)!!
+//                    .absolutePath + "/.AlarmRingTones" + File.separator + testName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
+//                val testDownloadable = DownloadableItem(777,fileNameFullPath)
+//                myDownloader2.singleFileDNLD(testDownloadable)
             }
 
         }
@@ -593,7 +593,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
 
                 // IAP
-                    //iapInstance2.refreshItemIdsAndMp3UrlMap(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) ** todo: 원복
+                    iapInstance2.refreshItemIdIapNameTitle(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) ** todo: 원복
 
                 // Update MediaPlayer.kt
                     mpClassInstance.createMp3UrlMap(fullRtClassList)

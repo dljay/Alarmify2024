@@ -207,7 +207,7 @@ class AlarmsListFragment : Fragment() {
                 val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
                 if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
                         try{
-                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.fileName=="defrt01" }.single() // **todo: Safety Check 실제로 뻑남.
+                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.iapName=="defrt01" }.single() // **todo: Safety Check 실제로 뻑남.
                             val artPath: String? = defRta1.artFilePathStr
 
                             //mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!

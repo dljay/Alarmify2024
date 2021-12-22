@@ -59,7 +59,7 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
 
         }
     }
-    fun permissionForSingleDNLD(receivedDownloadableItem: DownloadableItem) {
+/*    fun permissionForSingleDNLD(receivedDownloadableItem: DownloadableItem) {
         Log.d(TAG, "permissionForSingleDNLD: Downloadable Item =$receivedDownloadableItem")
 
         Log.d(TAG, "permissionForSingleDNLD: API higher >>>than 23. API LVL= ${Build.VERSION.SDK_INT}")
@@ -94,16 +94,16 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
             }
         } else { // 2) 이미 권한 허용이 된 상태
             Log.d(TAG, "permissionForSingleDNLD: 2) 이미 권한이 허용된 상태!")
-            /*myBtmShtObjInst.removePermBtmSheetAndResume()
+            myBtmShtObjInst.removePermBtmSheetAndResume()
             val myDownloaderInstance = MyDownloader(receivedActivity) // todo: 이렇게하면 결국  MyDownloader() 를 두개 만들어주니..memory issue.
-                myDownloaderInstance.singleFileDNLD(receivedDownloadableItem)*/
+                myDownloaderInstance.singleFileDNLD(receivedDownloadableItem)
         }
 
-    }
+    }*/
 
 
     //1-b> Permission to Write 신규 다운로드 or 앱 재설치시 기존에 '구매해놓은' RT 를 다운받아야될 때.)
-    fun permissionForMultipleDNLD(receivedDownloadableList: MutableList<DownloadableItem>) { // called from: MyDownloader.kt>preDownloadPrep()
+    /*fun permissionForMultipleDNLD(receivedDownloadableList: MutableList<DownloadableItem>) { // called from: MyDownloader.kt>preDownloadPrep()
         needToDownloadList = receivedDownloadableList
         Log.d(TAG, "permissionForMultipleDNLD: needToDownloadList.size = ${needToDownloadList.size}, contents=$needToDownloadList")
 
@@ -151,7 +151,7 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
             }
 
         }
-    }
+    }*/
 
     private fun reqPermToWrite() {
         ActivityCompat.requestPermissions(receivedActivity, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), MY_WRITE_PERMISSION_CODE)

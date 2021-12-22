@@ -8,36 +8,45 @@ import com.google.gson.reflect.TypeToken
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 import java.lang.Exception
 
-private const val TAG="MySharedPrefManager"
+private const val TAG = "MySharedPrefManager"
+
 //private const val TR_PLAY_INF_SHARED_PREF = "TrackPlayInfo"
 //<1> RTA, ART PATH 저장 관련
-    private const val ON_DISK_RTA_ART_URI_LIST = "RtaArtPathList" //현재 .rta 는 Uri 로 ..  .art 는 String path 로 저장
-    private const val KEY_1 ="RtaArt_Key"
+private const val ON_DISK_RTA_ART_URI_LIST =
+    "RtaArtPathList" //현재 .rta 는 Uri 로 ..  .art 는 String path 로 저장
+private const val KEY_1 = "RtaArt_Key"
+
 //<2> ListFrag ROW 에 사용될 ART PATH 관련
-    private const val ART_PATH_FOR_LIST_FRAG = "ArtPathForListFrag"
-    private const val KEY_2 ="Art_Key"
+private const val ART_PATH_FOR_LIST_FRAG = "ArtPathForListFrag"
+private const val KEY_2 = "Art_Key"
+
+//<3> InAppPurchase 관련
+private const val IAP_PREF = "MyIAP" //MyPref.xml
 
 
 class MySharedPrefManager(context: Context) {
 
     //    val prefs: SharedPreferences = context.getSharedPreferences(TR_PLAY_INF_SHARED_PREF, Context.MODE_PRIVATE) //TrackPlayInfo = xml 파일 이름!!
-    val prefForRtaArt: SharedPreferences = context.getSharedPreferences(ON_DISK_RTA_ART_URI_LIST, Context.MODE_PRIVATE) // RtaArtPathList.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
-    val preForListFrag: SharedPreferences = context.getSharedPreferences(ART_PATH_FOR_LIST_FRAG, Context.MODE_PRIVATE) // RtaArtPathList.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
-
+    private val prefForRtaArt: SharedPreferences = context.getSharedPreferences(ON_DISK_RTA_ART_URI_LIST,Context.MODE_PRIVATE) // RtaArtPathList.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
+    private val prefForListFrag: SharedPreferences = context.getSharedPreferences(ART_PATH_FOR_LIST_FRAG,Context.MODE_PRIVATE) // ArtPathForListFrag.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
+    private val prefForIAP: SharedPreferences = context.getSharedPreferences(IAP_PREF, Context.MODE_PRIVATE) // MyIAP.xml
+    //
     private val gson: Gson = Gson()
 
-    inline fun <reified T> genericType() = object: TypeToken<T>() {}.type // todo: 이것이 무엇인지 inline 에 대해서 공부해봐야함.
-//<1> *.RTA 와 *.Art Path 가 저장된 Object 를 Shared Pref(RtaArtPathList.xml) 에 저장하기
+    inline fun <reified T> genericType() =
+        object : TypeToken<T>() {}.type // todo: 이것이 무엇인지 inline 에 대해서 공부해봐야함.
+
+    //<1> *.RTA 와 *.Art Path 가 저장된 Object 를 Shared Pref(RtaArtPathList.xml) 에 저장하기
     fun getRtaArtPathList(): MutableList<RtWithAlbumArt> {
-        return try{
-            val jsonStrGet = prefForRtaArt.getString(KEY_1,"No Data")
+        return try {
+            val jsonStrGet = prefForRtaArt.getString(KEY_1, "No Data")
 
             val type = genericType<List<RtWithAlbumArt>>()
             val onDiskRtaArtPathList = gson.fromJson<List<RtWithAlbumArt>>(jsonStrGet, type)
             Log.d(TAG, "getRtaArtPathList: onDiskRtaArtPathList = $onDiskRtaArtPathList")
 
             onDiskRtaArtPathList.toMutableList()
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             Log.d(TAG, "getRtaArtPathList: Error retrieving from Shared Prefs..error message=$e")
             arrayListOf<RtWithAlbumArt>() // 에러 발생시 빈 깡통 List 를 리턴.
         }
@@ -51,19 +60,21 @@ class MySharedPrefManager(context: Context) {
         Log.d(TAG, "saveRtaArtPathList: done")
     }
 
-//<2> List Fragment ROW 에서 보여질 ART PATH 용도: [Key,Value] = [AlarmId-Int, ArtPath-String].. AlarmDetailsFrag.kt 에서 알람 설정 후 [알람 id, artPath] 형태로 저장.
+    //<2> List Fragment ROW 에서 보여질 ART PATH 용도: [Key,Value] = [AlarmId-Int, ArtPath-String].. AlarmDetailsFrag.kt 에서 알람 설정 후 [알람 id, artPath] 형태로 저장.
     fun saveArtPathForAlarm(alarmId: Int, artPath: String?) {
         Log.d(TAG, "saveArtPathForAlarm: alarmId=$alarmId, artPath=$artPath")
-        preForListFrag.edit().putString(alarmId.toString(),artPath).apply()
+        prefForListFrag.edit().putString(alarmId.toString(), artPath).apply()
     }
+
     // 알람 id 로 art Path 받기
-    fun getArtPathForAlarm(alarmId: Int): String? {
-        return preForListFrag.getString(alarmId.toString(), null) // 없으면 그냥 null 을 return.
+    fun getArtPathForAlarm(alarmId: Int): String {
+        return prefForListFrag.getString(alarmId.toString(), null).toString() // 없으면 그냥 null 을 return.
     }
+
     // rta 제목으로 art Path 받기 (전달받은 스트링은 경로포함-> 여기서 링톤명(ex.defrt5) 추출해야함!)
     fun getArtPathFromRtaPath(fullRtaPath: String?): String {
-        if(!fullRtaPath.isNullOrEmpty()) {
-            val rtaFileName= fullRtaPath.substringAfter(".AlarmRingTones/").substringBefore(".rta")
+        if (!fullRtaPath.isNullOrEmpty()) {
+            val rtaFileName = fullRtaPath.substringAfter(".AlarmRingTones/").substringBefore(".rta")
             Log.d(TAG, "getArtPathFromRtaPath: rtaFileName=$rtaFileName")
             return rtaFileName
         } else {
@@ -71,6 +82,40 @@ class MySharedPrefManager(context: Context) {
         }
 
     }
+// IAP 관련 --->
+
+    // 1) 구매 여부 Bool - IapName / ex) (p1, true), (p2,false) ...
+    fun getPurchaseBoolPerIapName(iapName: String) = prefForIAP.getBoolean(iapName, false)
+
+    fun savePurchaseBoolPerIapName(iapName: String, value: Boolean) {
+        prefForIAP.edit().putBoolean(iapName, value).apply()
+    }
+
+
+    // 2) id / iapName / TrTitle 저장. (MyIAPHeler2.kt> refresh
+    fun getIapNamePerTrId(trId: Int): String {
+        return prefForIAP.getString(trId.toString(), "noValue").toString() // ex (1, p1) (2,p2) ..
+    }
+
+    fun saveTrIdPerIapName(iapName: String, trId: Int) { // (p1, 1), (p2, 2) ..
+        prefForIAP.edit().putInt(iapName, trId).apply()
+    }
+
+    fun getTrIdPerIapName(iapName: String): Int = prefForIAP.getInt(iapName, -1) //(p1, 1) , (p2, 2) ...
+
+    fun saveIapNamePerTrId(trId: Int, iapName: String) { // (trId,IapName) (1, p1) (2,p2) ..
+        Log.d(TAG, "saveIapNamePerTrId: trId=$trId, iapName=$iapName")
+        prefForIAP.edit().putString(trId.toString(), iapName).apply()
+
+    }
+
+
+    // 2-c) id 에 따른 trTitle
+    fun getTrTitlePerTrId(trId: Int): String = prefForIAP.getString(trId.toString(), "No Value").toString()
+    fun saveTrTitlePerTrId(trId: Int, trTitle: String) { // (1,"Alaska Wind"), (2, "Elephant Cry") ..
+        prefForIAP.edit().putString(trId.toString(), trTitle).apply()
+    }
+// <--- IAP 관련
 
 //// 아래 셋다 현재 사용 안되는 상태
 //    fun savePlayInfo(playInfoObject: PlayInfoContainer) {

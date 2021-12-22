@@ -9,7 +9,6 @@ import android.util.Log
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
 import java.io.*
 
 private const val TAG="DiskSearcher"
@@ -80,7 +79,7 @@ class DiskSearcher(val context: Context)
 
         if(artPathEmptyList.isNotEmpty()) { //(즉 artPathEmptyList 안 갯수가 > 0)
                 for(i in 0 until artPathEmptyList.size) { //todo: 여기 for loop 은 단순 모니터링 용. 없애도 됨.
-                    Log.d(TAG, "isDiskScanNeeded: 다음 파일의 artFilePathStr 은 비어있음!! = ${artPathEmptyList[i].fileName}")
+                    Log.d(TAG, "isDiskScanNeeded: 다음 파일의 artFilePathStr 은 비어있음!! = ${artPathEmptyList[i].iapName}")
                 }
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
@@ -286,7 +285,7 @@ class DiskSearcher(val context: Context)
             val artFilePath = onDiskArtMap[trIDString] //trIDString & artFilePath 둘 다 nullable String
 
         //4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
-        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileName = fileReceived.name,
+        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, iapName = fileReceived.name,
             artFilePathStr = artFilePath, rtDescription = rtDescription, badgeStr = badgeString) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
         Log.d(TAG, "extractMetaDataFromRta: Extracted [onDiskRingtone]=$onDiskRingtone")
         return onDiskRingtone
@@ -388,18 +387,22 @@ class DiskSearcher(val context: Context)
         }
     }
 
-    fun deleteFromDisk(downloadableItem: DownloadableItem) {
-        val trId=  downloadableItem.trackID
-        val fileNameFull = downloadableItem.filePathAndName
-        val fileToDelete = File(fileNameFull)
-        
-        
-        if(fileToDelete.exists()) {
-            fileToDelete.delete()
-            Log.d(TAG, "deleteFromDisk: *****Deleting trId=$trId, fileToDelete=$fileToDelete")
-        } else if(!fileToDelete.exists()) {
-            Log.d(TAG, "deleteFromDisk: Such Filie doesn't exist on the drive. FileName= $fileToDelete")
+    fun deleteFromDisk(rtWAlbumArtObj: RtWithAlbumArt) { //todo: rtWithAlbumArt obj 로 교체.
+        val trId=  rtWAlbumArtObj.trIdStr
+        val fileNameFull = rtWAlbumArtObj.audioFilePath
+        if(!fileNameFull.isNullOrEmpty()) {
+            val fileToDelete = File(fileNameFull)
+
+            if(fileToDelete.exists()) {
+                fileToDelete.delete()
+                Log.d(TAG, "deleteFromDisk: *****Deleting trId=$trId, fileToDelete=$fileToDelete")
+            } else if(!fileToDelete.exists()) {
+                Log.d(TAG, "deleteFromDisk: Such Filie doesn't exist on the drive. FileName= $fileToDelete")
+            }
+        } else {
+            Log.d(TAG, "deleteFromDisk: Maybe fileNameFull variable is null? fileNameFull=$fileNameFull ")
         }
+        
 
     }
 }

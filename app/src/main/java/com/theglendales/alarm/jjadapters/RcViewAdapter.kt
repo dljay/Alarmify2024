@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.android.billingclient.api.Purchase
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -25,6 +24,7 @@ import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelper2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
+import com.theglendales.alarm.model.mySharedPrefManager
 //import com.theglendales.alarm.jjiap.MyIAPHelper
 import io.gresse.hugo.vumeterlibrary.VuMeterView
 
@@ -67,6 +67,8 @@ class RcViewAdapter(
 
         val currentItem = currentRtList[position]
         val currentTrId = currentRtList[position].id
+        val currentIapName = currentRtList[position].iapName
+
         viewHolderMap[currentTrId] = holder
 
         val currentTrIapName = currentRtList[position].iapName
@@ -76,7 +78,7 @@ class RcViewAdapter(
 
 
         Log.d(TAG, "onBindViewHolder: holder TrId= ${holder.holderTrId}, currentTrIapName= $currentTrIapName")
-        Log.d(TAG, "onBindViewHolder: Purchased Stats Map=${MyIAPHelper2.purchaseStatsMap[currentTrId]} ")
+        Log.d(TAG, "onBindViewHolder: Purchased Stats Map=${mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)} ")
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " +
 //                "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
@@ -97,7 +99,7 @@ class RcViewAdapter(
         holder.tv3_Price.text = MyIAPHelper2.itemPricesMap[currentTrIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
 
         //Purchase Stat True or False
-        when(MyIAPHelper2.purchaseStatsMap[currentTrId]) {
+        when(mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)) {
             true -> {// Show "Purchased" icon
                 holder.iv_PurchasedTrue.visibility = View.VISIBLE
                 holder.iv_PurchasedFalse.visibility = View.GONE

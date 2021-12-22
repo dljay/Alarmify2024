@@ -354,7 +354,7 @@ class AlarmDetailsFragment : Fragment() {
         }
         Log.d(TAG, "updateUisForRt: called #$#@% selectedRtFileName=$selectedRtFileName, updatedRtFileName=$updatedRtFileName")
     //2) 그 외 user 가 일반적으로 지정한 알람음의 경우>
-        val indexOfSelectedRt = DiskSearcher.finalRtArtPathList.indexOfFirst { rtOnDisk -> rtOnDisk.fileName == updatedRtFileName }
+        val indexOfSelectedRt = DiskSearcher.finalRtArtPathList.indexOfFirst { rtOnDisk -> rtOnDisk.iapName == updatedRtFileName }
         /** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
         if(indexOfSelectedRt!=-1) // 현재 disk 에 있는 rt list 에서 현재 '설정한(or 되어있던)' rt 를 찾았으면 CircleAlbumArt 보여주기.
         {

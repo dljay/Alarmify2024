@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
@@ -27,7 +26,7 @@ private const val TAG="MyDownloader2"
 
 
 
-
+//todo: 이거 지우기 + MyPermissionHanlder 고쳐주기.
 data class DownloadableItem(val trackID: Int=0, val filePathAndName:String="") {
     override fun toString(): String
     {
@@ -233,22 +232,20 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 // <----------***MULTIPLE File Dnld <<<<<<<<<<<<----------------
 
 //********Single File Dnld **************
-    fun singleFileDNLD(itemToDownload: DownloadableItem) {
-        Log.d(TAG, "singleFileDNLD: Begins. ItemToDownload=$itemToDownload")
+    fun singleFileDNLD(rtWAlbumArtObj: RtWithAlbumArt) {
+        Log.d(TAG, "singleFileDNLD: Begins. TrId= ${rtWAlbumArtObj.trIdStr}, rtTitle=${rtWAlbumArtObj.rtTitle}, rtWAlbumArtObj=${rtWAlbumArtObj}, ")
     // 일단 Permission Check
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 DONWLOAD 에 특별한 Permission 필요 없음.
 //            permHandler.permissionForSingleDNLD(itemToDownload) // 필요없는듯. 에러도 안남.. API25 에서 잘됨.
 //        }
-
-
-        val fileNameAndFullPath = itemToDownload.filePathAndName
-        val trackID = itemToDownload.trackID
-        val fileName = File(fileNameAndFullPath).name
+        val fileNameAndFullPath = rtWAlbumArtObj.audioFilePath
+        val trackID = rtWAlbumArtObj.trIdStr
+        val iapName = rtWAlbumArtObj.iapName
         val testXXTitle = "TestTitle"
 
     // RtWithAlbumArtObj 으로 변환 후 일단 ViewModel 에 전달 -> SecondFrag 에서 DNLD BottomFrag UI 준비 //todo: 여기서 제대로..
         val dnldAsRtObj = RtWithAlbumArt(trIdStr = trackID.toString(), rtTitle = testXXTitle, audioFilePath = fileNameAndFullPath,
-                        fileName = fileName, rtDescription ="", badgeStr = "", isRadioBtnChecked = false)
+                        iapName = iapName, rtDescription ="", badgeStr = "", isRadioBtnChecked = false)
         dnldViewModel.updateDNLDRtObj(dnldAsRtObj)
 
 
@@ -274,7 +271,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
         dnlRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE) // 다운 중에만 표시 todo: NEXUS 5X API30 에뮬레이터에서 표시 안됨.
         // 내 app 의 Main Storage>android/data/com.xx.downloadtest1/files/안에 .AlarmRingTones라는 폴더를 만들고! 그 안에 file 저장! hidden 상태임!
-        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones",fileName) // * 경로설정.
+        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones", iapName) // * 경로설정.
         //get download service, and enqueue file
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         // 다운로드 & 완료 알림(BroadCast) 관련: 1)식별 id 생성 2)Broadcast 등록.

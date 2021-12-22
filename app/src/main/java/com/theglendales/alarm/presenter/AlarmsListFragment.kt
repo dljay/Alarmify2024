@@ -129,6 +129,7 @@ class AlarmsListFragment : Fragment() {
 
 
             //CoroutineScope(Dispatchers.IO).launch { <== ** 일부러 코루틴에서 제외-> 그래야 여기서 update SharedPref 등이 끝나고나서 밑에 innerClass>getView 실행됨.
+            //코루틴 안 쓰고 DiskScan 가동시에는 어떻게든 Animation 으로 시간 끌기?
                 //lottieAnimCtrl(SHOW_ANIM)
                 //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
                 myDiskSearcher.readAlbumArtOnDisk()
@@ -481,7 +482,6 @@ class AlarmsListFragment : Fragment() {
 // **** 내가 추가한 Utility Methods **
 // 추가 3) Lottie 관련-->
     private fun showLottieDialogFrag() {
-
         lottieDialogFrag.show(requireActivity().supportFragmentManager, lottieDialogFrag.tag)
     }
     private fun hideLottieAndShowSnackBar() {

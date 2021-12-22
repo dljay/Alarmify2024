@@ -80,13 +80,16 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                             {
                                 purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
 
-                                // ********************************기존 구매건
+                                // ********************************>>>기존 구매건
                                 if (p.purchaseState == Purchase.PurchaseState.PURCHASED)
                                 {
                                     mySharedPrefManager.savePurchaseBoolPerIapName(iapName, true)
                                     Log.d(TAG, "C-1) ☺ onBillingSetupFinished: PurchaseState is PURCHASED for trackID=$trackID, itemName=$iapName")
+                                // 구매가 확인된 RT 는 URL 을 SharedPref (MyIapUrl.xml)에 저장 (추후 소실시 Listfrag 로딩 후 다운로드
+                                    val dnldURL = rtObject.mp3URL
+                                    mySharedPrefManager.saveUrlPerIap(iapName, dnldURL)
                                     downloadHandlerBridge(trackID, true, downloadNow = false)
-                                    // ********************************기존 구매건
+                                    // <<<********************************기존 구매건
                                 } else
                                 { // 구매한적이 있으나 뭔가 문제가 생겨서 PurchaseState.Purchased 가 아닐때 여기로 들어옴. 애당초 구입한적이 없는 물품은 여기 뜨지도 않음!
                                     mySharedPrefManager.savePurchaseBoolPerIapName(iapName, false)
@@ -223,15 +226,6 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     }
 
 
-
-//    private val preferenceObject: SharedPreferences
-//        private get() = receivedActivity.getSharedPreferences(PREF_FILE, 0)
-//    private val preferenceEditObject: SharedPreferences.Editor
-//        private get() {
-//            val pref = receivedActivity.getSharedPreferences(PREF_FILE, 0)
-//            return pref.edit()
-//        }
-
     //    // 2) 가격 저장... (KEY, PRICE=string) / ex) (p1, ₩1,000)
 //    private fun getItemPriceFromPref(iapName: String): String? {
 //        return preferenceObject.getString(iapName+"strYo", "N/A")
@@ -304,7 +298,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
         return rtObj.iapName
     }
-    fun getTrkIdByIapName(iapName: String): Int {
+   /* fun getTrkIdByIapName(iapName: String): Int {
         val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.iapName == iapName } // .first() : returns the first object matching { predicate}
         return rtObj.id
     }
@@ -312,7 +306,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
 
         val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
         return rtObj.title
-    }
+    }*/
 //List 에서 원하는 값 받아오는 functions. 내가 만든 <<<------------
 
     fun handlePurchaseNotification(purchases: List<Purchase>) {
@@ -373,6 +367,8 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                                 // ############################## 신규 구매건. 과거 구매건은 정상 처리되었어도 여기까지는 안 들어옴. (logd 로 확인)
                                 // !!!!!!!!!!!!! 그러나!! 전체 리스트중 한개만 구입해놓은 상태면 다운받게됨.
                                 Toast.makeText(receivedActivity, "You have purchased $iapName", Toast.LENGTH_SHORT).show()
+
+                            // 실 다운로드 실행->
                                 downloadHandlerBridge(trackId, true, downloadNow = true)
                                 // ############################## 신규 구매건
 
@@ -442,7 +438,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
             .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
 
         if(!keepTheFile && myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) {
-            // (잘못된 구매 사유 등으로) Keep 할 필요 없는 파일인데 디스크에 있을경우 삭제!
+            // (잘못된 구매 사유 등으로) Keep 할 필요 없는 파일인데 디스크에 있을경우 삭제! //todo: 테스트 필요.
             Log.d(TAG, "downloadHandlerBridge: !![WARNING] Deleting this File!!=$iapName")
                 myDiskSearcher.deleteFromDisk(rtInstance, fileNameAndFullPath)
         }

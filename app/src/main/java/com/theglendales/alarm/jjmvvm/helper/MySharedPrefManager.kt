@@ -21,7 +21,8 @@ private const val ART_PATH_FOR_LIST_FRAG = "ArtPathForListFrag"
 private const val KEY_2 = "Art_Key"
 
 //<3> InAppPurchase 관련
-private const val IAP_PREF = "MyIAP" //MyPref.xml
+private const val IAP_PREF_BOOL = "MyIAP" //MyPref.xml
+private const val IAP_PREF_URL = "MyIAPUrl" //MyPref.xml
 
 
 class MySharedPrefManager(context: Context) {
@@ -29,7 +30,8 @@ class MySharedPrefManager(context: Context) {
     //    val prefs: SharedPreferences = context.getSharedPreferences(TR_PLAY_INF_SHARED_PREF, Context.MODE_PRIVATE) //TrackPlayInfo = xml 파일 이름!!
     private val prefForRtaArt: SharedPreferences = context.getSharedPreferences(ON_DISK_RTA_ART_URI_LIST,Context.MODE_PRIVATE) // RtaArtPathList.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
     private val prefForListFrag: SharedPreferences = context.getSharedPreferences(ART_PATH_FOR_LIST_FRAG,Context.MODE_PRIVATE) // ArtPathForListFrag.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
-    private val prefForIAP: SharedPreferences = context.getSharedPreferences(IAP_PREF, Context.MODE_PRIVATE) // MyIAP.xml
+    private val prefIapPurchaseBool: SharedPreferences = context.getSharedPreferences(IAP_PREF_BOOL, Context.MODE_PRIVATE) // MyIAP.xml
+    private val prefIapUrl: SharedPreferences = context.getSharedPreferences(IAP_PREF_URL, Context.MODE_PRIVATE) // MyIAPUrl.xml
     //
     private val gson: Gson = Gson()
 
@@ -84,11 +86,17 @@ class MySharedPrefManager(context: Context) {
 // IAP 관련 --->
 
     // 1) 구매 여부 Bool - IapName / ex) (p1, true), (p2,false) ...
-    fun getPurchaseBoolPerIapName(iapName: String) = prefForIAP.getBoolean(iapName, false)
+    fun getPurchaseBoolPerIapName(iapName: String) = prefIapPurchaseBool.getBoolean(iapName, false)
 
     fun savePurchaseBoolPerIapName(iapName: String, value: Boolean) {
-        prefForIAP.edit().putBoolean(iapName, value).apply()
+        prefIapPurchaseBool.edit().putBoolean(iapName, value).apply()
     }
+    // 2) 구매하는 RT 의 URL 저장&Loading (추후 ListFrag 에서 파일 복귀시 사용)
+    fun saveUrlPerIap(iapName: String, url: String) {
+        prefIapUrl.edit().putString(iapName, url).apply() // todo: Firebase 에서 추후 Security 강화에서 아무나 접근 못하게..
+    }
+    fun getUrlByIap(iapName: String) = prefIapUrl.getString(iapName, "No Url Found")
+
 
 
     // 2) id / iapName / TrTitle 저장. (MyIAPHeler2.kt> refresh

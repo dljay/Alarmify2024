@@ -442,6 +442,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
         }
     //내가 추가-> btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
     btmNavView.visibility =View.VISIBLE
+
     }
 
     private fun showDetails(@NonNull edited: EditedAlarm) {

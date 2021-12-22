@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.*
+import android.widget.TextView
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -22,7 +23,7 @@ class BtmSht_SingleDNLD2 : BottomSheetDialogFragment() {
             return BtmSht_SingleDNLD2()
         }
     }
-
+    lateinit var tvRtTitle: TextView
     lateinit var linearPrgsIndicator : LinearProgressIndicator
     lateinit var objAnim: ObjectAnimator
 
@@ -41,7 +42,8 @@ class BtmSht_SingleDNLD2 : BottomSheetDialogFragment() {
             setStyle(STYLE_NORMAL, R.style.BottomSheetDialogStyle)
             isCancelable = false // 배경 클릭 금지.
         }
-    // always initialize other view here!! onCreateView 에서는 'v' 가 proper 하게 init 되지 않아서 뻑나는 경우가 있음
+    // INIT! always initialize other view here!! onCreateView 에서는 'v' 가 proper 하게 init 되지 않아서 뻑나는 경우가 있음
+        tvRtTitle = view.findViewById(R.id.tv_dnldRtTitle)
         linearPrgsIndicator = view.findViewById(R.id.id_dnld_linearPrgsBar)
         linearPrgsIndicator.progress = 0 // 다음 다운로드를 위해 Prgrs 를 '0' 으로 초기화.
         objAnim = ObjectAnimator.ofInt(linearPrgsIndicator,"progress", 0) // 최초 progress 는 0으로 초기화.
@@ -119,6 +121,17 @@ class BtmSht_SingleDNLD2 : BottomSheetDialogFragment() {
 //            in 0..20 -> { // 0 이상 20 이하
 //                Log.d(TAG, "prepAnim: Between 0 & 20. PrgrsReceived=$prgrsReceived ") }
 
+    }
+// 다운시작하면 TextView 에 현재 다운 받는 곡 명 써주기.
+    fun updateTextView(rtTitle: String?) {
+        if(!this::tvRtTitle.isInitialized) {
+            return
+        }
+        if(rtTitle.isNullOrEmpty()) {
+            tvRtTitle.text = "DOWNLOADING PURCHASED ITEM .."
+        } else {
+            tvRtTitle.text = "DOWNLOADING $rtTitle .."
+        }
     }
     
     /*fun cancelAndNullifyAnim() {

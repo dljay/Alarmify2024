@@ -8,6 +8,7 @@ import android.net.Uri
 import android.util.Log
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
+import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import java.io.*
 
@@ -387,22 +388,20 @@ class DiskSearcher(val context: Context)
         }
     }
 
-    fun deleteFromDisk(rtWAlbumArtObj: RtWithAlbumArt) { //todo: rtWithAlbumArt obj 로 교체.
-        val trId=  rtWAlbumArtObj.trIdStr
-        val fileNameFull = rtWAlbumArtObj.audioFilePath
-        if(!fileNameFull.isNullOrEmpty()) {
-            val fileToDelete = File(fileNameFull)
+    fun deleteFromDisk(rtClassObj: RingtoneClass, fileNameAndFullPath: String) { //todo: rtWithAlbumArt obj 로 교체.
+            val trId=  rtClassObj.id
 
-            if(fileToDelete.exists()) {
-                fileToDelete.delete()
-                Log.d(TAG, "deleteFromDisk: *****Deleting trId=$trId, fileToDelete=$fileToDelete")
-            } else if(!fileToDelete.exists()) {
-                Log.d(TAG, "deleteFromDisk: Such Filie doesn't exist on the drive. FileName= $fileToDelete")
+            try {
+                val fileToDelete = File(fileNameAndFullPath)
+                if(fileToDelete.exists()) {
+                    fileToDelete.delete()
+                    Log.d(TAG, "deleteFromDisk: *****Deleting trId=$trId, fileToDelete=$fileToDelete")
+                } else if(!fileToDelete.exists()) {
+                    Log.d(TAG, "deleteFromDisk: Such File doesn't exist on the drive. FileName= $fileToDelete")
+                }
+            }catch (e: Exception) {
+                Log.d(TAG, "deleteFromDisk: Maybe fileNameFull variable is null? fileNameFull=$fileNameAndFullPath ")
             }
-        } else {
-            Log.d(TAG, "deleteFromDisk: Maybe fileNameFull variable is null? fileNameFull=$fileNameFull ")
-        }
-        
 
-    }
+        }
 }

@@ -63,36 +63,34 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.04a [IAP 원복 전. MyIAP 의 Companion Obj - MAP 제거 전]
-//
-//1> SecondFrag 에서 IAP 를 다시 "원복" 시키기 -> IAP로 SingleDNLD 잘되는지 테스트.
-//- 가장 큰 관건은 MyIAP2 -> MyDownloader2 로 DNLD() 전달할 떄 "RtWithAlbumArt" 로 전달하기.
+// v3.07.04C [IAP 원복 전. MyIAP 의 Companion Obj - MAP 제거 후]
+//Achievements
+// IAP 대수술 (MAP 대부분 없애고 Price Map 만 남김- > 이것조차 SharedPref 로 대체 가능하기는 함.) (O)
+//- MyIAP2 -> MyDownloader2 로 DNLD() 전달할 떄 "RingtoneClass" 로 전달 -> MyDownloader2 Title 값 볼 수 있음.
 //-> 모든 MAP 없애고 -> RtWithAlbuMArt 에 .isPurchased(boo), price(Float) 등 항목 추가. 최초값은 병신였다가 -> MyIAPHelper 에서 채워주고 ->
-//rcvAdapter 로 전달 -> rcvAdapter 는 이제 static map 쓸 필요없이 List 하나로 조질수 있다.
-//=> MyDownloader2 에서 LiveData 보낼때도 RtWithAlbumart 로 제목과, trid 등 보내주잖아..
 //
+
+//ISSUES)
+// - 계속 Listfrag 왔다갔다 할때 깨지는거 결국 Lottie 애나메이션 postDelayed 문제 였음 -> AlamrsListFrag> Line 128, 490.반드시 관련 Blog 찾아볼것!
+// 에러 이름: Fragment AlarmsListFragment{a4a606f} (ffdc95fe-4c40-4580-bd65-ca609b3c0d93)} not attached to an activity.
+
+//Todos)
 //2> 이후 Multi DNLD 진행 : AlarmList Activity 런칭-> iap 를 SharedPref 로 확인 -> Multiple DNLD 진행
-//3> myiaphelper1 외 지워주기..
-//
-
-//
-//3) 이거 다 끝남녀 secondFrag Line 390, 575 복귀 ("원복") 으로 검색 -> IAP 다시 설정..휴.
-//https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3
-//4) MyIapHelper1 지워주기.
 //5) 현재 MyDownloader2 에서 DNLD_prgrs 로 쓰는 값을 Firebase 에서 적용했을때도 문제 없을지 확인 필요! (total 값을 못 받았던걸로 기억..)
+// MyDownloader2 -> SecondFrag 라이브데이터 -> 제목을 다운로드 화면에 표시?
+// Permission Handler 에서 Multi Dnld 이런거 없애주기..
 
-//todos
-//- myIAP <-> RCV 라이브데이터로 한번 조져보기?. MAP 을 너무 사용함..상호 의존 (SecondFrag <-> MyIap MAP <-> MediaPlayer MAP<->RCV MAP 의존도 줄이기)
+//4) MyIapHelper1 지워주기.
 //.. 추후 Firebase Bug 알림이! (이름 기억 안나네..)
-
-
-// 할일 ==>
-
-// todo: AlarmListActivity - onResume () 에서 기존에 DNLD BTM SHEET 없애준거등 처리..
-// todo: 기존 Permissions.kt 와 중복되는지 확인..
+// AlarmListActivity - onResume () 에서 기존에 DNLD BTM SHEET 없애준거등 처리..
+// 기존 Permissions.kt 와 중복되는지 확인..
 // fb bug 알림이
 // Gal S21 에서 왜 install 할때 인스톨이 안되는겨..
 //- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
+
+
+
+
 
 
 

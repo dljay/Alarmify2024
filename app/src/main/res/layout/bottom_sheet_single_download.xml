@@ -33,6 +33,7 @@
     </com.google.android.material.progressindicator.LinearProgressIndicator>
 
     <TextView
+        android:id="@+id/tv_dnldRtTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:lineSpacingExtra="4sp"

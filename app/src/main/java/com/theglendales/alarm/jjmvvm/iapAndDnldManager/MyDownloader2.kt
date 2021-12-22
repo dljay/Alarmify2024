@@ -9,6 +9,7 @@ import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.theglendales.alarm.configuration.globalInject
+import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 
@@ -232,26 +233,25 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 // <----------***MULTIPLE File Dnld <<<<<<<<<<<<----------------
 
 //********Single File Dnld **************
-    fun singleFileDNLD(rtWAlbumArtObj: RtWithAlbumArt) {
-        Log.d(TAG, "singleFileDNLD: Begins. TrId= ${rtWAlbumArtObj.trIdStr}, rtTitle=${rtWAlbumArtObj.rtTitle}, rtWAlbumArtObj=${rtWAlbumArtObj}, ")
+    fun singleFileDNLD(rtClassObj: RingtoneClass) {
+        Log.d(TAG, "singleFileDNLD: Begins. TrId= ${rtClassObj.id}, rtTitle=${rtClassObj.title}, rtClassObj=${rtClassObj}, ")
     // 일단 Permission Check
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 DONWLOAD 에 특별한 Permission 필요 없음.
 //            permHandler.permissionForSingleDNLD(itemToDownload) // 필요없는듯. 에러도 안남.. API25 에서 잘됨.
 //        }
-        val fileNameAndFullPath = rtWAlbumArtObj.audioFilePath
-        val trackID = rtWAlbumArtObj.trIdStr
-        val iapName = rtWAlbumArtObj.iapName
-        val testXXTitle = "TestTitle"
+
+        val trackID = rtClassObj.id
+        val iapName = rtClassObj.iapName
+        val trTitle = rtClassObj.title
+        val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
+        val mp3UrlToDownload= rtClassObj.mp3URL // 테스트 때 SoundHelix 16,15,14,12,11 링크 사용했음.
 
     // RtWithAlbumArtObj 으로 변환 후 일단 ViewModel 에 전달 -> SecondFrag 에서 DNLD BottomFrag UI 준비 //todo: 여기서 제대로..
-        val dnldAsRtObj = RtWithAlbumArt(trIdStr = trackID.toString(), rtTitle = testXXTitle, audioFilePath = fileNameAndFullPath,
+        val dnldAsRtObj = RtWithAlbumArt(trIdStr = trackID.toString(), rtTitle = trTitle, audioFilePath = fileNameAndFullPath,
                         iapName = iapName, rtDescription ="", badgeStr = "", isRadioBtnChecked = false)
         dnldViewModel.updateDNLDRtObj(dnldAsRtObj)
 
 
-    //download URL // todo: URL 변경
-
-        val mp3UrlToDownload="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" // 16,15,14,12,11 링크 사용했음.
     // 우선 URL valid 한지 체크
         val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlToDownload)
         if(!isUrlValid) {
@@ -336,7 +336,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                     Log.d(TAG, "getResultFromSingleDNLD: (Before) prevValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
                     prevPrgrsValue = myDownloadProgress
                     Log.d(TAG, "getResultFromSingleDNLD: (After) prevValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
-
+        // 여기서 한번 LiveData 때려주고!
                     dnldViewModel.updateDNLDProgressLive(prevPrgrsValue)
                 }
 

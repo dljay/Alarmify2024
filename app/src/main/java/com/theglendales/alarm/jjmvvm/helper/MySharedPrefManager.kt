@@ -33,8 +33,7 @@ class MySharedPrefManager(context: Context) {
     //
     private val gson: Gson = Gson()
 
-    inline fun <reified T> genericType() =
-        object : TypeToken<T>() {}.type // todo: 이것이 무엇인지 inline 에 대해서 공부해봐야함.
+    inline fun <reified T> genericType() = object : TypeToken<T>() {}.type // todo: 이것이 무엇인지 inline 에 대해서 공부해봐야함.
 
     //<1> *.RTA 와 *.Art Path 가 저장된 Object 를 Shared Pref(RtaArtPathList.xml) 에 저장하기
     fun getRtaArtPathList(): MutableList<RtWithAlbumArt> {
@@ -93,28 +92,10 @@ class MySharedPrefManager(context: Context) {
 
 
     // 2) id / iapName / TrTitle 저장. (MyIAPHeler2.kt> refresh
-    fun getIapNamePerTrId(trId: Int): String {
-        return prefForIAP.getString(trId.toString(), "noValue").toString() // ex (1, p1) (2,p2) ..
-    }
-
-    fun saveTrIdPerIapName(iapName: String, trId: Int) { // (p1, 1), (p2, 2) ..
-        prefForIAP.edit().putInt(iapName, trId).apply()
-    }
-
-    fun getTrIdPerIapName(iapName: String): Int = prefForIAP.getInt(iapName, -1) //(p1, 1) , (p2, 2) ...
-
-    fun saveIapNamePerTrId(trId: Int, iapName: String) { // (trId,IapName) (1, p1) (2,p2) ..
-        Log.d(TAG, "saveIapNamePerTrId: trId=$trId, iapName=$iapName")
-        prefForIAP.edit().putString(trId.toString(), iapName).apply()
-
-    }
-
-
-    // 2-c) id 에 따른 trTitle
-    fun getTrTitlePerTrId(trId: Int): String = prefForIAP.getString(trId.toString(), "No Value").toString()
-    fun saveTrTitlePerTrId(trId: Int, trTitle: String) { // (1,"Alaska Wind"), (2, "Elephant Cry") ..
-        prefForIAP.edit().putString(trId.toString(), trTitle).apply()
-    }
+//    fun getTrTitlePerTrId(trId: Int): String = prefForIAP.getString(trId.toString(), "No Value").toString()
+//    fun saveTrTitlePerTrId(trId: Int, trTitle: String) { // (1,"Alaska Wind"), (2, "Elephant Cry") ..
+//        prefForIAP.edit().putString(trId.toString(), trTitle).apply()
+//    }
 // <--- IAP 관련
 
 //// 아래 셋다 현재 사용 안되는 상태

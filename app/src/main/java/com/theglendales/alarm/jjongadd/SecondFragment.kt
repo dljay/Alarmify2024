@@ -218,11 +218,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 })
         //DNLD ViewMODEL Observe //한번 btmSht_SingleDnld Frag 를 보여준뒤-> ListFrag -> SecondFrag 복귀 했을 때 아래 LiveData 가 후루루룩 다 불리는 문제 => onDestroy() 에서 강제 VModel Clear 해줬음!
 
-            //2-C-가) DNLD: RtWithAlbumArt Obj 받기 (UI 갱신: DNLD Dialogue 열어주기)
+            //2-C-가) DNLD: RtWithAlbumArt Obj 받기 (UI 갱신: DNLD Dialogue 열어주고 곡 제목 표시)
             jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {rtWithAlbumArtObj ->
                 Log.d(TAG, "onViewCreated: trId= ${rtWithAlbumArtObj.trIdStr}, received rtObj = $rtWithAlbumArtObj")
                 // Show BtmSht_SingleDNLD Frag
                 btmSht_SingleDnld.show(requireActivity().supportFragmentManager, btmSht_SingleDnld.tag) // <-- listFrag 갔다 복귀했을 때 다시 DNLDFrag 열어주는 문제때문에 없앰.
+                // btmSht_SingleDnld.updateTextView(rtWithAlbumArtObj.rtTitle) <- 시간차때문에 이렇게 넣으면 안될듯..
                 //todo: viewmodel 에 getCurrentRtObj() 만들고 -> 다운로드중인 RT 제목 + 그래픽 보여주기?
                 
             })
@@ -246,6 +247,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
                         btmSht_SingleDnld.animateLPI(100,1) //  그래프 만땅!
                         btmSht_SingleDnld.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
+                        Snackbar.make(requireActivity().findViewById(android.R.id.content),"DOWNLOAD COMPLETED.",Snackbar.LENGTH_LONG).show()
                     }
                     else -> {btmSht_SingleDnld.removeBtmSheetAfterOneSec()
                         Snackbar.make(requireActivity().findViewById(android.R.id.content),"Unknown Download Status received. Status Code=$dnldStatusInt",Snackbar.LENGTH_LONG).show()}
@@ -405,16 +407,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             // 2) 우측 FREE, GET THIS 클릭했을 때 처리.
             R.id.id_cl_entire_Purchase -> {
                 Log.d(TAG, "myOnItemClick: You probably clicked FREE or GET This")
-                Toast.makeText(this.context, "Clicked Purchase Button for ${viewAndTrId.trId}",Toast.LENGTH_SHORT).show()
-                // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
+                //Snackbar.make(requireActivity().findViewById(android.R.id.content),"Clicked Purchase Button for ${viewAndTrId.trId}",Snackbar.LENGTH_SHORT).show() <- 어차피 구매창에 가려서 의미없음.
 
-                iapInstance2.myOnPurchaseClicked(viewAndTrId.trId) // todo: 다운로드 테스트 후 복귀시켜놔야함. 원복
-                // 아무거나 다운로드 테스트
-//                val testName="testFile"
-//                val fileNameFullPath = requireActivity().getExternalFilesDir(null)!!
-//                    .absolutePath + "/.AlarmRingTones" + File.separator + testName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
-//                val testDownloadable = DownloadableItem(777,fileNameFullPath)
-//                myDownloader2.singleFileDNLD(testDownloadable)
+
+                // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
+                iapInstance2.myOnPurchaseClicked(viewAndTrId.trId)
+
             }
 
         }
@@ -539,6 +537,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     lottieAnimationView.visibility = LottieAnimationView.VISIBLE
                     lottieAnimationView.setAnimation(R.raw.lottie_error1)
                     Snackbar.make(lottieAnimationView,"Please kindly check your network connection status",Snackbar.LENGTH_LONG).show()
+
                     //todo: 여기 SnackBar 에서 View 가 불안정할수 있음=>try this? -> Snackbar.make(requireActivity().findViewById(android.R.id.content), "..", Snackbar.LENGTH_LONG).show()
 
                 })
@@ -593,13 +592,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
 
                 // IAP
-                    iapInstance2.refreshItemIdIapNameTitle(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) ** todo: 원복
+                    iapInstance2.refreshItemIdIapNameTitle(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) **
 
-                // Update MediaPlayer.kt
+                // Update MediaPlayer.kt 의 URL
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
                 // Update RcV's RT MAP
                     rcvAdapterInstance.updateRingToneMap(fullRtClassList) //updateRcV 와는 별개로 추후 ListFrag 갔다왔을 때 UI 업뎃을 위해 사용.
-                    rcvAdapterInstance.refreshRecyclerView(fullRtClassList)
+                    //rcvAdapterInstance.refreshRecyclerView(fullRtClassList)
 
 
                 // 아무 트랙도 클릭 안한 상태

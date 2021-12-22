@@ -71,14 +71,14 @@ class RcViewAdapter(
 
         viewHolderMap[currentTrId] = holder
 
-        val currentTrIapName = currentRtList[position].iapName
+
         holder.tv1_Title.text = currentItem.title
         holder.tv2_ShortDescription.text = currentItem.tags
         holder.holderTrId = currentTrId
 
 
-        Log.d(TAG, "onBindViewHolder: holder TrId= ${holder.holderTrId}, currentTrIapName= $currentTrIapName")
-        Log.d(TAG, "onBindViewHolder: Purchased Stats Map=${mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)} ")
+        Log.d(TAG, "onBindViewHolder: holder TrId= ${holder.holderTrId}, currentTrIapName= $currentIapName")
+        Log.d(TAG, "onBindViewHolder: Purchased Statsp=${mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)} ")
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " +
 //                "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
@@ -96,7 +96,7 @@ class RcViewAdapter(
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
 
         //IAP 관련
-        holder.tv3_Price.text = MyIAPHelper2.itemPricesMap[currentTrIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
+        holder.tv3_Price.text = MyIAPHelper2.itemPricesMap[currentIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
 
         //Purchase Stat True or False
         when(mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)) {
@@ -233,9 +233,7 @@ class RcViewAdapter(
     }
 
     fun updateRingToneMap(inputRtList: MutableList<RingtoneClass>) {
-
         ringToneMap.clear()
-
         for (i in 0 until inputRtList.size) {
             ringToneMap[inputRtList[i].id] = inputRtList[i]
             //Log.d(TAG, "updateMap: ringToneMap id= ${inputRtList[i].id} = ringToneMap: $ringToneMap")

@@ -20,27 +20,17 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                    private val rcvAdapterInstance: RcViewAdapter?,
                    private val myDownloaderInstance: MyDownloader2) :  PurchasesUpdatedListener
 {
-    var currentRtList: MutableList<RingtoneClass> = ArrayList()
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
 
-    //Map containing IDs of Products (will replace 'purchaseItemIDsList')
-    //val itemIDsMap: HashMap<Int,String> = HashMap() // <trackID, productID> ex) <1,p1> <2,p2> ... productID = 결국엔 rtList 의 .iapName 과 같음.
-    //private val downloadUrlMap: HashMap<Int, String> = HashMap() // <trackID, mp3URL> ex) <1, http://xxx.xxx> ....
-
-
-
-
-    // download 필요한 item 들 목록
-
+    var currentRtList: MutableList<RingtoneClass> = ArrayList()
+    var clickedToBuyTrkID = -10 // 유저가 클릭할 때 myOnPurchaseClicked()에서 TrID 로 바뀜. [앱 Launch 후 IAP 초기화중 기존에 구입된 품목이 한개일경우-handlePurchase() 에서 자동 다운로드로 연결되는것을 방지]
 
 
     companion object
     {
         const val PREF_FILE = "MyPref"
-        //val purchaseStatsMap: HashMap<Int,Boolean> = HashMap() // <trackID, Bool> ex) <1,true> <2,false> ...
         val itemPricesMap: HashMap<String, String> = HashMap() // <trackID, price> ex) <1, 1000>, <2, 1200> 현재는 KRW 그러나 지역/국가별 자동 설정 될듯..
-        //var filesToDNLDCount : Int = 0 // 전체 다운로드가 필요한 파일 갯수. 해당 숫자를 추후 MyDownloader.kt>preDownloadPrep() 에서 참조하여 진행.
         var myQryPurchListSize : Int = 0
     }
 
@@ -102,7 +92,6 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                                     mySharedPrefManager.savePurchaseBoolPerIapName(iapName, false)
                                     Log.d(TAG, "C-ERROR) ‼ onBillingSetupFinished: PurchaseState is (not)PURCHASED for trackID=$trackID, itemName=$iapName")
                                     downloadHandlerBridge(trackID, false, downloadNow = false) // Disk 에 있으면 삭제.
-
                                 }
                             }
                         }
@@ -131,12 +120,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                             if(myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) { // 혹시나..구매한적도 없는데 만약 디스크에 있으면
                                 // 디스크에서 삭제
                                 Log.d(TAG, "onBillingSetupFinished: $iapName 는(은) 산 놈도 아닌데 하드에 있음. 지워야함!! ")
-                    /**
-                     * 여기서 IAP, Firebase 에서 RtClass 로 받은 정보를 바탕으로 => RtWithAlbumArt Object 로 변환하여 전달.
-                     */
-                                val rtWAlbumArtObj = RtWithAlbumArt(trIdStr = trId.toString(), rtTitle = trTitle, audioFilePath = fileNameAndFullPath, iapName = iapName,
-                                                    artFilePathStr = "", rtDescription = "", badgeStr = "", isRadioBtnChecked = false)
-                                myDiskSearcher.deleteFromDisk(rtWAlbumArtObj)
+                                myDiskSearcher.deleteFromDisk(rtObject, fileNameAndFullPath)
                             }
                         }}
                     }
@@ -147,7 +131,6 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                         Log.d(TAG, "C-3) ☺ onBillingSetupFinished:  The User has never ever 산적이 없으면 일로 오는듯! (queryPurchase.size 가 0 이란 뜻..?)")
                     }
                 }
-
                 refreshItemsPriceMap()
                 Log.d(TAG, "C) onBillingSetupFinished: finished..")
             }
@@ -165,14 +148,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         currentRtList = newRtList
 
         Log.d(TAG, "A) refreshItemIdsMap: begins!")
-        for (i in currentRtList.indices) {
-            //itemIDsMap[currentRtList[i].id] = currentRtList[i].iapName //ex) itemIDsMap[1=trackID] = p1 // [1,p1] [2,p2] .. (기존코드)
-            mySharedPrefManager.saveIapNamePerTrId(currentRtList[i].id, currentRtList[i].iapName) // (1, p1) (2, p2) .. 저장. 수술완료
-            mySharedPrefManager.saveTrIdPerIapName(currentRtList[i].iapName, currentRtList[i].id) // (p1, 1) (p2, 2) .. 저장. 수술완료
-            mySharedPrefManager.saveTrTitlePerTrId(currentRtList[i].id, currentRtList[i].title) // (1, "Rt1 Alaska") (2, "Big Train Sound")
 
-            //수술완료
-        }
         initIAP()
     }
     // Download/Delete Manager
@@ -197,7 +173,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                 {
                     for (skuDetails in mySkuDetailsListYo) {
 
-                        itemPricesMap[skuDetails.sku] = skuDetails.price// itemPricesMap[iapName] = 가격. ex) itemPricesMap[p1]= 1000
+                        itemPricesMap[skuDetails.sku] = skuDetails.price// itemPricesMap[iapName] = 가격. ex) (p1, 1000) (p2, 2000) ...
                         Log.d(TAG,"E) refreshItemsPriceMap: a) item title=${skuDetails.title} b)item price= ${skuDetails.price}, c)item sku= ${skuDetails.sku}")
                         // logd 결과 예시: a) item title=p1 b)item price= ₩1,000, c)item sku= p1
                     }
@@ -215,11 +191,12 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     //Clicked to Purchase
 //정상적인 purchase Flow: myOnPurchaseClicked() > initiatePurchase() > launchBillingFlow(구매화면) > onPurchaseUpdated() > handlePurchaseNotification()> downloadHanlderBridge()
     fun myOnPurchaseClicked(trackID: Int) { // position -> trackID: Int..  position 쓰면 Chip 걸린 상태로 리스트 변경되었을 때 다른 물품을 사게되겠찌..
-        val iapName = mySharedPrefManager.getIapNamePerTrId(trackID)
+        clickedToBuyTrkID = trackID
+        val iapName = getIapNameByTrkId(trackID)
         Log.d(TAG, "myOnPurchaseClicked: ATTEMPTING TO BUY!! 두구두구.. $iapName")
 
         if (mySharedPrefManager.getPurchaseBoolPerIapName(iapName)) { //selected item is already purchased
-            Toast.makeText(receivedActivity, "You already own " + mySharedPrefManager.getIapNamePerTrId(trackID), Toast.LENGTH_SHORT).show()
+            Toast.makeText(receivedActivity, "You already own $iapName", Toast.LENGTH_SHORT).show()
             //Snackbar.make(receivedActivity,"You already own " +itemIDsMap[trackID], Snackbar.LENGTH_SHORT).show()
             return
         }
@@ -247,13 +224,13 @@ class MyIAPHelper2(private val receivedActivity: Activity,
 
 
 
-    private val preferenceObject: SharedPreferences
-        private get() = receivedActivity.getSharedPreferences(PREF_FILE, 0)
-    private val preferenceEditObject: SharedPreferences.Editor
-        private get() {
-            val pref = receivedActivity.getSharedPreferences(PREF_FILE, 0)
-            return pref.edit()
-        }
+//    private val preferenceObject: SharedPreferences
+//        private get() = receivedActivity.getSharedPreferences(PREF_FILE, 0)
+//    private val preferenceEditObject: SharedPreferences.Editor
+//        private get() {
+//            val pref = receivedActivity.getSharedPreferences(PREF_FILE, 0)
+//            return pref.edit()
+//        }
 
     //    // 2) 가격 저장... (KEY, PRICE=string) / ex) (p1, ₩1,000)
 //    private fun getItemPriceFromPref(iapName: String): String? {
@@ -317,18 +294,34 @@ class MyIAPHelper2(private val receivedActivity: Activity,
             Toast.makeText(receivedActivity, "Error " + billingResult.debugMessage, Toast.LENGTH_SHORT).show()
         }
     }
-    //MAP UTIL functions. 내가 만든. ------------>>>>>
-    fun <K,V> getKeyFromMap(mapReceived: Map<K,V>, target: V): K {
-        return mapReceived.filter { target == it.value }.keys.first()
+//List 에서 원하는 값 받아오는 functions. 내가 만든 ------------>>>>>
+    // 아래 Method 들 모두 logd 로 시작/끝 테스트해보니 0.01 초도 안걸림.
+    fun getRtInstanceByIapName(iapName: String) = currentRtList.first { rtObj -> rtObj.iapName == iapName }
+    fun getRtInstanceByTrkId(trkId: Int) = currentRtList.first { rtObj -> rtObj.id == trkId }
+
+    fun getIapNameByTrkId(trkId: Int): String {
+
+        val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
+        return rtObj.iapName
     }
-//MAP UTIL functions. 내가 만든. <<<------------
+    fun getTrkIdByIapName(iapName: String): Int {
+        val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.iapName == iapName } // .first() : returns the first object matching { predicate}
+        return rtObj.id
+    }
+    fun getTrTitleByTrkId(trkId: Int): String {
+
+        val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
+        return rtObj.title
+    }
+//List 에서 원하는 값 받아오는 functions. 내가 만든 <<<------------
 
     fun handlePurchaseNotification(purchases: List<Purchase>) {
         Log.d(TAG, "handlePurchaseNotification: begins.")
 
         for (purchase in purchases) {
-            val trackId = mySharedPrefManager.getTrIdPerIapName(purchase.sku)
-            val iapName = mySharedPrefManager.getIapNamePerTrId(trackId)
+            val rtInstance = getRtInstanceByIapName(purchase.sku)
+            val trackId = rtInstance.id
+            val iapName = rtInstance.iapName
 
             //purchase found
             if (trackId > -1)
@@ -337,7 +330,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                 //1) if item is purchased
                 if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED)
                 {
-                    // 1-a) Invalid purchase
+                    // 1-A) Invalid purchase
                     if (!verifyValidSignature(purchase.originalJson, purchase.signature))
                     {
                         // show error to user
@@ -368,16 +361,17 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                             }
                         }
                     }
-                    // 1-C) (일반) 정상 구매. !!과거 구입건이 있을 때 앱 재설치 후 "최초" 실행시 이쪽으로 들어옴.!!
+                    // 1-C) (일반) 정상 구매. !!과거 구입건이 있을 때 앱 재설치 후 "최초" 실행시는 이쪽으로 들어옴.!! -> 그래서 다운받게 되는 이슈..
                     else
                     {
                         // Grant entitlement to the user on item purchase
                         if (mySharedPrefManager.getPurchaseBoolPerIapName(iapName)) {
                             mySharedPrefManager.savePurchaseBoolPerIapName(iapName, true)
 
-                            if(myQryPurchListSize == 1) { // A) 정상 신규 구매 한건
+                            if(myQryPurchListSize == 1 && clickedToBuyTrkID == trackId) { // A) 정상 신규 구매 1개 + 유저가 클릭한 trId 와 일치하면 진행
                                 Log.d(TAG, "handlePurchaseNotification: 1-C-a) 정상 single 구매. 다운로드 진행")
                                 // ############################## 신규 구매건. 과거 구매건은 정상 처리되었어도 여기까지는 안 들어옴. (logd 로 확인)
+                                // !!!!!!!!!!!!! 그러나!! 전체 리스트중 한개만 구입해놓은 상태면 다운받게됨.
                                 Toast.makeText(receivedActivity, "You have purchased $iapName", Toast.LENGTH_SHORT).show()
                                 downloadHandlerBridge(trackId, true, downloadNow = true)
                                 // ############################## 신규 구매건
@@ -440,22 +434,21 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     // 이전 (신규) 구매건에 대해서 처리-> single/multiDownloadOrNot() 에서 file 디스크에 있는지 체크 및 download 할지 여부를 정함.
     private fun downloadHandlerBridge(trId: Int, keepTheFile: Boolean, downloadNow: Boolean) {
         //Log.d(TAG, "downloadHandlerBridge: <<<MyDownloader.Kt 로 임무 전달!!> trackId= $trId")
-        val trTitle = mySharedPrefManager.getTrTitlePerTrId(trId)
-        val iapName = mySharedPrefManager.getIapNamePerTrId(trId) // p1, p2 등 productId 를 return
+        val rtInstance = getRtInstanceByTrkId(trId)
+
+        //val trTitle = rtInstance.title
+        val iapName = rtInstance.iapName
         val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
             .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
-
-        val rtWAlbumArtObj = RtWithAlbumArt(trIdStr = trId.toString(), rtTitle = trTitle, audioFilePath = fileNameAndFullPath, iapName = iapName,
-            artFilePathStr = "", rtDescription = "", badgeStr = "", isRadioBtnChecked = false)
 
         if(!keepTheFile && myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) {
             // (잘못된 구매 사유 등으로) Keep 할 필요 없는 파일인데 디스크에 있을경우 삭제!
             Log.d(TAG, "downloadHandlerBridge: !![WARNING] Deleting this File!!=$iapName")
-                myDiskSearcher.deleteFromDisk(rtWAlbumArtObj)
+                myDiskSearcher.deleteFromDisk(rtInstance, fileNameAndFullPath)
         }
         else if(downloadNow && keepTheFile) { // 정상 단독 구매건 다운로드 (sync 와 무관하고 app 에서 한개 샀을 때)
             Log.d(TAG, "downloadHandlerBridge: ***SINGLE PURCHASE!!")
-            myDownloaderInstance.singleFileDNLD(rtWAlbumArtObj)
+            myDownloaderInstance.singleFileDNLD(rtInstance)
         }
 
         //Log.d(TAG, "downloadHandlerBridge: ########### myQryPurchListSize=${myQryPurchListSize},trackId= $trId, toDownloadItem=$downloadableItem")

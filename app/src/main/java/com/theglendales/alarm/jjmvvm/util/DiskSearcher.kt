@@ -58,7 +58,7 @@ class DiskSearcher(val context: Context)
             return isDiskRescanNeeded
         }
     // 2-B) /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <10 미만
-        if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 10) { //todo: defaultRt 갯수 바뀌면. 반영.
+        if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 10) { //todo: defaultRt 갯수 바뀌면. 반영. 혹은 구입한 px.rta 갯수가 많을때도 문제. 숫자에 의존해서는 안된다.
             Log.d(TAG, "isDiskScanNeeded: 2-B)  /.AlarmRingtonesFolder 파일 갯수가 0 혹은 <10 미만")
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
@@ -94,23 +94,25 @@ class DiskSearcher(val context: Context)
     {
         onDiskRingtoneList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.
 
-    //(1)-b  /.AlarmRingTones 에 파일이 없거나, 5개 이하로 있을때 (즉 최초 실행 혹은 문제 발생) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
+    //(1)-b  /.AlarmRingTones 에 Defrt 파일이 없거나, 10개 미만으로 있을때 (즉 최초 실행 혹은 어떤 연유로 defrta 파일 갯수가 부족) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
+            val listOfDefrtFiles = alarmRtDir.listFiles { dir, name -> name.contains("defrt")  } // 파일 이름에 "defrt" 를 포함하는 놈들을 List 로 받아서. 그 갯수 확인.
+                if(!listOfDefrtFiles.isNullOrEmpty() && listOfDefrtFiles.size <10) {
+                    Log.d(TAG, "onDiskRtSearcher: Possible Missing Defrt Files. numberOfDefRtFiles=${listOfDefrtFiles.size}")
 
-        //if(alarmRtDir.listFiles().isNullOrEmpty()||alarmRtDir.listFiles().size < 10) { // 위에 isDiskScanNeeded() 서 체크해주니깐 여기서 if 문 필요 없음.
-            Log.d(TAG, "onDiskRtSearcher: NO FILES (or less than 5 files) INSIDE /.AlarmRingTones FOLDER!")
-            copyDefaultRtsToPhone(R.raw.defrt01, "defrt01.rta")
-            copyDefaultRtsToPhone(R.raw.defrt02,"defrt02.rta")
-            copyDefaultRtsToPhone(R.raw.defrt03, "defrt03.rta")
-            copyDefaultRtsToPhone(R.raw.defrt04, "defrt04.rta")
-            copyDefaultRtsToPhone(R.raw.defrt05, "defrt05.rta")
-            copyDefaultRtsToPhone(R.raw.defrt06, "defrt06.rta")
-            copyDefaultRtsToPhone(R.raw.defrt07, "defrt07.rta")
-            copyDefaultRtsToPhone(R.raw.defrt08, "defrt08.rta")
-            copyDefaultRtsToPhone(R.raw.defrt09, "defrt09.rta")
-            copyDefaultRtsToPhone(R.raw.defrt10, "defrt10.rta")
-        // raw 파일명은 .mp3 로, 폰에는 .rta 로 (.mp3 로 raw 에 넣지 않으면 인스톨 후 생성되는 두 Default 알람의 벨소리가 Notification 에서 소리 안남!)
+                    copyDefaultRtsToPhone(R.raw.defrt01, "defrt01.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt02,"defrt02.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt03, "defrt03.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt04, "defrt04.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt05, "defrt05.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt06, "defrt06.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt07, "defrt07.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt08, "defrt08.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt09, "defrt09.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt10, "defrt10.rta")
+                    // raw 파일명은 .mp3 로, 폰에는 .rta 로 (.mp3 로 raw 에 넣지 않으면 인스톨 후 생성되는 두 Default 알람의 벨소리가 Notification 에서 소리 안남!)
 
-          //  }
+                }
+
     //(1)-c: 구입한 파일이 현 폴더에 있는지 한번 더 확인? ...구축해줄곳임. flowchart 참고.
 
     // (2) 이제 폴더에 파일이 있을테니 이것으로 updateList() 로 전달할 ringtone 리스트를 만듬.
@@ -124,7 +126,9 @@ class DiskSearcher(val context: Context)
                 Log.d(TAG, " onDiskRtSearcher: \n[ADDING TO THE LIST]  *** Title= ${rtOnDisk.rtTitle}, trId=${rtOnDisk.trIdStr}, " +
                         "\n *** file.name=${f.name} // file.path= ${f.path.toString()} //\n artFilePath=${rtOnDisk.artFilePathStr}")
 
-            // (2)-b 해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우 null 상태. (User 가 지웠거나, onDiskRtSearcher() 가 가동 안되었을때 등등..)
+            // (2)-b **해당 trID의 artFilePath 가 MAP 에 등록되어있지 않은 경우** null 상태. (User 가 지웠거나, onDiskRtSearcher() 가 가동 안되었을때 등등..)
+                // 신규 구매의 경우 px.rta 파일은 있으나 rta 파일은 없을것. 그러나 정상적이라면 .rta<->.art 파일은 각각 있어야 함.
+                // (그래서 ListFrag 에서 .readAlbumArtOnDisk() 를 먼저 실행하여 이 extractArtFromRta() 과정을 생략 해주는것.)
                 if(rtOnDisk.artFilePathStr.isNullOrEmpty()) {
                     // ** 전체 file path rebuilding 이 'artFileList <-> audioFileList 대조 후 rebuilding 보다 효율적일듯. ** 생각보다 별로 안 걸림.
 
@@ -281,9 +285,9 @@ class DiskSearcher(val context: Context)
             Log.d(TAG, "extractMetaDataFromRta: BadgeString= $badgeString")
         
 
-            // 3-f) artFile Path(String)
+            // 3-f) artFile Path(String) 를 Map 에서 받음.
             //todo:  ** 아래 readArtOnDisk() 가 앱 시작과 동시에 실행됨. 다 되었다는 가정하에 여기서 찾지만. Path 가 아직 없는경우에 보완책
-            val artFilePath = onDiskArtMap[trIDString] //trIDString & artFilePath 둘 다 nullable String
+            val artFilePath = onDiskArtMap[trIDString] //<trkId, 앨범아트 경로> trIDString & artFilePath 둘 다 nullable String
 
         //4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
         val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, iapName = fileReceived.name,

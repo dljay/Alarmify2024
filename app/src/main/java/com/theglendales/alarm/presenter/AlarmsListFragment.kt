@@ -113,11 +113,9 @@ class AlarmsListFragment : Fragment() {
 
 
 
-    //최초 Data INSTALL -----------------
+    //최초 Data INSTALL 및 신규다운로드, rta 나 art 파일이 삭제되었을때. -----------------
         // 1) DiskSearcher.downloadedRtSearcher() 를 실행할 필요가 있는경우(O) (최초 앱 설치 or 신규 다운로드 등.. )
         // [신규 다운로드 후 rta 파일만 추가되었거나, user 삭제, 오류 등.. rt (.rta) 중 art 값이 null 인 놈이 있거나 등]
-
-
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
             // ** diskScan 시작 시점-> ANIM(ON)!
@@ -131,7 +129,7 @@ class AlarmsListFragment : Fragment() {
             //CoroutineScope(Dispatchers.IO).launch { <== ** 일부러 코루틴에서 제외-> 그래야 여기서 update SharedPref 등이 끝나고나서 밑에 innerClass>getView 실행됨.
             //코루틴 안 쓰고 DiskScan 가동시에는 어떻게든 Animation 으로 시간 끌기?
                 //lottieAnimCtrl(SHOW_ANIM)
-                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장
+                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장 <trkId, ArtPath>
                 myDiskSearcher.readAlbumArtOnDisk()
                 //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
                 val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.

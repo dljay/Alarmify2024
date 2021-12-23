@@ -372,24 +372,24 @@ class DiskSearcher(val context: Context)
 //    }
 
 //*************************** DOWNLOAD 관련해서 필요한 기능들 (기존에 MyDownloader.kt 에 있던 기능들 옮겨옴.)
-    fun checkDuplicatedFileOnDisk (filePathAndName: String): Boolean { //다운로드 받기 전 이미 Disk 에 File 이 있는지 체크.
-    //val destPath : String= receivedActivitiy.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones"
-    //Toast.makeText(this,"${destPath.toString()}",Toast.LENGTH_LONG).show()
-    //Log.d(TAG, "checkDuplicatedFileOnDisk: begins!!")
+    // Same File Exists ? + And that Same File need to be replaced?
+    fun isSameFileOnThePhone (filePathAndName: String): Boolean { //다운로드 받기 전 이미 Disk 에 File 이 있는지 체크.
 
         val fileToCheck = File(filePathAndName)
-        return if(fileToCheck.isFile) { //true if and only if the file denoted by this abstract pathname exists and is a normal file; false otherwise
 
-            Log.d(TAG, "checkDuplicatedFileOnDisk: \"File ${fileToCheck.name} exists\"")
+        return if(fileToCheck.isFile && fileToCheck.exists()) { //true if and only if the file denoted by this abstract pathname exists and is a normal file; false otherwise
+
+            Log.d(TAG, "doesSameFileExistOnThePhone: \"File ${fileToCheck.name} exists\"")
             //Toast.makeText(receivedActivity,"File ${fileToCheck.name} exists", Toast.LENGTH_LONG).show()
             // todo: 파일은 있지만 혹시나 불량 파일인지도 확인? (중간에 다운로드 끊기는 등)
             true
         }else{
-            Log.d(TAG, "checkDuplicatedFileOnDisk: \"File ${fileToCheck.name} DOES NOT!!XX exist!!\"")
+            Log.d(TAG, "doesSameFileExistOnThePhone: \"File ${fileToCheck.name} DOES NOT!!XX exist!!\"")
             //Toast.makeText(receivedActivity,"File ${fileToCheck.name} does not exist!!", Toast.LENGTH_SHORT).show()
             false
         }
     }
+
 
     fun deleteFromDisk(rtClassObj: RingtoneClass, fileNameAndFullPath: String) { //todo: rtWithAlbumArt obj 로 교체.
             val trId=  rtClassObj.id

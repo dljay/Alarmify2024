@@ -40,7 +40,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
     companion object {
         var isSyncInProcess: Boolean = false // onResume()/onPause() 등에서 현재도 다운중인지 확인 위해 사용.
-        var isSingleDNLDInProcess: Boolean = false
+        //var isSingleDNLDInProcess: Boolean = false
 
         var totalFilesToDNLD : Int = 0
         val btmShtSingleDNLDInstance= BtmSht_SingleDNLD() // 이놈 만큼은 object 가 아니고 class 임!
@@ -67,7 +67,11 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 //********MULTIPLE File Dnld ---------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     class DownloadInfoContainer(val dnldID: Long=0, val trkId: Int=0, val fileNameAndPath: String ="")
 
-    fun multipleFileDNLD(needToSyncListReceived: MutableList<DownloadableItem>) {
+    fun multipleFileDNLD(multipleDNLDNeededList: List<RingtoneClass>) {
+        Log.d(TAG, "multipleFileDNLD: [멀티] 파일 복원 필요 갯수:${multipleDNLDNeededList.size}, Received list=$multipleDNLDNeededList")
+    }
+
+    /*fun multipleFileDNLD(needToSyncListReceived: MutableList<DownloadableItem>) {
         // 다수 파일에 대한 다운로드. 앱 최초 실행 시 그전 구입건이 2개 이상 있으면 무조건 일로 들어옴.
         Log.d(TAG, "multipleFileDNLD: starts")
 
@@ -147,15 +151,11 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
             }//
         }
 
-    }
+    }*/
     private fun getDnldResultMulti(infoContainer: DownloadInfoContainer): Boolean { // 한개가 끝날때마다 bool return.
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         var isStillDownloading = true
         //multi- 다운로드 Animation 관련
-        var animInitialBool = false // 시작하자마자 20~40 % 까지(random) 는 무조건 animation 실행.
-        var animFortyNSixtyBool = false // progress 가 40~60 사이일 때 animation
-        var animSixtyEightyBool = false // 60~80 구간
-        var animEightyOrHigher = false // 80 이상
 
         var statusRunningCount =  0 // logd 미친듯이 뜨는것 막기 위해..
         var statusPauseCount = 0
@@ -281,7 +281,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
     // Download Progress -> ViewModel (LiveData) -> SecondFrag 로 전달됨.
         CoroutineScope(Dispatchers.IO).launch {
-            isSingleDNLDInProcess = true
+            //isSingleDNLDInProcess = true
 
             // 아래 getResult..() 에서 다운로드 중일때는 계속 Loop 돌다가. 다운이 끝나면 False or Success Status (INT) 를 보냄.
             val dnldResult = getResultFromSingleDNLD(downloadID, dnldAsRtObj)

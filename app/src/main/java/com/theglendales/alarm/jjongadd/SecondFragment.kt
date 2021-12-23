@@ -297,7 +297,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "onResume: 2nd Frag!")
         // 아래 onPause() 에서 save 한 '기존 재생 정보' 는 observeAndLoadFirebase() 에서 로딩하기로.
 
-    //todo: DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서 신중한 접근 필요. 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.
+    // DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서?  신중한 접근 필요. (Update: permission 상관없는듯..)
+    // 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.
 //        //B) 현재 Sync = Multi 다운로드가 진행중 && 인터넷이 되는 상태면 btmSheet_Multi 다시 보여주기!
 //        if(MyDownloader.isSyncInProcess && myNetworkCheckerInstance.isNetWorkAvailable())
 //        {
@@ -417,9 +418,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         }
     }
-
-
-
 
     private fun setNetworkAvailabilityListener() {
         //1-b) API 24 이상이면 콜백까지 등록

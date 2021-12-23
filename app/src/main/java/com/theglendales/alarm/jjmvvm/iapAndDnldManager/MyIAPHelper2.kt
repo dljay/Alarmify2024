@@ -22,7 +22,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     private val myDiskSearcher: DiskSearcher by globalInject()
 
     var currentRtList: MutableList<RingtoneClass> = ArrayList()
-    val multiDNLDNeededList = ArrayList<RingtoneClass>() // ##### <기존 구매했는데 a) 삭제 후 재설치 b) Pxx.rta 파일 소실 등으로 복원이 필요한 파일들 리스트> [멀티]
+    var multiDNLDNeededList: MutableList<RingtoneClass> = ArrayList() // ##### <기존 구매했는데 a) 삭제 후 재설치 b) Pxx.rta 파일 소실 등으로 복원이 필요한 파일들 리스트> [멀티]
     var clickedToBuyTrkID = -10 // 유저가 클릭할 때 myOnPurchaseClicked()에서 TrID 로 바뀜. [앱 Launch 후 IAP 초기화중 기존에 구입된 품목이 한개일경우-handlePurchase() 에서 자동 다운로드로 연결되는것을 방지]
 
 
@@ -67,6 +67,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                     {
                         Log.d(TAG, "C) onBillingSetupFinished: queryPurchases.size = ${queryPurchases.size}")
                         myQryPurchListSize = queryPurchases.size // 추후 MyDownloader.kt > multiDownloadOrNot() 에서 활용.
+                        multiDNLDNeededList.clear() // [멀티] 필요한 리스트는 우선 '0' 값으로, 바로 밑에서 채워줌.
                         handlePurchaseNotification(queryPurchases)
 
 
@@ -77,6 +78,9 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                             val rtObject = currentRtList.single { RtClass -> RtClass.iapName == p.sku } // iapName 이 p.sku (ex.p1, p2) 와 매칭하는 rtObject
                             val trackID = rtObject.id
                             val iapName = rtObject.iapName
+                            val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
+                                .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
+
 
                             //if purchase found. 구입 내역이 있는! item 만 나옴 (ex. 현재 21/06/4에는 rt1, rt2 만 여기에 해당됨..)
                             if (trackID > -1)
@@ -92,9 +96,13 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                                     val dnldURL = rtObject.mp3URL
                                     mySharedPrefManager.saveUrlPerIap(iapName, dnldURL)
                                     //downloadOrDeleteSinglePurchase(trackID, true, downloadNow = false)
-                            // (기존 구매가 확인되었으나 파일이없다) -> multiDNLDNeededList 에 추가!
-                                    multiDNLDNeededList.add(rtObject) // 멀티 #####
-                                    // <<<********************************기존 구매건
+                            // (기존 구매가 확인되었으나 파일이없다) -> multiDNLDNeededList 에 추가! [멀티]
+                                    if(!myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
+                                        Log.d(TAG, "onBillingSetupFinished: [멀티] 복원 다운로드 필요한 리스트에 다음을 추가: $iapName")
+                                        multiDNLDNeededList.add(rtObject)
+                                    }
+
+                                // <<<********************************기존 구매건
                                 } else
                                 { // 구매한적이 있으나 뭔가 문제가 생겨서 PurchaseState.Purchased 가 아닐때 여기로 들어옴. 애당초 구입한적이 없는 물품은 여기 뜨지도 않음!
                                     mySharedPrefManager.savePurchaseBoolPerIapName(iapName, false)
@@ -126,7 +134,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                                 .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
 
                             //todo: 다음을 구매 안한 상품들에 대해서 매번 해줘야 한다는 것= too CPU expensive..
-                            if(myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) { // 혹시나..구매한적도 없는데 만약 디스크에 있으면
+                            if(myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) { // 혹시나..구매한적도 없는데 만약 디스크에 있으면
                                 // 디스크에서 삭제
                                 Log.d(TAG, "onBillingSetupFinished: $iapName 는(은) 산 놈도 아닌데 하드에 있음. 지워야함!! ")
                                 myDiskSearcher.deleteFromDisk(rtObject, fileNameAndFullPath)
@@ -189,18 +197,19 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                         // logd 결과 예시: a) item title=p1 b)item price= ₩1,000, c)item sku= p1
                     }
                 }
+            /** 사실상 모든 INIT IAP 작업이 끝나는 곳. 여기서 RCView Update & Multi DNLD 진행
+             *  왜 이 블록에 있어야 하는지. 아래에서 rcvAdapter.refresh() & myDownloader.multipleFileDNLND() 넣으면 안되는지는 아직 모르겠음.
+             */
                 rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
+                myDownloaderInstance.multipleFileDNLD(multiDNLDNeededList)// [멀티] 다운로드 진행->
             }
         } else {
             Log.d(TAG, "E) refreshItemsPriceMap: itemIdsMap is null or empty..")
             Toast.makeText(receivedActivity, "Error Loading Billing Info: Error stage <E>", Toast.LENGTH_SHORT).show()
-
-    /** 사실상 모든 INIT IAP 작업이 끝나는 곳
-     * 여기서 RCView Update & Multi DNLD 진행
-     */
             rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
-            // 멀티 다운로드 진행->
         }
+//        rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
+//        myDownloaderInstance.multipleFileDNLD(multiDNLDNeededList)// [멀티] 다운로드 진행->
 
     }
 
@@ -451,14 +460,16 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
             .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
 
-        if(!keepTheFile && myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) {
+        if(!keepTheFile && myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
             // (잘못된 구매 사유 등으로) Keep 할 필요 없는 파일인데 디스크에 있을경우 삭제! //todo: 테스트 필요.
             Log.d(TAG, "downloadOrDeleteSinglePurchase: !![WARNING] Deleting this File!!=$iapName")
                 myDiskSearcher.deleteFromDisk(rtInstance, fileNameAndFullPath)
+            return
         }
-        else if(keepTheFile && myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) {
-            // (정상 구매로 Keep 은 맞는데 이미 Disk 에 동일한 파일이 있다.) //todo: FileSizeCheck?
-            Log.d(TAG, "downloadOrDeleteSinglePurchase: 다운받는건 맞는데(keepthefile=$keepTheFile) 이미 파일= $iapName 이 폰에 있음. ")
+        else if(keepTheFile && myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
+            // (정상 구매로 Keep 은 맞는데 이미 Disk 에 동일한 파일이 있다.) //todo: mp3가 정상 파일인지 다운로드 안 끊겼는지도 확인 필요. 이거 좀 불가능한듯. FileSizeCheck?
+            Log.d(TAG, "downloadOrDeleteSinglePurchase: 다운로드 필요 없음. 이미 파일= $iapName 이 폰에 있으므로.. ")
+            return
 
         }
         else if(downloadNow && keepTheFile) { // 정상 단독 구매건 다운로드 (sync 와 무관하고 app 에서 한개 샀을 때)

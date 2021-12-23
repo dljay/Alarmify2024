@@ -67,6 +67,8 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
     fun multipleFileDNLD(multipleDNLDNeededList: List<RingtoneClass>) {
         Log.d(TAG, "multipleFileDNLD: [멀티] 파일 복원 필요 갯수:${multipleDNLDNeededList.size}, Received list=$multipleDNLDNeededList")
+
+
     }
 
     /*fun multipleFileDNLD(needToSyncListReceived: MutableList<DownloadableItem>) {
@@ -411,44 +413,6 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
         return resultCode // downloading 이 끝나면 bool 값은 false 로 되어있음.
     }
 
-    //*********Bottom Sheets ***********
-    fun openBtmShtMultiDNLD() { // 다운로드와 동시에 BtmSheet_Sync 호출.
-
-        val fm = btmShtMultiObj.fragmentManager
-        if (fm == null) {
-            Log.d(TAG, "openBtmShtMultiDNLD: fm is null==bottomSheet NOT(XX) displayed or prepared!!!!")
-        }
-        if (fm != null) { // BottomSheet 이 display 된 상태.
-            Log.d(TAG, "openBtmShtMultiDNLD: fm not null..something is(OO) displayed already")
-
-            fm.beginTransaction()
-            fm.executePendingTransactions()
-        }
-        if (!btmShtMultiObj.isAdded) {//아무것도 display 안된 상태.
-            btmShtMultiObj.showBtmSyncDialog(receivedActivity)
-            Log.d(TAG, "openBtmShtMultiDNLD: ***DISPLAY BOTTOM SHEET_MULTI! NOW!! .isAdded= FALSE!!..")
-        }
-    }
-
-    fun openBtmShtSingleDNLD() { // 다운로드와 동시에 BtmSheet_Sync 호출.
-
-        val fm = btmShtSingleDNLDInstance.fragmentManager
-        if(fm==null) {
-            Log.d(TAG, "openBtmShtSingleDNLD: fm is null==bottomSheet NOT(XX) displayed or prepared!!!!")
-        }
-        if(fm!=null) { // BottomSheet 이 display 된 상태.
-            Log.d(TAG, "openBtmShtSingleDNLD: fm not null..something is(OO) displayed already")
-
-            fm.beginTransaction()
-            fm.executePendingTransactions()
-            //fm 에서의 onCreateView/Dialog() 작용은 Asynchronous 기 때문에. <-요기 executePending() 을 통해서 다 실행(?)한 후.에.야 밑에 .isAdded 에 걸림.
-        }
-
-        if(!btmShtSingleDNLDInstance.isAdded) {//아무것도 display 안된 상태.
-            btmShtSingleDNLDInstance.showBtmSingleDNLDSheet(receivedActivity)
-            Log.d(TAG, "openBtmShtSync: ***DISPLAY BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
-        }
-    }
 
 }
 

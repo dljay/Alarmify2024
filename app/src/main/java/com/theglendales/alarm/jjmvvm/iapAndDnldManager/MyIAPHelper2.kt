@@ -1,7 +1,6 @@
 package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 
 import android.app.Activity
-import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import com.android.billingclient.api.*
@@ -11,7 +10,6 @@ import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 import java.io.File
 import java.io.IOException
 
@@ -24,6 +22,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     private val myDiskSearcher: DiskSearcher by globalInject()
 
     var currentRtList: MutableList<RingtoneClass> = ArrayList()
+    val multiDNLDNeededList = ArrayList<RingtoneClass>() // ##### <기존 구매했는데 a) 삭제 후 재설치 b) Pxx.rta 파일 소실 등으로 복원이 필요한 파일들 리스트> [멀티]
     var clickedToBuyTrkID = -10 // 유저가 클릭할 때 myOnPurchaseClicked()에서 TrID 로 바뀜. [앱 Launch 후 IAP 초기화중 기존에 구입된 품목이 한개일경우-handlePurchase() 에서 자동 다운로드로 연결되는것을 방지]
 
 
@@ -52,6 +51,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 Log.d(TAG, "C) onBillingSetupFinished: starts..")
 
+
                 // billing setup 이 문제없이 되었다면.
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
                 {
@@ -68,6 +68,9 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                         Log.d(TAG, "C) onBillingSetupFinished: queryPurchases.size = ${queryPurchases.size}")
                         myQryPurchListSize = queryPurchases.size // 추후 MyDownloader.kt > multiDownloadOrNot() 에서 활용.
                         handlePurchaseNotification(queryPurchases)
+
+
+
                         //check item in purchase list. 구매 상태인 물품에 대해서! status check! 한번 더 확인. 문제없으면 true 로..
                         for (p in queryPurchases)
                         {
@@ -85,19 +88,22 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                                 {
                                     mySharedPrefManager.savePurchaseBoolPerIapName(iapName, true)
                                     Log.d(TAG, "C-1) ☺ onBillingSetupFinished: PurchaseState is PURCHASED for trackID=$trackID, itemName=$iapName")
-                                // 구매가 확인된 RT 는 URL 을 SharedPref (MyIapUrl.xml)에 저장 (추후 소실시 Listfrag 로딩 후 다운로드
+                            // 기존 구매가 확인된 RT 는 무조건 URL 을 SharedPref (MyIapUrl.xml)에 저장 -> 이후 multiDNLNDNeededList 에 추가되며 다운로드로 진행.
                                     val dnldURL = rtObject.mp3URL
                                     mySharedPrefManager.saveUrlPerIap(iapName, dnldURL)
-                                    downloadHandlerBridge(trackID, true, downloadNow = false)
+                                    //downloadOrDeleteSinglePurchase(trackID, true, downloadNow = false)
+                            // (기존 구매가 확인되었으나 파일이없다) -> multiDNLDNeededList 에 추가!
+                                    multiDNLDNeededList.add(rtObject) // 멀티 #####
                                     // <<<********************************기존 구매건
                                 } else
                                 { // 구매한적이 있으나 뭔가 문제가 생겨서 PurchaseState.Purchased 가 아닐때 여기로 들어옴. 애당초 구입한적이 없는 물품은 여기 뜨지도 않음!
                                     mySharedPrefManager.savePurchaseBoolPerIapName(iapName, false)
                                     Log.d(TAG, "C-ERROR) ‼ onBillingSetupFinished: PurchaseState is (not)PURCHASED for trackID=$trackID, itemName=$iapName")
-                                    downloadHandlerBridge(trackID, false, downloadNow = false) // Disk 에 있으면 삭제.
+                                    downloadOrDeleteSinglePurchase(trackID, false, downloadNow = false) // Disk 에 있으면 삭제하기 위해 이쪽으로 전달..
                                 }
                             }
                         }
+
                         //C-2) (기존) 구매안된 물품들(굉장히 다수겠지..)에 대해서는 SharedPref 에 false 로 표시!. //items that are not found in purchase list mark false
                         //indexOf returns -1 when item is not in foundlist. 리스트에 없으면 -1 반환.
                         // 수술가능(O) currentRtList.forEach { if(purchaseFound.indexOf(currentRtList[i].trID)  { savePurchaseItemBoolValueToPref(currnetRtList[i].iapName, false)
@@ -134,7 +140,9 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                         Log.d(TAG, "C-3) ☺ onBillingSetupFinished:  The User has never ever 산적이 없으면 일로 오는듯! (queryPurchase.size 가 0 이란 뜻..?)")
                     }
                 }
+
                 refreshItemsPriceMap()
+
                 Log.d(TAG, "C) onBillingSetupFinished: finished..")
             }
 
@@ -186,19 +194,25 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         } else {
             Log.d(TAG, "E) refreshItemsPriceMap: itemIdsMap is null or empty..")
             Toast.makeText(receivedActivity, "Error Loading Billing Info: Error stage <E>", Toast.LENGTH_SHORT).show()
+
+    /** 사실상 모든 INIT IAP 작업이 끝나는 곳
+     * 여기서 RCView Update & Multi DNLD 진행
+     */
             rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
+            // 멀티 다운로드 진행->
         }
 
     }
 
-    //Clicked to Purchase
+//Clicked to Purchase 관련
+
 //정상적인 purchase Flow: myOnPurchaseClicked() > initiatePurchase() > launchBillingFlow(구매화면) > onPurchaseUpdated() > handlePurchaseNotification()> downloadHanlderBridge()
     fun myOnPurchaseClicked(trackID: Int) { // position -> trackID: Int..  position 쓰면 Chip 걸린 상태로 리스트 변경되었을 때 다른 물품을 사게되겠찌..
         clickedToBuyTrkID = trackID
         val iapName = getIapNameByTrkId(trackID)
         Log.d(TAG, "myOnPurchaseClicked: ATTEMPTING TO BUY!! 두구두구.. $iapName")
 
-        if (mySharedPrefManager.getPurchaseBoolPerIapName(iapName)) { //selected item is already purchased
+        if (mySharedPrefManager.getPurchaseBoolPerIapName(iapName)) { //selected item is already purchased // todo: 혹은 디스크에 있는지? 그러나 내가 자동적으로 recover 되게 만들었음.
             Toast.makeText(receivedActivity, "You already own $iapName", Toast.LENGTH_SHORT).show()
             //Snackbar.make(receivedActivity,"You already own " +itemIDsMap[trackID], Snackbar.LENGTH_SHORT).show()
             return
@@ -330,7 +344,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                         // show error to user
                         Log.d(TAG, "handlePurchaseNotification: 1-A Invalid purchase. 다운취소???")
                         Toast.makeText(receivedActivity, "Error : Invalid Purchase", Toast.LENGTH_SHORT).show()
-                        downloadHandlerBridge(trackId, false, downloadNow = true) //todo: downloadOrDelete(trackId) (X)
+                        downloadOrDeleteSinglePurchase(trackId, false, downloadNow = true) //todo: downloadOrDelete(trackId) (X)
                         continue  //skip current iteration only because other items in purchase list must be checked if present
                     }
                     // 1-B) else purchase is valid but! 인식이 안된경우?
@@ -347,7 +361,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                                 Toast.makeText(receivedActivity, "You have purchased $iapName", Toast.LENGTH_SHORT).show()
                                 Log.d(TAG, "handlePurchaseNotification: 1-B 정상구매(not acknowledged). 다운로드 진행 ")
                                 // ############################## 신규 구매건. 과거 구매건은 정상 처리되었어도 여기까지는 안 들어옴. (logd 로 확인)
-                                downloadHandlerBridge(trackId, true, downloadNow = true) //todo: downloadOrDelete(trackId) (O)
+                                downloadOrDeleteSinglePurchase(trackId, true, downloadNow = true) //todo: downloadOrDelete(trackId) (O)
                                 // ############################## 신규 구매건
 
                                 rcvAdapterInstance!!.notifyDataSetChanged() //todo: 이거왠만하면 쓰지 말라는데. 구매상태 변화니깐 item Change 만 하면 되는데. 현재 작성되있는 refreshRcV(rtList) 로는 반영이 안되서..
@@ -369,7 +383,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                                 Toast.makeText(receivedActivity, "You have purchased $iapName", Toast.LENGTH_SHORT).show()
 
                             // 실 다운로드 실행->
-                                downloadHandlerBridge(trackId, true, downloadNow = true)
+                                downloadOrDeleteSinglePurchase(trackId, true, downloadNow = true)
                                 // ############################## 신규 구매건
 
                                 rcvAdapterInstance!!.notifyDataSetChanged()
@@ -388,7 +402,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                 else if (purchase.purchaseState == Purchase.PurchaseState.PENDING) {
                     Log.d(TAG, "handlePurchaseNotification: Purchase is pending")
                     Toast.makeText(receivedActivity,"$iapName: 2-A Purchase is Pending. Please complete Transaction", Toast.LENGTH_SHORT).show()
-                    downloadHandlerBridge(trackId, false, downloadNow = true)
+                    downloadOrDeleteSinglePurchase(trackId, false, downloadNow = true)
                 }
                 else if (purchase.purchaseState == Purchase.PurchaseState.UNSPECIFIED_STATE) {
                     //mark purchase false in case of UNSPECIFIED_STATE
@@ -396,7 +410,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                     Toast.makeText(receivedActivity, "$iapName: Purchase Status Unknown", Toast.LENGTH_SHORT).show()
                     Log.d(TAG, "handlePurchaseNotification:  2-B Purchase Status Unknown. 파일 확인후 삭제?")
 
-                    downloadHandlerBridge(trackId, false, downloadNow = true)
+                    downloadOrDeleteSinglePurchase(trackId, false, downloadNow = true)
                     rcvAdapterInstance!!.notifyDataSetChanged()
                 }
             }
@@ -427,9 +441,9 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     }
 
 
-    // 이전 (신규) 구매건에 대해서 처리-> single/multiDownloadOrNot() 에서 file 디스크에 있는지 체크 및 download 할지 여부를 정함.
-    private fun downloadHandlerBridge(trId: Int, keepTheFile: Boolean, downloadNow: Boolean) {
-        //Log.d(TAG, "downloadHandlerBridge: <<<MyDownloader.Kt 로 임무 전달!!> trackId= $trId")
+    // 신규 단일 구매건 & 기존 단일 구매건에 대해서- file 디스크에 있는지 체크 및 download 할지 여부를 정함.
+    private fun downloadOrDeleteSinglePurchase(trId: Int, keepTheFile: Boolean, downloadNow: Boolean) {
+        Log.d(TAG, "downloadOrDeleteSinglePurchase: <<<MyDownloader.Kt 로 임무 전달!!> trackId= $trId")
         val rtInstance = getRtInstanceByTrkId(trId)
 
         //val trTitle = rtInstance.title
@@ -439,15 +453,20 @@ class MyIAPHelper2(private val receivedActivity: Activity,
 
         if(!keepTheFile && myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) {
             // (잘못된 구매 사유 등으로) Keep 할 필요 없는 파일인데 디스크에 있을경우 삭제! //todo: 테스트 필요.
-            Log.d(TAG, "downloadHandlerBridge: !![WARNING] Deleting this File!!=$iapName")
+            Log.d(TAG, "downloadOrDeleteSinglePurchase: !![WARNING] Deleting this File!!=$iapName")
                 myDiskSearcher.deleteFromDisk(rtInstance, fileNameAndFullPath)
         }
+        else if(keepTheFile && myDiskSearcher.checkDuplicatedFileOnDisk(fileNameAndFullPath)) {
+            // (정상 구매로 Keep 은 맞는데 이미 Disk 에 동일한 파일이 있다.) //todo: FileSizeCheck?
+            Log.d(TAG, "downloadOrDeleteSinglePurchase: 다운받는건 맞는데(keepthefile=$keepTheFile) 이미 파일= $iapName 이 폰에 있음. ")
+
+        }
         else if(downloadNow && keepTheFile) { // 정상 단독 구매건 다운로드 (sync 와 무관하고 app 에서 한개 샀을 때)
-            Log.d(TAG, "downloadHandlerBridge: ***SINGLE PURCHASE!!")
+            Log.d(TAG, "downloadOrDeleteSinglePurchase: ***SINGLE PURCHASE!!")
             myDownloaderInstance.singleFileDNLD(rtInstance)
         }
 
-        //Log.d(TAG, "downloadHandlerBridge: ########### myQryPurchListSize=${myQryPurchListSize},trackId= $trId, toDownloadItem=$downloadableItem")
+        //Log.d(TAG, "downloadOrDeleteSinglePurchase: ########### myQryPurchListSize=${myQryPurchListSize},trackId= $trId, toDownloadItem=$downloadableItem")
 
     }
 

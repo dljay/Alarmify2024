@@ -415,7 +415,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //iapInstance2.myOnPurchaseClicked(viewAndTrId.trId)
 
                 //다운로드 Test 용도 - IAP  검증 걸치지 않고 해당 번호에 넣은 RT 다운로드 URL 로 이동. [원복]
-                val testRtClassObj = iapInstance2.getRtInstanceByTrkId(10)
+                val testRtClassObj = iapInstance2.getRtInstanceByTrkId(12)
 //                val testRtHelixObj = RingtoneClass(title = "SoundHelix8.mp3","moreshit","desc","imgUrl",
 //                    mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",id=1, iapName = "shitbagHelix")
                 myDownloader2.singleFileDNLD(testRtClassObj)

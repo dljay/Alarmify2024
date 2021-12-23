@@ -69,8 +69,7 @@ import java.util.Calendar
 // 실제 다운 필요한 놈들은 MyDownloader2.kt > multipleFileDNLD(multiRtList) 로 보냄 (O)  -- 여기서부터 ->
 
 //ISSUES)
-// - 계속 Listfrag 왔다갔다 할때 깨지는거 결국 Lottie 애나메이션 postDelayed 문제 였음 -> AlamrsListFrag> Line 128, 490.반드시 관련 Blog 찾아볼것!
-// 에러 이름: Fragment AlarmsListFragment{a4a606f} (ffdc95fe-4c40-4580-bd65-ca609b3c0d93)} not attached to an activity.
+
 
 //Todos)
 

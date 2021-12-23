@@ -279,12 +279,13 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
         // 2)추후 다운로드 완료후-> broadcast 받을것이고-> 여기서 만든 id(LONG) 로 판독 예정!
         dnldViewModel.updateDNLDRtObj(dnldAsRtObj)
 
-        // Download Progress -> ViewModel (LiveData) -> SecondFrag 로 전달은 아래 reportResultFromSingleDNLD 로도 되지만. 혹시 몰라서 이중방패로 넣어줌.
+
         // BackgroundThread (Dispatchers.IO) 에서 안해주면 UI 가 멈춤 (Progress 보여줄 수 없다..)
         CoroutineScope(Dispatchers.IO).launch {
 
             //isSingleDNLDInProcess = true
             // 아래 getResult..() 에서 다운로드 중일때는 계속 Loop 돌다가. 다운이 끝나면 False or Success Status (INT) 를 보냄.
+            // **Download Progress -> ViewModel (LiveData) -> SecondFrag 로 전달은 아래 reportResultFromSingleDNLD 로도 되지만. 혹시 몰라서 이중방패로 넣어줌.
             val dnldResult = getResultFromSingleDNLD(downloadID, dnldAsRtObj)
 
             withContext(Dispatchers.Main) {
@@ -350,8 +351,8 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                 // bytesWrittenOnPhone: 파일 사이즈 체크 (다운로드 중) 폰에 Write 되고 있는 실물 파일 사이즈 체크  (사실상 bytesDownloadedSoFar 과 일치해야함.)
               //  val bytesWrittenOnPhone = File(filePathAndName) // 이거 다운 시작하자마자도 다운받아야할 전체 사이즈 뜨고 그래서 그냥 안 쓰기로..
 
-                if(myDownloadProgress >= 98) { //todo: 간혹 다운 다 됐음에도 Status.Pause 에 한참 머무는 경우가 있어서. 미리 이걸로 체크. 다운 안됐는데 뜰수도 있음. Firebase 링크에서는 안될수도..
-                    //todo: Double Check! 다운 진짜 완료됐는지!! 디스크에 있는 파일사이즈 체크. 이거 예전에 넣어놓은 이유가 다 있겠징.
+                if(myDownloadProgress >= 98) { //아래 다됐음에도 Status_Paused 되면 다운 종료하는것과 마찬가지 이중방패 (이건 위에서 제공받은 bytesDownloadedSoFar 에 의존)
+
                     val currentTime= Calendar.getInstance().time
                     Log.d(TAG, "getResultFromSingleDNLD: [다운로드 완료] @@@@@@myDownloadProgress=${myDownloadProgress}, time:$currentTime")
                     //isStillDownloading = false // 이제 While loop 에서 벗어나자! <- 불필요
@@ -382,8 +383,6 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                         }
                     }
                 }
-
-
                 when(statusInt) {
 
                     DownloadManager.STATUS_PENDING -> {} //1, 참고로 이거 제끼고 바로 running 으로 가는 경우도 많음.

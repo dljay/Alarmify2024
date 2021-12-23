@@ -97,7 +97,7 @@ class DiskSearcher(val context: Context)
             val listOfDefrtFiles = alarmRtDir.listFiles { dir, name -> name.contains("defrt")  } // 파일 이름에 "defrt" 를 포함하는 놈들을 List 로 받아서. 그 갯수 확인.
                 if(!listOfDefrtFiles.isNullOrEmpty() && listOfDefrtFiles.size <10) {
                     Log.d(TAG, "onDiskRtSearcher: Possible Missing Defrt Files. numberOfDefRtFiles=${listOfDefrtFiles.size}")
-
+                        //todo: 없는 파일만 복사!
                     copyDefaultRtsToPhone(R.raw.defrt01, "defrt01.rta")
                     copyDefaultRtsToPhone(R.raw.defrt02,"defrt02.rta")
                     copyDefaultRtsToPhone(R.raw.defrt03, "defrt03.rta")

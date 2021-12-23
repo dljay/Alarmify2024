@@ -97,7 +97,7 @@ class AlarmsListFragment : Fragment() {
     private val yesAlarmFri = getYesAlarmDayDrawable("F")
     private val yesAlarmSat = getYesAlarmDayDrawable("Sat")
 
-    private var isLottiePlayedOnce = false
+    private var isLottiePlayedOnce = false // DiskScan 에서 한번이라도 Lottie 애니메이션이 재생됐는지 확인( -> recoverMissingPurchasedFiles() 때도 틀어줘야될수도 있거덩)
 //내가 추가<-
 
     /** changed by [Prefs.listRowLayout] in [onResume]*/
@@ -161,7 +161,7 @@ class AlarmsListFragment : Fragment() {
         //1-a. isDiskScanNeeded -> false -> Lottie Anim (X)
         //1-b. isDiskScanNeeded -> true -> Lottie Anim (O)
         //2-a. isMissingPurchasedFiles -> false -> Snackbar: Rebuilding DB Completed.
-        //2-b. isMissingPurchasedFiles -> true -> Lottie Anim (O)--재생중이면 생략 -> download -> Snackbar: Recovering.. please restart later.
+        //2-b. isMissingPurchasedFiles -> true -> Lottie Anim (O)--재생중이거나 1-b 에서 한번 재생했으면 생략 -> download -> Snackbar: Recovering.. please restart later.
     }
 
 // ## Inner Class ##

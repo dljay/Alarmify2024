@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.unused.BtmSht_SingleDNLD
@@ -21,7 +20,6 @@ import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 private const val TAG="MyDownloader2"
 
@@ -244,12 +242,12 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
         val iapName = rtClassObj.iapName
         val trTitle = rtClassObj.title
         val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
-        val mp3UrlToDownload= rtClassObj.mp3URL // 테스트 때 SoundHelix 16,15,14,12,11 링크 사용했음.
+        val mp3UrlToDownload= rtClassObj.mp3URL // 테스트 때 SoundHelix 16,15,14,12,11,9 링크 사용했음.
 
     // RtWithAlbumArtObj 으로 변환 후 일단 ViewModel 에 전달 -> SecondFrag 에서 DNLD BottomFrag UI 준비 //todo: 여기서 제대로..
         val dnldAsRtObj = RtWithAlbumArt(trIdStr = trackID.toString(), rtTitle = trTitle, audioFilePath = fileNameAndFullPath,
                         iapName = iapName, rtDescription ="", badgeStr = "", isRadioBtnChecked = false)
-        dnldViewModel.updateDNLDRtObj(dnldAsRtObj)
+
 
 
     // 우선 URL valid 한지 체크
@@ -260,6 +258,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
             return
         }
     //Donwload Prep
+    try {
         Log.d(TAG, "singleFileDNLD: %%%%%%%%%%% WE'll FINALLY DOWNLOAD THIS trId=$trackID %%%%%%%%%%%")
         Log.d(TAG, "singleFileDNLD: %%%%%%%%%%% WE'll FINALLY DOWNLOAD THIS URL= $mp3UrlToDownload %%%%%%%%%%%")
         val dnlRequest = DownloadManager.Request(Uri.parse(mp3UrlToDownload))
@@ -271,21 +270,23 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
         dnlRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE) // 다운 중에만 표시 todo: NEXUS 5X API30 에뮬레이터에서 표시 안됨.
         // 내 app 의 Main Storage>android/data/com.xx.downloadtest1/files/안에 .AlarmRingTones라는 폴더를 만들고! 그 안에 file 저장! hidden 상태임!
-        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones", iapName) // * 경로설정.
+        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones","$iapName.rta") // * 경로+ File 이름 설정.
         //get download service, and enqueue file
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         // 다운로드 & 완료 알림(BroadCast) 관련: 1)식별 id 생성 2)Broadcast 등록.
         val downloadID = dnlManager.enqueue(dnlRequest) // 이 코드는 두가지 역할을 함.
         //1) Enqueue a new download. The download will start automatically once the download manager is ready to execute it and connectivity is available.
         // 2)추후 다운로드 완료후-> broadcast 받을것이고-> 여기서 만든 id(LONG) 로 판독 예정!
+        dnldViewModel.updateDNLDRtObj(dnldAsRtObj)
 
-    // Download Progress -> ViewModel (LiveData) -> SecondFrag 로 전달됨.
+        // Download Progress -> ViewModel (LiveData) -> SecondFrag 로 전달은 아래 reportResultFromSingleDNLD 로도 되지만. 혹시 몰라서 이중방패로 넣어줌.
+        // BackgroundThread (Dispatchers.IO) 에서 안해주면 UI 가 멈춤 (Progress 보여줄 수 없다..)
         CoroutineScope(Dispatchers.IO).launch {
-            //isSingleDNLDInProcess = true
 
+            //isSingleDNLDInProcess = true
             // 아래 getResult..() 에서 다운로드 중일때는 계속 Loop 돌다가. 다운이 끝나면 False or Success Status (INT) 를 보냄.
             val dnldResult = getResultFromSingleDNLD(downloadID, dnldAsRtObj)
-            // 아래 getResult..() 여기서 다 LiveData->SecondFrag 로 콜백해주지만. 혹시 몰라서 넣어놓음.
+
             withContext(Dispatchers.Main) {
                 when(dnldResult) {
                     DownloadManager.STATUS_FAILED -> {
@@ -300,7 +301,14 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                 }
             }
         }
-        Log.d(TAG, "singleFileDNLD: DLND ID= $downloadID, trackId=$trackID")
+    } // try Block{} 여기까지 <--
+    catch (e: Exception) {
+        Log.d(TAG, "singleFileDNLD: Failed to Download. Error=$e")
+        dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_FAILED)//16,  에러 발생시 SecondFrag 에 알림 (BtmSheet 없애주기라도해야지..)
+        Toast.makeText(receivedActivity,"Download Failed. Please check your internet connection.",Toast.LENGTH_LONG).show()
+    }
+
+
 
     }
 
@@ -309,10 +317,6 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
         var isStillDownloading = true
         var resultCode = -44 //Default 로 -44 고 다운 성공시(8) 실패시(16) 을 return
-        /*var animInitialBool = false // 시작하자마자 20~40 % 까지(random) 는 무조건 animation 실행.
-        var animFortyNSixtyBool = false // progress 가 40~60 사이일 때 animation
-        var animSixtyEightyBool = false // 60~80 구간
-        var animEightyOrHigher = false // 80 이상*/
         var prevPrgrsValue: Int = -77 // progress 가 변했을때만 ViewModel 에 전달!
         var prevStatusValue = -77 // Status 가 변했을때만 ViewModel 에 전달!
 
@@ -333,9 +337,9 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
 
                 // progress 가 변했을때만 ViewModel 에 전달!
                 if(prevPrgrsValue != myDownloadProgress) {
-                    Log.d(TAG, "getResultFromSingleDNLD: (Before) prevValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
+                    Log.d(TAG, "getResultFromSingleDNLD: (Before) prevPrgrsValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
                     prevPrgrsValue = myDownloadProgress
-                    Log.d(TAG, "getResultFromSingleDNLD: (After) prevValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
+                    Log.d(TAG, "getResultFromSingleDNLD: (After) prevPrgrsValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
         // 여기서 한번 LiveData 때려주고!
                     dnldViewModel.updateDNLDProgressLive(prevPrgrsValue)
                 }
@@ -357,7 +361,7 @@ class MyDownloader2 (private val receivedActivity: Activity, val dnldViewModel: 
                 }
 
                 val statusInt = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) // Status.xx 가 더 있음. 더 연구해볼것..
-            // Status 가 변했을때만 ViewModel 에 전달.
+            // Status 가 변했을때만 ViewModel 에 전달. !! 안 그러면 미친듯이 0.1 초에 한번씩 전달..
                 if(prevStatusValue != statusInt) {
                     Log.d(TAG, "getResultFromSingleDNLD: (Before) prevStatusValue=$prevStatusValue, statusInt=$statusInt")
                     prevStatusValue = statusInt

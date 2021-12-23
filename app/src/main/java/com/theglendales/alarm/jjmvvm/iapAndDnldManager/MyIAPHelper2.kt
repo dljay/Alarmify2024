@@ -201,6 +201,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
              *  왜 이 블록에 있어야 하는지. 아래에서 rcvAdapter.refresh() & myDownloader.multipleFileDNLND() 넣으면 안되는지는 아직 모르겠음.
              */
                 rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
+                rcvAdapterInstance.notifyDataSetChanged() // 현재 Firebase 가 두번씩 로딩되면서. 간혹 값이 null 로 표기되는 경우가 있음.
                 myDownloaderInstance.multipleFileDNLD(multiDNLDNeededList)// [멀티] 다운로드 진행->
             }
         } else {
@@ -219,9 +220,11 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     fun myOnPurchaseClicked(trackID: Int) { // position -> trackID: Int..  position 쓰면 Chip 걸린 상태로 리스트 변경되었을 때 다른 물품을 사게되겠찌..
         clickedToBuyTrkID = trackID
         val iapName = getIapNameByTrkId(trackID)
+        val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
+        .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
         Log.d(TAG, "myOnPurchaseClicked: ATTEMPTING TO BUY!! 두구두구.. $iapName")
 
-        if (mySharedPrefManager.getPurchaseBoolPerIapName(iapName)) { //selected item is already purchased // todo: 혹은 디스크에 있는지? 그러나 내가 자동적으로 recover 되게 만들었음.
+        if (mySharedPrefManager.getPurchaseBoolPerIapName(iapName) && myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) { //selected item is already purchased // todo: 혹은 디스크에 있는지? 그러나 내가 자동적으로 recover 되게 만들었음.
             Toast.makeText(receivedActivity, "You already own $iapName", Toast.LENGTH_SHORT).show()
             //Snackbar.make(receivedActivity,"You already own " +itemIDsMap[trackID], Snackbar.LENGTH_SHORT).show()
             return

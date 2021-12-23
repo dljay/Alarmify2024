@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 // v3.07.04E [복원 필요한 파일 멀티 다운로드 작업-진행중]
-//Achievements
+// Achievements
 // MyIAPHelper2.kt 에서 복원 필요한 파일 (기존 구매한 Pxx.rta 가 디스크에 없는 경우) 다운로드 작업 -> [멀티] 라고 모두 Comment 에 붙여놨음. (O)
 // 실제 다운 필요한 놈들은 MyDownloader2.kt > multipleFileDNLD(multiRtList) 로 보냄 (O)  -- 여기서부터 ->
 

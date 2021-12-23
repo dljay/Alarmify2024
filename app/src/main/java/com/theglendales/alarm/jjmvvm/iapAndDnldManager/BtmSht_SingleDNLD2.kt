@@ -110,16 +110,14 @@ class BtmSht_SingleDNLD2 : BottomSheetDialogFragment() {
             return
 
         }
-        if(isAnimationRunning()) {
-            Log.d(TAG, "prepAnim: Animation is already running!")
-            return
-        }
+//        if(isAnimationRunning()) { // 간혹 Prgrs 가 1초만에 두번 입력되는 경우가 있음( 1->85..) 이런식으로. 그랬을때 85로 뛰는 Prgrs 는 진행이 안되고 멈춰있는것처럼 보임. 일단 없애도 문제는 없는것처럼 보이기는 함.
+//            Log.d(TAG, "prepAnim: Animation is already running!")
+//            return
+//        }
         Log.d(TAG, "prepAnim: PrgrsReceived=$prgrsReceived ")
         val randomDuration = (2000L..5000L).random() // 그래프 차는 빠르기 랜덤 시간 값.
         animateLPI(prgrsReceived, randomDuration)
-//        when (prgrsReceived) { <- 이런거 필요없음.
-//            in 0..20 -> { // 0 이상 20 이하
-//                Log.d(TAG, "prepAnim: Between 0 & 20. PrgrsReceived=$prgrsReceived ") }
+
 
     }
 // 다운시작하면 TextView 에 현재 다운 받는 곡 명 써주기.

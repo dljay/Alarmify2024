@@ -408,11 +408,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             // 2) 우측 FREE, GET THIS 클릭했을 때 처리.
             R.id.id_cl_entire_Purchase -> {
                 Log.d(TAG, "myOnItemClick: You probably clicked FREE or GET This")
-                //Snackbar.make(requireActivity().findViewById(android.R.id.content),"Clicked Purchase Button for ${viewAndTrId.trId}",Snackbar.LENGTH_SHORT).show() <- 어차피 구매창에 가려서 의미없음.
-
 
                 // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
-                iapInstance2.myOnPurchaseClicked(viewAndTrId.trId)
+
+                //** 실제 다운로드에 쓰일 코드**
+                //iapInstance2.myOnPurchaseClicked(viewAndTrId.trId)
+
+                //다운로드 Test 용도 - IAP  검증 걸치지 않고 해당 번호에 넣은 RT 다운로드 URL 로 이동. [원복]
+                val testRtClassObj = iapInstance2.getRtInstanceByTrkId(10)
+//                val testRtHelixObj = RingtoneClass(title = "SoundHelix8.mp3","moreshit","desc","imgUrl",
+//                    mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",id=1, iapName = "shitbagHelix")
+                myDownloader2.singleFileDNLD(testRtClassObj)
+
+
 
             }
 

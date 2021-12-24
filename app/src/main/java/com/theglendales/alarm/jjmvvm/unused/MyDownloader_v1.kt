@@ -19,7 +19,7 @@ import kotlin.collections.ArrayList
 
 //todo: 불량/끊긴 다운로드인지도 체크 필요.?
 
-private const val TAG = "MyDownloader"
+private const val TAG = "MyDownloader_v1"
 
 /*data class DownloadableItem(val trackID: Int=0, val filePathAndName:String="") {
     override fun toString(): String
@@ -28,7 +28,7 @@ private const val TAG = "MyDownloader"
     }
 }*/
 
-class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity() {
+class MyDownloader_v1(private val receivedActivity: Activity) : AppCompatActivity() {
 
     companion object {
         var isSyncInProcess: Boolean = false // onResume()/onPause() 등에서 현재도 다운중인지 확인 위해 사용.
@@ -55,7 +55,7 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
     // <1-a> MyIapHelper.kt 에서 호출!로 시작-> 여기서 B)정상 구매인지 C) 디스크에 파일이 있는지 확인, 2)없으면 Perm Check-> Download!
     fun multiDownloadOrNot(downloadableItem: DownloadableItem, keepTheFile: Boolean) {
 
-        //A) MyIAPHelper.kt>downloadHandler() 에서 전달 받은 DownloadableItem 은 "심판 대상이므로" 일단 리스트에 add.
+        //A) MyIAPHelper_v1.kt>downloadHandler() 에서 전달 받은 DownloadableItem 은 "심판 대상이므로" 일단 리스트에 add.
         listToBeJudged.add(downloadableItem)
         Log.d(
             TAG,
@@ -72,7 +72,7 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
         }
         //C) 계속 진행되다 여기서 전달받은 갯수가 드디어 myQryPurchListSize 와 같으면 (=queryPurchases.size) 다운받을지 말지 심판 시작!
         //C-1) 최초 실행시 Sync 작업: 기존 구매내역 확인 후 파일 다운받을지 말지 정하기.
-        if (listToBeJudged.size == MyIAPHelper.myQryPurchListSize) // listTobeJudged(처리 전달 받은 아이템 숫자) = 구입 내역 목록 아이템 갯수
+        if (listToBeJudged.size == MyIAPHelper_v1.myQryPurchListSize) // listTobeJudged(처리 전달 받은 아이템 숫자) = 구입 내역 목록 아이템 갯수
         //todo: 만약 이 size 가 일치하지 않는 경우 반드시 대비 필요!!할까..?
         {
             val finalList = mutableListOf<DownloadableItem>()
@@ -99,7 +99,7 @@ class MyDownloader(private val receivedActivity: Activity) : AppCompatActivity()
             }
             //D) 최종으로 for loop 이 끝나고 정리된 리스트를 전달!
             // 이제 기존/현재의 구매건(들)에 대한 정리가 끝났을테니.초기화.
-            MyIAPHelper.myQryPurchListSize = 0
+            MyIAPHelper_v1.myQryPurchListSize = 0
             listToBeJudged.clear()
             // Permission 요청: Write Permission 체크 진행 ->그리고 여기서 바로 다운로드로 진행..
             Log.d(TAG, "MultiDownloadOrNot: ##for loop 종료! finalList.size=${finalList.size}")

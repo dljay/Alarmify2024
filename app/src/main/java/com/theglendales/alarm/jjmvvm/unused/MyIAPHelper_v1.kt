@@ -14,17 +14,17 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.Security
 import java.io.File
 import java.io.IOException
 
-private const val TAG="MyIAPHelper"
+private const val TAG="MyIAPHelper_v1"
 
-class MyIAPHelper(private val receivedActivity: Activity,
-                  private val rcvAdapterInstance: RcViewAdapter?,
-                  private val receivedRingtoneClassList: MutableList<RingtoneClass>) : PurchasesUpdatedListener
+class MyIAPHelper_v1(private val receivedActivity: Activity,
+                     private val rcvAdapterInstance: RcViewAdapter?,
+                     private val receivedRingtoneClassList: MutableList<RingtoneClass>) : PurchasesUpdatedListener
 {
     //Map containing IDs of Products (will replace 'purchaseItemIDsList')
     val itemIDsMap: HashMap<Int,String> = HashMap() // <trackID, productID> ex) <1,p1> <2,p2> ...
     val downloadUrlMap: HashMap<Int, String> = HashMap() // <trackID, mp3URL> ex) <1, http://xxx.xxx> ....
 
-    private val myDownloaderInstance = MyDownloader(receivedActivity) //여기서부터 Instance 체인.. MyIap->MyDownloader->PermHandler->MyBottomSheet.
+    private val myDownloaderInstance = MyDownloader_v1(receivedActivity) //여기서부터 Instance 체인.. MyIap->MyDownloader_v1->PermHandler->MyBottomSheet.
 
     // download 필요한 item 들 목록
 
@@ -35,7 +35,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
         const val PREF_FILE = "MyPref"
         val purchaseStatsMap: HashMap<Int,Boolean> = HashMap() // <trackID, Bool> ex) <1,true> <2,false> ...
         val itemPricesMap: HashMap<String, String> = HashMap() // <trackID, price> ex) <1, 1000>, <2, 1200> 현재는 KRW 그러나 지역/국가별 자동 설정 될듯..
-        //var filesToDNLDCount : Int = 0 // 전체 다운로드가 필요한 파일 갯수. 해당 숫자를 추후 MyDownloader.kt>preDownloadPrep() 에서 참조하여 진행.
+        //var filesToDNLDCount : Int = 0 // 전체 다운로드가 필요한 파일 갯수. 해당 숫자를 추후 MyDownloader_v1.kt>preDownloadPrep() 에서 참조하여 진행.
         var myQryPurchListSize : Int = 0
     }
 
@@ -68,7 +68,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
                     if (queryPurchases != null && queryPurchases.size > 0)
                     {
                         Log.d(TAG, "C) onBillingSetupFinished: queryPurchases.size = ${queryPurchases.size}")
-                        myQryPurchListSize = queryPurchases.size // 추후 MyDownloader.kt > multiDownloadOrNot() 에서 활용.
+                        myQryPurchListSize = queryPurchases.size // 추후 MyDownloader_v1.kt > multiDownloadOrNot() 에서 활용.
                         handlePurchaseNotification(queryPurchases)
                         //check item in purchase list. 구매 상태인 물품에 대해서! status check! 한번 더 확인. 문제없으면 true 로..
                         for (p in queryPurchases)
@@ -210,7 +210,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
             itemIDsMap[trackID]?.let { initiatePurchase(it) } // 계속 이렇게 wrap.. 왜냐면 String? 형태니깐.
 
         } else {
-            billingClient = BillingClient.newBuilder(receivedActivity).enablePendingPurchases().setListener(this@MyIAPHelper).build()
+            billingClient = BillingClient.newBuilder(receivedActivity).enablePendingPurchases().setListener(this@MyIAPHelper_v1).build()
             billingClient!!.startConnection(object : BillingClientStateListener {
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -370,7 +370,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
                                 Toast.makeText(receivedActivity, "You have purchased " + itemIDsMap[trackId], Toast.LENGTH_SHORT).show()
                                 downloadHandlerBridge(trackId, true, singlePurchase = true) //todo: downloadOrDelete(trackId) (O)
                                 // ############################## 신규 구매건
-                                refreshPurchaseStatsMap() // onBindView 에서 MyIAPHelper.purchaseStatsMap[currentTrId].toString() 에 의존!확인!
+                                refreshPurchaseStatsMap() // onBindView 에서 MyIAPHelper_v1.purchaseStatsMap[currentTrId].toString() 에 의존!확인!
                                 rcvAdapterInstance!!.notifyDataSetChanged()
                                 return
                             }
@@ -430,7 +430,7 @@ class MyIAPHelper(private val receivedActivity: Activity,
 
     // 이전 (신규) 구매건에 대해서 처리-> single/multiDownloadOrNot() 에서 file 디스크에 있는지 체크 및 download 할지 여부를 정함.
     private fun downloadHandlerBridge(trId: Int, keepTheFile: Boolean,singlePurchase: Boolean) {
-        //Log.d(TAG, "downloadHandlerBridge: <<<MyDownloader.Kt 로 임무 전달!!> trackId= $trId")
+        //Log.d(TAG, "downloadHandlerBridge: <<<MyDownloader_v1.Kt 로 임무 전달!!> trackId= $trId")
         val fileNameShort = itemIDsMap[trId] // Map 에서 "p1," "p2" 등 productId 를 return
         // 확장자 이름은 혹시 모르니 mp3 대신 rta (ring tone audio)로 변경!.
         val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!

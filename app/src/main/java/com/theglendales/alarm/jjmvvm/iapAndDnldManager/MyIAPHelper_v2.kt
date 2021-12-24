@@ -13,10 +13,10 @@ import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import java.io.File
 import java.io.IOException
 
-private const val TAG="MyIAPHelper2"
-class MyIAPHelper2(private val receivedActivity: Activity,
-                   private val rcvAdapterInstance: RcViewAdapter?,
-                   private val myDownloaderInstance: MyDownloader2) :  PurchasesUpdatedListener
+private const val TAG="MyIAPHelper_v2"
+class MyIAPHelper_v2(private val receivedActivity: Activity,
+                     private val rcvAdapterInstance: RcViewAdapter?,
+                     private val myDownloaderVInstance: MyDownloader_v2) :  PurchasesUpdatedListener
 {
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
@@ -28,14 +28,13 @@ class MyIAPHelper2(private val receivedActivity: Activity,
 
     companion object
     {
-        const val PREF_FILE = "MyPref"
         val itemPricesMap: HashMap<String, String> = HashMap() // <trackID, price> ex) <1, 1000>, <2, 1200> 현재는 KRW 그러나 지역/국가별 자동 설정 될듯..
         var myQryPurchListSize : Int = 0
     }
 
     private var billingClient: BillingClient? = null
 
-    //## <B> A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.refreshRcView()!
+    //## <B> A. refreshItemIdIapNameTitle -> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.refreshRcView()!
     /**
      * initIAP(): 아이템의 구입여부 확인 후 myPref 에 bool 값 저장 -> 끝나면 rcView update!
      */
@@ -43,7 +42,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
     {
         Log.d(TAG, "B) initIAP: init starts")
         // Establish connection to billing client
-        //check purchase status from google play store cache on every app start
+        // Check purchase status from google play store cache on every app start
         billingClient = BillingClient.newBuilder(receivedActivity.applicationContext)
             .enablePendingPurchases().setListener(this).build()
 
@@ -66,11 +65,9 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                     if (queryPurchases != null && queryPurchases.size > 0)
                     {
                         Log.d(TAG, "C) onBillingSetupFinished: queryPurchases.size = ${queryPurchases.size}")
-                        myQryPurchListSize = queryPurchases.size // 추후 MyDownloader.kt > multiDownloadOrNot() 에서 활용.
+                        myQryPurchListSize = queryPurchases.size // 추후 MyDownloader_v1.kt > multiDownloadOrNot() 에서 활용.
                         multiDNLDNeededList.clear() // [멀티] 필요한 리스트는 우선 '0' 값으로, 바로 밑에서 채워줌.
                         handlePurchaseNotification(queryPurchases)
-
-
 
                         //check item in purchase list. 구매 상태인 물품에 대해서! status check! 한번 더 확인. 문제없으면 true 로..
                         for (p in queryPurchases)
@@ -80,7 +77,6 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                             val iapName = rtObject.iapName
                             val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
                                 .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
-
 
                             //if purchase found. 구입 내역이 있는! item 만 나옴 (ex. 현재 21/06/4에는 rt1, rt2 만 여기에 해당됨..)
                             if (trackID > -1)
@@ -114,7 +110,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
 
                         //C-2) (기존) 구매안된 물품들(굉장히 다수겠지..)에 대해서는 SharedPref 에 false 로 표시!. //items that are not found in purchase list mark false
                         //indexOf returns -1 when item is not in foundlist. 리스트에 없으면 -1 반환.
-                        // 수술가능(O) currentRtList.forEach { if(purchaseFound.indexOf(currentRtList[i].trID)  { savePurchaseItemBoolValueToPref(currnetRtList[i].iapName, false)
+
                         currentRtList.forEach { rtObject->
                             if(purchaseFound.indexOf(rtObject.id) == -1)
                             { // itemIDsMap 에서 "구매한목록(purchaseFound)" 에 없는 놈들은 다 false 로!
@@ -143,7 +139,6 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                     }
                     // C-3) 애당초 구매건이 하나도 없으면. 모두 false!
                     else {
-                        // 수술가능(O) currentRtList.forEach { {..... savePurchaseItemBoolValueToPref(currnetRtList[i].iapName, false)
                         currentRtList.forEach { rtObject -> mySharedPrefManager.savePurchaseBoolPerIapName(rtObject.iapName, false) }
                         Log.d(TAG, "C-3) ☺ onBillingSetupFinished:  The User has never ever 산적이 없으면 일로 오는듯! (queryPurchase.size 가 0 이란 뜻..?)")
                     }
@@ -158,7 +153,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         })
         Log.d(TAG, "initIAP: finished..")
     }
-    //## <A> A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.refreshRcView()!
+    //## <A> A. refreshItemIdIapNameTitle -> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.refreshRcView()!
 /**
  *  제일 먼저 호출되는 곳
  */
@@ -170,10 +165,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
 
         initIAP()
     }
-    // Download/Delete Manager
-    private fun checkPurchasedItemOnDisk(trackId: Int) { // 산놈이면 확실히 다운로드. 안샀거나 취소했으면 반드시 삭제!
 
-    }
     //##<E>  A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() ==> (finally..) rcvAdapter.refreshRcView()!
     private fun refreshItemsPriceMap() {
         Log.d(TAG, "refreshItemsPriceMap: called")
@@ -204,7 +196,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                 rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
                 rcvAdapterInstance.notifyDataSetChanged() // 현재 Firebase 가 두번씩 로딩되면서. 간혹 값이 null 로 표기되는 경우가 있음.
                 if(multiDNLDNeededList.size > 0) { // 복원 필요한 파일 갯수가 있으면 -> [멀티] 다운로드 진행->
-                    myDownloaderInstance.multipleFileDNLD(multiDNLDNeededList)
+                    myDownloaderVInstance.multipleFileDNLD(multiDNLDNeededList)
                 }
 
             }
@@ -213,8 +205,8 @@ class MyIAPHelper2(private val receivedActivity: Activity,
             Toast.makeText(receivedActivity, "Error Loading Billing Info: Error stage <E>", Toast.LENGTH_SHORT).show()
             rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
         }
-//        rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
-//        myDownloaderInstance.multipleFileDNLD(multiDNLDNeededList)// [멀티] 다운로드 진행->
+// 여기서는 안 먹힘.       rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
+//        myDownloaderVInstance.multipleFileDNLD(multiDNLDNeededList)// [멀티] 다운로드 진행->
 
     }
 
@@ -240,7 +232,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
             initiatePurchase(iapName)
 
         } else {
-            billingClient = BillingClient.newBuilder(receivedActivity).enablePendingPurchases().setListener(this@MyIAPHelper2).build()
+            billingClient = BillingClient.newBuilder(receivedActivity).enablePendingPurchases().setListener(this@MyIAPHelper_v2).build()
             billingClient!!.startConnection(object : BillingClientStateListener {
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
@@ -255,16 +247,6 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         }
     }
 
-
-    //    // 2) 가격 저장... (KEY, PRICE=string) / ex) (p1, ₩1,000)
-//    private fun getItemPriceFromPref(iapName: String): String? {
-//        return preferenceObject.getString(iapName+"strYo", "N/A")
-//    }
-//
-//    private fun saveItemPriceToPref(iapName: String, value: String) { //PURCHASE_KEY = p1, p2, p3....
-//        preferenceEditObject.putString(iapName+"strYo", value).commit()
-//    }
-//// Saving to Shared Prefs on Disk (Local) <----------
     private fun initiatePurchase(PRODUCT_ID: String) {
         Log.d(TAG, "initiatePurchase: begins..")
         val skuList: MutableList<String> = ArrayList()
@@ -328,15 +310,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
         return rtObj.iapName
     }
-   /* fun getTrkIdByIapName(iapName: String): Int {
-        val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.iapName == iapName } // .first() : returns the first object matching { predicate}
-        return rtObj.id
-    }
-    fun getTrTitleByTrkId(trkId: Int): String {
 
-        val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
-        return rtObj.title
-    }*/
 //List 에서 원하는 값 받아오는 functions. 내가 만든 <<<------------
 
     fun handlePurchaseNotification(purchases: List<Purchase>) {
@@ -459,7 +433,7 @@ class MyIAPHelper2(private val receivedActivity: Activity,
 
     // 신규 단일 구매건 & 기존 단일 구매건에 대해서- file 디스크에 있는지 체크 및 download 할지 여부를 정함.
     private fun downloadOrDeleteSinglePurchase(trId: Int, keepTheFile: Boolean, downloadNow: Boolean) {
-        Log.d(TAG, "downloadOrDeleteSinglePurchase: <<<MyDownloader.Kt 로 임무 전달!!> trackId= $trId")
+        Log.d(TAG, "downloadOrDeleteSinglePurchase: <<<MyDownloader_v1.Kt 로 임무 전달!!> trackId= $trId")
         val rtInstance = getRtInstanceByTrkId(trId)
 
         //val trTitle = rtInstance.title
@@ -481,10 +455,8 @@ class MyIAPHelper2(private val receivedActivity: Activity,
         }
         else if(downloadNow && keepTheFile) { // 정상 단독 구매건 다운로드 (sync 와 무관하고 app 에서 한개 샀을 때)
             Log.d(TAG, "downloadOrDeleteSinglePurchase: ***SINGLE PURCHASE!!")
-            myDownloaderInstance.singleFileDNLD(rtInstance)
+            myDownloaderVInstance.singleFileDNLD(rtInstance)
         }
-
-        //Log.d(TAG, "downloadOrDeleteSinglePurchase: ########### myQryPurchListSize=${myQryPurchListSize},trackId= $trId, toDownloadItem=$downloadableItem")
 
     }
 

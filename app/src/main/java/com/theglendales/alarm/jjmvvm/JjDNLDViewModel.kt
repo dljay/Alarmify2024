@@ -34,7 +34,7 @@ class JjDNLDViewModel : ViewModel() {
         _dnldRtObj.value = rtObjReceived
     }
 
-    //나) StatusDNLD ENUM=> 아래는 MyDownloader2.kt 에서 전달받음. 그 후 전달받은 Status 는 _dnldStatus 로 옮겨지고 SecondFrag 의 jjDNLDViewModel 이 이것을 Observe 하고 있음
+    //나) StatusDNLD ENUM=> 아래는 MyDownloader_v2.kt 에서 전달받음. 그 후 전달받은 Status 는 _dnldStatus 로 옮겨지고 SecondFrag 의 jjDNLDViewModel 이 이것을 Observe 하고 있음
     fun updateDNLDStatusLive(statusIntReceived: Int) {
         Log.d(TAG, "updateDNLDStatusLive: called. Status Number=$statusIntReceived")
         _dnldStatus.postValue(statusIntReceived) // .postValue 코루틴 등 BackGround Thread 에서 처리할 때 사용. "Posts a task to a main thread to set the given value."

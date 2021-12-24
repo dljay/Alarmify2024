@@ -11,16 +11,14 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.theglendales.alarm.R
-import kotlinx.coroutines.delay
-import java.util.concurrent.TimeUnit
 
-private const val TAG="BtmSht_SingleDNLD2"
+private const val TAG="BtmSht_SingleDNLD_v2"
 
-class BtmSht_SingleDNLD2 : BottomSheetDialogFragment() {
+class BtmSht_SingleDNLD_v2 : BottomSheetDialogFragment() {
 
     companion object {
-        fun newInstance(): BtmSht_SingleDNLD2 {
-            return BtmSht_SingleDNLD2()
+        fun newInstance(): BtmSht_SingleDNLD_v2 {
+            return BtmSht_SingleDNLD_v2()
         }
     }
     lateinit var tvRtTitle: TextView

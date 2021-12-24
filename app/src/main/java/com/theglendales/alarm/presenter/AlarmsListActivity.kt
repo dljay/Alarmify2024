@@ -65,8 +65,8 @@ import java.util.Calendar
 
 // v3.07.04G [복원 필요한 파일 멀티 다운로드 작업-진행중]
 // Achievements
-// MyIAPHelper2.kt 에서 복원 필요한 파일 (기존 구매한 Pxx.rta 가 디스크에 없는 경우) 다운로드 작업 -> [멀티] 라고 모두 Comment 에 붙여놨음. (O)
-// 실제 다운 필요한 놈들은 MyDownloader2.kt > multipleFileDNLD(multiRtList) 로 보냄 (O)  -- 여기서부터 ->
+// MyIAPHelper_v2.kt 에서 복원 필요한 파일 (기존 구매한 Pxx.rta 가 디스크에 없는 경우) 다운로드 작업 -> [멀티] 라고 모두 Comment 에 붙여놨음. (O)
+// 실제 다운 필요한 놈들은 MyDownloader_v2.kt > multipleFileDNLD(multiRtList) 로 보냄 (O)  -- 여기서부터 ->
 // multiFileDNLD 구현 -> Snackbar 로 결과 통보 & Snackbar 표기용 utility method 만듬. (O)
 
 //ISSUES)
@@ -74,8 +74,8 @@ import java.util.Calendar
 
 //Todos)
 
-//5) 현재 MyDownloader2 에서 DNLD_prgrs 로 쓰는 값을 Firebase 에서 적용했을때도 문제 없을지 확인 필요! (total 값을 못 받았던걸로 기억..)
-// MyDownloader2 -> SecondFrag 라이브데이터 -> 제목을 다운로드 화면에 표시?
+//5) 현재 MyDownloader_v2 에서 DNLD_prgrs 로 쓰는 값을 Firebase 에서 적용했을때도 문제 없을지 확인 필요! (total 값을 못 받았던걸로 기억..)
+// MyDownloader_v2 -> SecondFrag 라이브데이터 -> 제목을 다운로드 화면에 표시?
 // Permission Handler 에서 Multi Dnld 이런거 없애주기..
 
 //4) MyIapHelper1 지워주기.

@@ -79,7 +79,7 @@ class AlarmsListFragment : Fragment() {
 // 내가 추가-->
     //lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
     lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
-    lateinit var myPermHandler: MyPermissionHandler
+    //lateinit var myPermHandler: MyPermissionHandler
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
 

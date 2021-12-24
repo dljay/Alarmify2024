@@ -8,7 +8,13 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
-import com.theglendales.alarm.jjmvvm.unused.MyDownloader
+import com.theglendales.alarm.jjmvvm.unused.MyDownloader_v1
+
+/**
+ * 현재(21.12.24) 로선 내 알람앱에서는 별도의 Permission 확인이 필요없는것처럼 보이기는 함.(App 내부 폴더만 Read/Download 하는정도여서)
+ * Permission_안내 Fragment 도 현재 Obj 상태로 잘 열리니 일단 그냥 둠.
+ * 이 페이지에 있는 코드들도 추후 분명 다시 쓸 수 있어서 남겨둠.
+ */
 
 private const val TAG="MyPermissionHandler"
 class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnRequestPermissionsResultCallback
@@ -95,7 +101,7 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
         } else { // 2) 이미 권한 허용이 된 상태
             Log.d(TAG, "permissionForSingleDNLD: 2) 이미 권한이 허용된 상태!")
             myBtmShtObjInst.removePermBtmSheetAndResume()
-            val myDownloaderInstance = MyDownloader(receivedActivity) // todo: 이렇게하면 결국  MyDownloader() 를 두개 만들어주니..memory issue.
+            val myDownloaderInstance = MyDownloader_v1(receivedActivity) // todo: 이렇게하면 결국  MyDownloader_v1() 를 두개 만들어주니..memory issue.
                 myDownloaderInstance.singleFileDNLD(receivedDownloadableItem)
         }
 
@@ -103,7 +109,7 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
 
 
     //1-b> Permission to Write 신규 다운로드 or 앱 재설치시 기존에 '구매해놓은' RT 를 다운받아야될 때.)
-    /*fun permissionForMultipleDNLD(receivedDownloadableList: MutableList<DownloadableItem>) { // called from: MyDownloader.kt>preDownloadPrep()
+    /*fun permissionForMultipleDNLD(receivedDownloadableList: MutableList<DownloadableItem>) { // called from: MyDownloader_v1.kt>preDownloadPrep()
         needToDownloadList = receivedDownloadableList
         Log.d(TAG, "permissionForMultipleDNLD: needToDownloadList.size = ${needToDownloadList.size}, contents=$needToDownloadList")
 
@@ -140,7 +146,7 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
         } else { // 2) 이미 권한 허용이 된 상태
             Log.d(TAG, "permissionForMultipleDNLD: 2) 이미 권한이 허용된 상태!")
             myBtmShtObjInst.removePermBtmSheetAndResume()
-            val myDownloaderInstance = MyDownloader(receivedActivity) // todo: 이렇게하면 결국  MyDownloader() 를 두개 만들어주니..memory issue.
+            val myDownloaderInstance = MyDownloader_v1(receivedActivity) // todo: 이렇게하면 결국  MyDownloader_v1() 를 두개 만들어주니..memory issue.
 
             if(needToDownloadList.size == 1) { // 한개 단순 구매의 경우. 리스트에는 하나만 있음.
                 myDownloaderInstance.singleFileDNLD(needToDownloadList[0])
@@ -168,7 +174,7 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
                     Log.d(TAG, "onRequestPermissionsResult: Permission Allowed(O)!!")
                     myBtmShtObjInst.removePermBtmSheetAndResume()
 
-                    val myDownloaderInstance = MyDownloader(receivedActivity) // todo: 이렇게하면 결국  MyDownloader() 를 두개 만들어주니..memory issue.
+                    val myDownloaderInstance = MyDownloader_v1(receivedActivity) // todo: 이렇게하면 결국  MyDownloader_v1() 를 두개 만들어주니..memory issue.
                     if(needToDownloadList.size == 1) { // 한개 단순 구매의 경우. 리스트에는 하나만 있음.
                         myDownloaderInstance.singleFileDNLD(needToDownloadList[0])
                         needToDownloadList.clear()

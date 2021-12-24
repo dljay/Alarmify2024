@@ -380,7 +380,7 @@ class DiskSearcher(val context: Context)
 //
 //    }
 
-//*************************** DOWNLOAD 관련해서 필요한 기능들 (기존에 MyDownloader.kt 에 있던 기능들 옮겨옴.)
+//*************************** DOWNLOAD 관련해서 필요한 기능들 (기존에 MyDownloader_v1.kt 에 있던 기능들 옮겨옴.)
     // Same File Exists ? + And that Same File need to be replaced?
     fun isSameFileOnThePhone (filePathAndName: String): Boolean { //다운로드 받기 전 이미 Disk 에 File 이 있는지 체크.
 

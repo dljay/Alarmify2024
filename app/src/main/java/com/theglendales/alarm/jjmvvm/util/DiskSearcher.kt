@@ -13,7 +13,7 @@ import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import java.io.*
 
 private const val TAG="DiskSearcher"
-private const val RT_FOLDER="/.AlarmRingTones"
+private const val RTA_FOLDER="/.AlarmRingTones"
 private const val ART_FOLDER="/.AlbumArt"
 //private const val SH_PREF_FOLDER= "shared_prefs" // is this folder name reliable? check..
 
@@ -32,7 +32,7 @@ class DiskSearcher(val context: Context)
 
 
     val topFolder = context.getExternalFilesDir(null)!!.absolutePath
-    val alarmRtDir = File(topFolder, RT_FOLDER)
+    val alarmRtDir = File(topFolder, RTA_FOLDER)
     val artDir = File(topFolder, ART_FOLDER)
     //val xmlFile = File(topFolder+SH_PREF_FOLDER+ "RtaArtPathList.xml") // RtaArtPathList.xml
 
@@ -168,21 +168,30 @@ class DiskSearcher(val context: Context)
         // A-1-b)폴더는 있는데 그 안에 아무 파일이 없을때..(아무것도 다운 받은게 없는 상태.)
         if(artDir.listFiles().isNullOrEmpty()) {
             Log.d(TAG, "readAlbumArtOnDisk: NO Album Art graphic FILES INSIDE THE FOLDER!. Probably the first time opening this app?")
-            onDiskRtSearcher()
+            onDiskRtSearcher() // todo? Hmm..?
         }
-        // todo: 쓸데없는 파일 있으면 삭제..
+
+
         // A-1-c)폴더에 파일이 있을때 => 각 파일의 경로를 onDiskArtMap 에 저장 ex) [01, 경로1], [02, 경로2] ...
         if(artDir.listFiles() != null)
         {
             // ./AlbumArt 폴더에 있는 xxx.art 파일 for loop
             for(artFile in artDir.listFiles())
             {
+                //1) 쓸데없는 파일 있으면 삭제..
+                if(artFile.name.contains('-')||!artFile.name.contains(".art")||artFile.length()==0L) {
+                    Log.d(TAG, "!!! Deleting following .art file= ${artFile.name}")
+                    artFile.delete()
+
+                }
+                //2) Map 에 띄워줌.
                 val fullPathOfArtFile: String = topFolder+ ART_FOLDER+ File.separator + artFile.name
                 //val artUri = Uri.parse(artFile.path.toString())
                 val trkId = artFile.nameWithoutExtension // 모든 앨범아트는 RT 의 TrkId 값.art 로 설정해야함! (**파일명과 TrkId 가 일치해야함! ) -> ex) defrt01.art
 
                 onDiskArtMap[trkId] = artFile.path // MAP 에 저장! <trkId, PathString>
                 Log.d(TAG, "readAlbumArtOnDisk: added artFilePath(${artFile.path}) to onDiskArtMap => $onDiskArtMap")
+
             }// for loop 끝.
 
         }
@@ -207,7 +216,7 @@ class DiskSearcher(val context: Context)
         Log.d(TAG, "copyDefaultRtsToPhone: started..")
         //Method #1
         val inputStr: InputStream = context.resources.openRawResource(defaultRtRaw)
-        val outStr: FileOutputStream = FileOutputStream(topFolder + RT_FOLDER +File.separator + defRtName)
+        val outStr: FileOutputStream = FileOutputStream(topFolder + RTA_FOLDER +File.separator + defRtName)
         val buff: ByteArray = ByteArray(1024)
         var length: Int = inputStr.read(buff)
         try {
@@ -233,35 +242,35 @@ class DiskSearcher(val context: Context)
 
     }
 
-    private fun extractMetaDataFromRta(fileReceived: File): RtWithAlbumArt {
+    private fun extractMetaDataFromRta(fileInRtaFolder: File): RtWithAlbumArt {
         val mmr =  MediaMetadataRetriever()
 
-        val actualFileForMmr = topFolder+ RT_FOLDER+ File.separator + fileReceived.name
+        val actualFileForMmr = topFolder+ RTA_FOLDER+ File.separator + fileInRtaFolder.name
 
         try { // 미디어 파일이 아니면(즉 Pxx.rta 가 아닌 파일은) setDataSource 하면 crash 남! 따라서 try/catch 로 확인함.
             mmr.setDataSource(actualFileForMmr)
         }catch (er:Exception) {
-            Log.d(TAG, "extractMetaDataFromRta: unable to run mmr.setDataSource for the file=${fileReceived.name}. WE'LL DELETE THIS PIECE OF SHIT!")
-            fileReceived.delete()
+            Log.d(TAG, "extractMetaDataFromRta: unable to run mmr.setDataSource for the file=${fileInRtaFolder.name}. WE'LL DELETE THIS PIECE OF SHIT!")
+            fileInRtaFolder.delete()
         }
 
         //1) 파일이 제대로 된 rta 인지 곡 길이(duration) return 하는것으로 확인. (Ex. p1=10초=10042(ms) 리턴)  옹.
         val fileDuration = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
 
-        Log.d(TAG, "extractMetaDataFromRta: fileName= ${fileReceived.name}, fileDuration=$fileDuration")
+        Log.d(TAG, "extractMetaDataFromRta: fileName= ${fileInRtaFolder.name}, fileDuration=$fileDuration")
         if(fileDuration==null) {
-            Log.d(TAG, "extractMetaDataFromRta: Possible Corrupted file. Filename=${fileReceived.name}")
-            fileReceived.delete()
+            Log.d(TAG, "extractMetaDataFromRta: Possible Corrupted file. Filename=${fileInRtaFolder.name}")
+            fileInRtaFolder.delete()
         }
         //2) 파일명에 hyphen(-) 포함되어있거나(중복 다운로드)/'rt' 가 없거나!/사이즈가=0 이면 => 삭제
-        // todo: 확장자명이 .rta 가 아녀도 삭제! (현재는 확장자 mp3 등 상관 없이 허용)
-        if(fileReceived.name.contains('-')||!fileReceived.name.contains("rt")||fileReceived.length()==0L) {
-            Log.d(TAG, "!!! extractMetaDataFromRta: ${fileReceived.name}")
-            if(fileReceived.length()==0L) {
-                Log.d(TAG, "extractMetaDataFromRta: file size prob 0? Filesize=${fileReceived.length()}")
+        //
+        if(fileInRtaFolder.name.contains('-')||!fileInRtaFolder.name.contains(".rta")||fileInRtaFolder.length()==0L) {
+            Log.d(TAG, "!!! extractMetaDataFromRta: ${fileInRtaFolder.name}")
+            if(fileInRtaFolder.length()==0L) {
+                Log.d(TAG, "extractMetaDataFromRta: file size prob 0? Filesize=${fileInRtaFolder.length()}")
             }
-            fileReceived.delete()
-            Log.d(TAG, "downloadedRtSearcher: deleted file: [ ${fileReceived.name} ] from the disk")
+            fileInRtaFolder.delete()
+            Log.d(TAG, "downloadedRtSearcher: deleted file: [ ${fileInRtaFolder.name} ] from the disk")
 
         }
         //3) Album MetaData (제목, TrId) 찾기. 앨범 아트는 AlarmDetailsFrag 에서 찾아줌. 4) 번에서 이걸 RingtoneClass 로 만들어줌.
@@ -273,7 +282,7 @@ class DiskSearcher(val context: Context)
             val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER)
 
             // 3-c) rta File Path
-            val audioFilePath = fileReceived.path.toString()
+            val audioFilePath = fileInRtaFolder.path.toString()
 
             // 3-d) "앨범설명글" METADATA_KEY_ALBUMARTIST 사용
             val rtDescription = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST) // todo: check.
@@ -289,7 +298,7 @@ class DiskSearcher(val context: Context)
             val artFilePath = onDiskArtMap[trIDString] //<trkId, 앨범아트 경로> trIDString & artFilePath 둘 다 nullable String
 
         //4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
-        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, iapName = fileReceived.name,
+        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, iapName = fileInRtaFolder.name,
             artFilePathStr = artFilePath, rtDescription = rtDescription, badgeStr = badgeString) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
         Log.d(TAG, "extractMetaDataFromRta: Extracted [onDiskRingtone]=$onDiskRingtone")
         return onDiskRingtone

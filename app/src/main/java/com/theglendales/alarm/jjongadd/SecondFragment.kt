@@ -259,13 +259,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
                 btmSht_SingleDnld.prepAnim(dnldPrgrs) // 여기서 prgrs 확인 및 기존 Animation 작동중인지 확인 후 Progress Bar Animation 작동.
             })
-            //2-C-라 MultiDNLD 진행되었을때 SnackBar 로 알림 (다운로드 결과까지 포함)
+            //2-C-라 MultiDNLD 진행되었을때 SnackBar 로 알림 (다운로드 결과까지 포함) //todo: 과연 boolArray 가 최선일지..
             jjDNLDViewModel.isMultiDnldRunning.observe(viewLifecycleOwner, {arrayBool ->
                 if(arrayBool.size == 2) { // 정상이라면 arrayBool 은 값을 두개만 포함해야한다. ex.) true, true = 작동ok, 에러없음.
                     Log.d(TAG, "onViewCreated: **[멀티] 다운로드 가동됨=${arrayBool[0]} 에러여부=${arrayBool[1]}")
                     when(arrayBool[1]) {
                         true -> { snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RETRIEVE PREVIOUSLY PURCHASED ITEMS.", false)}
-                        false -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS.", false)}
+                        false -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
                     }
                 }
             })
@@ -420,16 +420,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             R.id.id_cl_entire_Purchase -> {
                 Log.d(TAG, "myOnItemClick: You probably clicked FREE or GET This")
 
-                // tvGetThis.text = "Clicked!" <-- 이거 에러남. 잘 됐었는데. 희한..
+                iapInstance2.myOnPurchaseClicked(viewAndTrId.trId) //** 실제 구입 -> 다운로드에 쓰일 코드**
 
-                //** 실제 다운로드에 쓰일 코드**
-                //iapInstance2.myOnPurchaseClicked(viewAndTrId.trId)
-
-                //다운로드 Test 용도 - IAP  검증 걸치지 않고 해당 번호에 넣은 RT 다운로드 URL 로 이동. [원복]
-                val testRtClassObj = iapInstance2.getRtInstanceByTrkId(12)
+            //다운로드 Test 용도 - IAP  검증 걸치지 않고 해당 번호에 넣은 RT 다운로드 URL 로 이동. [원복]
+                //val testRtClassObj = iapInstance2.getRtInstanceByTrkId(12)
 //                val testRtHelixObj = RingtoneClass(title = "SoundHelix8.mp3","moreshit","desc","imgUrl",
 //                    mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",id=1, iapName = "shitbagHelix")
-                myDownloader2.singleFileDNLD(testRtClassObj)
+                //myDownloader2.singleFileDNLD(testRtClassObj)
 
 
 

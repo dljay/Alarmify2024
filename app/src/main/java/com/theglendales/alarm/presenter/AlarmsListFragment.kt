@@ -497,7 +497,7 @@ class AlarmsListFragment : Fragment() {
         if(lottieDialogFrag.isAdded) {
             lottieDialogFrag.dismissAllowingStateLoss()
             if(activity != null) {
-                Snackbar.make(requireActivity().findViewById(android.R.id.content), "REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()
+                snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"REBUILDING DATABASE COMPLETED",isShort = false )
             }
 
         }
@@ -541,7 +541,19 @@ class AlarmsListFragment : Fragment() {
             }
         }
     }
-// 추가 5)
+// 추가 5) SnackBar 대신 전달 (view & fragment 문제없는지도 확인)
+    private fun snackBarDeliverer(view: View, msg: String, isShort: Boolean) {
+        if(activity!=null && isAdded) { // activity 가 존재하며, 현재 Fragment 가 attached 되있으면 Snackbar 를 표시.
+            Log.d(TAG, "snackBarMessenger: Show Snackbar. Fragment isAdded=$isAdded, Activity=$activity")
+            if(isShort) {
+                Snackbar.make(view, "$msg", Snackbar.LENGTH_SHORT).show()
+            }else {
+                Snackbar.make(view, "$msg", Snackbar.LENGTH_LONG).show()
+            }
+        } else {
+            Log.d(TAG, "snackBarDeliverer: Unable to Deliver Snackbar message!!")
+        }
+    }
 
 
 }

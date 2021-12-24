@@ -198,11 +198,15 @@ class MyIAPHelper2(private val receivedActivity: Activity,
                     }
                 }
             /** 사실상 모든 INIT IAP 작업이 끝나는 곳. 여기서 RCView Update & Multi DNLD 진행
-             *  왜 이 블록에 있어야 하는지. 아래에서 rcvAdapter.refresh() & myDownloader.multipleFileDNLND() 넣으면 안되는지는 아직 모르겠음.
+             *  왜 rcvAdapter.refresh 나 myDownloader.multiple..() 이 여기에 있어야 하는지. 아래에서 rcvAdapter.refresh() & myDownloader.multipleFileDNLND() 넣으면 안되는지는 아직 모르겠음.
              */
+                Log.d(TAG, "refreshItemsPriceMap: ------------IAP 모든게 끝나는 지점-----")
                 rcvAdapterInstance!!.refreshRecyclerView(currentRtList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
                 rcvAdapterInstance.notifyDataSetChanged() // 현재 Firebase 가 두번씩 로딩되면서. 간혹 값이 null 로 표기되는 경우가 있음.
-                myDownloaderInstance.multipleFileDNLD(multiDNLDNeededList)// [멀티] 다운로드 진행->
+                if(multiDNLDNeededList.size > 0) { // 복원 필요한 파일 갯수가 있으면 -> [멀티] 다운로드 진행->
+                    myDownloaderInstance.multipleFileDNLD(multiDNLDNeededList)
+                }
+
             }
         } else {
             Log.d(TAG, "E) refreshItemsPriceMap: itemIdsMap is null or empty..")

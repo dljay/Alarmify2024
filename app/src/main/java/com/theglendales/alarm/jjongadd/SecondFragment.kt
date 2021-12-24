@@ -42,14 +42,12 @@ import com.theglendales.alarm.jjmvvm.JjFirebaseViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.BtmSht_SingleDNLD2
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
 
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloader2
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelper2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
-import java.io.File
 
 //Coroutines
 
@@ -240,25 +238,38 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         Log.d(TAG, "onViewCreated: Observer: !!!! DNLD FAILED (XX) !!!!! ")
                         //remove BTMSHEET & Show Warning Snackbar
                         btmSht_SingleDnld.removeBtmSheetAfterOneSec()
-                        Snackbar.make(requireActivity().findViewById(android.R.id.content),"Download Failed. Please check your network connectivity",Snackbar.LENGTH_LONG).show()
+                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Download Failed. Please check your network connectivity", false)
+
                     }
                     DownloadManager.STATUS_SUCCESSFUL-> {//8
                         Log.d(TAG, "onViewCreated: Observer: DNLD SUCCESS (O)  ")
                         // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
                         btmSht_SingleDnld.animateLPI(100,1) //  그래프 만땅!
                         btmSht_SingleDnld.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
-                        Snackbar.make(requireActivity().findViewById(android.R.id.content),"DOWNLOAD COMPLETED.",Snackbar.LENGTH_LONG).show()
+                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "DOWNLOAD COMPLETED.", false)
                     }
                     else -> {btmSht_SingleDnld.removeBtmSheetAfterOneSec()
-                        Snackbar.make(requireActivity().findViewById(android.R.id.content),"Unknown Download Status received. Status Code=$dnldStatusInt",Snackbar.LENGTH_LONG).show()}
+                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Unknown Download Status received. Status Code=$dnldStatusInt", false)
+                        }
 
-            }
+                }
             })
-            //2-C-나 DNLD: (UI 갱신: Prgrs 애니메이션 보여주기)
+            //2-C-다 DNLD: (UI 갱신: Prgrs 애니메이션 보여주기)
             jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, {dnldPrgrs ->
                 Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
                 btmSht_SingleDnld.prepAnim(dnldPrgrs) // 여기서 prgrs 확인 및 기존 Animation 작동중인지 확인 후 Progress Bar Animation 작동.
             })
+            //2-C-라 MultiDNLD 진행되었을때 SnackBar 로 알림 (다운로드 결과까지 포함)
+            jjDNLDViewModel.isMultiDnldRunning.observe(viewLifecycleOwner, {arrayBool ->
+                if(arrayBool.size == 2) { // 정상이라면 arrayBool 은 값을 두개만 포함해야한다. ex.) true, true = 작동ok, 에러없음.
+                    Log.d(TAG, "onViewCreated: **[멀티] 다운로드 가동됨=${arrayBool[0]} 에러여부=${arrayBool[1]}")
+                    when(arrayBool[1]) {
+                        true -> { snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RETRIEVE PREVIOUSLY PURCHASED ITEMS.", false)}
+                        false -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS.", false)}
+                    }
+                }
+            })
+
         //3) Firebase ViewModel Initialize
 
 
@@ -542,7 +553,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     Log.d(TAG, "lottieAnimController: NO INTERNET ERROR!!")
                     lottieAnimationView.visibility = LottieAnimationView.VISIBLE
                     lottieAnimationView.setAnimation(R.raw.lottie_error1)
-                    Snackbar.make(lottieAnimationView,"Please kindly check your network connection status",Snackbar.LENGTH_LONG).show()
+
+                    snackBarDeliverer(lottieAnimationView,"Please kindly check your network connection status",false)
 
                     //todo: 여기 SnackBar 에서 View 가 불안정할수 있음=>try this? -> Snackbar.make(requireActivity().findViewById(android.R.id.content), "..", Snackbar.LENGTH_LONG).show()
 
@@ -862,12 +874,20 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     /*fun updateResultOnRcView(fullRtClassList: MutableList<RingtoneClass>) {
         Log.d(TAG, "showResult: 5) called..Finally! ")
-
-
         rcvAdapterInstance.updateRingToneMap(fullRtClassList)// todo: 이 map 안 쓰이는것 같은데 흐음.. (우리는 Map 기반이므로 list 정보를 -> 모두 Map 으로 업데이트!)
-
-
     }*/
+    private fun snackBarDeliverer(view: View, msg: String, isShort: Boolean) {
+        if(activity!=null && isAdded) { // activity 가 존재하며, 현재 Fragment 가 attached 되있으면 Snackbar 를 표시.
+            Log.d(TAG, "snackBarMessenger: Show Snackbar. Fragment isAdded=$isAdded, Activity=$activity")
+            if(isShort) {
+                Snackbar.make(view, "$msg", Snackbar.LENGTH_SHORT).show()
+            }else {
+                Snackbar.make(view, "$msg", Snackbar.LENGTH_LONG).show()
+            }
+        } else {
+            Log.d(TAG, "snackBarDeliverer: Unable to Deliver Snackbar message!!")
+        }
+    }
 
 
 }

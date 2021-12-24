@@ -94,12 +94,12 @@ class DiskSearcher(val context: Context)
         onDiskRingtoneList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.
         //todo: Defrt 갯수 바뀌면 아래 .size <10 변경해야함.
     //(1)-b  /.AlarmRingTones 에 Defrt 파일이 없거나, 10개 미만으로 있을때 (즉 최초 실행 혹은 어떤 연유로 defrta 파일 갯수가 부족) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
-            val listOfDefrtFiles = alarmRtDir.listFiles { dir, name -> name.contains("defrt")  } // 파일 이름에 "defrt" 를 포함하는 놈들을 List 로 받아서. 그 갯수 확인.
+            val listOfDefrtFiles = alarmRtDir.listFiles { _, name -> name.contains("defrt")  } // 파일 이름에 "defrt" 를 포함하는 놈들을 List 로 받아서. 그 갯수 확인.
                 if(!listOfDefrtFiles.isNullOrEmpty() && listOfDefrtFiles.size <10) {
                     Log.d(TAG, "onDiskRtSearcher: Possible Missing Defrt Files. numberOfDefRtFiles=${listOfDefrtFiles.size}")
                         //todo: 없는 파일만 복사!
                     copyDefaultRtsToPhone(R.raw.defrt01, "defrt01.rta")
-                    copyDefaultRtsToPhone(R.raw.defrt02,"defrt02.rta")
+                    copyDefaultRtsToPhone(R.raw.defrt02, "defrt02.rta")
                     copyDefaultRtsToPhone(R.raw.defrt03, "defrt03.rta")
                     copyDefaultRtsToPhone(R.raw.defrt04, "defrt04.rta")
                     copyDefaultRtsToPhone(R.raw.defrt05, "defrt05.rta")
@@ -316,7 +316,6 @@ class DiskSearcher(val context: Context)
         // Album Art
         val artBytes: ByteArray? = mmr.embeddedPicture // returns null if no such graphic is found.
 
-
         var albumArtBMP: Bitmap? = null
         if(artBytes==null) {Log.d(TAG, "extractArtFromSingleRta: No embedded Image Resource found!!") }
         if(artBytes!=null) // embed 된 image 를 추출 가능하면=>
@@ -342,12 +341,12 @@ class DiskSearcher(val context: Context)
             return
         }
 
-
         // Initialize a new file instance to save bitmap object
         val dir = artDir
         if(!dir.exists()) {
             dir.mkdirs()
         }
+        // ex) .rta 파일의 METADATA 중 '작곡가' 에 TrId 가 저장됨: Ex) defrt01, p1, p2 ...
         val savedToDiskFile = File(dir,"${trkId}.art") // JPG 파일 포맷인데 우리는 그냥 .art 로 임의로 사용 (모바일에서 자동 검색되서 뜨는것 막는 용도도 있음..)
 
         try{

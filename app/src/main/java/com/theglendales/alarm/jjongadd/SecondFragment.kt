@@ -41,10 +41,10 @@ import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.JjFirebaseViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.BtmSht_SingleDNLD_v2
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.BtmShtSingleDNLDV2
 
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloader_v2
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelper_v2
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloaderV2
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
@@ -63,10 +63,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     //IAP
     //lateinit var iapInstance: MyIAPHelper_v1
-    lateinit var iapInstanceV2: MyIAPHelper_v2
+    lateinit var iapInstanceV2: MyIAPHelperV2
     //Download 관련
-    lateinit var myDownloaderV2: MyDownloader_v2
-    lateinit var btmSht_SingleDnldV: BtmSht_SingleDNLD_v2
+    lateinit var myDownloaderV2: MyDownloaderV2
+    lateinit var btmSht_SingleDNLDV: BtmShtSingleDNLDV2
 
 
 
@@ -156,7 +156,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         layoutManager = LinearLayoutManager(context)
         rcView.layoutManager = layoutManager
     //BtmSht_SingleDnld init (싱글톤으로)
-        btmSht_SingleDnldV = BtmSht_SingleDNLD_v2.newInstance()
+        btmSht_SingleDNLDV = BtmShtSingleDNLDV2.newInstance()
 
 
     //  LIVEDATA ->
@@ -215,13 +215,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //GlbVars.playbackPos = playbackPos
                 })
 
-        //DNLD ViewMODEL Observe //한번 btmSht_SingleDnldV Frag 를 보여준뒤-> ListFrag -> SecondFrag 복귀 했을 때 아래 LiveData 가 후루루룩 다 불리는 문제 => onDestroy() 에서 강제 VModel Clear 해줬음!
+        //DNLD ViewMODEL Observe //한번 btmSht_SingleDNLDV Frag 를 보여준뒤-> ListFrag -> SecondFrag 복귀 했을 때 아래 LiveData 가 후루루룩 다 불리는 문제 => onDestroy() 에서 강제 VModel Clear 해줬음!
             //2-C-가) DNLD: RtWithAlbumArt Obj 받기 (UI 갱신: DNLD Dialogue 열어주고 곡 제목 표시)
             jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {rtWithAlbumArtObj ->
                 Log.d(TAG, "onViewCreated: trId= ${rtWithAlbumArtObj.trIdStr}, received rtObj = $rtWithAlbumArtObj")
                 // Show BtmSht_SingleDNLD Frag
-                btmSht_SingleDnldV.show(requireActivity().supportFragmentManager, btmSht_SingleDnldV.tag) // <-- listFrag 갔다 복귀했을 때 다시 DNLDFrag 열어주는 문제때문에 없앰.
-                // btmSht_SingleDnldV.updateTextView(rtWithAlbumArtObj.rtTitle) <- 시간차때문에 이렇게 넣으면 안될듯..
+                btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag) // <-- listFrag 갔다 복귀했을 때 다시 DNLDFrag 열어주는 문제때문에 없앰.
+                // btmSht_SingleDNLDV.updateTextView(rtWithAlbumArtObj.rtTitle) <- 시간차때문에 이렇게 넣으면 안될듯..
                 //todo: viewmodel 에 getCurrentRtObj() 만들고 -> 다운로드중인 RT 제목 + 그래픽 보여주기?
                 
             })
@@ -237,18 +237,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     DownloadManager.STATUS_FAILED -> {//16
                         Log.d(TAG, "onViewCreated: Observer: !!!! DNLD FAILED (XX) !!!!! ")
                         //remove BTMSHEET & Show Warning Snackbar
-                        btmSht_SingleDnldV.removeBtmSheetAfterOneSec()
+                        btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Download Failed. Please check your network connectivity", false)
 
                     }
                     DownloadManager.STATUS_SUCCESSFUL-> {//8
                         Log.d(TAG, "onViewCreated: Observer: DNLD SUCCESS (O)  ")
                         // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
-                        btmSht_SingleDnldV.animateLPI(100,1) //  그래프 만땅!
-                        btmSht_SingleDnldV.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
+                        btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅!
+                        btmSht_SingleDNLDV.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "DOWNLOAD COMPLETED.", false)
                     }
-                    else -> {btmSht_SingleDnldV.removeBtmSheetAfterOneSec()
+                    else -> {btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Unknown Download Status received. Status Code=$dnldStatusInt", false)
                         }
 
@@ -257,7 +257,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //2-C-다 DNLD: (UI 갱신: Prgrs 애니메이션 보여주기)
             jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, {dnldPrgrs ->
                 Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
-                btmSht_SingleDnldV.prepAnim(dnldPrgrs) // 여기서 prgrs 확인 및 기존 Animation 작동중인지 확인 후 Progress Bar Animation 작동.
+                btmSht_SingleDNLDV.prepAnim(dnldPrgrs) // 여기서 prgrs 확인 및 기존 Animation 작동중인지 확인 후 Progress Bar Animation 작동.
             })
             //2-C-라 MultiDNLD 진행되었을때 SnackBar 로 알림 (다운로드 결과까지 포함) //todo: 과연 boolArray 가 최선일지..
             jjDNLDViewModel.isMultiDnldRunning.observe(viewLifecycleOwner, {arrayBool ->
@@ -279,8 +279,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
-            myDownloaderV2 = activity?.let {MyDownloader_v2(it,jjDNLDViewModel)}!!
-            iapInstanceV2 = MyIAPHelper_v2(requireActivity(), rcvAdapterInstance, myDownloaderV2)
+            myDownloaderV2 = activity?.let {MyDownloaderV2(it,jjDNLDViewModel)}!!
+            iapInstanceV2 = MyIAPHelperV2(requireActivity(), rcvAdapterInstance, myDownloaderV2)
 
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance

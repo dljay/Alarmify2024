@@ -15,6 +15,7 @@ class FirebaseRepoClass
     //1) Get all data from Firebase . 2) 코루틴 사용 안하고 callback 사용 3) google.
     fun getPostList(): Task<QuerySnapshot> { // return type: Task snapshot!
         dbCollectionReference = firebaseFSInstance.collection("ringtones")
+        
         return dbCollectionReference.orderBy("id", Query.Direction.ASCENDING).get()
 
     }

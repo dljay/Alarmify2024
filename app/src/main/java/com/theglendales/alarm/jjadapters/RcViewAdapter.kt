@@ -22,7 +22,7 @@ import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelper_v2
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.model.mySharedPrefManager
 //import com.theglendales.alarm.jjiap.MyIAPHelper_v1
@@ -96,7 +96,7 @@ class RcViewAdapter(
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
 
         //IAP 관련
-        holder.tv3_Price.text = MyIAPHelper_v2.itemPricesMap[currentIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
+        holder.tv3_Price.text = MyIAPHelperV2.itemPricesMap[currentIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
 
         //Purchase Stat True or False
         when(mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)) {

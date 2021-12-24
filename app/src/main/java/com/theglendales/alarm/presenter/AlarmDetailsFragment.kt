@@ -362,6 +362,7 @@ class AlarmDetailsFragment : Fragment() {
 
             val selectedRtForThisAlarm: RtWithAlbumArt = DiskSearcher.finalRtArtPathList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
             val rtTitle = selectedRtForThisAlarm.rtTitle
+
             val rtDescription = selectedRtForThisAlarm.rtDescription
             val badgeStr = selectedRtForThisAlarm.badgeStr // ex. "I,N,H" -> Intense, Nature, History 뭔 이런식.
             val artPath = selectedRtForThisAlarm.artFilePathStr

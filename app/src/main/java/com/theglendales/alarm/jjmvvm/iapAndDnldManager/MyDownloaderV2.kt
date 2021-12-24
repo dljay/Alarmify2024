@@ -21,7 +21,7 @@ import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
 
-private const val TAG="MyDownloader_v2"
+private const val TAG="MyDownloaderV2"
 
 
 
@@ -34,7 +34,7 @@ data class DownloadableItem(val trackID: Int=0, val filePathAndName:String="") {
 }
 
 
-class MyDownloader_v2 (private val receivedActivity: Activity, val dnldViewModel: JjDNLDViewModel) : AppCompatActivity() {
+class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel: JjDNLDViewModel) : AppCompatActivity() {
 
 
 //********Single File Dnld **************

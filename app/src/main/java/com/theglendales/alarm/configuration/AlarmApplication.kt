@@ -29,7 +29,7 @@ class AlarmApplication : Application() {
             var jjPackageName=""
 
             fun getDefRtaPathStr(rtaName: String): String {
-
+                //raw 폴더에 저장된 defrt01.rta, defrt02.rta 로 AlarmDatabaseHelper 에서 Install 후 알람 두개의 ringtone 으로 적용시켜줌.
                 return ContentResolver.SCHEME_ANDROID_RESOURCE + File.pathSeparator + File.separator + File.separator+ jjPackageName + "/raw/" + rtaName
                 // File.pathSeparator = ":" , File.separator = "/"
             }

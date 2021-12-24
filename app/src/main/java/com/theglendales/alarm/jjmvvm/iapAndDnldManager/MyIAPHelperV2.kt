@@ -13,10 +13,10 @@ import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import java.io.File
 import java.io.IOException
 
-private const val TAG="MyIAPHelper_v2"
-class MyIAPHelper_v2(private val receivedActivity: Activity,
-                     private val rcvAdapterInstance: RcViewAdapter?,
-                     private val myDownloaderVInstance: MyDownloader_v2) :  PurchasesUpdatedListener
+private const val TAG="MyIAPHelperV2"
+class MyIAPHelperV2(private val receivedActivity: Activity,
+                    private val rcvAdapterInstance: RcViewAdapter?,
+                    private val myDownloaderVInstance: MyDownloaderV2) :  PurchasesUpdatedListener
 {
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
@@ -232,7 +232,7 @@ class MyIAPHelper_v2(private val receivedActivity: Activity,
             initiatePurchase(iapName)
 
         } else {
-            billingClient = BillingClient.newBuilder(receivedActivity).enablePendingPurchases().setListener(this@MyIAPHelper_v2).build()
+            billingClient = BillingClient.newBuilder(receivedActivity).enablePendingPurchases().setListener(this@MyIAPHelperV2).build()
             billingClient!!.startConnection(object : BillingClientStateListener {
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
                     if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {

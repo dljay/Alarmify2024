@@ -12,13 +12,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.theglendales.alarm.R
 
-private const val TAG="BtmSht_SingleDNLD_v2"
+private const val TAG="BtmShtSingleDNLDV2"
 
-class BtmSht_SingleDNLD_v2 : BottomSheetDialogFragment() {
+class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
 
     companion object {
-        fun newInstance(): BtmSht_SingleDNLD_v2 {
-            return BtmSht_SingleDNLD_v2()
+        fun newInstance(): BtmShtSingleDNLDV2 {
+            return BtmShtSingleDNLDV2()
         }
     }
     lateinit var tvRtTitle: TextView

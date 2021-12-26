@@ -8,14 +8,9 @@ import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RingtoneClass
 import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
 
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
-import com.theglendales.alarm.jjmvvm.unused.BtmSht_SingleDNLD
-import com.theglendales.alarm.jjmvvm.unused.BtmSht_Sync
-import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
 import kotlinx.coroutines.*
 import java.io.File
@@ -46,14 +41,15 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
 //        }
 
         val trackID = rtClassObj.id
-        val iapName = rtClassObj.iapName
+        val fileNameWithoutExt = rtClassObj.iapName // ex) iapName= p1000, p1001 ...
         val trTitle = rtClassObj.title
-        val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
+        val description = rtClassObj.description
+        val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + fileNameWithoutExt +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
         val mp3UrlToDownload= rtClassObj.mp3URL // 테스트 때 SoundHelix 16,15,14,12,11,9 링크 사용했음.
 
     // RtWithAlbumArtObj 으로 변환 후 일단 ViewModel 에 전달 -> SecondFrag 에서 DNLD BottomFrag UI 준비 //todo: 여기서 제대로..
         val dnldAsRtObj = RtWithAlbumArt(trIdStr = trackID.toString(), rtTitle = trTitle, audioFilePath = fileNameAndFullPath,
-                        iapName = iapName, rtDescription ="", badgeStr = "", isRadioBtnChecked = false)
+                        fileNameWithoutExt = fileNameWithoutExt, rtDescription =description, badgeStr = "", isRadioBtnChecked = false)
 
 
 
@@ -77,7 +73,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
 
         dnlRequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE) // 다운 중에만 표시 todo: NEXUS 5X API30 에뮬레이터에서 표시 안됨.
         // 내 app 의 Main Storage>android/data/com.xx.downloadtest1/files/안에 .AlarmRingTones라는 폴더를 만들고! 그 안에 file 저장! hidden 상태임!
-        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones","$iapName.rta") // * 경로+ File 이름 설정.
+        dnlRequest.setDestinationInExternalFilesDir(receivedActivity.applicationContext,".AlarmRingTones","$fileNameWithoutExt.rta") // * 경로+ File 이름 설정.
         //get download service, and enqueue file
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         // 다운로드 & 완료 알림(BroadCast) 관련: 1)식별 id 생성 2)Broadcast 등록.

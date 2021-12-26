@@ -65,6 +65,38 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
 
         }
     }
+    private fun reqPermToWrite() {
+        ActivityCompat.requestPermissions(receivedActivity, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), MY_WRITE_PERMISSION_CODE)
+        // 폰에 기본으로 설정된 "xx Permission 허락합니까?" Dialog -> 여기서 결과 Y/N 여부에 따라 아래 onRequestPermissionsResult 로 반응.
+    }
+    override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray)
+    {
+        Log.d(TAG, "onRequestPermissionsResult: INSIDE PermissionHandler.kt!")
+        //super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when(requestCode) {
+            MY_WRITE_PERMISSION_CODE -> {
+                if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){ //Permission 허용 Yes 했을 때
+                    Log.d(TAG, "onRequestPermissionsResult: Permission Allowed(O)!!")
+                    myBtmShtObjInst.removePermBtmSheetAndResume() //todo : 이 줄 없애도 될듯.. 여기서 보여주지도 않은 벤치췽~ bottomsht 왜 없애?
+                }
+                else if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED){ //Permission 허용 No 했을 때
+                    Log.d(TAG, "onRequestPermissionsResult: PERMISSION_DENIED (or BACKGROUND clicked.)")
+                    //todo: LiveData -> SecondFrag 로 "Permission Denied" 되었음 전달?
+                    if(!myBtmShtObjInst.isAdded) {//아무것도 display 안된 상태.
+                        Log.d(TAG, "permissionToWrite: ***DISPLAY 벤치휭~ BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
+                        myBtmShtObjInst.showBtmPermDialog(receivedActivity) //Settings & Cancel 갈 수 있는 BottomFrag
+                    }
+                }
+                else {
+                    Log.d(TAG, "onRequestPermissionsResult: Permission DENIED!!(XXX)..") //기타? 아마도 No 인듯..
+                    Toast.makeText(receivedActivity,"Permission Denied.", Toast.LENGTH_LONG).show()
+                }
+            }
+
+        }
+
+    }
+// 이전 IAP->Download <-> Permission 연결되었을때 코드 (21.12.26 전)
 /*    fun permissionForSingleDNLD(receivedDownloadableItem: DownloadableItem) {
         Log.d(TAG, "permissionForSingleDNLD: Downloadable Item =$receivedDownloadableItem")
 
@@ -159,12 +191,10 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
         }
     }*/
 
-    private fun reqPermToWrite() {
-        ActivityCompat.requestPermissions(receivedActivity, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), MY_WRITE_PERMISSION_CODE)
-    }
+
 
     //onReqPerm 은 MainActivity 에만 써줘야 되더라..그래서 Main에 onReqPerm.. 하고 override 해줬음.
-    override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray)
+   /* override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray)
     {
         Log.d(TAG, "onRequestPermissionsResult: INSIDE PermissionHandler.kt!")
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -202,6 +232,6 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
 
         }
 
-    }
+    }*/
 
 }

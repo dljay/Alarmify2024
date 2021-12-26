@@ -1,5 +1,6 @@
 package com.theglendales.alarm.jjfirebaserepo
 
+import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -15,12 +16,18 @@ class FirebaseRepoClass
     //1) Get all data from Firebase . 2) 코루틴 사용 안하고 callback 사용 3) google.
     fun getPostList(): Task<QuerySnapshot> { // return type: Task snapshot!
         dbCollectionReference = firebaseFSInstance.collection("ringtones")
+//        dbCollectionReference.whereArrayContains(badgeStrArray, "A, B")
         
         return dbCollectionReference.orderBy("id", Query.Direction.ASCENDING).get()
 
     }
+    fun sortTest() : Task<QuerySnapshot> {
+        val field= "badgeStrArray"
+        return dbCollectionReference.whereArrayContains(field, "A, B").get()
+    }
 
     fun sortSingleOrMultipleTags(tagsList: MutableList<String>): Task<QuerySnapshot> {
+        Log.d(TAG, "sortSingleOrMultipleTags: tagsList = $tagsList")
         // 약간 멍청해보이지만 this is the only way..?
         when (tagsList.size) {
             1 -> { // 1개 chip 선택

@@ -17,9 +17,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import android.widget.AdapterView.AdapterContextMenuInfo
-import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
-import com.airbnb.lottie.LottieAnimationView
 import com.amulyakhare.textdrawable.TextDrawable
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -39,7 +37,6 @@ import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.jjadapters.GlideApp
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
@@ -203,16 +200,18 @@ class AlarmsListFragment : Fragment() {
             var artPathFromAlarmValue = alarm.artFilePath // +++
 
 
-        // ** Row 의 앨범아트 path가 비어있을 때. (정상적인 Install 후 SQL 이 잘 진행되었다면 여기를 거쳐가서는 안된다!)
+        // ** Row 의 앨범아트 path가 비어있을 때. )
             // Update: '21.12.14=> 앱 Install 후 생성되는 두개의 알람은 모두 SQL 에서 자동으로 각각 defrt1-2 rta/art 경로를 저장한다! (label: InstallAlarm)
-            // DetailsFrag 를 들어가는 순간
+            /**
+             * 정상적인 Install 후 SQL 이 잘 진행되었다면 여기를 거쳐가서는 안된다!**
+             */
 
             if(artPathFromAlarmValue.isNullOrEmpty()) {
                 Log.d(TAG, "getView: (1-No Art File Found) artPathFromAlarmValue=$artPathFromAlarmValue, \nalarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
                 val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
                 if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
                         try{
-                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.iapName=="defrt01" }.single() // **todo: Safety Check 실제로 뻑남.
+                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.fileNameWithoutExt=="defrt01" }.single() // **todo: Safety Check 실제로 뻑남.
                             val artPath: String? = defRta1.artFilePathStr
 
                             //mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!

@@ -516,6 +516,20 @@ class SecondFragment : androidx.fragment.app.Fragment() {
      //위에 Chip 이 선택된 항목(string list)을 여기로 전달.
     private fun sendRequestToFbRepo(tagsList: MutableList<String>) {
          var tagOnlyRtClassList: MutableList<RingtoneClass> = ArrayList()
+     //test -->
+         firebaseRepoInstance.sortTest().addOnCompleteListener {
+             if (it.isSuccessful) {
+
+                 tagOnlyRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
+                 rcvAdapterInstance.refreshRecyclerView(tagOnlyRtClassList)
+
+                 Log.d(TAG, "sendRequestToFbRepo: tagOnlyRtClassList.size=${tagOnlyRtClassList.size}, 내용: $tagOnlyRtClassList")
+
+             } else {
+                 Log.d(TAG, "sendRequestToFbRepo: ERROR!!- Exception message: ${it.exception!!.message}")
+             }
+         }
+     //test <--
 
          firebaseRepoInstance.sortSingleOrMultipleTags(tagsList).addOnCompleteListener {
              if (it.isSuccessful) {

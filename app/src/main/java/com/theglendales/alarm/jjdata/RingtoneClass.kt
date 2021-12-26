@@ -1,6 +1,7 @@
 package com.theglendales.alarm.jjdata
 
-data class RingtoneClass(val title: String="", val tags: String="", val description: String="", val imageURL: String="", val mp3URL: String="", val id: Int = 0, val iapName: String="")
+data class RingtoneClass(val title: String="", val tags: String="", val description: String="", val imageURL: String="", val mp3URL: String="",
+                         val id: Int = 0, val iapName: String="", val badgeStrArray: ArrayList<String> = arrayListOf())
 {
     override fun toString(): String
     {

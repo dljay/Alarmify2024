@@ -468,7 +468,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         chipGroup = v.findViewById(R.id.id_chipGroup)
         for (i in 0 until chipGroup.childCount) {
             val chip: Chip = chipGroup.getChildAt(i) as Chip
-            chip.setOnCheckedChangeListener { buttonView, isChecked ->
+            chip.setOnCheckedChangeListener { _, isChecked ->
                 createStringListFromChips()
                 when (isChecked) {
                     true -> {
@@ -477,7 +477,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
                     false -> {
                         chip.isChipIconVisible = true
-                        backToFullRtList()
+                        //backToFullRtList()
                     }
                 }
             }
@@ -499,59 +499,46 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 R.id.id_chip1_intense -> tagsList.add(intenseTag)
                 R.id.id_chip2_gentle -> tagsList.add(gentleTag)
                 R.id.id_chip3_nature -> tagsList.add(natureTag)
-                R.id.id_chip4_location -> tagsList.add(popularTag)
-                R.id.id_chip5_popular -> tagsList.add(miscTag)
-                R.id.id_chip6_misc -> tagsList.add(locationsTag)
+                R.id.id_chip4_location -> tagsList.add(locationsTag)
+                R.id.id_chip5_popular -> tagsList.add(popularTag)
+                R.id.id_chip6_misc -> tagsList.add(miscTag)
             }
         }
         Log.d(TAG, "createStringListFromChips: tagsList= $tagsList")
 
         if(tagsList.isNotEmpty()) {
             myIsChipChecked= true // pull to refresh  했을 때 이 값을 근거로..
-            sendRequestToFbRepo(tagsList)
+            filterListByTags(tagsList)
         }else if(tagsList.isEmpty()) { // 체크 된 chip 이 하나도 없음!
             myIsChipChecked= false
+            filterListByTags(tagsList)
         }
     }
      //위에 Chip 이 선택된 항목(string list)을 여기로 전달.
-    private fun sendRequestToFbRepo(tagsList: MutableList<String>) {
-         var tagOnlyRtClassList: MutableList<RtInTheCloud> = ArrayList()
-     //test -->
-         // Sort List received-> Alphabetical order
+    private fun filterListByTags(tagsList: MutableList<String>) {
 
+    // ** String List 두개 비교하기 ** rtObject.bdgStrArray & tagsList. ex) [INT, NATURE] .. //
+         // tag 2개 설정 -> 2개 해제  -> 아무것도 없다 ! => 그냥 원복: fullRtList 전체 보여주기.
+         if(tagsList.isEmpty()) {
+             Log.d(TAG, "filterListByTags: tagsList is Empty..Showing fullRtClassList")
+             rcvAdapterInstance.refreshRecyclerView(fullRtClassList)
+             return
+         } else { // 그렇지 않을때는 tagsList 로 들어온 STR 에 의거- filtering 된 리스트를 rcV 에 전달. 
+             val sortedList = fullRtClassList.filter { rtObject -> rtObject.bdgStrArray.containsAll(tagsList) }
+             Log.d(TAG, "filterListByTags: sortedList.size=${sortedList.size}, sortedList=$sortedList")
 
-//2)         Case: A,F ->  6, 11
-        // ** 이거 쓰면 될듯..!! ** //
-         val testTagList = arrayListOf<String>("B","D","F")
-         val sortedList2 = fullRtClassList.filter { rtObject ->
-             rtObject.bdgStrArray.containsAll(testTagList) }
-         Log.d(TAG, "sendRequestToFbRepo: sortedList2.size=${sortedList2.size}, sortedList2=$sortedList2")
-         rcvAdapterInstance.refreshRecyclerView(sortedList2.toMutableList())
-
-//3)         Case: B,D,F -> 5, 7
-//4)         Case: E,F -> 5, 11,12
+             rcvAdapterInstance.refreshRecyclerView(sortedList.toMutableList())
+         }
+         
+         
 
      //test <--
 
-       /*  firebaseRepoInstance.sortSingleOrMultipleTags(tagsList).addOnCompleteListener {
-             if (it.isSuccessful) {
-
-                 tagOnlyRtClassList = it.result!!.toObjects(RtInTheCloud::class.java)
-                 rcvAdapterInstance.refreshRecyclerView(tagOnlyRtClassList)
-
-
-                 Log.d(TAG, "sendRequestToFbRepo: tagOnlyRtClassList.size=${tagOnlyRtClassList.size}, 내용: $tagOnlyRtClassList")
-
-             } else {
-                 Log.d(TAG, "sendRequestToFbRepo: ERROR!!- Exception message: ${it.exception!!.message}")
-             }
-         }*/
-
     }
     private fun backToFullRtList() {
+        Log.d(TAG, "backToFullRtList: called.")
         rcvAdapterInstance.refreshRecyclerView(fullRtClassList)
         mySmoothScroll()
-
     }
 
     //lottieAnimation Controller = 로딩:0 번, 인터넷에러:1번, 정상:2번(lottie 를 감춰!)

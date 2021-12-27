@@ -72,7 +72,13 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                         //check item in purchase list. 구매 상태인 물품에 대해서! status check! 한번 더 확인. 문제없으면 true 로..
                         for (p in queryPurchases)
                         {
-                            val rtObject = currentRtList.single { RtClass -> RtClass.iapName == p.sku } // iapName 이 p.sku (ex.p1, p2) 와 매칭하는 rtObject
+                            var rtObject = RtInTheCloud()
+                            try {
+                                 rtObject = currentRtList.single { RtClass -> RtClass.iapName == p.sku } // iapName 이 p.sku (ex.p1, p2) 와 매칭하는 rtObject
+                            } catch (e: Exception) {
+                                Log.d(TAG, "onBillingSetupFinished: List 에서 현재 p.sku(=${p.sku}) 에 매칭하는 rtObject 를 찾을 수 없음.")
+                            }
+                            
                             val trackID = rtObject.id
                             val iapName = rtObject.iapName
                             val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
@@ -302,13 +308,25 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
     }
 //List 에서 원하는 값 받아오는 functions. 내가 만든 ------------>>>>>
     // 아래 Method 들 모두 logd 로 시작/끝 테스트해보니 0.01 초도 안걸림.
-    fun getRtInstanceByIapName(iapName: String) = currentRtList.first { rtObj -> rtObj.iapName == iapName }
+    fun getRtInstanceByIapName(iapName: String): RtInTheCloud {
+      try{
+          return currentRtList.first { rtObj -> rtObj.iapName == iapName }
+      } catch (e: Exception) {
+          Log.d(TAG, "getRtInstanceByIapName: 기존에 p1 을 샀는데 이제 iapName 이 모두 p1001~ 임. 이러면 리스트에서 못찾으니깐 에러나는거지!! Error=$e")
+          return RtInTheCloud() // empty RtObj
+      }
+    }
     fun getRtInstanceByTrkId(trkId: Int) = currentRtList.first { rtObj -> rtObj.id == trkId }
 
     fun getIapNameByTrkId(trkId: Int): String {
-
-        val rtObj: RtInTheCloud = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
-        return rtObj.iapName
+        try {
+            val rtObj: RtInTheCloud = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
+            return rtObj.iapName
+        }catch (e: Exception) {
+            Log.d(TAG, "getIapNameByTrkId: trkID 에 따른 IapName 을 찾을 수 없음 trkId=$trkId")
+            return ""
+        }
+        
     }
 
 //List 에서 원하는 값 받아오는 functions. 내가 만든 <<<------------

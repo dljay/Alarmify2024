@@ -224,7 +224,8 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
             val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlToDownload)
             if(!isUrlValid) {
                 Log.d(TAG, "multipleFileDNLD: DOWNLOAD ERROR. INVALID URL!")
-                Toast.makeText(receivedActivity,"DOWNLOAD ERROR. INVALID URL!", Toast.LENGTH_LONG).show()
+                Toast.makeText(receivedActivity,"UNABLE TO RECOVER PREVIOUS ITEMS. ERROR=INVALID URL", Toast.LENGTH_LONG).show()
+                // 테스트 기간에 iapName 이 p1 인 아이템을 샀지만, google play console 에 p1001 로 아이디를 바꾼 제품을 올려놓아서 더이상 찾을 수 없음. 계속 여기 걸림.
                 return
             }
             //Download Prep

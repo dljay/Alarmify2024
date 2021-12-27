@@ -7,7 +7,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 
-const val TAG ="FBRepoClass"
+private const val TAG ="FBRepoClass"
+private const val FB_COLLECTION_NAME="ringtones"
 class FirebaseRepoClass
 {
     private val firebaseFSInstance : FirebaseFirestore = FirebaseFirestore.getInstance()
@@ -15,7 +16,7 @@ class FirebaseRepoClass
 
     //1) Get all data from Firebase . 2) 코루틴 사용 안하고 callback 사용 3) google.
     fun getPostList(): Task<QuerySnapshot> { // return type: Task snapshot!
-        dbCollectionReference = firebaseFSInstance.collection("ringtones")
+        dbCollectionReference = firebaseFSInstance.collection(FB_COLLECTION_NAME)
 //        dbCollectionReference.whereArrayContains(badgeStrArray, "A, B")
         
         return dbCollectionReference.orderBy("id", Query.Direction.ASCENDING).get()

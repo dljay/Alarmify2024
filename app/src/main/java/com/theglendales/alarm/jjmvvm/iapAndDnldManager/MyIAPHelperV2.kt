@@ -58,6 +58,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                     val queryPurchase = billingClient!!.queryPurchases(BillingClient.SkuType.INAPP)
                     val queryPurchases = queryPurchase.purchasesList
 
+
                     //check status of found items and save values to preference
                     //item which are not found simply save false values to their preference
                     //indexOf return index of item in purchase list from 0-2 (because we have 3 items) else returns -1 if not found
@@ -72,6 +73,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                         //check item in purchase list. 구매 상태인 물품에 대해서! status check! 한번 더 확인. 문제없으면 true 로..
                         for (p in queryPurchases)
                         {
+
                             var rtObject = RtInTheCloud()
                             try {
                                  rtObject = currentRtList.single { RtClass -> RtClass.iapName == p.sku } // iapName 이 p.sku (ex.p1, p2) 와 매칭하는 rtObject
@@ -80,15 +82,18 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                             }
                             
                             val trackID = rtObject.id
-                            val iapName = rtObject.iapName
+
+                    /**
+                     *  val iapName = rtObject.iapName [기존 코드]
+                     *  예전에 샀다 없어진 물품 구입의 가능성도 있어서 val iapName = p.sku 로 일단 대체  (ex. 1년전에 p1 물건 구입 -> p1 자체가 playconsole 에서 사라진 경우-> List 에서 찾을 수 없다.)
+                     */
+                            val iapName = p.sku
                             val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
                                 .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
-
                             //if purchase found. 구입 내역이 있는! item 만 나옴 (ex. 현재 21/06/4에는 rt1, rt2 만 여기에 해당됨..)
                             if (trackID > -1)
                             {
                                 purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
-
                                 // ********************************>>>기존 구매건
                                 if (p.purchaseState == Purchase.PurchaseState.PURCHASED)
                                 {
@@ -103,7 +108,6 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                                         Log.d(TAG, "onBillingSetupFinished: [멀티] 복원 다운로드 필요한 리스트에 다음을 추가: $iapName")
                                         multiDNLDNeededList.add(rtObject)
                                     }
-
                                 // <<<********************************기존 구매건
                                 } else
                                 { // 구매한적이 있으나 뭔가 문제가 생겨서 PurchaseState.Purchased 가 아닐때 여기로 들어옴. 애당초 구입한적이 없는 물품은 여기 뜨지도 않음!
@@ -114,36 +118,49 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                             }
                         }
 
-                        //C-2) (기존) 구매안된 물품들(굉장히 다수겠지..)에 대해서는 SharedPref 에 false 로 표시!. //items that are not found in purchase list mark false
-                        //indexOf returns -1 when item is not in foundlist. 리스트에 없으면 -1 반환.
+                    //C-2) (기존) 구매안된 물품들(굉장히 다수겠지..)에 대해서는 SharedPref 에 false 로 표시!. //items that are not found in purchase list mark false
+                    //indexOf returns -1 when item is not in foundlist. 리스트에 없으면 -1 반환.
+
+                    /**
+                     *  But!! queryPurchaseHistoryAsync() 호출해서 -> Local Google Play Cache 뿐만 아니라 다른 기기에서의 구입 history 까지 한번 살펴보기 (정말 산 적이 없는지)
+                     */
+                        // 새로 추가된 코드 21.12.28 - 모두 구매 false 로 sharedPref 에 저장하기전에 ->  Local Google Play Cache 뿐만 아니라 다른 기기에서의 history 까지 한번 살펴보기 (정말 산 적이 없는지)
+                       /* billingClient!!.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP) { billingResult, purchaseHistoryRecordList ->
+                            Log.d(TAG,"onPurchaseHistoryResponse: C-2-a [구매 내역이 뜨지 않다른 기기에서의 구매 내역까지 검토] " +
+                                    "\n billingResult=$billingResult, purchaseHistoryRecordList=$purchaseHistoryRecordList")
+                            if (purchaseHistoryRecordList != null) {
+                                for(i in purchaseHistoryRecordList.indices) {
+                                    Log.d(TAG, "onBillingSetupFinished: C-2-a [현재 뜨지는 않지만 다른 기기에서 샀던 아이템 목록=${purchaseHistoryRecordList[i].sku}")
+                                }
+                            }
+                        }*/
+
 
                         currentRtList.forEach { rtObject->
-                            if(purchaseFound.indexOf(rtObject.id) == -1)
-                            { // itemIDsMap 에서 "구매한목록(purchaseFound)" 에 없는 놈들은 다 false 로!
+                            if(purchaseFound.indexOf(rtObject.id) == -1) //현재 우리의 rtList (currentRtList) 중 구매 리스트에 없는 모든 물품들에 대해서..
+                            { // itemIDsMap 에서 "구매한목록(purchaseFound)" 에 없는 놈들은 다 false 로! //todo: 이걸 구매 안한 상품들에 대해서 매번 해줘야 한다는 것= too CPU expensive..
                                 val iapName = rtObject.iapName
                                 val trId = rtObject.id
                                 val trTitle = rtObject.title
                                 //val badgeStr -> FB 업뎃 후 입력 가능.
 
                             mySharedPrefManager.savePurchaseBoolPerIapName(iapName, false)
-                            Log.d(TAG, "C-2) ₥₥₥ onBillingSetupFinished: trackId=$trId 물품(상품 이름은=$iapName)은 purchaseFound 에 없음! 고로 false 로 SharedPref 에 저장됨! ")
+                            Log.d(TAG, "C-2-b) ₥₥₥ onBillingSetupFinished: trackId=$trId 물품(상품 이름은=$iapName)은 purchaseFound 에 없음! 고로 false 로 SharedPref 에 저장됨! ")
 
 
                     /**
                      * 모든 파일명은 .iapName 과 일치해야함 (ex p1.rta, p2.rta .. )
                      */
+                    // 혹시나..구매한적도 없는데 만약 디스크에 있으면 디스크에서 삭제
                             val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
                                 .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
-
-                            //todo: 다음을 구매 안한 상품들에 대해서 매번 해줘야 한다는 것= too CPU expensive..
-                            if(myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) { // 혹시나..구매한적도 없는데 만약 디스크에 있으면
-                                // 디스크에서 삭제
+                            if(myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
                                 Log.d(TAG, "onBillingSetupFinished: $iapName 는(은) 산 놈도 아닌데 하드에 있음. 지워야함!! ")
                                 myDiskSearcher.deleteFromDisk(rtObject, fileNameAndFullPath)
                             }
                         }}
                     }
-                    // C-3) 애당초 구매건이 하나도 없으면. 모두 false!
+                    // C-3) 애당초 구매건이 하나도 없으면->.. 모두 false!
                     else {
                         currentRtList.forEach { rtObject -> mySharedPrefManager.savePurchaseBoolPerIapName(rtObject.iapName, false) }
                         Log.d(TAG, "C-3) ☺ onBillingSetupFinished:  The User has never ever 산적이 없으면 일로 오는듯! (queryPurchase.size 가 0 이란 뜻..?)")
@@ -157,7 +174,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
 
             override fun onBillingServiceDisconnected() {}
         })
-        Log.d(TAG, "initIAP: finished..")
+        Log.d(TAG, "initIAP: End of InitIap() 그렇다고 진짜 끝난건 아님. onBillingSetupFinished 는 진행중....")
     }
     //## <A> A. refreshItemIdIapNameTitle -> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.refreshRcView()!
 /**
@@ -167,7 +184,8 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
         currentRtList.clear()
         currentRtList = newRtList
 
-        Log.d(TAG, "A) refreshItemIdsMap: begins!")
+        Log.d(TAG, "A) refreshItemIdIapNameTitle: begins!")
+        mySharedPrefManager.isMyIAPXmlExist()
 
         initIAP()
     }
@@ -311,7 +329,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
     fun getRtInstanceByIapName(iapName: String): RtInTheCloud {
       try{
           return currentRtList.first { rtObj -> rtObj.iapName == iapName }
-      } catch (e: Exception) {
+      } catch (e: Exception) { // Google Play Console 에서 DeActivate 된 과거 물품 구입건은 현재 currentRtList 에 없기에 이쪽으로 들어옴 (ex. p1, p7)
           Log.d(TAG, "getRtInstanceByIapName: 기존에 p1 을 샀는데 이제 iapName 이 모두 p1001~ 임. 이러면 리스트에서 못찾으니깐 에러나는거지!! Error=$e")
           return RtInTheCloud() // empty RtObj
       }
@@ -337,7 +355,8 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
         for (purchase in purchases) {
             val rtInstance = getRtInstanceByIapName(purchase.sku)
             val trackId = rtInstance.id
-            val iapName = rtInstance.iapName
+            //val iapName = rtInstance.iapName
+            val iapName = purchase.sku // 위와 똑같음 어차피. ex) p1001, p1002 ..
 
             //purchase found
             if (trackId > -1)
@@ -364,6 +383,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                         { billingResult ->
                             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
                             {
+
                                 //if purchase is acknowledged then save value in preference
                                 mySharedPrefManager.savePurchaseBoolPerIapName(iapName, true)  // ex) (p1, true) (p2, false) ..
                                 //Toast.makeText(receivedActivity, "You have purchased $iapName", Toast.LENGTH_SHORT).show()

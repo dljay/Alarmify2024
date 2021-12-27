@@ -63,14 +63,16 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.06a [Firebase 에 BdgStrArray 생성 및 코드 수정(진행중)]
-// Achievements (O)
-// RtInTheCloud, RtOnThePhone 클래스명 변경.
-// Firebase 에 bdgStrArray (배지) 만들어서 더 이상 No setter/getter Firebase 이런 에러 안 뜨게 했음.
-// Chip, Badge 동기화 및 app 안에서 chip 클릭-> 자체 filtering (FB 에 requeset 하지 않는다!! 데이터 saving! Performance Saving!)
+// v3.07.06b [Firebase 에 BdgStrArray 생성 및 코드 수정(진행중)] -211228(화)/01:53
 
 //ISSUES (X)
-// 기존 내가 샀던 p1,p7 이 존재해서 새로운 p1001 을 다운받으려 클릭/구매  -> p1001 을 세개나 다운 받았네.
+//1) Gal S21 에서 emulator 에서 산 p1001 이 12/28 01:49 (AM) 현재 인식 안되는 문제:
+//-> queryPurchaseHistoryAsync() 에는 뜬다. qPHA() 를 해주고 queryPurchase() 해주면 cache 가 refresh 된다는데 아직 못해봄.
+//-> MyIAPHelperV2.kt 에서 '첫 IAP 실행하는것인지 (첫 인스톨) 검사- mySharedPref> MyIAP.xml 파일 있는지 여부로 체크. -> 이 다음에 바로 qPHA() 실행-queryPurchase() 실행해서 cache 리프레쉬 될지 테스트.
+//-> 이 외에도 onBillingSetUpFinished() 에서 purchaseList.size ==0 일때 실행하기? 근데 난 p1, p7 기록은 cache 남아서 떠서 계속 size == 2 로 뜸.
+// 2) 기존에 구입한 p1,p7 이 계속 뜨는 문제 (Library 에서 아예 없어졌는데.. 이거 어떻게 Cache 자체에서 없앨수 없을까?)
+
+// 3)기존 내가 샀던 p1,p7 이 존재해서 새로운 p1001 을 다운받으려 클릭/구매  -> p1001 을 세개나 다운 받았네.
 // 이 상태에서 listFrag 로 옮겨가면 자동으로 지워주는데, RtPickerActivity 에 들어가니 (list 가 refresh 되지 않아서) 세개 그대로 떠 있음. (스샷 참고)
 // RtPicker 에 떠있던 놈들은 당연히 재생이 안되는데 이때 기존 앱에 설치된 Permission 이 떠버림 (역시 스샷 참고)
 

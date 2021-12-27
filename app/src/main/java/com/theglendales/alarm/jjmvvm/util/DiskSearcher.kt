@@ -95,7 +95,7 @@ class DiskSearcher(val context: Context)
         // todo: 현재 /.AlarmRingTones 폴더 안 rta 갯수를 파악해서 필요할 경우 copy 하는것에서 -> 무조건 다 copy 하는것으로 변경할지? (defrt mp3 데이터 변경되었을때나 업데이트 되었을때 대처 위해..)
     //(1)-b  /.AlarmRingTones 에 Defrt 파일이 없거나, 10개 미만으로 있을때 (즉 최초 실행 혹은 어떤 연유로 defrta 파일 갯수가 부족) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
             val listOfDefrtFiles = alarmRtDir.listFiles { _, name -> name.contains("defrt")  } // 파일 이름에 "defrt" 를 포함하는 놈들을 List 로 받아서. 그 갯수 확인.
-                if(!listOfDefrtFiles.isNullOrEmpty() && listOfDefrtFiles.size <10) {
+                if(listOfDefrtFiles.isNullOrEmpty() || listOfDefrtFiles.size <10) { // 아예 폴더가 비어있거나 or Defrtxx.rta 파일이 10개 미만일 떄.
                     Log.d(TAG, "onDiskRtSearcher: Possible Missing Defrt Files. numberOfDefRtFiles=${listOfDefrtFiles.size}")
 
                     copyDefaultRtsToPhone(R.raw.defrt01, "defrt01.rta")

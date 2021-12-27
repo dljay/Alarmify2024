@@ -21,10 +21,8 @@ class FirebaseRepoClass
         return dbCollectionReference.orderBy("id", Query.Direction.ASCENDING).get()
 
     }
-    fun sortTest() : Task<QuerySnapshot> {
-        val field= "badgeStrArray"
-        return dbCollectionReference.whereArrayContains(field, "A, B").get()
-    }
+    // 이건 whereArrayContains 는 두번 이상 못 써서 ..망침.. 의미가 없음..
+
 
     fun sortSingleOrMultipleTags(tagsList: MutableList<String>): Task<QuerySnapshot> {
         Log.d(TAG, "sortSingleOrMultipleTags: tagsList = $tagsList")

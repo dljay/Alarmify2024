@@ -63,7 +63,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.04H [복원 필요한 파일 멀티 다운로드 작업-SnackBar 로 간단히..]
+// v3.07.05B [Firebase 에 BdgStrArray 생성 및 코드 수정(진행중)]
 // Achievements
 // multiFileDNLD 구현 -> Snackbar 로 결과 통보 & Snackbar 표기용 utility method 만듬. (O)
 

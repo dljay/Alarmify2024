@@ -246,6 +246,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
                 val downloadID = dnlManager.enqueue(dnlRequest) // 이 코드는 두가지 역할을 함.
             } catch (e: Exception) {
                 isErrorOccurred = true
+                Log.d(TAG, "multipleFileDNLD: error trying to retrieve previously purchased. \nError=$e")
 
             }
 
@@ -253,6 +254,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
         // 멀티 다운로드 시도 과정 report -> Snackbar 로 바로 "복원 시작" 전달.
         val arrayBool: Array<Boolean> = arrayOf(true, isErrorOccurred) // true= 멀티다운로드를 가동했다!, isErrorOccurred= 다운과정에서 에러가 있냐 없냐!
         dnldViewModel.updateMultiDnldStats(arrayBool)
+    //todo : 다운로드 끝났을 떄 Snackbar 가동.
     }
 // <----------***MULTIPLE File Dnld <<<<<<<<<<<<----------------
 

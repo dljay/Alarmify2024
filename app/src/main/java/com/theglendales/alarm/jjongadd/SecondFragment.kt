@@ -517,33 +517,35 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     private fun sendRequestToFbRepo(tagsList: MutableList<String>) {
          var tagOnlyRtClassList: MutableList<RingtoneClass> = ArrayList()
      //test -->
-         firebaseRepoInstance.sortTest().addOnCompleteListener {
-             if (it.isSuccessful) {
+         // Sort List received-> Alphabetical order
 
-                 tagOnlyRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
-                 rcvAdapterInstance.refreshRecyclerView(tagOnlyRtClassList)
 
-                 Log.d(TAG, "sendRequestToFbRepo: tagOnlyRtClassList.size=${tagOnlyRtClassList.size}, 내용: $tagOnlyRtClassList")
+//2)         Case: A,F ->  6, 11
+        // ** 이거 쓰면 될듯..!! ** //
+         val testTagList = arrayListOf<String>("B","D","F")
+         val sortedList2 = fullRtClassList.filter { rtObject ->
+             rtObject.bdgStrArray.containsAll(testTagList) }
+         Log.d(TAG, "sendRequestToFbRepo: sortedList2.size=${sortedList2.size}, sortedList2=$sortedList2")
+         rcvAdapterInstance.refreshRecyclerView(sortedList2.toMutableList())
 
-             } else {
-                 Log.d(TAG, "sendRequestToFbRepo: ERROR!!- Exception message: ${it.exception!!.message}")
-             }
-         }
+//3)         Case: B,D,F -> 5, 7
+//4)         Case: E,F -> 5, 11,12
+
      //test <--
 
-         firebaseRepoInstance.sortSingleOrMultipleTags(tagsList).addOnCompleteListener {
+       /*  firebaseRepoInstance.sortSingleOrMultipleTags(tagsList).addOnCompleteListener {
              if (it.isSuccessful) {
 
                  tagOnlyRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
                  rcvAdapterInstance.refreshRecyclerView(tagOnlyRtClassList)
 
-                 //Log.d(TAG, "sendRequestToFbRepo: Success. Showing items including 'A.N.Y' of the tags: $tagsList")
+
                  Log.d(TAG, "sendRequestToFbRepo: tagOnlyRtClassList.size=${tagOnlyRtClassList.size}, 내용: $tagOnlyRtClassList")
 
              } else {
                  Log.d(TAG, "sendRequestToFbRepo: ERROR!!- Exception message: ${it.exception!!.message}")
              }
-         }
+         }*/
 
     }
     private fun backToFullRtList() {

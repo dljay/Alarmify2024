@@ -73,7 +73,7 @@ class RcViewAdapter(
 
 
         holder.tv1_Title.text = currentItem.title
-        holder.tv2_ShortDescription.text = currentItem.tags
+        holder.tv2_ShortDescription.text = currentItem.hashtags
         holder.holderTrId = currentTrId
 
 

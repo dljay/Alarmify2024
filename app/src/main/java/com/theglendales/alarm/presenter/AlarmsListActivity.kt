@@ -69,8 +69,10 @@ import java.util.Calendar
 // Firebase 에 bdgStrArray (배지) 만들어서 더 이상 No setter/getter Firebase 이런 에러 안 뜨게 했음.
 // Chip, Badge 동기화 및 app 안에서 chip 클릭-> 자체 filtering (FB 에 requeset 하지 않는다!! 데이터 saving! Performance Saving!)
 
-
 //ISSUES (X)
+// 기존 내가 샀던 p1,p7 이 존재해서 새로운 p1001 을 다운받으려 클릭/구매  -> p1001 을 세개나 다운 받았네.
+// 이 상태에서 listFrag 로 옮겨가면 자동으로 지워주는데, RtPickerActivity 에 들어가니 (list 가 refresh 되지 않아서) 세개 그대로 떠 있음. (스샷 참고)
+// RtPicker 에 떠있던 놈들은 당연히 재생이 안되는데 이때 기존 앱에 설치된 Permission 이 떠버림 (역시 스샷 참고)
 
 
 

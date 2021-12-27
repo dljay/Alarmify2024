@@ -366,7 +366,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                             {
                                 //if purchase is acknowledged then save value in preference
                                 mySharedPrefManager.savePurchaseBoolPerIapName(iapName, true)  // ex) (p1, true) (p2, false) ..
-                                Toast.makeText(receivedActivity, "You have purchased $iapName", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(receivedActivity, "You have purchased $iapName", Toast.LENGTH_SHORT).show()
                                 Log.d(TAG, "handlePurchaseNotification: 1-B 정상구매(not acknowledged). 다운로드 진행 ")
                                 // ############################## 신규 구매건. 과거 구매건은 정상 처리되었어도 여기까지는 안 들어옴. (logd 로 확인)
                                 downloadOrDeleteSinglePurchase(trackId, true, downloadNow = true) //todo: downloadOrDelete(trackId) (O)
@@ -388,7 +388,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                                 Log.d(TAG, "handlePurchaseNotification: 1-C-a) 정상 single 구매. 다운로드 진행")
                                 // ############################## 신규 구매건. 과거 구매건은 정상 처리되었어도 여기까지는 안 들어옴. (logd 로 확인)
                                 // !!!!!!!!!!!!! 그러나!! 전체 리스트중 한개만 구입해놓은 상태면 다운받게됨.
-                                Toast.makeText(receivedActivity, "You have purchased $iapName", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(receivedActivity, "You have purchased $iapName", Toast.LENGTH_SHORT).show()
 
                             // 실 다운로드 실행->
                                 downloadOrDeleteSinglePurchase(trackId, true, downloadNow = true)

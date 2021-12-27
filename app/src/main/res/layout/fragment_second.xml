@@ -49,7 +49,7 @@
                     app:singleLine="false">
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/id_chip1_nature"
+                        android:id="@+id/id_chip1_intense"
                         style="@style/customChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -57,16 +57,50 @@
                         android:layout_marginTop="8dp"
                         android:checkable="true"
                         android:checked="false"
-                        android:text="@string/chip1_nature"
+                        android:text="@string/chip1_intense"
                         app:checkedIcon="@drawable/chip_check_empty_background"
-                        app:chipIcon="@drawable/chip1_nature"
+                        app:chipIcon="@drawable/chip1_intense"
+                        app:chipIconVisible="true">
+
+                    </com.google.android.material.chip.Chip>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/id_chip2_gentle"
+                        style="@style/customChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:text="@string/chip2_gentle"
+                        app:checkedIcon="@drawable/chip_check_empty_background"
+                        app:chipIcon="@drawable/chip2_gentle"
+                        app:chipIconVisible="true">
+
+                    </com.google.android.material.chip.Chip>
+
+
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/id_chip3_nature"
+                        style="@style/customChipStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:checkable="true"
+                        android:checked="false"
+                        android:text="@string/chip3_nature"
+                        app:checkedIcon="@drawable/chip_check_empty_background"
+                        app:chipIcon="@drawable/chip3_nature"
                         app:chipIconVisible="true">
 
                     </com.google.android.material.chip.Chip>
 
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/id_chip2_city"
+                        android:id="@+id/id_chip4_location"
                         style="@style/customChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -74,15 +108,15 @@
                         android:layout_marginTop="8dp"
                         android:checkable="true"
                         android:checked="false"
-                        android:text="@string/chip2_city"
+                        android:text="@string/chip4_Locations"
                         app:checkedIcon="@drawable/chip_check_empty_background"
-                        app:chipIcon="@drawable/chip2_city"
+                        app:chipIcon="@drawable/chip4_location"
                         app:chipIconVisible="true">
 
                     </com.google.android.material.chip.Chip>
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/id_chip3_intense"
+                        android:id="@+id/id_chip5_popular"
                         style="@style/customChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -90,15 +124,15 @@
                         android:layout_marginTop="8dp"
                         android:checkable="true"
                         android:checked="false"
-                        android:text="@string/chip3_intense"
+                        android:text="@string/chip5_Popular"
                         app:checkedIcon="@drawable/chip_check_empty_background"
-                        app:chipIcon="@drawable/chip3_intense"
+                        app:chipIcon="@drawable/chip5_popular"
                         app:chipIconVisible="true">
 
                     </com.google.android.material.chip.Chip>
 
                     <com.google.android.material.chip.Chip
-                        android:id="@+id/id_chip4_vintage"
+                        android:id="@+id/id_chip6_misc"
                         style="@style/customChipStyle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -106,44 +140,14 @@
                         android:layout_marginTop="8dp"
                         android:checkable="true"
                         android:checked="false"
-                        android:text="@string/chip4_vintage"
+                        android:text="@string/chip6_Misc"
                         app:checkedIcon="@drawable/chip_check_empty_background"
-                        app:chipIcon="@drawable/chip4_vintage"
+                        app:chipIcon="@drawable/chip6_misc"
                         app:chipIconVisible="true">
 
                     </com.google.android.material.chip.Chip>
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/id_chip5_weapons"
-                        style="@style/customChipStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:checkable="true"
-                        android:checked="false"
-                        android:text="@string/chip5_weapons"
-                        app:checkedIcon="@drawable/chip_check_empty_background"
-                        app:chipIcon="@drawable/chip5_weapons"
-                        app:chipIconVisible="true">
 
-                    </com.google.android.material.chip.Chip>
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/id_chip6_calm"
-                        style="@style/customChipStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
-                        android:checkable="true"
-                        android:checked="false"
-                        android:text="@string/chip6_calm"
-                        app:checkedIcon="@drawable/chip_check_empty_background"
-                        app:chipIcon="@drawable/chip6_peaceful2"
-                        app:chipIconVisible="true">
-
-                    </com.google.android.material.chip.Chip>
 
                 </com.google.android.material.chip.ChipGroup>
 

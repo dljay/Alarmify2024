@@ -18,12 +18,12 @@
     <!--      Here come strings which are not contained in the AOSP -->
 
     <!--Chip Strings.. Chip 표시되는 글자들에 대한 string variable-->
-    <string name="chip1_nature">Nature</string>
-    <string name="chip2_city">City</string>
-    <string name="chip3_intense">Intense</string>
-    <string name="chip4_vintage">Vintage</string>
-    <string name="chip5_weapons">Weapons</string>
-    <string name="chip6_calm">Calm</string>
+    <string name="chip1_intense">Intense</string>
+    <string name="chip2_gentle">Gentle</string>
+    <string name="chip3_nature">Nature</string>
+    <string name="chip4_Locations">Locations</string>
+    <string name="chip5_Popular">Popular</string>
+    <string name="chip6_Misc">Misc.</string>
 
     <!--Permission 내가 추가 -->
     <string name="bottomSheet_Message1">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again.\n\nHitting <b>CANCEL</b> will dismiss your purchase and disable restoring previously purchased ringtones.</string>

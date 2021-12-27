@@ -486,22 +486,22 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // Chip Related #2 (Listener Setup & Sending a Request to FbRepoClass.)
     private fun createStringListFromChips() {
         val tagsList = mutableListOf<String>()
-        val natureTag ="Nature"
-        val cityTag ="City"
-        val intenseTag ="Intense"
-        val vintageTag ="Vintage"
-        val weaponsTag ="Weapons"
-        val peacefulTag="Calm"
+        val intenseTag ="INT"
+        val gentleTag="GEN"
+        val natureTag ="NAT"
+        val locationsTag ="LOC"
+        val popularTag ="POP"
+        val miscTag ="MIS"
 
         chipGroup.checkedChipIds.forEach {
 
             when(it) {
-                R.id.id_chip1_nature -> tagsList.add(natureTag)
-                R.id.id_chip2_city -> tagsList.add(cityTag)
-                R.id.id_chip3_intense -> tagsList.add(intenseTag)
-                R.id.id_chip4_vintage -> tagsList.add(vintageTag)
-                R.id.id_chip5_weapons -> tagsList.add(weaponsTag)
-                R.id.id_chip6_calm -> tagsList.add(peacefulTag)
+                R.id.id_chip1_intense -> tagsList.add(intenseTag)
+                R.id.id_chip2_gentle -> tagsList.add(gentleTag)
+                R.id.id_chip3_nature -> tagsList.add(natureTag)
+                R.id.id_chip4_location -> tagsList.add(popularTag)
+                R.id.id_chip5_popular -> tagsList.add(miscTag)
+                R.id.id_chip6_misc -> tagsList.add(locationsTag)
             }
         }
         Log.d(TAG, "createStringListFromChips: tagsList= $tagsList")

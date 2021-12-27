@@ -5,14 +5,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
+import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 
 private const val TAG="JjDNLDViewModel"
 
 class JjDNLDViewModel : ViewModel() {
 
-    //1) Single 다운로드할 때 인식할 RtWithAlbumArt Obj <일부 칸은 Null 로 되어있음. ListFrag 에서 DiskScan.. 하면서 채워주면 된다..>
-    private val _dnldRtObj = MutableLiveData<RtWithAlbumArt>() //Private but Mutable (외부접근 금지)
+    //1) Single 다운로드할 때 인식할 RtOnThePhone Obj <일부 칸은 Null 로 되어있음. ListFrag 에서 DiskScan.. 하면서 채워주면 된다..>
+    private val _dnldRtObj = MutableLiveData<RtOnThePhone>() //Private but Mutable (외부접근 금지)
     val dnldRtObj = _dnldRtObj // immutable & constantly monitors this.
 
     //2) Single  다운로드의 Status 정보
@@ -29,7 +29,7 @@ class JjDNLDViewModel : ViewModel() {
 
 // ** Functions
     //가) RtWithAlbum Obj -> 이걸 바탕으로 다운로드 BtmSht UI 업뎃.
-    fun updateDNLDRtObj(rtObjReceived: RtWithAlbumArt) {
+    fun updateDNLDRtObj(rtObjReceived: RtOnThePhone) {
         Log.d(TAG, "updateDNLDRtObj: called. rtObjReceived=$rtObjReceived")
         _dnldRtObj.value = rtObjReceived
     }

@@ -23,7 +23,7 @@ import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
+import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -76,7 +76,9 @@ class RtPickerActivity : AppCompatActivity() {
         private val iv_badge1_Intense by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge1_Intense) as ImageView}
         private val iv_badge2_Gentle by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge2_Gentle) as ImageView}
         private val iv_badge3_Nature by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge3_Nature) as ImageView}
-        private val iv_badge4_Human by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge_4_History) as ImageView}
+        private val iv_badge4_Location by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge_4_Location) as ImageView}
+        private val iv_badge5_Popular by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge_5_Popular) as ImageView}
+        private val iv_badge6_Misc by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge_6_Misc) as ImageView}
 
 
 
@@ -169,7 +171,7 @@ class RtPickerActivity : AppCompatActivity() {
                 tv_lowerUi_about.text = rtWithAlbumArt.rtDescription // Rt 설명
                 iv_lowerUi_bigThumbnail.setImageDrawable(iv_upperUi_thumbNail.drawable) // AlbumArt 현재 상단 UI 앨범아트 고대로 갖고와서 설정.
                 //Badges
-                val badgeStrRaw = rtWithAlbumArt.badgeStr // ex. "I,N,H" -> Intense, Nature, History 뭔 이런식.
+                val badgeStrRaw = rtWithAlbumArt.badgeStr // ex. "INT,NAT,POP" -> Intense, Nature, Popular 뭔 이런식.
                 val badgeStrList = BadgeSortHelper.getBadgesListFromStr(badgeStrRaw)
                 showOrHideBadges(badgeStrList)
 
@@ -219,8 +221,8 @@ class RtPickerActivity : AppCompatActivity() {
         rcView.setHasFixedSize(true)
 
 
-    //7-a) RcVAdapter 에 보여줄 List<RtWithAlbumArt> 를 제공 (이미 DiskSearcher 에 로딩되어있으니 특별히 기다릴 필요 없지..)
-        val rtOnDiskList:  MutableList<RtWithAlbumArt> = DiskSearcher.finalRtArtPathList
+    //7-a) RcVAdapter 에 보여줄 List<RtOnThePhone> 를 제공 (이미 DiskSearcher 에 로딩되어있으니 특별히 기다릴 필요 없지..)
+        val rtOnDiskList:  MutableList<RtOnThePhone> = DiskSearcher.finalRtArtPathList
         if(!rtOnDiskList.isNullOrEmpty()) {
             rcvAdapter.updateRcV(rtOnDiskList)
             
@@ -240,7 +242,7 @@ class RtPickerActivity : AppCompatActivity() {
 
     }
 // <0> My Utility Methods
-    private suspend fun getPositionOfCurrentRt(rtOnDiskList: MutableList<RtWithAlbumArt>): Int {
+    private suspend fun getPositionOfCurrentRt(rtOnDiskList: MutableList<RtOnThePhone>): Int {
         // 현재 DetailsFrag 에서 설정되어있는 RT 의 '파일 이름'
         val rtFileName = AlarmDetailsFragment.detailFragDisplayedRtFileName
         val index  =  rtOnDiskList.indexOfFirst { rt -> rt.fileNameWithoutExt == rtFileName } // 동일한 'FileName'을 갖는 놈의 인덱스를 리스트 에서 찾기
@@ -363,16 +365,20 @@ private fun setUpSlidingPanel() {
         iv_badge1_Intense.visibility = View.GONE
         iv_badge2_Gentle.visibility = View.GONE
         iv_badge3_Nature.visibility = View.GONE
-        iv_badge4_Human.visibility = View.GONE
+        iv_badge4_Location.visibility = View.GONE
+        iv_badge5_Popular.visibility = View.GONE
+        iv_badge6_Misc.visibility = View.GONE
         // String List 에서 이제 글자따라 다시 visible 시켜주기!
         Log.d(TAG, "showOrHideBadges: badgeStrList=$badgeStrList")
         if (badgeStrList != null) {
             for(i in badgeStrList.indices) {
                 when(badgeStrList[i]) {
-                    "I" -> iv_badge1_Intense.visibility = View.VISIBLE
-                    "G" -> iv_badge2_Gentle.visibility = View.VISIBLE
-                    "N" -> iv_badge3_Nature.visibility = View.VISIBLE
-                    "H" -> iv_badge4_Human.visibility = View.VISIBLE
+                    "INT" -> iv_badge1_Intense.visibility = View.VISIBLE
+                    "GEN" -> iv_badge2_Gentle.visibility = View.VISIBLE
+                    "NAT" -> iv_badge3_Nature.visibility = View.VISIBLE
+                    "LOC" -> iv_badge4_Location.visibility = View.VISIBLE
+                    "POP" -> iv_badge5_Popular.visibility = View.VISIBLE
+                    "MIS" -> iv_badge6_Misc.visibility = View.VISIBLE
                 }
             }
         }

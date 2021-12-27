@@ -1,6 +1,5 @@
 package com.theglendales.alarm.jjmvvm
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,17 +7,17 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.QuerySnapshot
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
-import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 
 private const val TAG="JjFirebaseViewModel"
 class JjFirebaseViewModel : ViewModel() {
     private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 아래 줄 대체!! 성공!
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
-    var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
+    var fullRtClassList: MutableList<RtInTheCloud> = ArrayList()
 //livedata
-//    private val _liveRtList = MutableLiveData<MutableList<RingtoneClass>>() // Private& Mutable LiveData
-//    val liveRtList: LiveData<MutableList<RingtoneClass>> = _liveRtList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
+//    private val _liveRtList = MutableLiveData<MutableList<RtInTheCloud>>() // Private& Mutable LiveData
+//    val liveRtList: LiveData<MutableList<RtInTheCloud>> = _liveRtList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
 
     private val _liveTaskQSnapShot = MutableLiveData<Task<QuerySnapshot>>() // Private& Mutable LiveData
     val liveTaskQSnapShot: LiveData<Task<QuerySnapshot>> = _liveTaskQSnapShot // 이놈을 SecondFrag 에서 Observe => Public but! Immutable (즉 이놈은 언제나= _liveRtList. Mirror...)
@@ -56,7 +55,7 @@ class JjFirebaseViewModel : ViewModel() {
 //            if(it.isSuccessful)
 //            {
 //                Log.d(TAG, "<<<<<<<<<loadPostData: successful")
-//                fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
+//                fullRtClassList = it.result!!.toObjects(RtInTheCloud::class.java)
 //                _liveRtList.postValue(fullRtClassList) // LIVE DATA!
 //
 //

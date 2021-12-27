@@ -6,7 +6,7 @@ import android.widget.Toast
 import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.RcViewAdapter
-import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -21,8 +21,8 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
 
-    var currentRtList: MutableList<RingtoneClass> = ArrayList()
-    var multiDNLDNeededList: MutableList<RingtoneClass> = ArrayList() // ##### <기존 구매했는데 a) 삭제 후 재설치 b) Pxx.rta 파일 소실 등으로 복원이 필요한 파일들 리스트> [멀티]
+    var currentRtList: MutableList<RtInTheCloud> = ArrayList()
+    var multiDNLDNeededList: MutableList<RtInTheCloud> = ArrayList() // ##### <기존 구매했는데 a) 삭제 후 재설치 b) Pxx.rta 파일 소실 등으로 복원이 필요한 파일들 리스트> [멀티]
     var clickedToBuyTrkID = -10 // 유저가 클릭할 때 myOnPurchaseClicked()에서 TrID 로 바뀜. [앱 Launch 후 IAP 초기화중 기존에 구입된 품목이 한개일경우-handlePurchase() 에서 자동 다운로드로 연결되는것을 방지]
 
 
@@ -157,7 +157,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
 /**
  *  제일 먼저 호출되는 곳
  */
-    fun refreshItemIdIapNameTitle(newRtList: MutableList<RingtoneClass>) { // 새로 받은 ringToneList 로 itemIDsMap 을 수정/업뎃해줌. initIAP() 에서 호출됨.
+    fun refreshItemIdIapNameTitle(newRtList: MutableList<RtInTheCloud>) { // 새로 받은 ringToneList 로 itemIDsMap 을 수정/업뎃해줌. initIAP() 에서 호출됨.
         currentRtList.clear()
         currentRtList = newRtList
 
@@ -307,7 +307,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
 
     fun getIapNameByTrkId(trkId: Int): String {
 
-        val rtObj: RingtoneClass = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
+        val rtObj: RtInTheCloud = currentRtList.first { rtObj -> rtObj.id == trkId } // .first() : returns the first object matching { predicate}
         return rtObj.iapName
     }
 

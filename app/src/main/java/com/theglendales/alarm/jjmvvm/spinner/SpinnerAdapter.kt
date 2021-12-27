@@ -18,19 +18,19 @@ import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
+import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 
 private const val TAG="SpinnerAdapter"
 class SpinnerAdapter(val context: Context) : BaseAdapter() {
 
     companion object{
-        val rtOnDiskList= mutableListOf<RtWithAlbumArt>()
+        val rtOnDiskList= mutableListOf<RtOnThePhone>()
         //var albumArtMap: HashMap<String?, Bitmap?> = HashMap() // <trkId, BMP?>
 
     }
     private val myDiskSearcher: DiskSearcher by globalInject()
 
-    fun updateList(rtOnDiskListReceived: MutableList<RtWithAlbumArt>) {
+    fun updateList(rtOnDiskListReceived: MutableList<RtOnThePhone>) {
         Log.d(TAG, "updateList: called. rtOnDiskListReceived=$rtOnDiskListReceived")
         rtOnDiskList.clear()
         for(i in 0 until rtOnDiskListReceived.size) {

@@ -12,7 +12,7 @@ v0.20c) raw 안에 rta 파일 넣고 핸들링 하는것.
 ** 1-b-2) 1-b) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extracArtFromSingleRta()  -> save image(.rta) on Disk
 
 1-c) mySharedPrefManager.saveRtaArtPathList(resultList)
-=> Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
+=> Merge 된 리스트(rtOnThePhone obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
 
 1-d) myDiskSearcher.updateList(resultList)
 => Companion obj 메모리에 띄워놓음(갱신): DiskSearcher.kt>finalRtArtPathList 

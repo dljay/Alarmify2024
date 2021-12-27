@@ -52,7 +52,7 @@ import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
+import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 import com.theglendales.alarm.jjongadd.TimePickerJjong
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
@@ -114,7 +114,9 @@ class AlarmDetailsFragment : Fragment() {
             private val iv_badge1_Intense by lazy {fragmentView.findViewById(R.id.iv_badge1_intense) as ImageView}
             private val iv_badge2_Gentle by lazy {fragmentView.findViewById(R.id.iv_badge2_gentle) as ImageView}
             private val iv_badge3_Nature by lazy {fragmentView.findViewById(R.id.iv_badge3_nature) as ImageView}
-            private val iv_badge4_Human by lazy {fragmentView.findViewById(R.id.iv_badge4_history) as ImageView}
+            private val iv_badge4_Location by lazy {fragmentView.findViewById(R.id.iv_badge4_location) as ImageView}
+            private val iv_badge5_Popular by lazy {fragmentView.findViewById(R.id.iv_badge5_popular) as ImageView}
+            private val iv_badge6_Misc by lazy {fragmentView.findViewById(R.id.iv_badge6_misc) as ImageView}
         // RtPickerActivity 로 넘어갈 때 현재 지정되어있는 알람 정보를 넘기기 위해..
 
 
@@ -360,7 +362,7 @@ class AlarmDetailsFragment : Fragment() {
         {
             //Log.d(TAG, "updateCircleAlbumArt: indexOfSelectedRt=$indexOfSelectedRt, selectedRtForThisAlarm=${SpinnerAdapter.rtOnDiskList[indexOfSelectedRt]}")
 
-            val selectedRtForThisAlarm: RtWithAlbumArt = DiskSearcher.finalRtArtPathList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
+            val selectedRtForThisAlarm: RtOnThePhone = DiskSearcher.finalRtArtPathList[indexOfSelectedRt] // 리스트 업데이트 전에 실행-> indexOfSelectedRt 가 -1 ->  뻑남..
             val rtTitle = selectedRtForThisAlarm.rtTitle
 
             val rtDescription = selectedRtForThisAlarm.rtDescription
@@ -626,16 +628,20 @@ class AlarmDetailsFragment : Fragment() {
         iv_badge1_Intense.visibility = View.GONE
         iv_badge2_Gentle.visibility = View.GONE
         iv_badge3_Nature.visibility = View.GONE
-        iv_badge4_Human.visibility = View.GONE
+        iv_badge4_Location.visibility = View.GONE
+        iv_badge5_Popular.visibility = View.GONE
+        iv_badge6_Misc.visibility = View.GONE
         // String List 에서 이제 글자따라 다시 visible 시켜주기!
         Log.d(TAG, "showOrHideBadges: badgeStrList=$badgeStrList")
         if (badgeStrList != null) {
             for(i in badgeStrList.indices) {
                 when(badgeStrList[i]) {
-                    "I" -> iv_badge1_Intense.visibility = View.VISIBLE
-                    "G" -> iv_badge2_Gentle.visibility = View.VISIBLE
-                    "N" -> iv_badge3_Nature.visibility = View.VISIBLE
-                    "H" -> iv_badge4_Human.visibility = View.VISIBLE
+                    "INT" -> iv_badge1_Intense.visibility = View.VISIBLE
+                    "GEN" -> iv_badge2_Gentle.visibility = View.VISIBLE
+                    "NAT" -> iv_badge3_Nature.visibility = View.VISIBLE
+                    "LOC" -> iv_badge4_Location.visibility = View.VISIBLE
+                    "POP" -> iv_badge5_Popular.visibility = View.VISIBLE
+                    "MIS" -> iv_badge6_Misc.visibility = View.VISIBLE
                 }
             }
         }

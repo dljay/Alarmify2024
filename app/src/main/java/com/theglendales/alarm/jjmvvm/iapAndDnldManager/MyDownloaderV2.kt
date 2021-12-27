@@ -8,10 +8,10 @@ import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
 
-import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
+import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.*
@@ -33,7 +33,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
 
 
 //********Single File Dnld **************
-    fun singleFileDNLD(rtClassObj: RingtoneClass) {
+    fun singleFileDNLD(rtClassObj: RtInTheCloud) {
         Log.d(TAG, "singleFileDNLD: Begins. TrId= ${rtClassObj.id}, rtTitle=${rtClassObj.title}, rtClassObj=${rtClassObj}, ")
     // 일단 Permission Check
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 DONWLOAD 에 특별한 Permission 필요 없음.
@@ -48,7 +48,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
         val mp3UrlToDownload= rtClassObj.mp3URL // 테스트 때 SoundHelix 16,15,14,12,11,9 링크 사용했음.
 
     // RtWithAlbumArtObj 으로 변환 후 일단 ViewModel 에 전달 -> SecondFrag 에서 DNLD BottomFrag UI 준비 //todo: 여기서 제대로..
-        val dnldAsRtObj = RtWithAlbumArt(trIdStr = trackID.toString(), rtTitle = trTitle, audioFilePath = fileNameAndFullPath,
+        val dnldAsRtObj = RtOnThePhone(trIdStr = trackID.toString(), rtTitle = trTitle, audioFilePath = fileNameAndFullPath,
                         fileNameWithoutExt = fileNameWithoutExt, rtDescription =description, badgeStr = "", isRadioBtnChecked = false)
 
 
@@ -114,7 +114,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
 
     }
 
-    private fun getResultFromSingleDNLD(dnldID: Long, dnldAsRtObj: RtWithAlbumArt): Int  {
+    private fun getResultFromSingleDNLD(dnldID: Long, dnldAsRtObj: RtOnThePhone): Int  {
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
         var isStillDownloading = true
@@ -207,7 +207,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
         return resultCode // downloading 이 끝나면 bool 값은 false 로 되어있음.
     }
 // ---------***MULTIPLE File Dnld ----------->>>>>
-    fun multipleFileDNLD(multipleRtList: List<RingtoneClass>) {
+    fun multipleFileDNLD(multipleRtList: List<RtInTheCloud>) {
         // todo: 현재는 단순히 바로 다운로드 실행 -> Snackbar 로 "Recovering purchased items" 정도로만 뜸. 나중에 Single DNLD 처럼 Prgrs BtmSheet 쓸지 고민.."
         Log.d(TAG, "multipleFileDNLD: [멀티] 파일 복원 필요 갯수:${multipleRtList.size}, Received list=$multipleRtList")
         var isErrorOccurred = false

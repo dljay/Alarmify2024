@@ -33,7 +33,7 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
-import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
@@ -125,7 +125,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Firebase 관련
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
     lateinit var jjFirebaseVModel: JjFirebaseViewModel
-    var fullRtClassList: MutableList<RingtoneClass> = ArrayList()
+    var fullRtClassList: MutableList<RtInTheCloud> = ArrayList()
 
     // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -216,7 +216,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 })
 
         //DNLD ViewMODEL Observe //한번 btmSht_SingleDNLDV Frag 를 보여준뒤-> ListFrag -> SecondFrag 복귀 했을 때 아래 LiveData 가 후루루룩 다 불리는 문제 => onDestroy() 에서 강제 VModel Clear 해줬음!
-            //2-C-가) DNLD: RtWithAlbumArt Obj 받기 (UI 갱신: DNLD Dialogue 열어주고 곡 제목 표시)
+            //2-C-가) DNLD: RtOnThePhone Obj 받기 (UI 갱신: DNLD Dialogue 열어주고 곡 제목 표시)
             jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {rtWithAlbumArtObj ->
                 Log.d(TAG, "onViewCreated: trId= ${rtWithAlbumArtObj.trIdStr}, received rtObj = $rtWithAlbumArtObj")
                 // Show BtmSht_SingleDNLD Frag
@@ -424,7 +424,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             //다운로드 Test 용도 - IAP  검증 걸치지 않고 해당 번호에 넣은 RT 다운로드 URL 로 이동. [원복]
                 //val testRtClassObj = iapInstanceV2.getRtInstanceByTrkId(12)
-//                val testRtHelixObj = RingtoneClass(title = "SoundHelix8.mp3","moreshit","desc","imgUrl",
+//                val testRtHelixObj = RtInTheCloud(title = "SoundHelix8.mp3","moreshit","desc","imgUrl",
 //                    mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",id=1, iapName = "shitbagHelix")
                 //myDownloaderV2.singleFileDNLD(testRtClassObj)
 
@@ -515,7 +515,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
      //위에 Chip 이 선택된 항목(string list)을 여기로 전달.
     private fun sendRequestToFbRepo(tagsList: MutableList<String>) {
-         var tagOnlyRtClassList: MutableList<RingtoneClass> = ArrayList()
+         var tagOnlyRtClassList: MutableList<RtInTheCloud> = ArrayList()
      //test -->
          // Sort List received-> Alphabetical order
 
@@ -536,7 +536,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
        /*  firebaseRepoInstance.sortSingleOrMultipleTags(tagsList).addOnCompleteListener {
              if (it.isSuccessful) {
 
-                 tagOnlyRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
+                 tagOnlyRtClassList = it.result!!.toObjects(RtInTheCloud::class.java)
                  rcvAdapterInstance.refreshRecyclerView(tagOnlyRtClassList)
 
 
@@ -620,7 +620,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     // 우선 lottie Loading animation-stop!!
                     lottieAnimController(2) //stop!
 
-                    fullRtClassList = it.result!!.toObjects(RingtoneClass::class.java)
+                    fullRtClassList = it.result!!.toObjects(RtInTheCloud::class.java)
 
                 // IAP
                     iapInstanceV2.refreshItemIdIapNameTitle(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) **
@@ -885,7 +885,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
 
-    /*fun updateResultOnRcView(fullRtClassList: MutableList<RingtoneClass>) {
+    /*fun updateResultOnRcView(fullRtClassList: MutableList<RtInTheCloud>) {
         Log.d(TAG, "showResult: 5) called..Finally! ")
         rcvAdapterInstance.updateRingToneMap(fullRtClassList)// todo: 이 map 안 쓰이는것 같은데 흐음.. (우리는 Map 기반이므로 list 정보를 -> 모두 Map 으로 업데이트!)
     }*/

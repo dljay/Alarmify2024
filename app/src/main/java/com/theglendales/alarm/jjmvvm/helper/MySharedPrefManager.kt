@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
+import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 import java.lang.Exception
 
 private const val TAG = "MySharedPrefManager"
@@ -38,23 +38,23 @@ class MySharedPrefManager(context: Context) {
     inline fun <reified T> genericType() = object : TypeToken<T>() {}.type // todo: 이것이 무엇인지 inline 에 대해서 공부해봐야함.
 
     //<1> *.RTA 와 *.Art Path 가 저장된 Object 를 Shared Pref(RtaArtPathList.xml) 에 저장하기
-    fun getRtaArtPathList(): MutableList<RtWithAlbumArt> {
+    fun getRtaArtPathList(): MutableList<RtOnThePhone> {
         return try {
             val jsonStrGet = prefForRtaArt.getString(KEY_1, "No Data")
 
-            val type = genericType<List<RtWithAlbumArt>>()
-            val onDiskRtaArtPathList = gson.fromJson<List<RtWithAlbumArt>>(jsonStrGet, type)
+            val type = genericType<List<RtOnThePhone>>()
+            val onDiskRtaArtPathList = gson.fromJson<List<RtOnThePhone>>(jsonStrGet, type)
             Log.d(TAG, "getRtaArtPathList: onDiskRtaArtPathList = $onDiskRtaArtPathList")
 
             onDiskRtaArtPathList.toMutableList()
         } catch (e: Exception) {
             Log.d(TAG, "getRtaArtPathList: Error retrieving from Shared Prefs..error message=$e")
-            arrayListOf<RtWithAlbumArt>() // 에러 발생시 빈 깡통 List 를 리턴.
+            arrayListOf<RtOnThePhone>() // 에러 발생시 빈 깡통 List 를 리턴.
         }
 
     }
 
-    fun saveRtaArtPathList(rtaArtPathList: List<RtWithAlbumArt>) {
+    fun saveRtaArtPathList(rtaArtPathList: List<RtOnThePhone>) {
         Log.d(TAG, "saveRtaArtPathList: begins..")
         val jsonStrSave = gson.toJson(rtaArtPathList)
         prefForRtaArt.edit().putString(KEY_1, jsonStrSave).apply()

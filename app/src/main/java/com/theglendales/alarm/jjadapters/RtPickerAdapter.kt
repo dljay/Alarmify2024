@@ -19,13 +19,13 @@ import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
-import com.theglendales.alarm.jjmvvm.util.RtWithAlbumArt
+import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 import com.theglendales.alarm.presenter.AlarmDetailsFragment
 
 // RcView 싱글 Selection 참고: https://stackoverflow.com/questions/28972049/single-selection-in-recyclerview
 
 private const val TAG="RtPickerAdapter"
-class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
+class RtPickerAdapter(var rtaArtPathList: MutableList<RtOnThePhone>,
                       private val receivedActivity: Activity,
                       private val rtPickerVModel: JjRtPickerVModel,
                       private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RtPickerAdapter.RtPickerVHolder>()
@@ -108,7 +108,7 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
         return rtaArtPathList.size
     }
 // My Methods
-    fun updateRcV(newList: MutableList<RtWithAlbumArt>) {
+    fun updateRcV(newList: MutableList<RtOnThePhone>) {
         val oldList= rtaArtPathList // Constructor 로 받은 리스트
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(JjDiffCallback(oldList, newList))
         rtaArtPathList = newList
@@ -116,7 +116,7 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtWithAlbumArt>,
         diffResult.dispatchUpdatesTo(this)
     }
 // DiffUtil Class
-    class JjDiffCallback(var oldList: MutableList<RtWithAlbumArt>, var newList: MutableList<RtWithAlbumArt>) : DiffUtil.Callback() {
+    class JjDiffCallback(var oldList: MutableList<RtOnThePhone>, var newList: MutableList<RtOnThePhone>) : DiffUtil.Callback() {
     override fun getOldListSize(): Int {
         return oldList.size
     }

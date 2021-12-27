@@ -18,7 +18,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjdata.GlbVars
-import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 
@@ -38,7 +38,7 @@ interface MyOnItemClickListener {
 }
 
 class RcViewAdapter(
-    var currentRtList: MutableList<RingtoneClass>,
+    var currentRtList: MutableList<RtInTheCloud>,
     private val receivedActivity: FragmentActivity,
     private val rcViewModel: JjRecyclerViewModel,
     private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
@@ -48,7 +48,7 @@ class RcViewAdapter(
         var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()
     }
 
-    var ringToneMap: HashMap<Int, RingtoneClass> = HashMap()
+    var ringToneMap: HashMap<Int, RtInTheCloud> = HashMap()
     var isRVClicked: Boolean = false // 혹시나 미리 클릭되었을 경우를 대비하여 만든 boolean value. 이거 안 쓰이나?
 // 하이라이트시 background 에 적용될 색
     val highlightColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.gray_light_highlight_1)
@@ -220,7 +220,7 @@ class RcViewAdapter(
         return currentRtList.size
     }
 
-    fun refreshRecyclerView(newList: MutableList<RingtoneClass>) {
+    fun refreshRecyclerView(newList: MutableList<RtInTheCloud>) {
         //Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (BEFORE): ${currentRtList.size}")
         val oldList = currentRtList
 
@@ -232,7 +232,7 @@ class RcViewAdapter(
         //enableHighlightOnTrId(GlbVars.clickedTrId)
     }
 
-    fun updateRingToneMap(inputRtList: MutableList<RingtoneClass>) {
+    fun updateRingToneMap(inputRtList: MutableList<RtInTheCloud>) {
         ringToneMap.clear()
         for (i in 0 until inputRtList.size) {
             ringToneMap[inputRtList[i].id] = inputRtList[i]
@@ -240,12 +240,12 @@ class RcViewAdapter(
         }
     }
 
-    fun getDataFromMap(trackId: Int): RingtoneClass? {
+    fun getDataFromMap(trackId: Int): RtInTheCloud? {
         return if (ringToneMap.isNotEmpty()) ringToneMap[trackId] else null
     }
 
     // DiffUtil Class
-    class MyDiffCallbackClass(var oldRingToneList: MutableList<RingtoneClass>,var newRingToneList: MutableList<RingtoneClass>) : DiffUtil.Callback() { // Extend by DiffUtil
+    class MyDiffCallbackClass(var oldRingToneList: MutableList<RtInTheCloud>, var newRingToneList: MutableList<RtInTheCloud>) : DiffUtil.Callback() { // Extend by DiffUtil
         override fun getOldListSize(): Int {
             return oldRingToneList.size
         }

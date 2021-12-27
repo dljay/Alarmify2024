@@ -12,10 +12,8 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import com.theglendales.alarm.R
-import com.theglendales.alarm.configuration.AlarmApplication
 import com.theglendales.alarm.jjdata.GlbVars
-import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import java.io.IOException
 import java.lang.Exception
@@ -205,9 +203,9 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
 
 // <----------<1>기존 코드들 ExoPlayer Related
 // ----------><2>기존 코드들 Utility
-    fun createMp3UrlMap(receivedRingtoneClassList: List<RingtoneClass>) {
-        for (i in receivedRingtoneClassList.indices) {
-            mp3UrlMap[receivedRingtoneClassList[i].id] = receivedRingtoneClassList[i].mp3URL
+    fun createMp3UrlMap(receivedRtInTheCloudList: List<RtInTheCloud>) {
+        for (i in receivedRtInTheCloudList.indices) {
+            mp3UrlMap[receivedRtInTheCloudList[i].id] = receivedRtInTheCloudList[i].mp3URL
     }
 
 // <----------<2>기존 코드들 Utility

@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import com.android.billingclient.api.*
 import com.theglendales.alarm.jjadapters.RcViewAdapter
-import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.Security
 
@@ -18,7 +18,7 @@ private const val TAG="MyIAPHelper_v1"
 
 class MyIAPHelper_v1(private val receivedActivity: Activity,
                      private val rcvAdapterInstance: RcViewAdapter?,
-                     private val receivedRingtoneClassList: MutableList<RingtoneClass>) : PurchasesUpdatedListener
+                     private val receivedRtInTheCloudList: MutableList<RtInTheCloud>) : PurchasesUpdatedListener
 {
     //Map containing IDs of Products (will replace 'purchaseItemIDsList')
     val itemIDsMap: HashMap<Int,String> = HashMap() // <trackID, productID> ex) <1,p1> <2,p2> ...
@@ -138,9 +138,9 @@ class MyIAPHelper_v1(private val receivedActivity: Activity,
     //## <A> A. refreshItemIdsMap-> B. initIAP() -> (wait..) C. onBillingSetupFinished() -> D. refreshPurchaseStatsMap() -> E. refreshItemsPriceMap() =>(finally..) rcvAdapter.updateRcView!
     fun refreshItemIdsAndMp3UrlMap() { // 새로 받은 ringToneList 로 itemIDsMap 을 수정/업뎃해줌. initIAP() 에서 호출됨.
         Log.d(TAG, "A) refreshItemIdsMap: begins!")
-        for (i in receivedRingtoneClassList.indices) {
-            itemIDsMap[receivedRingtoneClassList[i].id] = receivedRingtoneClassList[i].iapName //ex) itemIDsMap[1=trackID] = p1 // [id, iapName]
-            //downloadUrlMap[receivedRingtoneClassList[i].id] = receivedRingtoneClassList[i].mp3URL //ex) itemIDsMap[1=trackID] = p1
+        for (i in receivedRtInTheCloudList.indices) {
+            itemIDsMap[receivedRtInTheCloudList[i].id] = receivedRtInTheCloudList[i].iapName //ex) itemIDsMap[1=trackID] = p1 // [id, iapName]
+            //downloadUrlMap[receivedRtInTheCloudList[i].id] = receivedRtInTheCloudList[i].mp3URL //ex) itemIDsMap[1=trackID] = p1
         }
         initIAP()
     }
@@ -183,12 +183,12 @@ class MyIAPHelper_v1(private val receivedActivity: Activity,
                         // logd 결과 예시: a) item title=p1 b)item price= ₩1,000, c)item sku= p1
                     }
                 }
-                rcvAdapterInstance!!.refreshRecyclerView(receivedRingtoneClassList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
+                rcvAdapterInstance!!.refreshRecyclerView(receivedRtInTheCloudList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
             }
         } else {
             Log.d(TAG, "E) refreshItemsPriceMap: itemIdsMap is null or empty..")
             Toast.makeText(receivedActivity, "Error Loading Billing Info: Error stage <E>", Toast.LENGTH_SHORT).show()
-            rcvAdapterInstance!!.refreshRecyclerView(receivedRingtoneClassList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
+            rcvAdapterInstance!!.refreshRecyclerView(receivedRtInTheCloudList) // #$#$#$$#$#$!@#$!!#! FINALLY 여기서 rcView 를 업뎃-> onBindView 하게끔! #$#$@!$#@@$@#$#
         }
 
     }

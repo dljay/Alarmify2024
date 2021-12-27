@@ -1,7 +1,7 @@
 package com.theglendales.alarm.jjdata
 
-data class RingtoneClass(val title: String="", val hashtags: String="", val description: String="", val imageURL: String="", val mp3URL: String="",
-                         val id: Int = 0, val iapName: String="", val bdgStrArray: ArrayList<String> = arrayListOf())
+data class RtInTheCloud(val title: String="", val hashtags: String="", val description: String="", val imageURL: String="", val mp3URL: String="",
+                        val id: Int = 0, val iapName: String="", val bdgStrArray: ArrayList<String> = arrayListOf())
 {
     override fun toString(): String
     {
@@ -18,7 +18,7 @@ data class RingtoneClass(val title: String="", val hashtags: String="", val desc
             return false
         }
         // 위에서 통과하면 (즉 같은 javaClass의 object 면)
-        other as RingtoneClass
+        other as RtInTheCloud
 
         // 2) Check Individual Fields
         if(id != other.id) return false

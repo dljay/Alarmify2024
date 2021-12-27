@@ -8,7 +8,7 @@ import android.net.Uri
 import android.util.Log
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
-import com.theglendales.alarm.jjdata.RingtoneClass
+import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import java.io.*
 
@@ -21,14 +21,14 @@ private const val ART_FOLDER="/.AlbumArt"
 class DiskSearcher(val context: Context)
 {
     companion object {
-        val finalRtArtPathList = mutableListOf<RtWithAlbumArt>() // AlarmListActivity> DiskSearcher.rtArtPath SharedPref 에서 받은걸 여기에 저장.
+        val finalRtArtPathList = mutableListOf<RtOnThePhone>() // AlarmListActivity> DiskSearcher.rtArtPath SharedPref 에서 받은걸 여기에 저장.
     }
     val mySharedPrefManager: MySharedPrefManager by globalInject() // Shared Pref by Koin!!
 
-    val emptyList = mutableListOf<RtWithAlbumArt>()
+    val emptyList = mutableListOf<RtOnThePhone>()
 
     val onDiskArtMap: HashMap<String?, String?> = HashMap() // <trkId, 앨범아트 경로> <- 이것이 먼저 업데이트되어
-    val onDiskRingtoneList = mutableListOf<RtWithAlbumArt>() // 요 리스트를 갱신하는데 도움을 줌..
+    val onDiskRingtoneList = mutableListOf<RtOnThePhone>() // 요 리스트를 갱신하는데 도움을 줌..
 
 
     val topFolder = context.getExternalFilesDir(null)!!.absolutePath
@@ -45,7 +45,7 @@ class DiskSearcher(val context: Context)
         if(!alarmRtDir.exists()) {alarmRtDir.mkdir()} // <A> /.AlarmRingTones 폴더가 존재하지 않는다. -> 폴더 생성
         if(!artDir.exists()) {artDir.mkdir()} // <B> /.AlbumArt 폴더가 존재하지 않는다.
 
-        // SharedPref (RtaArtPathList.xml)에서 돌려받는 list 는 Disk 에 저장되어있는 RtWithAlbumArt object 들의 정보를 담고 있음.
+        // SharedPref (RtaArtPathList.xml)에서 돌려받는 list 는 Disk 에 저장되어있는 RtOnThePhone object 들의 정보를 담고 있음.
         val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
 
 
@@ -89,15 +89,15 @@ class DiskSearcher(val context: Context)
 
 
 
-    fun onDiskRtSearcher(): MutableList<RtWithAlbumArt>
+    fun onDiskRtSearcher(): MutableList<RtOnThePhone>
     {
         onDiskRingtoneList.clear() // DetailsFrag 다시 들어왔을 때 먼저 클리어하고 시작.
-        //todo: Defrt 갯수 바뀌면 아래 .size <10 변경해야함.
+        // todo: 현재 /.AlarmRingTones 폴더 안 rta 갯수를 파악해서 필요할 경우 copy 하는것에서 -> 무조건 다 copy 하는것으로 변경할지? (defrt mp3 데이터 변경되었을때나 업데이트 되었을때 대처 위해..)
     //(1)-b  /.AlarmRingTones 에 Defrt 파일이 없거나, 10개 미만으로 있을때 (즉 최초 실행 혹은 어떤 연유로 defrta 파일 갯수가 부족) => Raw 폴더에 있는 DefaultRt 들을 폰에 복사
             val listOfDefrtFiles = alarmRtDir.listFiles { _, name -> name.contains("defrt")  } // 파일 이름에 "defrt" 를 포함하는 놈들을 List 로 받아서. 그 갯수 확인.
                 if(!listOfDefrtFiles.isNullOrEmpty() && listOfDefrtFiles.size <10) {
                     Log.d(TAG, "onDiskRtSearcher: Possible Missing Defrt Files. numberOfDefRtFiles=${listOfDefrtFiles.size}")
-                        //todo: 없는 파일만 복사!
+
                     copyDefaultRtsToPhone(R.raw.defrt01, "defrt01.rta")
                     copyDefaultRtsToPhone(R.raw.defrt02, "defrt02.rta")
                     copyDefaultRtsToPhone(R.raw.defrt03, "defrt03.rta")
@@ -201,7 +201,7 @@ class DiskSearcher(val context: Context)
 
     // AlarmDetailsFragment> Line 385 에서 호출 (Details Frag 열었을 때 동그란 Frame 안에 있는 Album Art 사진에 현재 RT 의 경로를 전달)
     fun getArtFilePath(trkId: String?): String? = onDiskArtMap[trkId]
-    fun updateList(rtOnDiskListReceived: MutableList<RtWithAlbumArt>) {
+    fun updateList(rtOnDiskListReceived: MutableList<RtOnThePhone>) {
         Log.d(TAG, "updateList: called. rtOnDiskListReceived=$rtOnDiskListReceived")
 
         DiskSearcher.finalRtArtPathList.clear()
@@ -242,7 +242,7 @@ class DiskSearcher(val context: Context)
 
     }
 
-    private fun extractMetaDataFromRta(fileInRtaFolder: File): RtWithAlbumArt {
+    private fun extractMetaDataFromRta(fileInRtaFolder: File): RtOnThePhone {
         val mmr =  MediaMetadataRetriever()
 
         val actualFileForMmr = topFolder+ RTA_FOLDER+ File.separator + fileInRtaFolder.name
@@ -273,7 +273,7 @@ class DiskSearcher(val context: Context)
             Log.d(TAG, "downloadedRtSearcher: deleted file: [ ${fileInRtaFolder.name} ] from the disk")
 
         }
-        //3) Album MetaData (제목, TrId) 찾기. 앨범 아트는 AlarmDetailsFrag 에서 찾아줌. 4) 번에서 이걸 RingtoneClass 로 만들어줌.
+        //3) Album MetaData (제목, TrId) 찾기. 앨범 아트는 AlarmDetailsFrag 에서 찾아줌. 4) 번에서 이걸 RtInTheCloud 로 만들어줌.
             // 3-a) "제목" // METADATA_KEY_TITLE 사용!
             val rtTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
 
@@ -297,8 +297,8 @@ class DiskSearcher(val context: Context)
             //todo:  ** 아래 readArtOnDisk() 가 앱 시작과 동시에 실행됨. 다 되었다는 가정하에 여기서 찾지만. Path 가 아직 없는경우에 보완책
             val artFilePath = onDiskArtMap[trIDString] //<trkId, 앨범아트 경로> trIDString & artFilePath 둘 다 nullable String
 
-        //4) RtWithAlbumArt Class 로 만들어서 리스트(onDiskRtList)에 저장
-        val onDiskRingtone = RtWithAlbumArt(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileNameWithoutExt = fileInRtaFolder.name,
+        //4) RtOnThePhone Class 로 만들어서 리스트(onDiskRtList)에 저장
+        val onDiskRingtone = RtOnThePhone(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileNameWithoutExt = fileInRtaFolder.name,
             artFilePathStr = artFilePath, rtDescription = rtDescription, badgeStr = badgeString) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
         Log.d(TAG, "extractMetaDataFromRta: Extracted [onDiskRingtone]=$onDiskRingtone")
         return onDiskRingtone
@@ -357,7 +357,7 @@ class DiskSearcher(val context: Context)
             stream.close()
             // 이제는 파일 추출했으니
             onDiskArtMap[trkId] = savedToDiskFile.path // a) onDiskArtMap 에 artPath 를 기록
-            // b)onDiskRtList 에서 RtWithAlbumArt object 를 찾아서 albumArtPath 를 정리해줌 -> 그래야 Spinner 에 뜨지!!
+            // b)onDiskRtList 에서 RtOnThePhone object 를 찾아서 albumArtPath 를 정리해줌 -> 그래야 Spinner 에 뜨지!!
             val index: Int = onDiskRingtoneList.indexOfFirst { rt -> rt.trIdStr == trkId } // 동일한 rt.trId 를 갖는 놈의 인덱스를 onDiskRtList 에서 찾기
             Log.d(TAG, "saveBmpToJpgOnDisk: index of missing artPath in onDiskRtList=$index")
             onDiskRingtoneList[index].artFilePathStr = savedToDiskFile.path
@@ -399,7 +399,7 @@ class DiskSearcher(val context: Context)
     }
 
 
-    fun deleteFromDisk(rtClassObj: RingtoneClass, fileNameAndFullPath: String) { //todo: rtWithAlbumArt obj 로 교체.
+    fun deleteFromDisk(rtClassObj: RtInTheCloud, fileNameAndFullPath: String) { //todo: rtWithAlbumArt obj 로 교체.
             val trId=  rtClassObj.id
 
             try {

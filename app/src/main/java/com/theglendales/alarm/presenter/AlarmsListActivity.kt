@@ -64,13 +64,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 // v3.07.06a [Firebase 에 BdgStrArray 생성 및 코드 수정(진행중)]
-// Achievements
+// Achievements (O)
 // RtInTheCloud, RtOnThePhone 클래스명 변경.
 // Firebase 에 bdgStrArray (배지) 만들어서 더 이상 No setter/getter Firebase 이런 에러 안 뜨게 했음.
 // Chip, Badge 동기화 및 app 안에서 chip 클릭-> 자체 filtering (FB 에 requeset 하지 않는다!! 데이터 saving! Performance Saving!)
 
-//ISSUES)
-// secondFrag>miniPlayer Chip 다 노출되는 문제.
+
+//ISSUES (X)
+
 
 
 //Todos)

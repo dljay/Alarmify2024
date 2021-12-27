@@ -117,6 +117,17 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var constLayout_entire: ConstraintLayout // {findViewById<ConstraintLayout>(R.id.id_lowerUI_entireConsLayout)}
     lateinit var iv_lowerUi_bigThumbnail: ImageView // {findViewById<ImageView>(R.id.id_lowerUi_iv_bigThumbnail)}
     lateinit var tv_lowerUi_about: TextView // { findViewById<TextView>(R.id.id_lowerUi_tv_Description) }
+    lateinit var mPlayer_bdg1_intense: ImageView
+    lateinit var mPlayer_bdg2_gentle: ImageView
+    lateinit var mPlayer_bdg3_nature: ImageView
+    lateinit var mPlayer_bdg4_location: ImageView
+    lateinit var mPlayer_bdg5_popular: ImageView
+    lateinit var mPlayer_bdg6_misc: ImageView
+
+
+
+
+
 
     // listfrag 가거나 나갔다왔을 때 관련.
     var isFireBaseFetchDone = false // a) 최초 rcV 열어서 모든게 준비되면 =true, b) 다른 frag 로 나갔다왔을 때 reconstructXX() 다 끝나면 true.
@@ -381,9 +392,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
 
     private fun myOnLiveDataFromRCV(viewAndTrId: ViewAndTrIdClass) {
-        val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
+        val rtInTheCloudObj = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
         val ivInside_Rc = viewAndTrId.view.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
-        Log.d(TAG, "myOnLiveDataReceived: called. .. 1)ivInside_Rc=$ivInside_Rc, 2)rtClassFromtheList= $ringtoneClassFromtheList")
+        Log.d(TAG, "myOnLiveDataReceived: called. .. 1)ivInside_Rc=$ivInside_Rc, 2)rtClassFromtheList= $rtInTheCloudObj")
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
 
     //Sliding Panel - Upper UI
@@ -392,13 +403,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         var spaceTwenty="                    " // 20칸
         var spaceFifty="                                                 " //50칸 (기존 사용)
         var spaceSixty="                                                           " //60칸
-        tv_upperUi_title.text = spaceFifteen+ ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
-        if(ringtoneClassFromtheList?.title!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?
+        tv_upperUi_title.text = spaceFifteen+ rtInTheCloudObj?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
+        if(rtInTheCloudObj?.title!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?
         else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
         }
 
     //Sliding Panel -  Lower UI
-        tv_lowerUi_about.text = ringtoneClassFromtheList?.description
+        tv_lowerUi_about.text = rtInTheCloudObj?.description // Description 채워주기
+        val badgeStrList = rtInTheCloudObj.bdgStrArray// Badge Sort
+        showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
         //
         when (viewAndTrId.view.id) {
             //1) RcView > 왼쪽 큰 영역(album/title) 클릭했을때 처리.
@@ -534,6 +547,32 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
      //test <--
 
+    }
+    // MiniPlayer Lower Part - Chip(badge) 을 sort 하여 보여줄건 보여주고 가릴건 가리기.
+    private fun showOrHideBadgesOnMiniPlayer(badgeStrList: List<String>?) {
+        // 일단 다 gone 으로 꺼주고 시작 (안 그러면 RtPicker 갔다왔을 떄 기존에 켜진놈이 안 꺼지니께..)
+        // 혹시 이렇게 꺼지는게 눈에 안 좋아보이면 위에서 RtPicker Activity 갈때 꺼줘도 됨..
+        mPlayer_bdg1_intense.visibility = View.GONE
+        mPlayer_bdg2_gentle.visibility = View.GONE
+        mPlayer_bdg3_nature.visibility = View.GONE
+        mPlayer_bdg4_location.visibility = View.GONE
+        mPlayer_bdg5_popular.visibility = View.GONE
+        mPlayer_bdg6_misc.visibility = View.GONE
+        // String List 에서 이제 글자따라 다시 visible 시켜주기!
+        Log.d(TAG, "showOrHideBadges: badgeStrList=$badgeStrList")
+        if (badgeStrList != null) {
+            for(i in badgeStrList.indices) {
+                when(badgeStrList[i]) {
+                    "INT" -> mPlayer_bdg1_intense.visibility = View.VISIBLE
+                    "GEN" -> mPlayer_bdg2_gentle.visibility = View.VISIBLE
+                    "NAT" -> mPlayer_bdg3_nature.visibility = View.VISIBLE
+                    "LOC" -> mPlayer_bdg4_location.visibility = View.VISIBLE
+                    "POP" -> mPlayer_bdg5_popular.visibility = View.VISIBLE
+                    "MIS" -> mPlayer_bdg6_misc.visibility = View.VISIBLE
+                }
+            }
+        }
+        Log.d(TAG, "showOrHideBadges: done..")
     }
     private fun backToFullRtList() {
         Log.d(TAG, "backToFullRtList: called.")
@@ -716,11 +755,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             seekBar = v.findViewById(R.id.id_upperUi_Seekbar)
             seekbarListenerSetUp()
 
-        //b) lower Ui
+        //b-1) lower Ui 기본
         constLayout_entire = v.findViewById<ConstraintLayout>(R.id.id_lowerUI_entireConsLayout)
         iv_lowerUi_bigThumbnail = v.findViewById<ImageView>(R.id.id_lowerUi_iv_bigThumbnail)
         //iv_lowerUi_bigThumbnail.visibility = View.INVISIBLE // Frag 전환시 placeHolder (빨갱이사진) 보이는 것 방지 위해.
         tv_lowerUi_about = v.findViewById<TextView>(R.id.id_lowerUi_tv_Description)
+        //b-2) lower ui Badge
+        // Badge 관련
+        mPlayer_bdg1_intense = v.findViewById(R.id.mPlayer_badge1_Intense)
+        mPlayer_bdg2_gentle = v.findViewById(R.id.mPlayer_badge2_Gentle)
+        mPlayer_bdg3_nature = v.findViewById(R.id.mPlayer_badge3_Nature)
+        mPlayer_bdg4_location = v.findViewById(R.id.mPlayer_badge_4_Location)
+        mPlayer_bdg5_popular = v.findViewById(R.id.mPlayer_badge_5_Popular)
+        mPlayer_bdg6_misc = v.findViewById(R.id.mPlayer_badge_6_Misc)
 
     //Title Scroll horizontally. 흐르는 텍스트
         tv_upperUi_title.apply {

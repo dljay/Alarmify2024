@@ -80,7 +80,8 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
         val downloadID = dnlManager.enqueue(dnlRequest) // 이 코드는 두가지 역할을 함.
         //1) Enqueue a new download. The download will start automatically once the download manager is ready to execute it and connectivity is available.
         // 2)추후 다운로드 완료후-> broadcast 받을것이고-> 여기서 만든 id(LONG) 로 판독 예정!
-        dnldViewModel.updateDNLDRtObj(dnldAsRtObj)
+        runOnUiThread {dnldViewModel.updateDNLDRtObj(dnldAsRtObj) }
+
 
 
         // BackgroundThread (Dispatchers.IO) 에서 안해주면 UI 가 멈춤 (Progress 보여줄 수 없다..)
@@ -108,7 +109,9 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
     } // try Block{} 여기까지 <--
     catch (e: Exception) {
         Log.d(TAG, "singleFileDNLD: Failed to Download. Error=$e")
-        dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_FAILED)//16,  에러 발생시 SecondFrag 에 알림 (BtmSheet 없애주기라도해야지..)
+        //16,  에러 발생시 SecondFrag 에 알림 (BtmSheet 없애주기라도해야지..)
+        runOnUiThread { dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_FAILED)}
+
         Toast.makeText(receivedActivity,"Download Failed. Please check your internet connection.",Toast.LENGTH_LONG).show()
         }
 
@@ -143,7 +146,8 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
                     prevPrgrsValue = myDownloadProgress
                     Log.d(TAG, "getResultFromSingleDNLD: (After) prevPrgrsValue=$prevPrgrsValue, myDownloadProgress=$myDownloadProgress")
         // 여기서 한번 LiveData 때려주고!
-                    dnldViewModel.updateDNLDProgressLive(prevPrgrsValue)
+                    runOnUiThread { dnldViewModel.updateDNLDProgressLive(prevPrgrsValue) }
+
                 }
                 // 다운로드 성공으로 완료(.STATUS_SUCCESSFUL) 후 보고까지 시간차가 나는 경우가 종종 있음. 그래서 파일 사이즈 체크를 실행하여 btmSht 없애주도록 해봄.
                 // bytesWrittenOnPhone: 파일 사이즈 체크 (다운로드 중) 폰에 Write 되고 있는 실물 파일 사이즈 체크  (사실상 bytesDownloadedSoFar 과 일치해야함.)
@@ -154,7 +158,8 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
                     Log.d(TAG, "getResultFromSingleDNLD: [다운로드 완료] @@@@@@myDownloadProgress=${myDownloadProgress}, time:$currentTime")
                     //isStillDownloading = false // 이제 While loop 에서 벗어나자! <- 불필요
                     resultCode = DownloadManager.STATUS_SUCCESSFUL // 8
-                    dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_SUCCESSFUL)
+                    runOnUiThread { dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_SUCCESSFUL) }
+
                     break // escape from While Loop!
                 }
 
@@ -164,7 +169,8 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
                     Log.d(TAG, "getResultFromSingleDNLD: (Before) prevStatusValue=$prevStatusValue, statusInt=$statusInt")
                     prevStatusValue = statusInt
                     Log.d(TAG, "getResultFromSingleDNLD: (After) prevStatusValue=$prevStatusValue, statusInt=$statusInt")
-                    dnldViewModel.updateDNLDStatusLive(statusInt)
+                    runOnUiThread { dnldViewModel.updateDNLDStatusLive(statusInt) }
+
 
                     //** 다운이 다 됐음에도 STATUS_PAUSED 에서 10초 이상씩 머무는 경우가 있음 -> 이럴때는 실제 폰에 '다운된 용량/다운받을 전체 파일 사이즈' 로 확인하여 98% 이상이면 무조건 SUCCESS 로 해주고 종료.
                     if(statusInt== DownloadManager.STATUS_PAUSED) {
@@ -174,7 +180,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
                             val prgrsBasedOnActualDNLDSize = (currentDnloadingFile.length()*100L /totalBytesToDNLD).toInt()
                             if(prgrsBasedOnActualDNLDSize > 98) {
                                 Log.d(TAG, "getResultFromSingleDNLD: 다운로드 STATUS_PAUSED 지만 다운이 다 된것으로 보임. 다운로드 종료 예정 \n prgrsBasedOnActualDNLDSize=$prgrsBasedOnActualDNLDSize")
-                                dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_SUCCESSFUL)
+                                runOnUiThread { dnldViewModel.updateDNLDStatusLive(DownloadManager.STATUS_SUCCESSFUL) }
                                 break
                             }
                         }
@@ -189,13 +195,15 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
                         Log.d(TAG, "getResultFromSingleDNLD: STATUS FAILED / trkId=${dnldAsRtObj.trIdStr}")
                         Toast.makeText(receivedActivity,"Download Failed. Please check your internet connection.",Toast.LENGTH_LONG).show()
                         //resultCode = DownloadManager.STATUS_FAILED // 16 <- 불필요
-                        dnldViewModel.updateDNLDStatusLive(16)
+                        runOnUiThread { dnldViewModel.updateDNLDStatusLive(16) }
+
                         // isStillDownloading = false <- 불필요
                         break
                     }
                     DownloadManager.STATUS_SUCCESSFUL -> { //8.  ** 굉장한 Delay 가 있음. 실 다운로드가 끝나고도 10~15초 이상 걸린뒤 여기에 들어옴.
                         Log.d(TAG, "getResultFromSingleDNLD: STATUS SUCCESSFUL, Progress= $myDownloadProgress, TRK ID=trkId=${dnldAsRtObj.trIdStr}")
-                        dnldViewModel.updateDNLDStatusLive(8)
+                        runOnUiThread { dnldViewModel.updateDNLDStatusLive(8) }
+
                         //resultCode = DownloadManager.STATUS_SUCCESSFUL // 8  <- 불필요
                         //isStillDownloading = false <- 불필요
                         break
@@ -254,8 +262,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
         }//end of For loop
         // 멀티 다운로드 시도 과정 report -> Snackbar 로 바로 "복원 시작" 및 에러여부 Display.
         val arrayBool: Array<Boolean> = arrayOf(true, isErrorOccurred) // true= 멀티다운로드를 가동했다!, isErrorOccurred= 다운과정에서 에러가 있냐 없냐!
-        dnldViewModel.updateMultiDnldStats(arrayBool)
-    //todo : 다운로드 끝났을 떄 Snackbar 가동.
+        runOnUiThread { dnldViewModel.updateMultiDnldStats(arrayBool) }
     }
 // <----------***MULTIPLE File Dnld <<<<<<<<<<<<----------------
 

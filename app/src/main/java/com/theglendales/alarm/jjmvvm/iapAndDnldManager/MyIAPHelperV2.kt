@@ -267,7 +267,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
             })
         }
     }
-    //(a)initiatePurhcase() - (b)Display Purchase Dialog ->  (c) onPurchaseUpdated
+    //(a)initiatePurhcase() 이거 Async 임!! - (b)Display Purchase Dialog ->  (c) onPurchaseUpdated
     private fun initiatePurchase(PRODUCT_ID: String) { //(a) initiatePurchase
         Log.d(TAG, "initiatePurchase: begins..")
         val skuList: MutableList<String> = ArrayList()

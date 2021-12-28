@@ -301,9 +301,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //Chip
         initChip(view)
         // 네트워크 체크-> Lottie 로 연결
-        setNetworkAvailabilityListener()
+        setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
         //MVVM - Livedata Observe Firebase ..
-        observeAndLoadFireBase()
+        //observeAndLoadFireBase()
         //SwipeRefresh Listener 등록
         registerSwipeRefreshListener()
 
@@ -452,13 +452,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //1-b) API 24 이상이면 콜백까지 등록
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             myNetworkCheckerInstance.connectivityManager.let {
-                it.registerDefaultNetworkCallback(object :
-                    ConnectivityManager.NetworkCallback() {
+                it.registerDefaultNetworkCallback(object :ConnectivityManager.NetworkCallback() {
                     override fun onAvailable(network: Network) {
-                        //Connection is gained.
+                        //Connection is gained -> 다시 FIREBASE loading
                         Log.d(TAG,"onAvailable: Internet available: OOOOOOOOOOOOOOOOOOOOO ") //최초 앱 실행시에도 (인터넷이 되니깐) 여기 log 가 작동됨.
 
-                        Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() } // MainThread 에서만 실행해야함. 이거 없으면 크래쉬! (Cannot invoke observe on a backgroudn thread)
+                        Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() } // MainThread 에서만 실행해야함. 이거 없으면 크래쉬! (Cannot invoke observe on a background thread)
                         // 참고: Normally observe(..) and observeForever(..) should be called from the main thread because their
                         // callbacks (Observer<T>.onChanged(T t)) often change the UI which is only possible in the main thread.
                     }
@@ -925,7 +924,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }*/
     private fun snackBarDeliverer(view: View, msg: String, isShort: Boolean) {
         if(activity!=null && isAdded) { // activity 가 존재하며, 현재 Fragment 가 attached 되있으면 Snackbar 를 표시.
-            Log.d(TAG, "snackBarMessenger: Show Snackbar. Fragment isAdded=$isAdded, Activity=$activity")
+            Log.d(TAG, "snackBarMessenger: Show Snackbar. Fragment isAdded=$isAdded, Message=[$msg], Activity=$activity")
             if(isShort) {
                 Snackbar.make(view, "$msg", Snackbar.LENGTH_SHORT).show()
             }else {

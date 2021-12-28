@@ -250,12 +250,9 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
                 Log.d(TAG, "multipleFileDNLD: error trying to retrieve previously purchased. \nError=$e")
 
             }
-            if(isErrorOccurred) { // a)잘못된 URL 이든 b)Network 문제로 다운로드가 안됐을때 Toast 로 알림 메시지
-                Toast.makeText(receivedActivity,"UNABLE TO RECOVER PREVIOUSLY PURCHASED ITEM.", Toast.LENGTH_LONG).show()
-            }
 
         }//end of For loop
-        // 멀티 다운로드 시도 과정 report -> Snackbar 로 바로 "복원 시작" 전달.
+        // 멀티 다운로드 시도 과정 report -> Snackbar 로 바로 "복원 시작" 및 에러여부 Display.
         val arrayBool: Array<Boolean> = arrayOf(true, isErrorOccurred) // true= 멀티다운로드를 가동했다!, isErrorOccurred= 다운과정에서 에러가 있냐 없냐!
         dnldViewModel.updateMultiDnldStats(arrayBool)
     //todo : 다운로드 끝났을 떄 Snackbar 가동.

@@ -121,21 +121,6 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                     //C-2) (기존) 구매안된 물품들(굉장히 다수겠지..)에 대해서는 SharedPref 에 false 로 표시!. //items that are not found in purchase list mark false
                     //indexOf returns -1 when item is not in foundlist. 리스트에 없으면 -1 반환.
 
-                    /**
-                     *  But!! queryPurchaseHistoryAsync() 호출해서 -> Local Google Play Cache 뿐만 아니라 다른 기기에서의 구입 history 까지 한번 살펴보기 (정말 산 적이 없는지)
-                     */
-                        // 새로 추가된 코드 21.12.28 - 모두 구매 false 로 sharedPref 에 저장하기전에 ->  Local Google Play Cache 뿐만 아니라 다른 기기에서의 history 까지 한번 살펴보기 (정말 산 적이 없는지)
-                       /* billingClient!!.queryPurchaseHistoryAsync(BillingClient.SkuType.INAPP) { billingResult, purchaseHistoryRecordList ->
-                            Log.d(TAG,"onPurchaseHistoryResponse: C-2-a [구매 내역이 뜨지 않다른 기기에서의 구매 내역까지 검토] " +
-                                    "\n billingResult=$billingResult, purchaseHistoryRecordList=$purchaseHistoryRecordList")
-                            if (purchaseHistoryRecordList != null) {
-                                for(i in purchaseHistoryRecordList.indices) {
-                                    Log.d(TAG, "onBillingSetupFinished: C-2-a [현재 뜨지는 않지만 다른 기기에서 샀던 아이템 목록=${purchaseHistoryRecordList[i].sku}")
-                                }
-                            }
-                        }*/
-
-
                         currentRtList.forEach { rtObject->
                             if(purchaseFound.indexOf(rtObject.id) == -1) //현재 우리의 rtList (currentRtList) 중 구매 리스트에 없는 모든 물품들에 대해서..
                             { // itemIDsMap 에서 "구매한목록(purchaseFound)" 에 없는 놈들은 다 false 로! //todo: 이걸 구매 안한 상품들에 대해서 매번 해줘야 한다는 것= too CPU expensive..
@@ -151,7 +136,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                     /**
                      * 모든 파일명은 .iapName 과 일치해야함 (ex p1.rta, p2.rta .. )
                      */
-                    // 혹시나..구매한적도 없는데 만약 디스크에 있으면 디스크에서 삭제
+                    // 혹시나..구매한적도 없는데 만약 디스크에 있으면 디스크에서 삭제 // todo: Coroutine Scope.
                             val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
                                 .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
                             if(myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
@@ -185,8 +170,6 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
         currentRtList = newRtList
 
         Log.d(TAG, "A) refreshItemIdIapNameTitle: begins!")
-        mySharedPrefManager.isMyIAPXmlExist()
-
         initIAP()
     }
 

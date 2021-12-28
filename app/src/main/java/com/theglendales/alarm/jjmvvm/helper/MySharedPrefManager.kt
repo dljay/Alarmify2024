@@ -91,7 +91,6 @@ class MySharedPrefManager(val context: Context) {
         Log.d(TAG, "isMyIAPXmlExist: result = ${prefIapPurchaseBool.contains("p1001")}") // MyIAP.xml 안에 해당 Key 가 있는지 검사. (파일 자체가 없으면 false 니 쓸수는 있지만.. 별로인듯.)
         /*val topFolder = context.getExternalFilesDir(null)!!.absolutePath
         val sharedPrefFile = File(topFolder, "/shared_prefs/"  + "MyIAP.xml" ) //"shared_prefs/MyIAP.xml <-- 씨발 이거 틀린듯.
-
          Log.d(TAG, "isMyIAPXmlExist:  MyIAP.xml file exists[${sharedPrefFile.exists()}]") */
     }
     fun getPurchaseBoolPerIapName(iapName: String) = prefIapPurchaseBool.getBoolean(iapName, false)

@@ -224,9 +224,9 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
             val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlToDownload)
             if(!isUrlValid) {
                 Log.d(TAG, "multipleFileDNLD: DOWNLOAD ERROR. INVALID URL!")
-                Toast.makeText(receivedActivity,"UNABLE TO RECOVER PREVIOUS ITEMS. ERROR=INVALID URL", Toast.LENGTH_LONG).show()
+                isErrorOccurred = true
                 // 테스트 기간에 iapName 이 p1 인 아이템을 샀지만, google play console 에 p1001 로 아이디를 바꾼 제품을 올려놓아서 더이상 찾을 수 없음. 계속 여기 걸림.
-                return
+                continue // 리스트 안 객체에 잘못된 URL 이 있을 경우 아래 try/catch{} 다운로드 구간을 걸치지 않고 => 바로 다음 for loop iteration 으로 skip!
             }
             //Download Prep
             try {
@@ -249,6 +249,9 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
                 isErrorOccurred = true
                 Log.d(TAG, "multipleFileDNLD: error trying to retrieve previously purchased. \nError=$e")
 
+            }
+            if(isErrorOccurred) { // a)잘못된 URL 이든 b)Network 문제로 다운로드가 안됐을때 Toast 로 알림 메시지
+                Toast.makeText(receivedActivity,"UNABLE TO RECOVER PREVIOUSLY PURCHASED ITEM.", Toast.LENGTH_LONG).show()
             }
 
         }//end of For loop

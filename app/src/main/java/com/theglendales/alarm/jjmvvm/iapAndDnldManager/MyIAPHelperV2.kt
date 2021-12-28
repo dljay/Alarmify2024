@@ -55,22 +55,23 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
                 {
                     //C-1) (!!기존!!) 구매한 물품들에 대해서만! 더.블.체크..? Check which items are in purchase list and which are not in purchase list
-                    val queryPurchase:  Purchase.PurchasesResult = billingClient!!.queryPurchases(BillingClient.SkuType.INAPP)
-                    val queryPurchases = queryPurchase.purchasesList // List<Purchase>
+                    val queryPurchase:  Purchase.PurchasesResult = billingClient!!.queryPurchases(BillingClient.SkuType.INAPP) // todo: this is Deprecated..
+
+                    val listOfPurchase = queryPurchase.purchasesList // List<Purchase>
 
                     //check status of found items and save values to preference
                     //item which are not found simply save false values to their preference
                     //indexOf return index of item in purchase list from 0-2 (because we have 3 items) else returns -1 if not found
                     val purchaseFound = ArrayList<Int>()
-                    if (queryPurchases != null && queryPurchases.size > 0)
+                    if (listOfPurchase != null && listOfPurchase.size > 0)
                     {
-                        Log.d(TAG, "C) onBillingSetupFinished: queryPurchases.size = ${queryPurchases.size}")
-                        myQryPurchListSize = queryPurchases.size // 추후 MyDownloader_v1.kt > multiDownloadOrNot() 에서 활용.
+                        Log.d(TAG, "C) onBillingSetupFinished: queryPurchases.size = ${listOfPurchase.size}")
+                        myQryPurchListSize = listOfPurchase.size // 추후 MyDownloader_v1.kt > multiDownloadOrNot() 에서 활용.
                         multiDNLDNeededList.clear() // [멀티] 필요한 리스트는 우선 '0' 값으로, 바로 밑에서 채워줌.
-                        handlePurchaseNotification(queryPurchases)
+                        handlePurchaseNotification(listOfPurchase)
 
                         //check item in purchase list. 구매 상태인 물품에 대해서! status check! 한번 더 확인. 문제없으면 true 로..
-                        for (p in queryPurchases)
+                        for (p in listOfPurchase)
                         {
 
                             var rtObject = RtInTheCloud()

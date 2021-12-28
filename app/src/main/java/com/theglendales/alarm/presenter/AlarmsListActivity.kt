@@ -63,7 +63,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.06c [IAP 수정중] -211228(화)/01:53
+// v3.07.06d [IAP 수정중-Billing Library 업데이트 전-build.gradle] - 211228(화)/오후1:20
 
 //ISSUES (X)
 // 3)기존 내가 샀던 p1,p7 이 존재해서 새로운 p1001 을 다운받으려 클릭/구매  -> p1001 을 세개나 다운 받았네.

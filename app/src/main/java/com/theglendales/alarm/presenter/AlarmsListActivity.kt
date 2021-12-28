@@ -63,14 +63,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.06b [Firebase 에 BdgStrArray 생성 및 코드 수정(진행중)] -211228(화)/01:53
+// v3.07.06c [IAP 수정중] -211228(화)/01:53
 
 //ISSUES (X)
-// 두번 FIREBASE 로딩,..ㄷㄷ
-//-> 이 외에도 onBillingSetUpFinished() 에서 purchaseList.size ==0 일때 실행하기? 근데 난 p1, p7 기록은 cache 남아서 떠서 계속 size == 2 로 뜸.
-// 2) 기존에 구입한 p1,p7 이 계속 뜨는 문제 (Library 에서 아예 없어졌는데.. 이거 어떻게 Cache 자체에서 없앨수 없을까?)
-// 다운로드 끝나면 스낵바 가동.
-
 // 3)기존 내가 샀던 p1,p7 이 존재해서 새로운 p1001 을 다운받으려 클릭/구매  -> p1001 을 세개나 다운 받았네.
 // 이 상태에서 listFrag 로 옮겨가면 자동으로 지워주는데, RtPickerActivity 에 들어가니 (list 가 refresh 되지 않아서) 세개 그대로 떠 있음. (스샷 참고)
 // RtPicker 에 떠있던 놈들은 당연히 재생이 안되는데 이때 기존 앱에 설치된 Permission 이 떠버림 (역시 스샷 참고)

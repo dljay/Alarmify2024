@@ -275,7 +275,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 if(arrayBool.size == 2) { // 정상이라면 arrayBool 은 값을 두개만 포함해야한다. ex.) true, true = 작동ok, 에러없음.
                     Log.d(TAG, "onViewCreated: **[멀티] 다운로드 가동됨=${arrayBool[0]} 에러여부=${arrayBool[1]}")
                     when(arrayBool[1]) {
-                        true -> { snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RETRIEVE PREVIOUSLY PURCHASED ITEMS.", false)}
+                        true -> { snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RECOVER SOME OF THE PURCHASED ITEMS.", false)}
                         false -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
                     }
                 }

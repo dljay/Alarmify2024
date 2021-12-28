@@ -55,9 +55,8 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
                 {
                     //C-1) (!!기존!!) 구매한 물품들에 대해서만! 더.블.체크..? Check which items are in purchase list and which are not in purchase list
-                    val queryPurchase = billingClient!!.queryPurchases(BillingClient.SkuType.INAPP)
-                    val queryPurchases = queryPurchase.purchasesList
-
+                    val queryPurchase:  Purchase.PurchasesResult = billingClient!!.queryPurchases(BillingClient.SkuType.INAPP)
+                    val queryPurchases = queryPurchase.purchasesList // List<Purchase>
 
                     //check status of found items and save values to preference
                     //item which are not found simply save false values to their preference
@@ -75,23 +74,19 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                         {
 
                             var rtObject = RtInTheCloud()
+
                             try {
                                  rtObject = currentRtList.single { RtClass -> RtClass.iapName == p.sku } // iapName 이 p.sku (ex.p1, p2) 와 매칭하는 rtObject
                             } catch (e: Exception) {
-                                Log.d(TAG, "onBillingSetupFinished: List 에서 현재 p.sku(=${p.sku}) 에 매칭하는 rtObject 를 찾을 수 없음.")
+                                Log.d(TAG, "onBillingSetupFinished: List 에서 현재 p.sku(=${p.sku}) 에 매칭하는 rtObject 를 찾을 수 없음. trackid=${rtObject.id}")
+                                //  예전에 샀다 없어진 물품인 경우 (ex. 1년전에 p1 물건 구입 -> p1 자체가 playconsole 에서 사라진 경우-> List 에서 찾을 수 없다.)
                             }
-                            
                             val trackID = rtObject.id
-
-                    /**
-                     *  val iapName = rtObject.iapName [기존 코드]
-                     *  예전에 샀다 없어진 물품 구입의 가능성도 있어서 val iapName = p.sku 로 일단 대체  (ex. 1년전에 p1 물건 구입 -> p1 자체가 playconsole 에서 사라진 경우-> List 에서 찾을 수 없다.)
-                     */
                             val iapName = p.sku
                             val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!
                                 .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
-                            //if purchase found. 구입 내역이 있는! item 만 나옴 (ex. 현재 21/06/4에는 rt1, rt2 만 여기에 해당됨..)
-                            if (trackID > -1)
+                            //if purchase found. 구입 내역이 있는! item 만 나옴
+                            if (trackID > 0) // 만약 p1,p7 등 아예 PlayConsole 카탈로그에서 Deactivate 시킨 물품인 경우 -> trackID= 0 임! (rtObject 자체가 깡통이니께)-> 이것들 걸름!
                             {
                                 purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
                                 // ********************************>>>기존 구매건
@@ -313,7 +308,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
       try{
           return currentRtList.first { rtObj -> rtObj.iapName == iapName }
       } catch (e: Exception) { // Google Play Console 에서 DeActivate 된 과거 물품 구입건은 현재 currentRtList 에 없기에 이쪽으로 들어옴 (ex. p1, p7)
-          Log.d(TAG, "getRtInstanceByIapName: 기존에 p1 을 샀는데 이제 iapName 이 모두 p1001~ 임. 이러면 리스트에서 못찾으니깐 에러나는거지!! Error=$e")
+          Log.d(TAG, "getRtInstanceByIapName: 기존에 $iapName 을 샀는데 이제 iapName 이 업데되서 모두 p100x~ 임. 이러면 리스트에서 못찾으니깐 에러나는거지!! Error=$e")
           return RtInTheCloud() // empty RtObj
       }
     }

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import android.view.View
@@ -15,11 +17,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
+import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjadapters.RtPickerAdapter
 import com.theglendales.alarm.jjmvvm.JjMpViewModel
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
 import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -44,6 +48,9 @@ private const val CURRENT_RT_FILENAME_KEY= "currentRtFileName_Key"
 
 class RtPickerActivity : AppCompatActivity() {
 
+    // DiskSearcher
+    private val myDiskSearcher: DiskSearcher by globalInject()
+    private val mySharedPrefManager: MySharedPrefManager by globalInject()
     //RcView Related
     lateinit var rcvAdapter: RtPickerAdapter
     lateinit var rcView: RecyclerView
@@ -221,7 +228,27 @@ class RtPickerActivity : AppCompatActivity() {
         rcView.setHasFixedSize(true)
 
 
-    //7-a) RcVAdapter 에 보여줄 List<RtOnThePhone> 를 제공 (이미 DiskSearcher 에 로딩되어있으니 특별히 기다릴 필요 없지..)
+    //7-a) RcVAdapter 에 보여줄 List<RtOnThePhone> 를 제공 (이미 AlarmsListFrag 실행 -> DiskSearcher 에 로딩되어있으니 특별히 기다릴 필요 없지..)
+    /**
+     * ListFrag 에서 해결됐어야 하지만. 늦은 다운로드 도착 혹은 중복 다운로드된 파일 (p100x-1.rta, p100x-2.rta.. etc.) 이 혹시나 있을 경우를 대비하여 DiskScan >>
+     */
+        if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
+            Log.d(TAG, "onCreate: $$$ [RtPicker] Alright let's scan the disk!")
+            //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장 <trkId, ArtPath>
+            myDiskSearcher.readAlbumArtOnDisk()
+            //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
+            val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
+            //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
+
+            // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
+            mySharedPrefManager.saveRtaArtPathList(resultList)
+
+            // 1-d) DiskSearcher.kt>finalRtArtPathList [Companion obj 메모리] 에 띄워놓음(갱신)
+            myDiskSearcher.updateList(resultList)
+            Log.d(TAG, "onCreate: --------------------------- DiskScan DONE..(Hopefully..)---------- \n\n resultList = $resultList!")
+            //} // ** diskScan 종료 <--
+
+        }
         val rtOnDiskList:  MutableList<RtOnThePhone> = DiskSearcher.finalRtArtPathList
         if(!rtOnDiskList.isNullOrEmpty()) {
             rcvAdapter.updateRcV(rtOnDiskList)

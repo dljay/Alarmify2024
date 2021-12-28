@@ -78,7 +78,7 @@ class RcViewAdapter(
 
 
         Log.d(TAG, "onBindViewHolder: holder TrId= ${holder.holderTrId}, currentTrIapName= $currentIapName")
-        Log.d(TAG, "onBindViewHolder: Purchased Statsp=${mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)} ")
+        Log.d(TAG, "onBindViewHolder: Purchased Stats=${mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)} ")
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " +
 //                "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
@@ -95,10 +95,14 @@ class RcViewAdapter(
         }
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
 
-        //IAP 관련
-        holder.tv3_Price.text = MyIAPHelperV2.itemPricesMap[currentIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
+        //IAP 관련 1) 가격 표시
+        if(MyIAPHelperV2.itemPricesMap.isNotEmpty()) {
+            holder.tv3_Price.text = MyIAPHelperV2.itemPricesMap[currentIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
+        } else { // 어떤 사유로든 itemPricesMap[] 에서 가격을 갖고 올 수 없을땐 sharedPref 에 저장된 가격을 로딩
+            holder.tv3_Price.text =mySharedPrefManager.getItemPricePerIap(currentIapName)
+        }
 
-        //Purchase Stat True or False
+        //IAP 관련 2) Purchase Stat True or False
         when(mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)) {
             true -> {// Show "Purchased" icon
                 holder.iv_PurchasedTrue.visibility = View.VISIBLE
@@ -111,6 +115,7 @@ class RcViewAdapter(
             else -> {
                 Toast.makeText(receivedActivity, "Error Displaying Purchased Item for trId=$currentTrId", Toast.LENGTH_SHORT).show()}
         }
+
         GlideApp.with(receivedActivity).load(currentItem.imageURL).centerCrop()
             .error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {

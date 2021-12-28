@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
-import com.theglendales.alarm.jjmvvm.unused.MyDownloader_v1
+
 
 /**
  * 현재(21.12.24) 로선 내 알람앱에서는 별도의 Permission 확인이 필요없는것처럼 보이기는 함.(App 내부 폴더만 Read/Download 하는정도여서)

@@ -24,6 +24,7 @@ private const val KEY_2 = "Art_Key"
 //<3> InAppPurchase 관련
 private const val IAP_PREF_BOOL = "MyIAP" //MyIAP.xml
 private const val IAP_PREF_URL = "MyIAPUrl" //MyIAPUrl.xml
+private const val IAP_PREF_PRICE = "MyIAPPrice" //MyIAPUrl.xml
 
 
 class MySharedPrefManager(val context: Context) {
@@ -33,6 +34,8 @@ class MySharedPrefManager(val context: Context) {
     private val prefForListFrag: SharedPreferences = context.getSharedPreferences(ART_PATH_FOR_LIST_FRAG,Context.MODE_PRIVATE) // ArtPathForListFrag.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
     private val prefIapPurchaseBool: SharedPreferences = context.getSharedPreferences(IAP_PREF_BOOL, Context.MODE_PRIVATE) // MyIAP.xml
     private val prefIapUrl: SharedPreferences = context.getSharedPreferences(IAP_PREF_URL, Context.MODE_PRIVATE) // MyIAPUrl.xml
+    private val prefIapPrice: SharedPreferences = context.getSharedPreferences(IAP_PREF_PRICE, Context.MODE_PRIVATE) // MyIAPPrice.xml
+
     //
     private val gson: Gson = Gson()
 
@@ -87,12 +90,6 @@ class MySharedPrefManager(val context: Context) {
 // IAP 관련 --->
 
     // 1) 구매 여부 Bool - IapName / ex) (p1, true), (p2,false) ...
-    fun isMyIAPXmlExist(){ // 최초 install, or 더 정확히는 최초로 SecondFrag 실행 (하여 MyIapHelper 실행)
-        Log.d(TAG, "isMyIAPXmlExist: result = ${prefIapPurchaseBool.contains("p1001")}") // MyIAP.xml 안에 해당 Key 가 있는지 검사. (파일 자체가 없으면 false 니 쓸수는 있지만.. 별로인듯.)
-        /*val topFolder = context.getExternalFilesDir(null)!!.absolutePath
-        val sharedPrefFile = File(topFolder, "/shared_prefs/"  + "MyIAP.xml" ) //"shared_prefs/MyIAP.xml <-- 씨발 이거 틀린듯.
-         Log.d(TAG, "isMyIAPXmlExist:  MyIAP.xml file exists[${sharedPrefFile.exists()}]") */
-    }
     fun getPurchaseBoolPerIapName(iapName: String) = prefIapPurchaseBool.getBoolean(iapName, false)
 
     fun savePurchaseBoolPerIapName(iapName: String, value: Boolean) {
@@ -104,6 +101,11 @@ class MySharedPrefManager(val context: Context) {
         prefIapUrl.edit().putString(iapName, url).apply() // todo: Firebase 에서 추후 Security 강화에서 아무나 접근 못하게..
     }
     fun getUrlByIap(iapName: String) = prefIapUrl.getString(iapName, "No Url Found")
+    // 3) 물품의 가격 저장
+    fun saveItemPricePerIap(iapName: String, price: String) {
+        prefIapPrice.edit().putString(iapName, price).apply()
+    }
+    fun getItemPricePerIap(iapName: String) = prefIapPrice.getString(iapName,"No Price Found")
 
 
 

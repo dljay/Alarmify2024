@@ -69,7 +69,7 @@ import java.util.Calendar
 //- Tr 클릭 구입 -> IAP 진행되면서-> viewModel 로 다운로드 시작 ui 업뎃(btm slide) 하는 순간->crash -> initiatePurchase() 에서 Async 되서 그랬던듯.
 //=> 일단 모든 viewmodel 업뎃을 runOnUiThread{} 로 감싸주니 크래쉬 안나고 dnldBtmSlide 잘 나옴. (추후 몇차례 더 확인 필요)
 //- 구입클릭->구입확인->다운로드창-> 파일 전달까지 잘됨 (O). 그런데 다운로드 후 ListFrag 로 돌아가니 Lottie Rebuilding Animation  만 나오고 화면 암것도 안 나옴
-//- 16:49현재  (구입후 5~20분) Emulator API30  에서 열었을 때 구입상태 표기 안됨
+//- 16:49현재  (구입후 5~20분) Emulator API30 에서 열었을 때 구입상태 표기 안됨
 //**permission
 //구입한 파일이 없을때 -> can't play error -> permission (기존에 만들어놓은) 경고 뜬다!
 

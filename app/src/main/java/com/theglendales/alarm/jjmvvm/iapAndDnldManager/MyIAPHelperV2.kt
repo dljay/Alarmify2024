@@ -156,8 +156,8 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                                 currentRtList.forEach { rtObject -> mySharedPrefManager.savePurchaseBoolPerIapName(rtObject.iapName, false) }
                                 Log.d(TAG, "C-3) ☺ onBillingSetupFinished:  The User has never ever 산적이 없으면 일로 오는듯! (queryPurchase.size 가 0 이란 뜻..?)")
                             }
-                            Log.d(TAG, "onQueryPurchasesResponse: **************** 여기가 진짜 IAP 마지막 지점인듯! 여기서 refreshItemsPriceMap?..확인해봅세.")
-                            refreshItemsPriceMap() // todo: Line 164 ->159 로 옮겼음.
+                            Log.d(TAG, "onQueryPurchasesResponse: **************** IAP onBillingFinished() 지점 -> 여기서 refreshItemsPriceMap...")
+                            refreshItemsPriceMap() // -> 여기서 multipleFileDownload() 실행. Line 164 (4줄 밑)-> 여기로 옮겼음.
                         }
 
                     } )

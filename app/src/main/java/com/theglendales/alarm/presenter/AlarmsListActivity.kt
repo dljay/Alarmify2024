@@ -63,7 +63,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.08a [Fragment 보여주는 방식 show/hide 변경 전]
+// v3.07.08b [Fragment 보여주는 방식 show/hide 변경 전-lollipop 관련 삭제 했음.]
+// - lollipop(API21) 관련 삭제.
 
 //**permission
 //구입한 파일이 없을때 -> can't play error -> permission (기존에 만들어놓은) 경고 뜬다!
@@ -384,35 +385,11 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
         {
             logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
             // 애니메이션
-            supportFragmentManager.findFragmentById(R.id.main_fragment_container)?.apply {
-                lollipop {
-//**ANIM 관련줄인데 삭제 a) exitTransition = Fade()
-                }
-            }
-            //Below is equivalent to : val listFragment= AlarmsListFragment()
-        //                          listFragment.sharedElementEnter = moveTransition()
-        //                          listFragment.enterTransition = Fade() .. 기타 등등.
-            val listFragment = AlarmsListFragment().apply {
-                lollipop {
-            // ANIM  관련 다음 3줄 삭제하면 Fade In/Out 안함!!
-//                        sharedElementEnterTransition = moveTransition()
-//                        enterTransition = Fade()
-//                        allowEnterTransitionOverlap = true
-                }
-            }
 
-            supportFragmentManager.beginTransaction()
-                    .apply {
-                        lollipop { // SDK 21 인듯
-                            edited.holder.getOrNull()?.addSharedElementsToTransition(this)
-                            //Log.d(TAG, "showList: yes lollipop")
-                        }
-                    }
-                    .apply {
-                        if (!lollipop()) {
+            val listFragment = AlarmsListFragment()
+            supportFragmentManager.beginTransaction().apply {
                             this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
                             Log.d(TAG, "showList: not lollipop()")
-                        }
                     }.replace(R.id.main_fragment_container, listFragment).commitAllowingStateLoss()
         }
     //내가 추가-> btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
@@ -426,40 +403,13 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
 
         if (currentFragment is AlarmDetailsFragment) {
             logger.debug { "skipping fragment transition, because already showing $currentFragment" }
-        } else {
+        } else
+        {
             logger.debug { "transition from: $currentFragment to show details, edited: $edited" }
-            currentFragment?.apply {
-                lollipop {
-//**ANIM 관련줄인데 삭제 a)                    exitTransition = Fade()
-                }
-            }
 
             val detailsFragment = AlarmDetailsFragment().apply {
-                arguments = Bundle()
-            }.apply {
-                lollipop {
-// ANIM  관련 다음 3줄 삭제하면 Fade In/Out 안함!!
-//                    enterTransition = TransitionSet().addTransition(Slide()).addTransition(Fade())
-//                    sharedElementEnterTransition = moveTransition()
-//                    allowEnterTransitionOverlap = true
-                }
-            }
-
-            supportFragmentManager.beginTransaction()
-                    .apply {
-                        if (!lollipop()) { //lollipop = SDK 21인듯..
-                            //this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
-                            Log.d(TAG, "showDetails: not lollipop")
-
-                        }
-                    }
-                    .apply {
-                        lollipop {
-                            edited.holder.getOrNull()?.addSharedElementsToTransition(this)
-                        }
-                    }
-                    .replace(R.id.main_fragment_container, detailsFragment)
-                    .commitAllowingStateLoss()
+                arguments = Bundle()}
+            supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, detailsFragment).commitAllowingStateLoss()
         }
         // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
         btmNavView.visibility =View.GONE

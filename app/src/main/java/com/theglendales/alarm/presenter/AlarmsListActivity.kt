@@ -11,15 +11,12 @@ import android.os.Build
 import android.os.Bundle
 import android.transition.ChangeBounds
 import android.transition.ChangeTransform
-import android.transition.Fade
-import android.transition.Slide
 import android.transition.TransitionSet
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
-import android.widget.LinearLayout
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -42,8 +39,6 @@ import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
-import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
 
@@ -56,9 +51,6 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
@@ -247,8 +239,7 @@ class AlarmsListActivity : AppCompatActivity() {
             // 밑에는 한마디로 Override fun onNavItemSelected: Boolean { 이 안에 들어가는 내용임.}
             when(it.itemId) {
                 R.id.id_setTime -> configureTransactions()
-                R.id.id_RingTone -> jjSetCurrentFragment(secondFrag)
-
+                R.id.id_RingTone -> jjSetCurrentFragAsSecondFrag(secondFrag)
             }
             Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener -> before hitting true!")
             true
@@ -265,10 +256,10 @@ class AlarmsListActivity : AppCompatActivity() {
     } // onCreate() 여기까지.
 // 추가 1-B)-->
 
-    fun jjSetCurrentFragment(receivedFragment: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
-            replace(R.id.main_fragment_container, receivedFragment)
+    fun jjSetCurrentFragAsSecondFrag(secondFrag: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
+            replace(R.id.main_fragment_container, secondFrag)
             commit()
-            Log.d(TAG, "jjSetCurrentFragment: ..... ")
+            Log.d(TAG, "jjSetCurrentFragAsSecondFrag: ..... ")
         }
 
 
@@ -325,15 +316,11 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
     }
 
     override fun onDestroy() {
-
-
     //
         Log.d(TAG, "onDestroy: jj-called")
         logger.debug { "$this" }
         super.onDestroy()
         this.mActionBarHandler.onDestroy()
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -370,11 +357,8 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
     private fun showList(@NonNull edited: EditedAlarm) {
     //추가->
     Log.d(TAG, "(Line281)showList: jj-called")
-
     //<-추가
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-
-
         if (currentFragment is AlarmsListFragment) {
             logger.debug { "skipping fragment transition, because already showing $currentFragment" }
         }

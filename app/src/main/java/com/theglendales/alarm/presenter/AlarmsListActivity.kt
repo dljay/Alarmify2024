@@ -63,35 +63,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.07b [IAP 수정중-Billing Library 업데이트 완료]
+// v3.07.08a [Fragment 보여주는 방식 show/hide 변경 전]
 
-//ISSUES 1)
-//- Tr 클릭 구입 -> IAP 진행되면서-> viewModel 로 다운로드 시작 ui 업뎃(btm slide) 하는 순간->crash -> initiatePurchase() 에서 Async 되서 그랬던듯.
-//=> 일단 모든 viewmodel 업뎃을 runOnUiThread{} 로 감싸주니 크래쉬 안나고 dnldBtmSlide 잘 나옴. (추후 몇차례 더 확인 필요)
-//- 구입클릭->구입확인->다운로드창-> 파일 전달까지 잘됨 (O). 그런데 다운로드 후 ListFrag 로 돌아가니 Lottie Rebuilding Animation  만 나오고 화면 암것도 안 나옴
-//- 16:49현재  (구입후 5~20분) Emulator API30 에서 열었을 때 구입상태 표기 안됨
 //**permission
 //구입한 파일이 없을때 -> can't play error -> permission (기존에 만들어놓은) 경고 뜬다!
-
-
-//Todos)
-
-//5) 현재 MyDownloaderV2 에서 DNLD_prgrs 로 쓰는 값을 Firebase 에서 적용했을때도 문제 없을지 확인 필요! (total 값을 못 받았던걸로 기억..)
-// MyDownloaderV2 -> SecondFrag 라이브데이터 -> 제목을 다운로드 화면에 표시?
-// Permission Handler 에서 Multi Dnld 이런거 없애주기..
-
-//4) MyIapHelper1 지워주기.
-//.. 추후 Firebase Bug 알림이! (이름 기억 안나네..)
-// AlarmListActivity - onResume () 에서 기존에 DNLD BTM SHEET 없애준거등 처리..
-// 기존 Permissions.kt 와 중복되는지 확인..
-// fb bug 알림이
-// Gal S21 에서 왜 install 할때 인스톨이 안되는겨..
-//- fab 버튼 -> 상단 + 로 변경? => xx 후에 울립니다 시간 표시-> 상단 .. ActionBar 진화형태.
-
-
-
-
-
 
 
 /**

@@ -157,11 +157,12 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                                 Log.d(TAG, "C-3) ☺ onBillingSetupFinished:  The User has never ever 산적이 없으면 일로 오는듯! (queryPurchase.size 가 0 이란 뜻..?)")
                             }
                             Log.d(TAG, "onQueryPurchasesResponse: **************** 여기가 진짜 IAP 마지막 지점인듯! 여기서 refreshItemsPriceMap?..확인해봅세.")
+                            refreshItemsPriceMap() // todo: Line 164 ->159 로 옮겼음.
                         }
 
                     } )
                 }
-                refreshItemsPriceMap() // todo: Line 164 ->159 로 옮기기?
+
 
                 Log.d(TAG, "C) onBillingSetupFinished: finished..")
             }

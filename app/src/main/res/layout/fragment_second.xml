@@ -164,7 +164,7 @@
                 android:scaleType="centerInside"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
-                app:lottie_rawRes="@raw/lottie_loading1"
+
                 app:lottie_scale="0.5">
 
             </com.airbnb.lottie.LottieAnimationView>

@@ -1,5 +1,6 @@
 package com.theglendales.alarm.jjmvvm
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,8 +17,8 @@ class JjFirebaseViewModel : ViewModel() {
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
     var fullRtClassList: MutableList<RtInTheCloud> = ArrayList()
 //livedata
-//    private val _liveRtList = MutableLiveData<MutableList<RtInTheCloud>>() // Private& Mutable LiveData
-//    val liveRtList: LiveData<MutableList<RtInTheCloud>> = _liveRtList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
+    private val _liveRtList = MutableLiveData<MutableList<RtInTheCloud>>() // Private& Mutable LiveData
+    val liveRtList: LiveData<MutableList<RtInTheCloud>> = _liveRtList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
 
     private val _liveTaskQSnapShot = MutableLiveData<Task<QuerySnapshot>>() // Private& Mutable LiveData
     val liveTaskQSnapShot: LiveData<Task<QuerySnapshot>> = _liveTaskQSnapShot // 이놈을 SecondFrag 에서 Observe => Public but! Immutable (즉 이놈은 언제나= _liveRtList. Mirror...)
@@ -26,6 +27,7 @@ class JjFirebaseViewModel : ViewModel() {
 //    val liveChipTaskQSnapShot: LiveData<Task<QuerySnapshot>> = _liveChipTaskQSnapShot // 이놈을 SecondFrag 에서 Observe => Public but! Immutable (즉 이놈은 언제나= _liveRtList. Mirror...)
 
     init {
+        Log.d(TAG, "initializing... ")
         loadFromFireBase()
     }
 //1) 기본 Firebase 로딩 관련
@@ -35,6 +37,7 @@ class JjFirebaseViewModel : ViewModel() {
     }
     // load from Fb! -
     fun loadFromFireBase()  {
+        // 만약 sharedPref-most recent list 가 존재하면 거기서 로딩(기존 리스트는 AlarmsListActivity 의 onDestroy() 때 삭제 가능).  새로고침이 문제..
         val qSnapShot= firebaseRepoInstance.getPostList() // Returns- Task<QuerySnapshot>
         _liveTaskQSnapShot.postValue(qSnapShot)
     }
@@ -49,7 +52,7 @@ class JjFirebaseViewModel : ViewModel() {
 //    }
 
 
-//    fun loadFromFireBase() // todo: 1)Task 를 return. 2)JjFbRepository.kt 로 별도로 옮기기?
+//    fun loadFromFireBase() // 1)Task 를 return. 2)JjFbRepository.kt 로 별도로 옮기기?
 //    {
 //        firebaseRepoInstance.getPostList().addOnCompleteListener {
 //            if(it.isSuccessful)

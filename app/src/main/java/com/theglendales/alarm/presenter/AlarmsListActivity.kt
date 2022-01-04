@@ -55,7 +55,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.08b [Fragment 보여주는 방식 show/hide 변경 전-lollipop 관련 삭제 했음.]
+// v3.07.08e [SecondFrag - 복귀했을 때 Fb나 IAP 읽지 않게 하기. IAP에 LiveData 적용 전!]
 // - lollipop(API21) 관련 삭제.
 
 //**permission
@@ -359,23 +359,23 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
     Log.d(TAG, "(Line281)showList: jj-called")
     //<-추가
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-        if (currentFragment is AlarmsListFragment) {
-            logger.debug { "skipping fragment transition, because already showing $currentFragment" }
-        }
-//        else if (currentFragment is SecondFragment) {
-//            Log.d(TAG, "showList: jj-currentFragment is SecondFragment !!")
-//        }
-        else // 현재 fragment 가 AlarmsListFragment 가 아니면 AlarmsListFragment 로 이동. 문제는 나갔다오면 onStart 에서 일로 온다는것..
-        {
-            logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
-            // 애니메이션
 
-            val listFragment = AlarmsListFragment()
-            supportFragmentManager.beginTransaction().apply {
-                            this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
-                            Log.d(TAG, "showList: not lollipop()")
+        when(currentFragment)
+        {
+            is AlarmsListFragment -> { // listFrag 보고 있다 홈 버튼 눌러서 Background 로 앱 갔다 들어왓을 때. (암것도 로딩 안함. 그대로..)
+                logger.debug { "skipping fragment transition, because already showing $currentFragment" }
+                }
+            else -> {
+                logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
+                // ListFrag 를 로딩>
+                    val listFragment = AlarmsListFragment()
+                    supportFragmentManager.beginTransaction().apply {
+                        this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
+                        Log.d(TAG, "showList: not lollipop()")
                     }.replace(R.id.main_fragment_container, listFragment).commitAllowingStateLoss()
+                }
         }
+
     //내가 추가-> btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
     btmNavView.visibility =View.VISIBLE
 
@@ -391,8 +391,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
         {
             logger.debug { "transition from: $currentFragment to show details, edited: $edited" }
 
-            val detailsFragment = AlarmDetailsFragment().apply {
-                arguments = Bundle()}
+            val detailsFragment = AlarmDetailsFragment().apply {arguments = Bundle()}
             supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, detailsFragment).commitAllowingStateLoss()
         }
         // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)

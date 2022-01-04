@@ -171,7 +171,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
     //  LIVEDATA ->
-        //1) ViewModel 3종 생성(RcvVModel/MediaPlayerVModel)
+        //1) ViewModel 4종 생성(RcvVModel/MediaPlayerVModel)
             //1-A)  *** JjRcvViewModel 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
             val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
             //1-B) jjMpViewModel 생성
@@ -231,6 +231,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {rtWithAlbumArtObj ->
                 Log.d(TAG, "onViewCreated: trId= ${rtWithAlbumArtObj.trIdStr}, received rtObj = $rtWithAlbumArtObj")
                 // Show BtmSht_SingleDNLD Frag
+
                 btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag) // <-- listFrag 갔다 복귀했을 때 다시 DNLDFrag 열어주는 문제때문에 없앰.
                 // btmSht_SingleDNLDV.updateTextView(rtWithAlbumArtObj.rtTitle) <- 시간차때문에 이렇게 넣으면 안될듯..
                 //todo: viewmodel 에 getCurrentRtObj() 만들고 -> 다운로드중인 RT 제목 + 그래픽 보여주기?
@@ -302,9 +303,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         initChip(view)
         // 네트워크 체크-> Lottie 로 연결
         setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
-        //MVVM - Livedata Observe Firebase ..
-        //observeAndLoadFireBase()
-        //SwipeRefresh Listener 등록
+
         registerSwipeRefreshListener()
 
     // MyCacher Init()
@@ -353,12 +352,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         super.onDestroy()
         Log.d(TAG, "onDestroy: 2nd Frag!")
          mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
-         requireActivity().viewModelStore.clear()// ListFrag 로 갈때는 그냥 ViewModel Clear 해줌 -> 다시 복귀했을 때 생쑈 없애기 위해..
-
+         //requireActivity().viewModelStore.clear()// ListFrag 로 갈때는 그냥 ViewModel Clear 해줌 -> 다시 복귀했을 때 생쑈 없애기 위해..
     }
-
-
-
 // ===================================== My Functions ==== >
 
     //MiniPlayer Play/Pause btn UI Update
@@ -461,7 +456,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     override fun onLost(network: Network) {
                         //connection is lost // 그러나 인터넷 안되는 상태(ex.airplane mode)로 최초 실행시 일로 안 들어옴!!
                         Log.d(TAG, "onLost: Internet available: XXXXXXXXXXXXXXXXXXXXX")
-                        lottieAnimController(1)
+                        lottieAnimController("error")
                     }
                 })
             }
@@ -537,11 +532,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
              rcvAdapterInstance.refreshRecyclerView(sortedList.toMutableList())
          }
-         
-         
-
      //test <--
-
     }
     // MiniPlayer Lower Part - Chip(badge) 을 sort 하여 보여줄건 보여주고 가릴건 가리기.
     private fun showOrHideBadgesOnMiniPlayer(badgeStrList: List<String>?) {
@@ -576,12 +567,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
     //lottieAnimation Controller = 로딩:0 번, 인터넷에러:1번, 정상:2번(lottie 를 감춰!)
-    private fun lottieAnimController(status: Int) {
+    private fun lottieAnimController(status: String) {
         when (status) {
-            0 -> {
+            "loading" -> {
                 lottieAnimationView.setAnimation(R.raw.lottie_loading1)
             } //최초 app launch->read.. auto play 기 때문에
-            1 -> {
+            "error" -> {
                 activity?.runOnUiThread(Runnable
                 {
                     Log.d(TAG, "lottieAnimController: NO INTERNET ERROR!!")
@@ -593,12 +584,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     //todo: 여기 SnackBar 에서 View 가 불안정할수 있음=>try this? -> Snackbar.make(requireActivity().findViewById(android.R.id.content), "..", Snackbar.LENGTH_LONG).show()
 
                 })
-                // 만약 sync(multiple file downloads)/single file download 중였다면 btmSheet 없애기.
-                //1) 싱글 다운로드 instance & Multi(obj)
-//                MyDownloader_v1.btmShtSingleDNLDInstance.removeSingleDNLDBtmSheet()
-//                BtmSht_Sync.removeMultiDNLDBtmSheet()
             }
-            2 -> {
+            "stop" -> {
                 activity?.runOnUiThread(Runnable
                 {
                     lottieAnimationView.cancelAnimation()
@@ -612,34 +599,32 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     //Firebase ViewModel 을 Observe
     private fun observeAndLoadFireBase() {
+        // 현재도 lottie 는 나오는 상황 (setUpLateIniUis() 에서 벌써 loading 실행해놨음)
         //1. 인터넷 가능한지 체크
         //인터넷되는지 체크
         val isInternetAvailable: Boolean = myNetworkCheckerInstance.isNetWorkAvailable()
         if (!isInternetAvailable) { // 인터넷 사용 불가!
             Log.d(TAG, "loadFromFireBase: isInternetAvailable= $isInternetAvailable")
-            lottieAnimController(1)
+            lottieAnimController("error")
             return //더이상 firebase 로딩이고 나발이고 진행 안함!!
         }
 
         //2. If we have internet connectivity, then call FireStore!
 
-        //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
+        //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjFirebaseVModel.liveRtList: ${jjFirebaseVModel.fullRtClassList}")
         jjFirebaseVModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
-            //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjViewModel.liveRtList: ${jjViewModel.liveRtList.value}")
+            //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjFirebaseVModel.liveRtList: ${jjFirebaseVModel.fullRtClassList}")
             it.addOnCompleteListener {
                 if (it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
                     Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
 
-
-
-
-                    // SwipeRefresh 멈춰 (aka 빙글빙글 animation 멈춰..)
+                    // SwipeRefresh 돌고 있었으면.. 멈춰 (aka 빙글빙글 animation 멈춰..)
                     if (swipeRefreshLayout.isRefreshing) {
                         Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
                         swipeRefreshLayout.isRefreshing = false
                     }
                     // 우선 lottie Loading animation-stop!!
-                    lottieAnimController(2) //stop!
+                    lottieAnimController("stop") //모든게 로딩 완료되었으니 애니메이션 stop!
 
                     fullRtClassList = it.result!!.toObjects(RtInTheCloud::class.java)
 
@@ -671,7 +656,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         reConstructTrUisOnReturn(GlbVars.clickedTrId)
                     }
                 } else { // 에러났을 때
-                    lottieAnimController(1)
+                    lottieAnimController("error")
                     Toast.makeText(
                         this.context,
                         "Error Loading Data from Firebase. Error: ${it.exception.toString()}",
@@ -722,6 +707,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     private fun setUpLateInitUis(v: View) {
     //Lottie
         lottieAnimationView = v.findViewById(R.id.id_lottie_secondFrag)
+        //일단 lottieAnim - Loading 애니메이션 틀어주기
+        lottieAnimController("loading")
 
     //Swipe Refresh Layout Related
         swipeRefreshLayout = v.findViewById(R.id.id_swipeRefreshLayout)

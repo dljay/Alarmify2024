@@ -17,9 +17,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -35,10 +38,7 @@ import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
-import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
-import com.theglendales.alarm.jjmvvm.JjMpViewModel
-import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
-import com.theglendales.alarm.jjmvvm.JjFirebaseViewModel
+import com.theglendales.alarm.jjmvvm.*
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.BtmShtSingleDNLDV2
@@ -48,6 +48,10 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.withContext
+
 
 //Coroutines
 
@@ -67,6 +71,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Download 관련
     lateinit var myDownloaderV2: MyDownloaderV2
     lateinit var btmSht_SingleDNLDV: BtmShtSingleDNLDV2
+    //Network Checker
+    lateinit var myNetworkCheckerInstance: MyNetWorkChecker
+    private val jjNtVModelFlow: JjNetworkCheckVModel by viewModels<JjNetworkCheckVModel>() //[FLOW]
+
 
 
 
@@ -86,7 +94,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var chipGroup: ChipGroup
     var myIsChipChecked = false
 
-    private val myNetworkCheckerInstance: MyNetWorkChecker by globalInject() // Koin 으로 대체!! 성공!
+
     // VumeterHandler
     private val VHolderUiHandler: VHolderUiHandler by globalInject() // Koin Inject
 
@@ -125,10 +133,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var mPlayer_bdg6_misc: ImageView
 
 
-
-
-
-
     // listfrag 가거나 나갔다왔을 때 관련.
     var isFireBaseFetchDone = false // a) 최초 rcV 열어서 모든게 준비되면 =true, b) 다른 frag 로 나갔다왔을 때 reconstructXX() 다 끝나면 true.
     var currentClickedTrId = -1
@@ -144,6 +148,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isFireBaseFetchDone, currentClickedTrId=$currentClickedTrId")
         super.onCreate(savedInstanceState)
 
+
+
     }
 
 //    override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -158,10 +164,21 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         return view
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         Log.d(TAG, "onViewCreated: jj- begins..")
         super.onViewCreated(view, savedInstanceState)
+
+    //[FLOW] NetworkChecker //todo : viewlifecycleowner? vs lifecyclescope?
+        // Philipp Lackner: https://www.youtube.com/watch?v=Qk2mIpE_riY&ab_channel=PhilippLackner  vs https://m.blog.naver.com/mym0404/221626544730
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            jjNtVModelFlow.isNtWorking.collect {
+                withContext(Dispatchers.Main) {
+                    Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")
+                }
+            }
+        }
     //RcView-->
         rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
         layoutManager = LinearLayoutManager(context)
@@ -171,7 +188,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
     //  LIVEDATA ->
-        //1) ViewModel 4종 생성(RcvVModel/MediaPlayerVModel)
+        //1) ViewModel 5종 생성(RcvVModel/MediaPlayerVModel)
             //1-A)  *** JjRcvViewModel 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
             val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
             //1-B) jjMpViewModel 생성
@@ -180,6 +197,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             val jjDNLDViewModel = ViewModelProvider(requireActivity()).get(JjDNLDViewModel::class.java)
             //1-D) jjFirebaseVModel Init
             jjFirebaseVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)
+            //1-E) jjNetworkCheckVModel
+            val jjNetworkCheckVModel = ViewModelProvider(requireActivity()).get(JjNetworkCheckVModel::class.java)
+
+
 
         //2) LiveData Observe
             //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달. [!! 기존 클릭해놓은 트랙이 있으면 ListFrag 갔다왔을때 자동으로 그전 track 값을 (fb 로딩전에) 호출하는 문제있음!!] -> isEverythingReady 로 해결함.
@@ -281,6 +302,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
                 }
             })
+            //2-D-가 NetworkCheck
+            jjNetworkCheckVModel.isNetworkAvailable.observe(viewLifecycleOwner, {isNetworkAvailable->
+
+                Log.d(TAG, "onViewCreated: isNetworkAvailable = $isNetworkAvailable")
+
+                //인터넷 (X) -> lottieAnim
+
+                //인터넷 (O) ->
+            })
 
         //3) Firebase ViewModel Initialize
 
@@ -293,16 +323,23 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
             myDownloaderV2 = activity?.let {MyDownloaderV2(it,jjDNLDViewModel)}!!
             iapInstanceV2 = MyIAPHelperV2(requireActivity(), rcvAdapterInstance, myDownloaderV2)
+            myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjNetworkCheckVModel) }!!
 
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance
         rcView.setHasFixedSize(true)
         //RcView <--
+    // 네트워크 체크-> MyNetworkChecker -> ViewModel -> SecondFrag 의 Lottie 로 연결
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { //Nougat=API 24. todo: MINIMUM SDK 변경?
+            Log.d(TAG, "onViewCreated: network call back- executed ")
+            myNetworkCheckerInstance.setNetworkListener() //annotated element should only be called on the given API level or higher
+        }
+
         setUpLateInitUis(view) // -> 이 안에서 setUpSlindingPanel() 도 해줌. todo: Coroutine 으로 착착. chain 하지 말고..
         //Chip
         initChip(view)
-        // 네트워크 체크-> Lottie 로 연결
-        setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
+
+        //setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
 
         registerSwipeRefreshListener()
 
@@ -316,6 +353,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: 2nd Frag!")
+
+
+
         // 아래 onPause() 에서 save 한 '기존 재생 정보' 는 observeAndLoadFirebase() 에서 로딩하기로.
 
     // DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서?  신중한 접근 필요. (Update: permission 상관없는듯..)
@@ -441,18 +481,17 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     private fun setNetworkAvailabilityListener() {
         //1-b) API 24 이상이면 콜백까지 등록
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             myNetworkCheckerInstance.connectivityManager.let {
                 it.registerDefaultNetworkCallback(object :ConnectivityManager.NetworkCallback() {
                     override fun onAvailable(network: Network) {
                         //Connection is gained -> 다시 FIREBASE loading
                         Log.d(TAG,"onAvailable: Internet available: OOOOOOOOOOOOOOOOOOOOO ") //최초 앱 실행시에도 (인터넷이 되니깐) 여기 log 가 작동됨.
-
                         Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() } // MainThread 에서만 실행해야함. 이거 없으면 크래쉬! (Cannot invoke observe on a background thread)
                         // 참고: Normally observe(..) and observeForever(..) should be called from the main thread because their
                         // callbacks (Observer<T>.onChanged(T t)) often change the UI which is only possible in the main thread.
                     }
-
                     override fun onLost(network: Network) {
                         //connection is lost // 그러나 인터넷 안되는 상태(ex.airplane mode)로 최초 실행시 일로 안 들어옴!!
                         Log.d(TAG, "onLost: Internet available: XXXXXXXXXXXXXXXXXXXXX")

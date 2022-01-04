@@ -39,7 +39,7 @@ class JjFirebaseViewModel : ViewModel() {
     fun loadFromFireBase()  {
         // 만약 sharedPref-most recent list 가 존재하면 거기서 로딩(기존 리스트는 AlarmsListActivity 의 onDestroy() 때 삭제 가능).  새로고침이 문제..
         val qSnapShot= firebaseRepoInstance.getPostList() // Returns- Task<QuerySnapshot>
-        _liveTaskQSnapShot.postValue(qSnapShot)
+        _liveTaskQSnapShot.postValue(qSnapShot) // postValue: main thread 에서 setValue 해줌.
     }
 //2) Chip Tag 로 Sorting 되는 결과물 받기 관련.
 //    fun getChipSortedObserver(): LiveData<Task<QuerySnapshot>> {

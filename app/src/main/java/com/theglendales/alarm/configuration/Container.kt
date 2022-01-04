@@ -133,7 +133,7 @@ fun startKoin(context: Context): Koin {
         factory { get<Context>().resources }
 
         // 내가 추가 -->
-        single<MyNetWorkChecker> { MyNetWorkChecker(context = context)}
+
         single<VHolderUiHandler> { VHolderUiHandler()}
         single<FirebaseRepoClass> { FirebaseRepoClass()}
         single<MySharedPrefManager> {MySharedPrefManager(context = context)}

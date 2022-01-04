@@ -55,11 +55,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-// v3.07.08e [SecondFrag - 복귀했을 때 Fb나 IAP 읽지 않게 하기. IAP에 LiveData 적용 전!]
-// - lollipop(API21) 관련 삭제.
 
-//**permission
-//구입한 파일이 없을때 -> can't play error -> permission (기존에 만들어놓은) 경고 뜬다!
+//v3.07.10a [FLOW] 테스트중
+
+//ListFrag <-> Secondfrag.kt  오가는 문제에서 SecondFrag.kt 를 다시 열 때 IAP진행x, NetworkCheck x 안하게 끔+기존 play 상태 복원 할려고 했음.
+//- Livedata 는 SecondFrag 열때마다 (기존 값을) 다시한번 emit 하는 문제가 있어서 LiveData->Flow 로 진행테스트 해봤음.
+//- Flow 로 바꾸다보니  Coroutine Scope, by viewModels() 등을 사용해야되서 Gradle(app) 을 많이 고침
+//=> target/compile sdk (31) 로 변경, 그랬더니 Android12 (api31) 에 넣기 위해 Manifest.xml 에서 android:export="bool" 이걸 activity 마다 넣어줘야했음.
+//기타: https://ddangeun.tistory.com/80 (by Viewmodels)
+//
+//
+//*** 해당버전 Flow 사용 위해 api31 로 바꾸고 gradle(app) 많이 바꿨음. 혹시나 문제 생기면 3.07.08b 로 rollback 할 것!! **
 
 
 /**
@@ -239,7 +245,7 @@ class AlarmsListActivity : AppCompatActivity() {
             // 밑에는 한마디로 Override fun onNavItemSelected: Boolean { 이 안에 들어가는 내용임.}
             when(it.itemId) {
                 R.id.id_setTime -> configureTransactions()
-                R.id.id_RingTone -> jjSetCurrentFragAsSecondFrag(secondFrag)
+                R.id.id_RingTone -> showSecondFrag(secondFrag)
             }
             Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener -> before hitting true!")
             true
@@ -256,11 +262,7 @@ class AlarmsListActivity : AppCompatActivity() {
     } // onCreate() 여기까지.
 // 추가 1-B)-->
 
-    fun jjSetCurrentFragAsSecondFrag(secondFrag: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
-            replace(R.id.main_fragment_container, secondFrag)
-            commit()
-            Log.d(TAG, "jjSetCurrentFragAsSecondFrag: ..... ")
-        }
+
 
 
 override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
@@ -378,6 +380,12 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
 
     //내가 추가-> btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
     btmNavView.visibility =View.VISIBLE
+
+    }
+    fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
+        replace(R.id.main_fragment_container, secondFragReceived)
+        commit()
+        Log.d(TAG, "showSecondFrag: ..... ")
 
     }
 

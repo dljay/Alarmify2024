@@ -59,7 +59,8 @@
         <activity
             android:name=".presenter.SettingsActivity"
             android:excludeFromRecents="true"
-            android:label="@string/settings">
+            android:label="@string/settings"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -68,7 +69,8 @@
             android:name=".presenter.HandleSetAlarm"
             android:excludeFromRecents="true"
             android:permission="com.android.alarm.permission.SET_ALARM"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:theme="@android:style/Theme.NoDisplay"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SET_ALARM" />
 

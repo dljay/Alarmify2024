@@ -65,13 +65,13 @@ val acraEmail = project.rootProject.file("local.properties")
     ?: ""
 
 android {
-    compileSdkVersion(30)
+    compileSdkVersion(31)
     defaultConfig {
         versionCode = 30707
         versionName = "3.07.07"
         applicationId = "com.theglendales.alarm"
         minSdkVersion(23)
-        targetSdkVersion(30)
+        targetSdkVersion(31)
         testApplicationId = "com.theglendales.alarm.test"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
@@ -137,10 +137,10 @@ dependencies {
     implementation("io.reactivex.rxjava2:rxandroid:2.1.1")
     implementation("org.koin:koin-core:2.1.5") //koin for Kotlin 1
 //koin 관련 내가 추가 -> 현재는 viewModel 을 Koin 으로 자동 등록하지 않을 예정여서 필요 없음.
-   /* implementation("org.koin:koin-core-ext:2.1.5")// koin for kotlin 2
-    implementation("org.koin:koin-android:2.1.5") //koin for android. !!! 여기서 android or androidx 라고 써도 됨. 정확히는 모르겠으나 일단은 android 로 써서 사용했음.
-    implementation("org.koin:koin-android-viewmodel:2.1.5") // koin Android ViewModel Features // !!! 여기서 android or androidx 라고 써도 됨. 정확히는 모르겠으나 일단은 android 로 써서 사용했음.
-    implementation("org.koin:koin-android-scope:2.1.5")*/
+    //implementation("org.koin:koin-core-ext:2.1.5")// koin for kotlin 2
+    //implementation("org.koin:koin-android:2.1.5") //koin for android. !!! 여기서 android or androidx 라고 써도 됨. 정확히는 모르겠으나 일단은 android 로 써서 사용했음.
+    //implementation("org.koin:koin-android-viewmodel:2.1.5") // koin Android ViewModel Features // !!! 여기서 android or androidx 라고 써도 됨. 정확히는 모르겠으나 일단은 android 로 써서 사용했음.
+    //implementation("org.koin:koin-android-scope:2.1.5")*/
     //implementation("org.koin:koin-android-architecture:2.1.5") // sharedViewModel 쓰기 위해서 이거..?
 // <--
 
@@ -166,6 +166,12 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1")
+    //Flow 사용 위해 넣음 (22.1.5)
+    implementation("androidx.activity:activity-ktx:1.4.0")
+    implementation("androidx.fragment:fragment-ktx:1.4.0") //(Secondfrag.kt 에서 by viewmodels 로 쉽게 inject 하는것 이거 사용)
+    //implementation("androidx.lifecycle-viewmodel-ktx:2.2.0")
+    //implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
+    //implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
     //ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.14.0")
     //GSON (SharedPref 에 Object 저장용)
@@ -193,10 +199,10 @@ dependencies {
 
     implementation("androidx.legacy:legacy-support-v4:1.0.0")//    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
-    androidTestImplementation("androidx.test:runner:1.3.0")
-    androidTestImplementation("androidx.test:rules:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test:rules:1.4.0")
     // androidx.test.ext.junit.rules.ActivityScenarioRule
     // androidx.test.ext.junit.runners.AndroidJUnit4
-    androidTestImplementation("androidx.test.ext:junit:1.1.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.3")
 }

@@ -192,7 +192,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //1-D) jjFirebaseVModel Init
             jjFirebaseVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)
             //1-E) jjNetworkCheckVModel
-            val jjNetworkCheckVModel = ViewModelProvider(requireActivity()).get(JjNetworkCheckVModel::class.java)
+            //val jjNetworkCheckVModel = ViewModelProvider(requireActivity()).get(JjNetworkCheckVModel::class.java)
 
 
 
@@ -297,24 +297,23 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 }
             })
             //2-D-가 NetworkCheck (LIVEDATA) 사용 안함 (XX)
-            jjNetworkCheckVModel.isNetworkAvailable.observe(viewLifecycleOwner, {isNetworkAvailable->
-                Log.d(TAG, "onViewCreated: [LIVEDATA] isNetworkAvailable = $isNetworkAvailable")
-                //인터넷 (X) -> lottieAnim
-                //인터넷 (O) ->
-            })
+//            jjNetworkCheckVModel.isNetworkAvailable.observe(viewLifecycleOwner, {isNetworkAvailable->
+//                Log.d(TAG, "onViewCreated: [LIVEDATA] isNetworkAvailable = $isNetworkAvailable")
+//                //인터넷 (X) -> lottieAnim
+//                //인터넷 (O) ->
+//            })
             //2-D-나 NetworkCheck [FLOW] StateFlow 사용!(O)
             //[FLOW] NetworkChecker //todo : viewlifecycleowner? vs lifecyclescope?
             // Philipp Lackner: https://www.youtube.com/watch?v=Qk2mIpE_riY&ab_channel=PhilippLackner  vs https://m.blog.naver.com/mym0404/221626544730
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-
-                    jjNtVModelFlow.isNtWorking.collectLatest {
-                        withContext(Dispatchers.Main) {
-                            Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        jjNtVModelFlow.isNtWorking.collectLatest {
+                            withContext(Dispatchers.Main) {
+                                Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")
+                            }
                         }
                     }
-
-
             }
 
         //3) Firebase ViewModel Initialize
@@ -328,7 +327,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
             myDownloaderV2 = activity?.let {MyDownloaderV2(it,jjDNLDViewModel)}!!
             iapInstanceV2 = MyIAPHelperV2(requireActivity(), rcvAdapterInstance, myDownloaderV2)
-            myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjNetworkCheckVModel) }!!
+            myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjNtVModelFlow) }!!
 
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance

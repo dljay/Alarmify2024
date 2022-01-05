@@ -305,11 +305,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //repeatOnLifeCycle() : 이 블록 안은 이 lifecycle 의 onStart() 에서 실행- onStop() 에서 cancel. lifecycle 시작하면 자동 re-launch!
                 // 혹시나 view 가 없을때 신호 받아서 crash 생기는것을 방지.
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    //.collectLatest : flow 가 새로운 value 를 뿜어냈을때 기존 emit 에 대해 처리중이었으면 그 처리는  cancel 된다.
-                        jjNtVModelFlow.isNtWorking.collectLatest {
-                            withContext(Dispatchers.Main) {
-                                Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")
-                            }
+
+                        jjNtVModelFlow.isNtWorking.collect {
+                            Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")
+                            // withContext(Dispatchers.Main) {} // hmm..? 이미 lifecycleScope 자체가 Dispatcher.Main 에서 돌아감.
                         }
                     }
             }
@@ -355,11 +354,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     override fun onStart() {
         super.onStart()
-        Log.d(TAG, "onStart: 2nd Frag")
+        viewLifecycleOwner
+        Log.d(TAG, "onStart: 2nd Frag // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState}")
+        Log.d(TAG, "onStart: 2nd Frag // lifecycle.currentState=${lifecycle.currentState}")
     }
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "onResume: 2nd Frag!")
+        Log.d(TAG, "onResume: 2nd Frag // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState} ")
+        Log.d(TAG, "onResume: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
     // DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서?  신중한 접근 필요. (Update: permission 상관없는듯..)
     // 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.
 //        //B) 현재 Sync = Multi 다운로드가 진행중 && 인터넷이 되는 상태면 btmSheet_Multi 다시 보여주기!
@@ -376,7 +378,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     override fun onPause() {
         super.onPause()
-        Log.d(TAG, "onPause: 2nd Frag!")
+        Log.d(TAG, "onPause: 2nd Frag! // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState}")
+        Log.d(TAG, "onPause: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
         //collapseSlidingPanel()
         //1) 현재 음악이 재생중이든 아니든 (재생중이 아니었으면 어차피 pauseMusic() 은 의미가 없음)
             mpClassInstance.pauseMusic() // a)일단 PAUSE 때리고
@@ -392,7 +395,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy: 2nd Frag!")
+
+        Log.d(TAG, "onDestroy: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}") //DESTROYED 로 뜬다.
          mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
          //requireActivity().viewModelStore.clear()// ListFrag 로 갈때는 그냥 ViewModel Clear 해줌 -> 다시 복귀했을 때 생쑈 없애기 위해..
     }

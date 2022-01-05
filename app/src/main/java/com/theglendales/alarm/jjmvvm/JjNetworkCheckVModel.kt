@@ -17,7 +17,7 @@ class JjNetworkCheckVModel : ViewModel() {
     init {Log.d(TAG, "init.. ")}
 
     //StateFlow
-    private val _isNtWorking = MutableStateFlow<Boolean>(false)
+    private val _isNtWorking = MutableStateFlow<Boolean>(true)
     val isNtWorking = _isNtWorking.asStateFlow() // 그냥 = _isNtWorking  이렇게 써도 되는데 그냥 이런 function 이 있네.
 
     fun updateNtAvailabilityByFlow(isAvailable: Boolean) {

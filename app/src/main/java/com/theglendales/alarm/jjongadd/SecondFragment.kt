@@ -20,9 +20,7 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -50,6 +48,8 @@ import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 
 
@@ -160,25 +160,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View {
 
         // Inflate the layout for this fragment
+
         val view: View = inflater.inflate(R.layout.fragment_second, container, false)
         return view
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
+    @RequiresApi(Build.VERSION_CODES.N) // API 24
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         Log.d(TAG, "onViewCreated: jj- begins..")
         super.onViewCreated(view, savedInstanceState)
 
-    //[FLOW] NetworkChecker //todo : viewlifecycleowner? vs lifecyclescope?
-        // Philipp Lackner: https://www.youtube.com/watch?v=Qk2mIpE_riY&ab_channel=PhilippLackner  vs https://m.blog.naver.com/mym0404/221626544730
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            jjNtVModelFlow.isNtWorking.collect {
-                withContext(Dispatchers.Main) {
-                    Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")
-                }
-            }
-        }
+
+
     //RcView-->
         rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
         layoutManager = LinearLayoutManager(context)
@@ -302,15 +296,26 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
                 }
             })
-            //2-D-가 NetworkCheck
+            //2-D-가 NetworkCheck (LIVEDATA) 사용 안함 (XX)
             jjNetworkCheckVModel.isNetworkAvailable.observe(viewLifecycleOwner, {isNetworkAvailable->
-
-                Log.d(TAG, "onViewCreated: isNetworkAvailable = $isNetworkAvailable")
-
+                Log.d(TAG, "onViewCreated: [LIVEDATA] isNetworkAvailable = $isNetworkAvailable")
                 //인터넷 (X) -> lottieAnim
-
                 //인터넷 (O) ->
             })
+            //2-D-나 NetworkCheck [FLOW] StateFlow 사용!(O)
+            //[FLOW] NetworkChecker //todo : viewlifecycleowner? vs lifecyclescope?
+            // Philipp Lackner: https://www.youtube.com/watch?v=Qk2mIpE_riY&ab_channel=PhilippLackner  vs https://m.blog.naver.com/mym0404/221626544730
+
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+
+                    jjNtVModelFlow.isNtWorking.collectLatest {
+                        withContext(Dispatchers.Main) {
+                            Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")
+                        }
+                    }
+
+
+            }
 
         //3) Firebase ViewModel Initialize
 
@@ -350,14 +355,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
 
     }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d(TAG, "onStart: 2nd Frag")
+    }
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: 2nd Frag!")
-
-
-
-        // 아래 onPause() 에서 save 한 '기존 재생 정보' 는 observeAndLoadFirebase() 에서 로딩하기로.
-
     // DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서?  신중한 접근 필요. (Update: permission 상관없는듯..)
     // 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.
 //        //B) 현재 Sync = Multi 다운로드가 진행중 && 인터넷이 되는 상태면 btmSheet_Multi 다시 보여주기!

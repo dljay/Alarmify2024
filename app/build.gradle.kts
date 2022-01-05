@@ -128,6 +128,7 @@ android {
 }
 
 
+
 dependencies {
     // App dependencies
     implementation(kotlin("stdlib", version = project.extra["kotlin"] as String))
@@ -144,12 +145,12 @@ dependencies {
     //implementation("org.koin:koin-android-architecture:2.1.5") // sharedViewModel 쓰기 위해서 이거..?
 // <--
 
-    implementation("androidx.fragment:fragment:1.2.5")
+    implementation("androidx.fragment:fragment:1.4.0")
     implementation("androidx.preference:preference:1.1.1")
 //jjong added
-    implementation("com.google.android.material:material:1.3.0")
-    implementation("androidx.appcompat:appcompat:1.2.0")
-    implementation("androidx.core:core-ktx:1.3.2")
+    implementation("com.google.android.material:material:1.4.0")
+    implementation("androidx.appcompat:appcompat:1.4.0")
+    implementation("androidx.core:core-ktx:1.7.0")
     //VuMeter
     implementation ("io.gresse.hugo.vumeterlibrary:vumeterlibrary:1.0.17")
     //Glide
@@ -157,21 +158,23 @@ dependencies {
     kapt ("android.arch.lifecycle:compiler:1.1.1")
     kapt ("com.github.bumptech.glide:compiler:4.12.0")
     //Firebase
-    implementation("com.google.firebase:firebase-firestore:23.0.1")
+    implementation("com.google.firebase:firebase-firestore:24.0.0")
     //SlidingUpPanel
     implementation("com.sothree.slidinguppanel:library:3.4.0")
     //Lottie
     implementation("com.airbnb.android:lottie:3.7.0")
     //Coroutine
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0") // **이 버전 올릴 때 위애-core 도 같이 올려줄것! 안그러면 난리남!
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1")
     //Flow 사용 위해 넣음 (22.1.5)
+
     implementation("androidx.activity:activity-ktx:1.4.0")
     implementation("androidx.fragment:fragment-ktx:1.4.0") //(Secondfrag.kt 에서 by viewmodels 로 쉽게 inject 하는것 이거 사용)
-    //implementation("androidx.lifecycle-viewmodel-ktx:2.2.0")
-    //implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
-    //implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
+    //Flow 사용 위해 넣음 2 (repeatOnLifecycle() 사용위해)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
     //ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.14.0")
     //GSON (SharedPref 에 Object 저장용)

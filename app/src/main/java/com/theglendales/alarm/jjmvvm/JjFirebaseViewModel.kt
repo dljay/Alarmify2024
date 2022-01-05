@@ -41,6 +41,11 @@ class JjFirebaseViewModel : ViewModel() {
         val qSnapShot= firebaseRepoInstance.getPostList() // Returns- Task<QuerySnapshot>
         _liveTaskQSnapShot.postValue(qSnapShot) // postValue: main thread 에서 setValue 해줌.
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d(TAG, "onCleared: called..")
+    }
 //2) Chip Tag 로 Sorting 되는 결과물 받기 관련.
 //    fun getChipSortedObserver(): LiveData<Task<QuerySnapshot>> {
 //        return liveChipTaskQSnapShot

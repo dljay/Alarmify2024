@@ -45,7 +45,7 @@ class MyNetWorkChecker(val context: Context, val jjNetworkCheckVModel: JjNetwork
                     //Connection is gained -> 다시 FIREBASE loading
                     Log.d(TAG,"onAvailable: Internet available: OOOOOOOOOOOOOOOOOOOOO ") //최초 앱 실행시에도 (인터넷이 되니깐) 여기 log 가 작동됨.
                     // todo: livedata update { observeAndLoadFireBase() } // MainThread 에서만 실행해야함.
-                    //jjNetworkCheckVModel.updateNetworkAvailability(true)
+                    jjNetworkCheckVModel.updateNetworkAvailability(true)
                     jjNetworkCheckVModel.updateNtViaFlow(true)
 
 
@@ -56,7 +56,7 @@ class MyNetWorkChecker(val context: Context, val jjNetworkCheckVModel: JjNetwork
                     Log.d(TAG, "onLost: Internet available: XXXXXXXXXXXXXXXXXXXXX")
                     // todo: livedata update -> anim error!
                     // todo: // onLost()가 secondFrag 가 없는 상황에서 돌발적으로 일어났을 때 context 가 괜찮을지 확인 필요.
-                    //jjNetworkCheckVModel.updateNetworkAvailability(false)
+                    jjNetworkCheckVModel.updateNetworkAvailability(false)
                     jjNetworkCheckVModel.updateNtViaFlow(false)
 
                 }

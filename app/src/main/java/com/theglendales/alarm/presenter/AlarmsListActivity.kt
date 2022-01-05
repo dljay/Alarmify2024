@@ -56,7 +56,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.10a [FLOW] 테스트중
+//v3.07.10c [FLOW] 테스트중, build.gradle(app) - Coroutine (1.6.0) 및 lifecycle (2.4.0) 업데이트 (앱 잘 되는것까지 확인)
 
 //ListFrag <-> Secondfrag.kt  오가는 문제에서 SecondFrag.kt 를 다시 열 때 IAP진행x, NetworkCheck x 안하게 끔+기존 play 상태 복원 할려고 했음.
 //- Livedata 는 SecondFrag 열때마다 (기존 값을) 다시한번 emit 하는 문제가 있어서 LiveData->Flow 로 진행테스트 해봤음.

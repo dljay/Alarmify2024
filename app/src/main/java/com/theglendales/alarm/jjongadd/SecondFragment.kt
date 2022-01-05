@@ -50,6 +50,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
@@ -296,18 +297,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
                 }
             })
-            //2-D-가 NetworkCheck (LIVEDATA) 사용 안함 (XX)
-//            jjNetworkCheckVModel.isNetworkAvailable.observe(viewLifecycleOwner, {isNetworkAvailable->
-//                Log.d(TAG, "onViewCreated: [LIVEDATA] isNetworkAvailable = $isNetworkAvailable")
-//                //인터넷 (X) -> lottieAnim
-//                //인터넷 (O) ->
-//            })
-            //2-D-나 NetworkCheck [FLOW] StateFlow 사용!(O)
-            //[FLOW] NetworkChecker //todo : viewlifecycleowner? vs lifecyclescope?
-            // Philipp Lackner: https://www.youtube.com/watch?v=Qk2mIpE_riY&ab_channel=PhilippLackner  vs https://m.blog.naver.com/mym0404/221626544730
+            //2-D-가 NetworkCheck [FLOW] StateFlow 사용!(O)
+            // viewlifecycleowner: 현재 생성되는 view 의 lifecycle. 그리고 그것에 종속된 coroutineScope= lifecyclescope?
 
-            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+            //Fragments should always use the viewLifecycleOwner to trigger UI updates.
+             viewLifecycleOwner.lifecycleScope.launch {
+                //repeatOnLifeCycle() : 이 블록 안은 이 lifecycle 의 onStart() 에서 실행- onStop() 에서 cancel. lifecycle 시작하면 자동 re-launch!
+                // 혹시나 view 가 없을때 신호 받아서 crash 생기는것을 방지.
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    //.collectLatest : flow 가 새로운 value 를 뿜어냈을때 기존 emit 에 대해 처리중이었으면 그 처리는  cancel 된다.
                         jjNtVModelFlow.isNtWorking.collectLatest {
                             withContext(Dispatchers.Main) {
                                 Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")

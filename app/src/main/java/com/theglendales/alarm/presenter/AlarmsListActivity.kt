@@ -56,7 +56,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.10e [FLOW] 테스트중, build.gradle(app) - Coroutine (1.6.0) 및 lifecycle (2.4.0) 업데이트 (앱 잘 되는것까지 확인)
+//v3.07.10f [결국 AlamrsListActivity 에서 frag show/hide 하는것 연구중..]
+//[FLOW] 테스트중, build.gradle(app) - Coroutine (1.6.0) 및 lifecycle (2.4.0) 업데이트 (앱 잘 되는것까지 확인)
 //온갖 뻘짓끝에. 결국은 frag show/hide 가 답인가..
 
 //ListFrag <-> Secondfrag.kt  오가는 문제에서 SecondFrag.kt 를 다시 열 때 IAP진행x, NetworkCheck x 안하게 끔+기존 play 상태 복원 할려고 했음.

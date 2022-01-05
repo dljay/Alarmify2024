@@ -20,7 +20,13 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.*
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.Lifecycle.State
+
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -46,12 +52,8 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 
 //Coroutines
@@ -74,7 +76,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var btmSht_SingleDNLDV: BtmShtSingleDNLDV2
     //Network Checker
     lateinit var myNetworkCheckerInstance: MyNetWorkChecker
+    //ViewModel 5종 생성
     private val jjNtVModelFlow: JjNetworkCheckVModel by viewModels<JjNetworkCheckVModel>() //[FLOW]
+
+    /*//1) ViewModel 5종 생성(RcvVModel/MediaPlayerVModel)
+    //1-A)  *** JjRcvViewModel 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
+    val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
+    //1-B) jjMpViewModel 생성
+    val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
+    //1-C) jjMyDownloaderViewModel 생성
+    val jjDNLDViewModel = ViewModelProvider(requireActivity()).get(JjDNLDViewModel::class.java)
+    //1-D) jjFirebaseVModel Init
+    jjFirebaseVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)*/
 
 
 
@@ -148,9 +161,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         isFireBaseFetchDone=false // ListFrag 갔을 때 이 값이 계속 true 로 있길래. 여기서 false 로 해줌. -> fb 로딩 끝나면 true 로 변함.
         Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isFireBaseFetchDone, currentClickedTrId=$currentClickedTrId")
         super.onCreate(savedInstanceState)
-
-
-
     }
 
 //    override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -159,9 +169,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //    }
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View {
-
         // Inflate the layout for this fragment
-
         val view: View = inflater.inflate(R.layout.fragment_second, container, false)
         return view
     }
@@ -171,8 +179,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         Log.d(TAG, "onViewCreated: jj- begins..")
         super.onViewCreated(view, savedInstanceState)
-
-
 
     //RcView-->
         rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
@@ -192,8 +198,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             val jjDNLDViewModel = ViewModelProvider(requireActivity()).get(JjDNLDViewModel::class.java)
             //1-D) jjFirebaseVModel Init
             jjFirebaseVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)
-            //1-E) jjNetworkCheckVModel
-            //val jjNetworkCheckVModel = ViewModelProvider(requireActivity()).get(JjNetworkCheckVModel::class.java)
+
 
 
 
@@ -303,9 +308,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //Fragments should always use the viewLifecycleOwner to trigger UI updates.
              viewLifecycleOwner.lifecycleScope.launch {
                 //repeatOnLifeCycle() : 이 블록 안은 이 lifecycle 의 onStart() 에서 실행- onStop() 에서 cancel. lifecycle 시작하면 자동 re-launch!
-                // 혹시나 view 가 없을때 신호 받아서 crash 생기는것을 방지.
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
 
+                repeatOnLifecycle(State.STARTED) {
                         jjNtVModelFlow.isNtWorking.collect {
                             Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")
                             // withContext(Dispatchers.Main) {} // hmm..? 이미 lifecycleScope 자체가 Dispatcher.Main 에서 돌아감.
@@ -354,13 +358,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     override fun onStart() {
         super.onStart()
-        viewLifecycleOwner
-        Log.d(TAG, "onStart: 2nd Frag // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState}")
+        //Log.d(TAG, "onStart: 2nd Frag // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState}")
         Log.d(TAG, "onStart: 2nd Frag // lifecycle.currentState=${lifecycle.currentState}")
     }
     override fun onResume() {
         super.onResume()
-        Log.d(TAG, "onResume: 2nd Frag // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState} ")
+        //Log.d(TAG, "onResume: 2nd Frag // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState} ")
         Log.d(TAG, "onResume: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
     // DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서?  신중한 접근 필요. (Update: permission 상관없는듯..)
     // 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.

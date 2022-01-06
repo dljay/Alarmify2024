@@ -56,7 +56,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.11a [SecondFrag 에서 복귀해주는것으로. 진행 전 import 관련 livedata.observe deprecated 경고 해결 상태 ]
+//v3.07.11b [SecondFrag 에서 복귀해주는것으로. 진행 전 import 관련 livedata.observe deprecated 경고 해결 상태 ]
 
 
 //ListFrag <-> Secondfrag.kt  오가는 문제에서 SecondFrag.kt 를 다시 열 때 IAP진행x, NetworkCheck x 안하게 끔+기존 play 상태 복원 할려고 했음.

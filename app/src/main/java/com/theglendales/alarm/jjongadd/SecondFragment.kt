@@ -344,7 +344,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //Chip
         initChip(view)
 
-        //setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
+        setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
 
         registerSwipeRefreshListener()
 

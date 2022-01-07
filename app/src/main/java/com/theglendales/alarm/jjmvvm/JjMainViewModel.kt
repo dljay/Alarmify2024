@@ -49,7 +49,6 @@ class JjMainViewModel : ViewModel() {
 
     fun updateNTWKStatus(isNetworkOK: Boolean) {
         _isNetworkWorking.postValue(isNetworkOK) // .postValue= backgroundThread 사용. // (이 job 은 발생지가 backgrouond thread 니깐 .value=xx 안되고 postValue() 써야함!)
-
     }
 
 //***********************

@@ -50,8 +50,6 @@ class MyNetWorkChecker(val context: Context, val jjMainVModel: JjMainViewModel) 
                     //connection is lost // 그러나 인터넷 안되는 상태(ex.airplane mode)로 최초 실행시 일로 안 들어옴!!
                     Log.d(TAG, "onLost: Internet available: XXXXXXXXXXXXXXXXXXXXX")
                     jjMainVModel.updateNTWKStatus(false)
-
-
                 }
             })
         }

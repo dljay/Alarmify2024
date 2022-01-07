@@ -34,6 +34,7 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
+import com.theglendales.alarm.jjadapters.RcCommIntf
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
@@ -294,7 +295,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         jjRcvViewModel.selectedRow.collect { vAndTrIdObj -> currentClickedTrId = vAndTrIdObj.trId
                             Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${vAndTrIdObj.trId}, \n currentClickedTrId=$currentClickedTrId")
                             if(vAndTrIdObj.view!=null) {
-                                updateMiniPlayerUiOnClick(vAndTrIdObj)
+                                updateMiniPlayerUiOnClick(vAndTrIdObj) // 동시에 ListFrag 갔다왔을때도 이걸 통해서 [복원]
                             }
                          }
                     }
@@ -331,6 +332,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 if(jjMainVModel.prevNT && !isNetworkWorking || !jjMainVModel.prevNT && !isNetworkWorking  ) {
                     Log.d(TAG, "onViewCreated: [MainVModel] Network Error! Launch Lottie!")
                     lottieAnimController("error")
+                    Toast.makeText(this.context,"Error: Unable to connect",Toast.LENGTH_SHORT).show()
                 }
                 //B) false && true (기존에 X 지금은 O)
                 else if(!jjMainVModel.prevNT && isNetworkWorking) {
@@ -355,9 +357,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         setUpLateInitUis(view) // -> 이 안에서 setUpSlindingPanel() 도 해줌. todo: Coroutine 으로 착착. chain 하지 말고..
         //Chip
         initChip(view)
-
         //setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
-
         registerSwipeRefreshListener()
 
     // MyCacher Init()
@@ -470,22 +470,17 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         val badgeStrList = rtInTheCloudObj.bdgStrArray// Badge Sort
         showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
         //
-        when (viewAndTrId.view?.id) {
-            //1) RcView > 왼쪽 큰 영역(album/title) 클릭했을때 처리.
-            R.id.id_rL_including_title_description -> {
+        //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
+        if (ivInside_Rc != null) { // 사실 RcView 가 제대로 setup 되어있으면 무조건 null 이 아님! RcView 클릭한 부분에 View 가 로딩된 상태 (사진 로딩 상태 x)
+            Log.d(TAG, "updateMiniPlayerUiOnClick: ivInside_Rc not null. ivInside_Rc=$ivInside_Rc")
+            iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
+            iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
+        }
 
-                //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
-                if (ivInside_Rc != null) { // 사실 RcView 가 제대로 setup 되어있으면 무조건 null 이 아님! RcView 클릭한 부분에 View 가 로딩된 상태 (사진 로딩 상태 x)
-                    Log.d(TAG, "updateMiniPlayerUiOnClick: ivInside_Rc not null. ivInside_Rc=$ivInside_Rc")
-                    iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
-                    iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
-                }
-
-                // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
-                if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
-                    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
-                }
-            }
+        // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
+        if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
+            slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
+        }
 
             //다운로드 Test 용도 - IAP  검증 걸치지 않고 해당 번호에 넣은 RT 다운로드 URL 로 이동. [원복]
 //                val testRtHelixObj = RtInTheCloud(title = "SoundHelix8.mp3","moreshit","desc","imgUrl",
@@ -493,7 +488,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //                myDownloaderV2.singleFileDNLD(testRtHelixObj)
 
 
-        }
+
     }
 
     private fun initChip(v: View) {
@@ -706,14 +701,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                          //4) Update RcV UI! (VuMeter 등)
                         reConstructTrUisOnReturn(GlbVars.clickedTrId)
                     }
-                } else { // 에러났을 때
+                }/* else { // 에러났을 때
                     lottieAnimController("error")
                     Toast.makeText(
                         this.context,
                         "Error Loading Data from Firebase. Error: ${it.exception.toString()}",
                         Toast.LENGTH_SHORT
                     ).show()
-                }
+                }*/
             }
 
         })
@@ -856,10 +851,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             setUpSlidingPanel()
 
+
         }
 
     }
-
     private fun setUpSlidingPanel() {
 
         Log.d(TAG,"setUpSlidingPanel: slidingUpPanelLayout.isActivated=${slidingUpPanelLayout.isActivated}")
@@ -950,22 +945,23 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
     }
-
-
-    /*fun updateResultOnRcView(fullRtClassList: MutableList<RtInTheCloud>) {
-        Log.d(TAG, "showResult: 5) called..Finally! ")
-        rcvAdapterInstance.updateRingToneMap(fullRtClassList)// todo: 이 map 안 쓰이는것 같은데 흐음.. (우리는 Map 기반이므로 list 정보를 -> 모두 Map 으로 업데이트!)
-    }*/
     private fun snackBarDeliverer(view: View, msg: String, isShort: Boolean) {
         if(activity!=null && isAdded) { // activity 가 존재하며, 현재 Fragment 가 attached 되있으면 Snackbar 를 표시.
             Log.d(TAG, "snackBarMessenger: Show Snackbar. Fragment isAdded=$isAdded, Message=[$msg], Activity=$activity")
             if(isShort) {
-                Snackbar.make(view, "$msg", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(view, msg, Snackbar.LENGTH_SHORT).show()
             }else {
-                Snackbar.make(view, "$msg", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show()
             }
         } else {
             Log.d(TAG, "snackBarDeliverer: Unable to Deliver Snackbar message!!")
+        }
+    }
+    
+    fun testRcComm(){ object : RcCommIntf {
+        override fun someFuncion() {
+            Log.d(TAG, "somexxFunction: called")
+            }
         }
     }
 

@@ -56,11 +56,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.12a [SecondFrag 에서 복귀해주는것으로. 진행 중]
-// Network Detector 및 Lottie 잘되는 것 확인 (O)
-//
-//
-//*** 해당버전 Flow 사용 위해 api31 로 바꾸고 gradle(app) 많이 바꿨음. 혹시나 문제 생기면 3.07.08b 로 rollback 할 것!! **
+//v3.07.12c [SecondFrag 에서 복귀해주는것으로. 진행 중]
+//------------Todo 22/1/7 (금) 오후 4:41분
+//1-a. SecondFrag 에서 FB로딩->IAP 로딩끝나고 -> rcView>refreshRcV() 불릴 때 lottie꺼주기?(Interface 활용해서 SecondFrag 와 커뮤니케이션?)
+//*1-b. 1-a 에서 Coroutine 으로 모든게 끝난 시점 확인하고 SecondFrag 가 그냥 lottie 꺼주는 방법 없을까?
+//2. RcV 에서 클릭 했을 때 viewAndTrId 가 아니고 그냥 RtInTheCloud Obj 넣어주기? => 결국 사진 보여주는것만 GLide 로 URL 통해 로딩하면 된다 -> Cache 되있으니 네트워크 쓸걸로 생각은 안된다.
+//3. RcV 구매 클릭 소스 넣어주기 (iapInstaceV2.myOnPurchaseClicked..) [Line 346]
+//4. MYIAPHelperV2.kt >itemPricesMAP 관련. <- 이걸 RecyclerView 에서 쓰는데 별로 바람직하지 않다. JjMainVieweModel 에서 보관? => RcV 에서 결국 필요한 건 ItemPricesMap 과 PurchaseBool 여부(현재는 SharePref)
+//5. 결과적으로 (가급적) JJMainVModel 과 JjMpViewModel 만 남겨두도록 해보기?
 
 
 /**

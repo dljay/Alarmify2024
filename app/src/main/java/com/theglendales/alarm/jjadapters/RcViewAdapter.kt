@@ -32,8 +32,8 @@ import io.gresse.hugo.vumeterlibrary.VuMeterView
 
 private const val TAG = "RcVAdapter"
 
-interface MyOnItemClickListener {
-    fun myOnItemClick(v: View, trackId: Int)
+interface RcCommIntf {
+    fun someFuncion()
 
 }
 
@@ -55,7 +55,6 @@ class RcViewAdapter(
     val plainColor = Color.WHITE
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-
         Log.d(TAG, "(Line44)onCreateViewHolder: jj- RcV! viewType=$viewType.")
         val myXmlToViewObject =
             LayoutInflater.from(parent.context).inflate(R.layout.jj_rc_single_slot, parent, false)
@@ -234,6 +233,9 @@ class RcViewAdapter(
         Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${currentRtList.size}")
 
         diffResult.dispatchUpdatesTo(this)
+        //todo: Turn off Lottie Loading
+
+
         //enableHighlightOnTrId(GlbVars.clickedTrId)
     }
 
@@ -325,7 +327,7 @@ class RcViewAdapter(
                     //1) [하이라이트, 음악 재생] - 구매 제외 부분 클릭  (Rl_including_tv1_2 영역)
                     R.id.id_rL_including_title_description -> {
                         //1-a)
-                        GlbVars.clickedTrId = holderTrId
+                        GlbVars.clickedTrId = holderTrId // onBindViewHolder 에서 적합한 trID 를 이미 부여받은 상태.
                         Log.d(TAG,"*****************************onClick-To Play MUSIC: Global.clTrId: ${GlbVars.clickedTrId}, holderTrId: $holderTrId ****************")
 
                         //1-b) 하이라이트 작동
@@ -334,6 +336,9 @@ class RcViewAdapter(
 
                         //1-c) 음악 플레이
                         mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+
+                        // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
+                        rcViewModel.updateLiveData(vHolderAndTrId) // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
                     }
                     //2) [구매 클릭]
                     R.id.id_cl_entire_Purchase -> {
@@ -342,8 +347,7 @@ class RcViewAdapter(
                         return
                     }
                 }
-            // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
-                rcViewModel.updateLiveData(vHolderAndTrId) // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
+
 
             }
 

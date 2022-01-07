@@ -629,6 +629,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 mpClassInstance.createMp3UrlMap(rtList)
                 // IAP (**여기서 onBillingFinished() 는 Async - 다른 thread 에서 따로 움직임!)
                 iapInstanceV2.refreshItemIdIapNameTitle(rtList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) ** todo: 여기서 refresh?
+                //Log.d(TAG, "spreadRtList: hopefully finished..?")
 
             } else {
                 //B) listFrag 갔다와서 ViewModel 이 종전에 있던 값 그냥 자동 반사로 또 보냈을 때 (같은 리스트. isFreshList=false)

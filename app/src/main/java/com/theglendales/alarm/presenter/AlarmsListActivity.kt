@@ -56,14 +56,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.11b [SecondFrag 에서 복귀해주는것으로. 진행 전 import 관련 livedata.observe deprecated 경고 해결 상태 ]
+//v3.07.12a [SecondFrag 에서 복귀해주는것으로. 진행 중]
+// Network Detector 및 Lottie 잘되는 것 확인 (O)
 
 
-//ListFrag <-> Secondfrag.kt  오가는 문제에서 SecondFrag.kt 를 다시 열 때 IAP진행x, NetworkCheck x 안하게 끔+기존 play 상태 복원 할려고 했음.
-//- Livedata 는 SecondFrag 열때마다 (기존 값을) 다시한번 emit 하는 문제가 있어서 LiveData->Flow 로 진행테스트 해봤음.
-//- Flow 로 바꾸다보니  Coroutine Scope, by viewModels() 등을 사용해야되서 Gradle(app) 을 많이 고침
-//=> target/compile sdk (31) 로 변경, 그랬더니 Android12 (api31) 에 넣기 위해 Manifest.xml 에서 android:export="bool" 이걸 activity 마다 넣어줘야했음.
-//기타: https://ddangeun.tistory.com/80 (by Viewmodels)
+
 //
 //
 //*** 해당버전 Flow 사용 위해 api31 로 바꾸고 gradle(app) 많이 바꿨음. 혹시나 문제 생기면 3.07.08b 로 rollback 할 것!! **
@@ -161,10 +158,12 @@ class AlarmsListActivity : AppCompatActivity() {
                 }
 
                 override fun hideDetails() {
+                    Log.d(TAG, "hideDetails: called")
                     editing.onNext(EditedAlarm())
                 }
 
                 override fun hideDetails(holder: RowHolder) {
+                    Log.d(TAG, "hideDetails2: [DetailFrag 에서 cancel/BackButton 누름] ")
                     editing.onNext(EditedAlarm(
                             isNew = false,
                             value = Optional.absent(),

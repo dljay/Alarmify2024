@@ -3,10 +3,12 @@ package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.RtInTheCloud
+import com.theglendales.alarm.jjmvvm.JjMainViewModel
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -16,10 +18,12 @@ import java.io.IOException
 private const val TAG="MyIAPHelperV2"
 class MyIAPHelperV2(private val receivedActivity: Activity,
                     private val rcvAdapterInstance: RcViewAdapter?,
-                    private val myDownloaderVInstance: MyDownloaderV2) :  PurchasesUpdatedListener
+                    private val myDownloaderVInstance: MyDownloaderV2)  :  PurchasesUpdatedListener //todo: SecondFrag 에 jjMainVModel 로 연갈할것?
+
 {
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
+
 
     var currentRtList: MutableList<RtInTheCloud> = ArrayList()
     var multiDNLDNeededList: MutableList<RtInTheCloud> = ArrayList() // ##### <기존 구매했는데 a) 삭제 후 재설치 b) Pxx.rta 파일 소실 등으로 복원이 필요한 파일들 리스트> [멀티]
@@ -176,10 +180,10 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
  *  제일 먼저 호출되는 곳
  */
     fun refreshItemIdIapNameTitle(newRtList: MutableList<RtInTheCloud>) { // 새로 받은 ringToneList 로 itemIDsMap 을 수정/업뎃해줌. initIAP() 에서 호출됨.
+        Log.d(TAG, "A) refreshItemIdIapNameTitle: begins! newRtList==currentRtList? : [${newRtList==currentRtList}]")
+    // 이미 했는지 안했는지 여기서 판단? bool ? MAP 갯수?
         currentRtList.clear()
         currentRtList = newRtList
-
-        Log.d(TAG, "A) refreshItemIdIapNameTitle: begins!")
         initIAP()
     }
 

@@ -3,12 +3,8 @@ package com.theglendales.alarm.jjongadd
 //import android.app.Fragment
 import android.annotation.SuppressLint
 import android.app.DownloadManager
-import android.net.ConnectivityManager
-import android.net.Network
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import androidx.fragment.app.Fragment // todo: Keep an eye on this guy..
@@ -77,17 +73,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Network Checker
     lateinit var myNetworkCheckerInstance: MyNetWorkChecker
     //ViewModel 5종 생성
-    private val jjNtVModelFlow: JjNetworkCheckVModel by viewModels<JjNetworkCheckVModel>() //[FLOW]
+    private val jjMainVModel: JjMainViewModel by viewModels()
+    private val jjNtVModelFlow: JjNetworkCheckVModel by viewModels() //[FLOW]
 
-    /*//1) ViewModel 5종 생성(RcvVModel/MediaPlayerVModel)
-    //1-A)  *** JjRcvViewModel 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
-    val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
-    //1-B) jjMpViewModel 생성
-    val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
-    //1-C) jjMyDownloaderViewModel 생성
-    val jjDNLDViewModel = ViewModelProvider(requireActivity()).get(JjDNLDViewModel::class.java)
-    //1-D) jjFirebaseVModel Init
-    jjFirebaseVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)*/
+    
 
 
 
@@ -153,7 +142,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     //Firebase 관련
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
-    lateinit var jjFirebaseVModel: JjFirebaseViewModel
+    lateinit var jjFbVModel: JjFirebaseViewModel
     var fullRtClassList: MutableList<RtInTheCloud> = ArrayList()
 
     // Basic overridden functions -- >
@@ -170,6 +159,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
+        Log.d(TAG, "onCreateView: jj-called.")
         val view: View = inflater.inflate(R.layout.fragment_second, container, false)
         return view
     }
@@ -189,6 +179,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
     //  LIVEDATA ->
+
         //1) ViewModel 5종 생성(RcvVModel/MediaPlayerVModel)
             //1-A)  *** JjRcvViewModel 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
             val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
@@ -197,7 +188,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //1-C) jjMyDownloaderViewModel 생성
             val jjDNLDViewModel = ViewModelProvider(requireActivity()).get(JjDNLDViewModel::class.java)
             //1-D) jjFirebaseVModel Init
-            jjFirebaseVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)
+            jjFbVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)
 
 
 
@@ -274,7 +265,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Download Failed. Please check your network connectivity", false)
 
                     }
-                    DownloadManager.STATUS_SUCCESSFUL-> {//8
+                    DownloadManager.STATUS_SUCCESSFUL-> {//8 <- 다시 secondFrag 들어왔을 때 뜰 수 있음.
                         Log.d(TAG, "onViewCreated: Observer: DNLD SUCCESS (O)  ")
                         // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
                         btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅!
@@ -308,13 +299,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //Fragments should always use the viewLifecycleOwner to trigger UI updates.
              viewLifecycleOwner.lifecycleScope.launch {
                 //repeatOnLifeCycle() : 이 블록 안은 이 lifecycle 의 onStart() 에서 실행- onStop() 에서 cancel. lifecycle 시작하면 자동 re-launch!
-
                 repeatOnLifecycle(State.STARTED) {
-                        jjNtVModelFlow.isNtWorking.collect {
-                            Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")
-                            // withContext(Dispatchers.Main) {} // hmm..? 이미 lifecycleScope 자체가 Dispatcher.Main 에서 돌아감.
-                        }
-                    }
+                        jjNtVModelFlow.isNtWorking.collect {Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")}}
             }
 
         //3) Firebase ViewModel Initialize
@@ -328,7 +314,34 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
             myDownloaderV2 = activity?.let {MyDownloaderV2(it,jjDNLDViewModel)}!!
             iapInstanceV2 = MyIAPHelperV2(requireActivity(), rcvAdapterInstance, myDownloaderV2)
-            myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjNtVModelFlow) }!!
+            myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!
+
+        //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
+            //Firebase 에서 새로운 리스트를 받을 떄 (or 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기)
+            jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListFromFb->
+                Log.d(TAG, "onViewCreated: [MainVModel] rtListFromFb via ViewModel= $rtListFromFb")
+
+                spreadRtList(rtListFromFb, jjMainVModel.isFreshList)
+                jjMainVModel.isFreshList = false // 이제 한번 spread 됐으니 fresh 가 아니지..
+            }
+            //Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
+            jjMainVModel.isNetworkWorking.observe(viewLifecycleOwner) { isNetworkWorking ->
+                Log.d(TAG, "onViewCreated: [MainVModel] Network Availability detected, isNetworkWorking=[$isNetworkWorking] ")
+
+                //A-1) true && false (기존에 O 지금은 X) or A-2) false && false (기존도 X 지금도 X) - 혹시 몰라서 넣음.
+                if(jjMainVModel.prevNT && !isNetworkWorking || !jjMainVModel.prevNT && !isNetworkWorking  ) {
+                    Log.d(TAG, "onViewCreated: [MainVModel] Network Error! Launch Lottie!")
+                    lottieAnimController("error")
+                }
+                //B) false && true (기존에 X 지금은 O)
+                else if(!jjMainVModel.prevNT && isNetworkWorking) {
+                    Log.d(TAG, "onViewCreated: [MainVModel] Network Working Again! Remove Error Lottie and Relaunch FB!!")
+                    lottieAnimController("stop")
+                    //todo: Relaunch FB!
+                }
+                jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
+
+            }
 
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance
@@ -336,7 +349,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //RcView <--
     // 네트워크 체크-> MyNetworkChecker -> ViewModel -> SecondFrag 의 Lottie 로 연결
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) { //Nougat=API 24. todo: MINIMUM SDK 변경?
-            Log.d(TAG, "onViewCreated: network call back- executed ")
+            Log.d(TAG, "onViewCreated: network call back- registered ")
             myNetworkCheckerInstance.setNetworkListener() //annotated element should only be called on the given API level or higher
         }
 
@@ -344,7 +357,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //Chip
         initChip(view)
 
-        setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
+        //setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
 
         registerSwipeRefreshListener()
 
@@ -401,6 +414,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         Log.d(TAG, "onDestroy: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}") //DESTROYED 로 뜬다.
          mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
+
          //requireActivity().viewModelStore.clear()// ListFrag 로 갈때는 그냥 ViewModel Clear 해줌 -> 다시 복귀했을 때 생쑈 없애기 위해..
     }
 // ===================================== My Functions ==== >
@@ -436,7 +450,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
 
     private fun myOnLiveDataFromRCV(viewAndTrId: ViewAndTrIdClass) {
-        val rtInTheCloudObj = rcvAdapterInstance.getDataFromMap(viewAndTrId.trId)
+        val rtInTheCloudObj = rcvAdapterInstance.getRtObjFromMap(viewAndTrId.trId)
         val ivInside_Rc = viewAndTrId.view.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
         Log.d(TAG, "myOnLiveDataReceived: called. .. 1)ivInside_Rc=$ivInside_Rc, 2)rtClassFromtheList= $rtInTheCloudObj")
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
@@ -486,32 +500,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
 
         }
-    }
-
-    private fun setNetworkAvailabilityListener() {
-        //1-b) API 24 이상이면 콜백까지 등록
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            myNetworkCheckerInstance.connectivityManager.let {
-                it.registerDefaultNetworkCallback(object :ConnectivityManager.NetworkCallback() {
-                    override fun onAvailable(network: Network) {
-                        //Connection is gained -> 다시 FIREBASE loading
-                        Log.d(TAG,"onAvailable: Internet available: OOOOOOOOOOOOOOOOOOOOO ") //최초 앱 실행시에도 (인터넷이 되니깐) 여기 log 가 작동됨.
-                        Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() } // MainThread 에서만 실행해야함. 이거 없으면 크래쉬! (Cannot invoke observe on a background thread)
-                        // 참고: Normally observe(..) and observeForever(..) should be called from the main thread because their
-                        // callbacks (Observer<T>.onChanged(T t)) often change the UI which is only possible in the main thread.
-                    }
-                    override fun onLost(network: Network) {
-                        //connection is lost // 그러나 인터넷 안되는 상태(ex.airplane mode)로 최초 실행시 일로 안 들어옴!!
-                        Log.d(TAG, "onLost: Internet available: XXXXXXXXXXXXXXXXXXXXX")
-                        lottieAnimController("error")
-                    }
-                })
-            }
-
-        }
-        //그 외 API 23 이하거나 && 인터넷이 안되는 상태로 app 을 켜면 loadFromFireBase() 실행 (<- 여기서 현재 돌고있는 loading animation 을 인터넷 불가 animation 으로 바꿔줌)
-        //return
     }
 
     private fun initChip(v: View) {
@@ -608,11 +596,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
         Log.d(TAG, "showOrHideBadges: done..")
     }
-    private fun backToFullRtList() {
-        Log.d(TAG, "backToFullRtList: called.")
-        rcvAdapterInstance.refreshRecyclerView(fullRtClassList)
-        mySmoothScroll()
-    }
+
 
     //lottieAnimation Controller = 로딩:0 번, 인터넷에러:1번, 정상:2번(lottie 를 감춰!)
     private fun lottieAnimController(status: String) {
@@ -644,7 +628,36 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
     }
 //MediaPlayerViewModel 을 Observe
+    //Send RtList to IAP,RCV,MP, etc..
+    private fun spreadRtList(rtList: MutableList<RtInTheCloud>, isFreshList: Boolean) {
+    //A) 첫 SecondFrag 런칭 후 로딩 or 새로고침(Spinner 휘리릭~)  ==> 모두 업데이트!
+    if(isFreshList) {
+        Log.d(TAG, "spreadRtList: Received new Fresh List from FB! Let's Spread this list!")
+        fullRtClassList = rtList // 추후 Chip Sorting 때 사용
+        // IAP
+        iapInstanceV2.refreshItemIdIapNameTitle(rtList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) **
+        // Update MediaPlayer.kt 의 URL
+        mpClassInstance.createMp3UrlMap(rtList)
+        // Update RcV's RT MAP
+        rcvAdapterInstance.updateRingToneMap(rtList) //updateRcV 와는 별개로 추후 RcV 에서 클릭했을 때 RtObj 을 이걸 통해서 받음
 
+
+    } else {
+    //B) listFrag 갔다와서 ViewModel 이 종전에 있던 값 그냥 자동 반사로 또 보냈을 때 (같은 리스트. isFreshList=false)
+        Log.d(TAG, "spreadRtList: This is not a fresh list.. 그냥 RCV 만 업뎃하자 (어쨌든 RcV 는 재구성되야하니깐..)")
+        rcvAdapterInstance.refreshRecyclerView(rtList)
+        rcvAdapterInstance.updateRingToneMap(rtList)
+    }
+    // SwipeRefresh 돌고 있었으면.. 멈춰 (aka 빙글빙글 animation 멈춰..)
+    if (swipeRefreshLayout.isRefreshing) {
+        Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
+        swipeRefreshLayout.isRefreshing = false
+    }
+
+    lottieAnimController("stop") //모든게 로딩 완료되었으니 애니메이션 stop!
+    
+
+    }
     //Firebase ViewModel 을 Observe
     private fun observeAndLoadFireBase() {
         // 현재도 lottie 는 나오는 상황 (setUpLateIniUis() 에서 벌써 loading 실행해놨음)
@@ -654,13 +667,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         if (!isInternetAvailable) { // 인터넷 사용 불가!
             Log.d(TAG, "loadFromFireBase: isInternetAvailable= $isInternetAvailable")
             lottieAnimController("error")
-            return //더이상 firebase 로딩이고 나발이고 진행 안함!!
+            return // 더이상 firebase 로딩이고 나발이고 진행 안함!!
         }
 
         //2. If we have internet connectivity, then call FireStore!
 
         //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjFirebaseVModel.liveRtList: ${jjFirebaseVModel.fullRtClassList}")
-        jjFirebaseVModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
+        jjFbVModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
             //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjFirebaseVModel.liveRtList: ${jjFirebaseVModel.fullRtClassList}")
             it.addOnCompleteListener {
                 if (it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
@@ -675,6 +688,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     lottieAnimController("stop") //모든게 로딩 완료되었으니 애니메이션 stop!
 
                     fullRtClassList = it.result!!.toObjects(RtInTheCloud::class.java)
+                    //Log.d(TAG, "observeAndLoadFireBase: fullRtClassList.hashCode() = ${fullRtClassList.hashCode()}")
 
                 // IAP
                     iapInstanceV2.refreshItemIdIapNameTitle(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) **
@@ -731,10 +745,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 if (swipeRefreshLayout.isRefreshing) {
                     Log.d(TAG, "Chip checked. Doing nothing but stopping the spinner.")
                     swipeRefreshLayout.isRefreshing = false
-
                 }
             } else if (!myIsChipChecked) {
-                Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() }
+                //Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() } //todo: jjMainVModel.getRtLisFromFb() 로 바꾸기!
+                jjMainVModel.getRtListFromFb()
             }
         }
     }
@@ -832,7 +846,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
 
 
-            val ringtoneClassFromtheList = rcvAdapterInstance.getDataFromMap(trackId)
+            val ringtoneClassFromtheList = rcvAdapterInstance.getRtObjFromMap(trackId)
             val ivInside_Rc = vHolder.iv_Thumbnail
             Log.d(TAG,"setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description}")
         //Sliding Panel - Upper UI

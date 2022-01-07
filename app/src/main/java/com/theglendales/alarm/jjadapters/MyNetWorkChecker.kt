@@ -7,11 +7,12 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import com.theglendales.alarm.jjmvvm.JjMainViewModel
 import com.theglendales.alarm.jjmvvm.JjNetworkCheckVModel
 
 private const val TAG ="MyNetWorkChecker"
 
-class MyNetWorkChecker(val context: Context, val jjNetworkCheckVModel: JjNetworkCheckVModel) {
+class MyNetWorkChecker(val context: Context, val jjMainVModel: JjMainViewModel) {
 
     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -35,23 +36,22 @@ class MyNetWorkChecker(val context: Context, val jjNetworkCheckVModel: JjNetwork
         }
 
     }
-    @RequiresApi(Build.VERSION_CODES.N) //API 24
+    @RequiresApi(Build.VERSION_CODES.N) //API 24 // API 23 이하 -> 콜백 기능 못 쓰는듯.
+    //
     fun setNetworkListener() {
         connectivityManager.let {
             it.registerDefaultNetworkCallback(object :ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
-                    //Connection is gained -> 다시 FIREBASE loading
+                    //Connection is gained -> Tell ViewModel!
                     Log.d(TAG,"onAvailable: Internet available: OOOOOOOOOOOOOOOOOOOOO ") //최초 앱 실행시에도 (인터넷이 되니깐) 여기 log 가 작동됨.
-                    // todo: livedata update { observeAndLoadFireBase() } // MainThread 에서만 실행해야함.
-                    jjNetworkCheckVModel.updateNtAvailabilityByFlow(true)
+                    jjMainVModel.updateNTWKStatus(true)
                 }
-
                 override fun onLost(network: Network) {
                     //connection is lost // 그러나 인터넷 안되는 상태(ex.airplane mode)로 최초 실행시 일로 안 들어옴!!
                     Log.d(TAG, "onLost: Internet available: XXXXXXXXXXXXXXXXXXXXX")
-                    // todo: livedata update -> anim error!
+                    jjMainVModel.updateNTWKStatus(false)
 
-                    jjNetworkCheckVModel.updateNtAvailabilityByFlow(false)
+
                 }
             })
         }

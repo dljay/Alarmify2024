@@ -245,7 +245,7 @@ class RcViewAdapter(
         }
     }
 
-    fun getDataFromMap(trackId: Int): RtInTheCloud? {
+    fun getRtObjFromMap(trackId: Int): RtInTheCloud? {
         return if (ringToneMap.isNotEmpty()) ringToneMap[trackId] else null
     }
 

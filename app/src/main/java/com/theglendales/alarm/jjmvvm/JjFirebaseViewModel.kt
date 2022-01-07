@@ -28,7 +28,8 @@ class JjFirebaseViewModel : ViewModel() {
 
     init {
         Log.d(TAG, "initializing... ")
-        loadFromFireBase()
+        // 로딩 후 listFrag 갔다 돌아왔을 때 -> sharedPref 가 있으면 거기서 로딩
+        //loadFromFireBase()
     }
 //1) 기본 Firebase 로딩 관련
     //Return LiveData!
@@ -37,6 +38,7 @@ class JjFirebaseViewModel : ViewModel() {
     }
     // load from Fb! -
     fun loadFromFireBase()  {
+        Log.d(TAG, "loadFromFireBase: called")
         // 만약 sharedPref-most recent list 가 존재하면 거기서 로딩(기존 리스트는 AlarmsListActivity 의 onDestroy() 때 삭제 가능).  새로고침이 문제..
         val qSnapShot= firebaseRepoInstance.getPostList() // Returns- Task<QuerySnapshot>
         _liveTaskQSnapShot.postValue(qSnapShot) // postValue: main thread 에서 setValue 해줌.

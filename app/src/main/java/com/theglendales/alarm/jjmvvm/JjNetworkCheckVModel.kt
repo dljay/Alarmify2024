@@ -26,6 +26,7 @@ class JjNetworkCheckVModel : ViewModel() {
         viewModelScope.launch {
             //Log.d(TAG, "updateNtAvailabilityByFlow: [FLOW] updating _isNtWorking.value(=$isAvailable)")
             _isNtWorking.value = isAvailable
+            //ntwkPrevState = isAvailable
         }
     }
 

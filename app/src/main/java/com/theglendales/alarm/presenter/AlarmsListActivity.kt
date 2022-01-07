@@ -58,9 +58,6 @@ import java.util.Calendar
 
 //v3.07.12a [SecondFrag 에서 복귀해주는것으로. 진행 중]
 // Network Detector 및 Lottie 잘되는 것 확인 (O)
-
-
-
 //
 //
 //*** 해당버전 Flow 사용 위해 api31 로 바꾸고 gradle(app) 많이 바꿨음. 혹시나 문제 생기면 3.07.08b 로 rollback 할 것!! **

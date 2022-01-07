@@ -48,8 +48,9 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
+import kotlinx.coroutines.withContext
 
 
 //Coroutines
@@ -200,7 +201,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}, \n isFireBaseFetchDone=$isFireBaseFetchDone, currentClickedTrId=$currentClickedTrId")
                 if(isFireBaseFetchDone) { // Firebase 로 데이터 fetching 이 다 끝나면 이 값이 = true 가 된다.
                     myOnLiveDataFromRCV(viewAndTrIdClassInstance)
-
                 }
             //**SHARED PREF 저장용 **
                 //playInfo.trackID = viewAndTrIdClassInstance.trId
@@ -337,7 +337,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 else if(!jjMainVModel.prevNT && isNetworkWorking) {
                     Log.d(TAG, "onViewCreated: [MainVModel] Network Working Again! Remove Error Lottie and Relaunch FB!!")
                     lottieAnimController("stop")
-                    //todo: Relaunch FB!
+                    jjMainVModel.getRtListFromFb() // Relaunch FB! -> 사실 lottie 가 사라지면서 기존 RcView 가 보여서 상관없긴 하지만.애초 Network 불가상태로 접속해 있을 수 있음.
                 }
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
 
@@ -620,6 +620,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             "stop" -> {
                 activity?.runOnUiThread(Runnable
                 {
+                    Log.d(TAG, "lottieAnimController: STOP (any) Animation!!")
                     lottieAnimationView.cancelAnimation()
                     lottieAnimationView.visibility = LottieAnimationView.GONE
                 })
@@ -630,45 +631,44 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //MediaPlayerViewModel 을 Observe
     //Send RtList to IAP,RCV,MP, etc..
     private fun spreadRtList(rtList: MutableList<RtInTheCloud>, isFreshList: Boolean) {
-    //A) 첫 SecondFrag 런칭 후 로딩 or 새로고침(Spinner 휘리릭~)  ==> 모두 업데이트!
-    if(isFreshList) {
-        Log.d(TAG, "spreadRtList: Received new Fresh List from FB! Let's Spread this list!")
-        fullRtClassList = rtList // 추후 Chip Sorting 때 사용
-        // IAP
-        iapInstanceV2.refreshItemIdIapNameTitle(rtList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) **
-        // Update MediaPlayer.kt 의 URL
-        mpClassInstance.createMp3UrlMap(rtList)
-        // Update RcV's RT MAP
-        rcvAdapterInstance.updateRingToneMap(rtList) //updateRcV 와는 별개로 추후 RcV 에서 클릭했을 때 RtObj 을 이걸 통해서 받음
 
+            //A) 첫 SecondFrag 런칭 후 로딩 or 새로고침(Spinner 휘리릭~)  ==> 모두 업데이트!
+            if(isFreshList) {
+                Log.d(TAG, "spreadRtList: Received new Fresh List from FB! Let's Spread this list!")
+                fullRtClassList = rtList // 추후 Chip Sorting 때 사용
+                // Update MediaPlayer.kt 의 URL
+                mpClassInstance.createMp3UrlMap(rtList)
+                // Update RcV's RT MAP
+                rcvAdapterInstance.updateRingToneMap(rtList) //updateRcV 와는 별개로 추후 RcV 에서 클릭했을 때 RtObj 을 이걸 통해서 받음
+                // IAP (**여기서 onBillingFinished() 는 Async - 다른 thread 에서 따로 움직임!)
+                iapInstanceV2.refreshItemIdIapNameTitle(rtList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) ** todo: 여기서 refresh?
 
-    } else {
-    //B) listFrag 갔다와서 ViewModel 이 종전에 있던 값 그냥 자동 반사로 또 보냈을 때 (같은 리스트. isFreshList=false)
-        Log.d(TAG, "spreadRtList: This is not a fresh list.. 그냥 RCV 만 업뎃하자 (어쨌든 RcV 는 재구성되야하니깐..)")
-        rcvAdapterInstance.refreshRecyclerView(rtList)
-        rcvAdapterInstance.updateRingToneMap(rtList)
-    }
-    // SwipeRefresh 돌고 있었으면.. 멈춰 (aka 빙글빙글 animation 멈춰..)
-    if (swipeRefreshLayout.isRefreshing) {
-        Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
-        swipeRefreshLayout.isRefreshing = false
-    }
+            } else {
+                //B) listFrag 갔다와서 ViewModel 이 종전에 있던 값 그냥 자동 반사로 또 보냈을 때 (같은 리스트. isFreshList=false)
+                Log.d(TAG, "spreadRtList: This is not a fresh list.. 그냥 RCV 만 업뎃하자 (어쨌든 RcV 는 재구성되야하니깐..)")
+                rcvAdapterInstance.refreshRecyclerView(rtList)
+                rcvAdapterInstance.updateRingToneMap(rtList)
+            }
 
-    lottieAnimController("stop") //모든게 로딩 완료되었으니 애니메이션 stop!
-    
-
+            // SwipeRefresh 돌고 있었으면.. 멈춰 (aka 빙글빙글 animation 멈춰..)
+            if (swipeRefreshLayout.isRefreshing) {
+                Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
+                swipeRefreshLayout.isRefreshing = false
+            }
+            //모든게 로딩 완료되었으니 애니메이션 stop!
+            lottieAnimController("stop")
     }
     //Firebase ViewModel 을 Observe
     private fun observeAndLoadFireBase() {
         // 현재도 lottie 는 나오는 상황 (setUpLateIniUis() 에서 벌써 loading 실행해놨음)
         //1. 인터넷 가능한지 체크
         //인터넷되는지 체크
-        val isInternetAvailable: Boolean = myNetworkCheckerInstance.isNetWorkAvailable()
+      /*  val isInternetAvailable: Boolean = myNetworkCheckerInstance.isNetWorkAvailable()
         if (!isInternetAvailable) { // 인터넷 사용 불가!
             Log.d(TAG, "loadFromFireBase: isInternetAvailable= $isInternetAvailable")
             lottieAnimController("error")
             return // 더이상 firebase 로딩이고 나발이고 진행 안함!!
-        }
+        }*/
 
         //2. If we have internet connectivity, then call FireStore!
 
@@ -677,7 +677,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjFirebaseVModel.liveRtList: ${jjFirebaseVModel.fullRtClassList}")
             it.addOnCompleteListener {
                 if (it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
-                    Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
+            /*        Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
 
                     // SwipeRefresh 돌고 있었으면.. 멈춰 (aka 빙글빙글 animation 멈춰..)
                     if (swipeRefreshLayout.isRefreshing) {
@@ -689,22 +689,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                     fullRtClassList = it.result!!.toObjects(RtInTheCloud::class.java)
                     //Log.d(TAG, "observeAndLoadFireBase: fullRtClassList.hashCode() = ${fullRtClassList.hashCode()}")
-
                 // IAP
                     iapInstanceV2.refreshItemIdIapNameTitle(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) **
-
                 // Update MediaPlayer.kt 의 URL
                     mpClassInstance.createMp3UrlMap(fullRtClassList)
                 // Update RcV's RT MAP
                     rcvAdapterInstance.updateRingToneMap(fullRtClassList) //updateRcV 와는 별개로 추후 ListFrag 갔다왔을 때 UI 업뎃을 위해 사용.
-                    //rcvAdapterInstance.refreshRecyclerView(fullRtClassList)
+                    //rcvAdapterInstance.refreshRecyclerView(fullRtClassList)*/
 
-
+                // *******
                 // 아무 트랙도 클릭 안한 상태
                     if(GlbVars.clickedTrId == -1 || currentClickedTrId == -1) {
                         isFireBaseFetchDone = true // 이제는 rcV 를 클릭하면 그에 대해 대응할 준비가 되어있음.
                     }
-
                 // 다른 frag 갔다가 돌아왔을 때 (or 새로고침) 했을 때- 다음의 reConstructXX() 가 다 완료되면 isEverythingReady = true 가 된다.
                     else if (GlbVars.clickedTrId > 0|| currentClickedTrId >0) { // 이중장치로 currentClickedTrId 추가함. 꼭 필요는 없긴 해..사실..
                         Log.d(TAG, "observeAndLoadFireBase: GlbVars.clickedTrId= ${GlbVars.clickedTrId}, currentClickedTrId=$currentClickedTrId")

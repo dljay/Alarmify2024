@@ -243,6 +243,7 @@ class RcViewAdapter(
             ringToneMap[inputRtList[i].id] = inputRtList[i]
             //Log.d(TAG, "updateMap: ringToneMap id= ${inputRtList[i].id} = ringToneMap: $ringToneMap")
         }
+        Log.d(TAG, "updateRingToneMap: finished.")
     }
 
     fun getRtObjFromMap(trackId: Int): RtInTheCloud? {

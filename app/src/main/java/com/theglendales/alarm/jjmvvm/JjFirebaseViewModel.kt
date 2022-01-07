@@ -25,10 +25,8 @@ class JjFirebaseViewModel : ViewModel() {
 
 //    private val _liveChipTaskQSnapShot = MutableLiveData<Task<QuerySnapshot>>() // Private& Mutable LiveData
 //    val liveChipTaskQSnapShot: LiveData<Task<QuerySnapshot>> = _liveChipTaskQSnapShot // 이놈을 SecondFrag 에서 Observe => Public but! Immutable (즉 이놈은 언제나= _liveRtList. Mirror...)
-
     init {
         Log.d(TAG, "initializing... ")
-        // 로딩 후 listFrag 갔다 돌아왔을 때 -> sharedPref 가 있으면 거기서 로딩
         //loadFromFireBase()
     }
 //1) 기본 Firebase 로딩 관련

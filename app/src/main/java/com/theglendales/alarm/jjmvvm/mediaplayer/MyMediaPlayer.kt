@@ -207,6 +207,7 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
         for (i in receivedRtInTheCloudList.indices) {
             mp3UrlMap[receivedRtInTheCloudList[i].id] = receivedRtInTheCloudList[i].mp3URL
     }
+    Log.d(TAG, "createMp3UrlMap: finished.")
 
 // <----------<2>기존 코드들 Utility
 }

@@ -48,9 +48,7 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 //Coroutines
@@ -76,6 +74,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //ViewModel 5종 생성
     private val jjMainVModel: JjMainViewModel by viewModels()
     private val jjNtVModelFlow: JjNetworkCheckVModel by viewModels() //[FLOW]
+    private val jjRcvViewModel: JjRecyclerViewModel by viewModels() // [FLOW]
 
     
 
@@ -183,7 +182,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         //1) ViewModel 5종 생성(RcvVModel/MediaPlayerVModel)
             //1-A)  *** JjRcvViewModel 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
-            val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
+            //val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
             //1-B) jjMpViewModel 생성
             val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
             //1-C) jjMyDownloaderViewModel 생성
@@ -191,20 +190,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //1-D) jjFirebaseVModel Init
             jjFbVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)
 
-
-
-
         //2) LiveData Observe
             //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달. [!! 기존 클릭해놓은 트랙이 있으면 ListFrag 갔다왔을때 자동으로 그전 track 값을 (fb 로딩전에) 호출하는 문제있음!!] -> isEverythingReady 로 해결함.
-            jjRcvViewModel.selectedRow.observe(viewLifecycleOwner, { viewAndTrIdClassInstance ->
-                currentClickedTrId = viewAndTrIdClassInstance.trId
-                Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${viewAndTrIdClassInstance.trId}, \n isFireBaseFetchDone=$isFireBaseFetchDone, currentClickedTrId=$currentClickedTrId")
-                if(isFireBaseFetchDone) { // Firebase 로 데이터 fetching 이 다 끝나면 이 값이 = true 가 된다.
-                    myOnLiveDataFromRCV(viewAndTrIdClassInstance)
-                }
-            //**SHARED PREF 저장용 **
-                //playInfo.trackID = viewAndTrIdClassInstance.trId
-            })
         //Media Player ViewMODEL Observe
             //2-B-가) MP: MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
@@ -299,8 +286,20 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //Fragments should always use the viewLifecycleOwner to trigger UI updates.
              viewLifecycleOwner.lifecycleScope.launch {
                 //repeatOnLifeCycle() : 이 블록 안은 이 lifecycle 의 onStart() 에서 실행- onStop() 에서 cancel. lifecycle 시작하면 자동 re-launch!
-                repeatOnLifecycle(State.STARTED) {
-                        jjNtVModelFlow.isNtWorking.collect {Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")}}
+                lifecycle.repeatOnLifecycle(State.RESUMED) {
+                    launch {
+                        jjNtVModelFlow.isNtWorking.collect {Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")}
+                    }
+                    launch {
+                        jjRcvViewModel.selectedRow.collect { vAndTrIdObj -> currentClickedTrId = vAndTrIdObj.trId
+                            Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${vAndTrIdObj.trId}, \n currentClickedTrId=$currentClickedTrId")
+                            if(vAndTrIdObj.view!=null) {
+                                updateMiniPlayerUiOnClick(vAndTrIdObj)
+                            }
+                         }
+                    }
+                }
+
             }
 
         //3) Firebase ViewModel Initialize
@@ -449,10 +448,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)
     // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
 
-    private fun myOnLiveDataFromRCV(viewAndTrId: ViewAndTrIdClass) {
-        val rtInTheCloudObj = rcvAdapterInstance.getRtObjFromMap(viewAndTrId.trId)
-        val ivInside_Rc = viewAndTrId.view.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
-        Log.d(TAG, "myOnLiveDataReceived: called. .. 1)ivInside_Rc=$ivInside_Rc, 2)rtClassFromtheList= $rtInTheCloudObj")
+    private fun updateMiniPlayerUiOnClick(viewAndTrId: ViewAndTrIdClass) {
+        val rtInTheCloudObj = fullRtClassList.single { rtObj -> rtObj.id == viewAndTrId.trId }
+        val ivInside_Rc = viewAndTrId.view?.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
+        Log.d(TAG, "updateMiniPlayerUiOnClick: called. .. 1)ivInside_Rc=$ivInside_Rc, 2)rtClassFromtheList= $rtInTheCloudObj")
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
 
     //Sliding Panel - Upper UI
@@ -471,13 +470,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         val badgeStrList = rtInTheCloudObj.bdgStrArray// Badge Sort
         showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
         //
-        when (viewAndTrId.view.id) {
+        when (viewAndTrId.view?.id) {
             //1) RcView > 왼쪽 큰 영역(album/title) 클릭했을때 처리.
             R.id.id_rL_including_title_description -> {
 
                 //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
                 if (ivInside_Rc != null) { // 사실 RcView 가 제대로 setup 되어있으면 무조건 null 이 아님! RcView 클릭한 부분에 View 가 로딩된 상태 (사진 로딩 상태 x)
-                    Log.d(TAG, "myOnLiveDataFromRCV: ivInside_Rc not null. ivInside_Rc=$ivInside_Rc")
+                    Log.d(TAG, "updateMiniPlayerUiOnClick: ivInside_Rc not null. ivInside_Rc=$ivInside_Rc")
                     iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
                     iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
                 }
@@ -487,17 +486,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
                 }
             }
-            // 2) 우측 FREE, GET THIS 클릭했을 때 처리.
-            R.id.id_cl_entire_Purchase -> {
-                Log.d(TAG, "myOnItemClick: You probably clicked FREE or GET This")
-
-                iapInstanceV2.myOnPurchaseClicked(viewAndTrId.trId) //** 실제 구입 -> 다운로드에 쓰일 코드**
 
             //다운로드 Test 용도 - IAP  검증 걸치지 않고 해당 번호에 넣은 RT 다운로드 URL 로 이동. [원복]
 //                val testRtHelixObj = RtInTheCloud(title = "SoundHelix8.mp3","moreshit","desc","imgUrl",
 //                    mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",id=1, iapName = "shitbagHelix")
 //                myDownloaderV2.singleFileDNLD(testRtHelixObj)
-            }
+
 
         }
     }
@@ -638,8 +632,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 fullRtClassList = rtList // 추후 Chip Sorting 때 사용
                 // Update MediaPlayer.kt 의 URL
                 mpClassInstance.createMp3UrlMap(rtList)
-                // Update RcV's RT MAP
-                rcvAdapterInstance.updateRingToneMap(rtList) //updateRcV 와는 별개로 추후 RcV 에서 클릭했을 때 RtObj 을 이걸 통해서 받음
                 // IAP (**여기서 onBillingFinished() 는 Async - 다른 thread 에서 따로 움직임!)
                 iapInstanceV2.refreshItemIdIapNameTitle(rtList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) ** todo: 여기서 refresh?
 
@@ -647,7 +639,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //B) listFrag 갔다와서 ViewModel 이 종전에 있던 값 그냥 자동 반사로 또 보냈을 때 (같은 리스트. isFreshList=false)
                 Log.d(TAG, "spreadRtList: This is not a fresh list.. 그냥 RCV 만 업뎃하자 (어쨌든 RcV 는 재구성되야하니깐..)")
                 rcvAdapterInstance.refreshRecyclerView(rtList)
-                rcvAdapterInstance.updateRingToneMap(rtList)
+                //rcvAdapterInstance.updateRingToneMap(rtList)
             }
 
             // SwipeRefresh 돌고 있었으면.. 멈춰 (aka 빙글빙글 animation 멈춰..)
@@ -843,21 +835,21 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
 
 
-            val ringtoneClassFromtheList = rcvAdapterInstance.getRtObjFromMap(trackId)
+            val rtObjFromList = fullRtClassList.single { rtObj -> rtObj.id == trackId }
             val ivInside_Rc = vHolder.iv_Thumbnail
-            Log.d(TAG,"setSlidingPanelOnReturn: title= ${ringtoneClassFromtheList?.title}, description = ${ringtoneClassFromtheList?.description}")
+            Log.d(TAG,"setSlidingPanelOnReturn: title= ${rtObjFromList?.title}, description = ${rtObjFromList?.description}")
         //Sliding Panel - Upper UI
             var spaceFifteen="               " // 15칸
             var spaceTwenty="                    " // 20칸
             var spaceFifty="                                                 " //50칸 (기존 사용)
             var spaceSixty="                                                           " //60칸
-            tv_upperUi_title.text = spaceFifteen+ ringtoneClassFromtheList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
-            if(ringtoneClassFromtheList?.title!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?
+            tv_upperUi_title.text = spaceFifteen+ rtObjFromList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
+            if(rtObjFromList?.title!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?
             else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
             }
 
         //Sliding Panel -  Lower UI
-            tv_lowerUi_about.text = ringtoneClassFromtheList?.description
+            tv_lowerUi_about.text = rtObjFromList?.description
             iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
         //Sliding Panel - Upper UI
             iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)

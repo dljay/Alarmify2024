@@ -48,7 +48,7 @@ class RcViewAdapter(
         var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()
     }
 
-    var ringToneMap: HashMap<Int, RtInTheCloud> = HashMap()
+
     var isRVClicked: Boolean = false // 혹시나 미리 클릭되었을 경우를 대비하여 만든 boolean value. 이거 안 쓰이나?
 // 하이라이트시 background 에 적용될 색
     val highlightColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.gray_light_highlight_1)
@@ -232,22 +232,9 @@ class RcViewAdapter(
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(MyDiffCallbackClass(oldList, newList))
         currentRtList = newList
         Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${currentRtList.size}")
-        //updateRingToneMap(receivedList)//이건 내가 추가
+
         diffResult.dispatchUpdatesTo(this)
         //enableHighlightOnTrId(GlbVars.clickedTrId)
-    }
-
-    fun updateRingToneMap(inputRtList: MutableList<RtInTheCloud>) {
-        ringToneMap.clear()
-        for (i in 0 until inputRtList.size) {
-            ringToneMap[inputRtList[i].id] = inputRtList[i]
-            //Log.d(TAG, "updateMap: ringToneMap id= ${inputRtList[i].id} = ringToneMap: $ringToneMap")
-        }
-        Log.d(TAG, "updateRingToneMap: finished.")
-    }
-
-    fun getRtObjFromMap(trackId: Int): RtInTheCloud? {
-        return if (ringToneMap.isNotEmpty()) ringToneMap[trackId] else null
     }
 
     // DiffUtil Class
@@ -329,28 +316,33 @@ class RcViewAdapter(
 
             isRVClicked = true // 이거 안쓰이는것 같음..  Recycle View 를 누른적이 있으면 true (혹시나 미리 누를수도 있으므로)
 
-
-
-
             if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null)
             { // To avoid possible mistake when we delete the item but click it
                 val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
 
-            //1) 하이라이트, 음악 재생은 "클릭 영역이 구매쪽 제외한 전체 영역일 때만!!" (Rl_including_tv1_2 영역)
-                if(v.id == R.id.id_rL_including_title_description) {
-                    //1-a)
-                    GlbVars.clickedTrId = holderTrId
-                    Log.d(TAG,"*****************************onClick-To Play MUSIC: Global.clTrId: ${GlbVars.clickedTrId}, holderTrId: $holderTrId ****************")
+            
+                when(v.id) {
+                    //1) [하이라이트, 음악 재생] - 구매 제외 부분 클릭  (Rl_including_tv1_2 영역)
+                    R.id.id_rL_including_title_description -> {
+                        //1-a)
+                        GlbVars.clickedTrId = holderTrId
+                        Log.d(TAG,"*****************************onClick-To Play MUSIC: Global.clTrId: ${GlbVars.clickedTrId}, holderTrId: $holderTrId ****************")
 
-                    //1-b) 하이라이트 작동
-                    disableHLAll() // 모든 하이라이트를 끄고
-                    enableHL(this) // 선택된 viewHolder 만 하이라이트!
+                        //1-b) 하이라이트 작동
+                        disableHLAll() // 모든 하이라이트를 끄고
+                        enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
-                    //1-c) 음악 플레이
-                    mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+                        //1-c) 음악 플레이
+                        mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+                    }
+                    //2) [구매 클릭]
+                    R.id.id_cl_entire_Purchase -> {
+                        Log.d(TAG, "onClick: !!!!!!!!!!!!!!!!!!!You probably clicked FREE or GET This")
+                        //iapInstanceV2.myOnPurchaseClicked(trId).. todo: 바로 구매창으로
+                        return
+                    }
                 }
-            //2) 음악쪽 클릭이든 구매쪽 클릭이든 일단 SecondFrag.kt 에 전달-> 거기서 알아서 판단.
-                //LiveData Feed
+            // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
                 rcViewModel.updateLiveData(vHolderAndTrId) // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
 
             }

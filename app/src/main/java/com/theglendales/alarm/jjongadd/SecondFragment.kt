@@ -620,10 +620,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 //MediaPlayerViewModel 을 Observe
     //Send RtList to IAP,RCV,MP, etc..
     private fun spreadRtList(rtList: MutableList<RtInTheCloud>, isFreshList: Boolean) {
+            //신규 로직
+            //if(isFreshList) {
+            //1)mpClassInstance.createMp3UrlMap(rtList)
+            //2)iapInstanceV2.refreshIAP(rtList) -> 끝날때까지 대기 -> rcvUpdate 여기서 (MyIAPHelper 에서 rcVInstance 빼기)
+            //3) Lottie 끄기.
+            //** refreshItemMAp 대신 직접 map 을 rcV 에 전달?
+            //** rcVAdapter 에서 클릭 -> 구입 -> Interface 사용해서 여기서 호출 및 이후 결과 받으면 rcvUpdate 도 여기서. }
+
 
             //A) 첫 SecondFrag 런칭 후 로딩 or 새로고침(Spinner 휘리릭~)  ==> 모두 업데이트!
             if(isFreshList) {
                 Log.d(TAG, "spreadRtList: Received new Fresh List from FB! Let's Spread this list!")
+
                 fullRtClassList = rtList // 추후 Chip Sorting 때 사용
                 // Update MediaPlayer.kt 의 URL
                 mpClassInstance.createMp3UrlMap(rtList)
@@ -643,7 +652,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
                 swipeRefreshLayout.isRefreshing = false
             }
-            //모든게 로딩 완료되었으니 애니메이션 stop!
+            //모든게 로딩 완료되었으니 애니메이션 stop! //todo: 진짜 끝났을 떄 실행하기.
             lottieAnimController("stop")
     }
     //Firebase ViewModel 을 Observe

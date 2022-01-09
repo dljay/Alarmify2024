@@ -50,10 +50,10 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
         billingClient = BillingClient.newBuilder(receivedActivity.applicationContext)
             .enablePendingPurchases().setListener(this).build()
 
+        //Listener
         billingClient!!.startConnection(object : BillingClientStateListener {
             override fun onBillingSetupFinished(billingResult: BillingResult) {
                 Log.d(TAG, "C) onBillingSetupFinished: starts..")
-
 
                 // billing setup 이 문제없이 되었다면.
                 if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
@@ -164,6 +164,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                             refreshItemsPriceMap() // -> 여기서 multipleFileDownload() 실행. Line 164 (4줄 밑)-> 여기로 옮겼음.
                         }
 
+
                     } )
                 }
 
@@ -171,7 +172,12 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                 Log.d(TAG, "C) onBillingSetupFinished: finished..")
             }
 
-            override fun onBillingServiceDisconnected() {}
+            override fun onBillingServiceDisconnected() {
+                Log.d(TAG, "onBillingServiceDisconnected: called")
+                //todo:  Try to restart the connection on the next request to
+                // Google Play by calling the startConnection() method.
+                // https://developer.android.com/google/play/billing/integrate
+            }
         })
         Log.d(TAG, "initIAP: End of InitIap() 그렇다고 진짜 끝난건 아님. onBillingSetupFinished 는 진행중....")
     }

@@ -56,8 +56,9 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.12c [SecondFrag 에서 복귀해주는것으로. 진행 중]
-//------------Todo 22/1/7 (금) 오후 4:41분
+//v3.07.12d [IAP 코루틴으로 수정. 진행 직전]
+//------------22/1/10 (월) 0시13분
+
 //1-a. SecondFrag 에서 FB로딩->IAP 로딩끝나고 -> rcView>refreshRcV() 불릴 때 lottie꺼주기?(Interface 활용해서 SecondFrag 와 커뮤니케이션?)
 //*1-b. 1-a 에서 Coroutine 으로 모든게 끝난 시점 확인하고 SecondFrag 가 그냥 lottie 꺼주는 방법 없을까?
 //2. RcV 에서 클릭 했을 때 viewAndTrId 가 아니고 그냥 RtInTheCloud Obj 넣어주기? => 결국 사진 보여주는것만 GLide 로 URL 통해 로딩하면 된다 -> Cache 되있으니 네트워크 쓸걸로 생각은 안된다.

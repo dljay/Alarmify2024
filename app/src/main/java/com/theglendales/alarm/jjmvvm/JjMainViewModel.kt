@@ -42,14 +42,15 @@ class JjMainViewModel : ViewModel() {
                     val rtList = it.result!!.toObjects(RtInTheCloud::class.java)
                     //2) IAP 에서 Price, PurchaseBool 을 채워준(+) rtList 를 받아옴.
                     val rtListPlusIAPInfo = iapV3.iapManager(rtList)
-                    Log.d(TAG, "refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
+
                     //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! --- todo: rcv 에서 iap 에 있는 map 의존 없애기.
-                    
+                    Log.d(TAG, "refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
                     //_rtInTheCloudList.value = rtListPlusIAPInfo
 
                     isFreshList = true //todo: 지우기
                     Log.d(TAG, "getRtList: <<<<<<<<<getRtList: successful")
                 }
+
 
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.
                 Log.d(TAG, "<<<<<<<getRtList: ERROR!! Exception message: ${it.exception!!.message}")

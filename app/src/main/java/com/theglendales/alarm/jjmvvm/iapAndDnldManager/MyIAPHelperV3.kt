@@ -6,6 +6,8 @@ import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlin.Exception
 import kotlin.coroutines.resume
@@ -22,36 +24,38 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
     private var billingClient: BillingClient? = null
 
     init {
+        Log.d(TAG, "init MyIapHelperV3 called. ")
         billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build() //todo: 왜 init 이 안되었지?
     }
     //todo: Try & Catch
 
+
     suspend fun iapManager(rtListFromFb: MutableList<RtInTheCloud>): MutableList<RtInTheCloud> {
         //<0> 우선 받은 리스트를 variable 에 복붙.
         rtListPlusIAPInfo = rtListFromFb
-        Log.d(TAG, "iapManager: <0> called. \n rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}")
+        Log.d(TAG, "iapManager: <0> Called: [0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}, [0].purchaseBool=${rtListPlusIAPInfo[0].purchaseBool}")
 
         //<1> BillingClient Connection 확인
-        Log.d(TAG, "iapManager: <1> called. \n rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}")
+        Log.d(TAG, "iapManager: <1> Called: [0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}")
         val billingResult: BillingResult = iap1_prepBillingClient()
 
-        //<1-a> Billing Client: Start Connection
+        //<1-a> Billing Client: Connection(O) => Start Connection
         if(billingResult.responseCode == BillingClient.BillingResponseCode.OK)
         {
-        Log.d(TAG, "iapManager: <1-a> called \n rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}")
+        Log.d(TAG, "iapManager: <1-a> Called: [0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}, [0].purchaseBool=${rtListPlusIAPInfo[0].purchaseBool}")
+
             //<2> Add price Info to our List
             iap2_addPriceToList()
             //<3> Add purchaseBool Info to our list
             iap3_addPurchaseBoolToList()
             //<4> 위의 <2>+<3> 이 끝났으면 list 를 반환
-            Log.d(TAG, "iapManager: <4> Called. \n rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}")
+            Log.d(TAG, "iapManager: <4> Called: [0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}, [0].purchaseBool=${rtListPlusIAPInfo[0].purchaseBool}")
 
+        //<1-b> Billing Client: Connection(X) => Show Error Message
         }else {
             Log.d(TAG, "iapManager: <1-b> called")
             toastMessenger.showMyToast("Failed to get IAP info", isShort = false)
         }
-
-
         return rtListPlusIAPInfo
     }
 

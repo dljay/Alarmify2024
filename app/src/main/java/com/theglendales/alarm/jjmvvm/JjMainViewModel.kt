@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.billingclient.api.BillingClient
+import com.android.billingclient.api.BillingResult
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
@@ -33,27 +35,45 @@ class JjMainViewModel : ViewModel() {
         refreshAndUpdateLiveData()}
     //ViewModel 최초 로딩시 & Spinner 로 휘리릭~ 새로고침 할 때 아래 function 이 불림.
     fun refreshAndUpdateLiveData() {
+        Log.d(TAG, "refreshAndUpdateLiveData: called")
         firebaseRepoInstance.getPostList().addOnCompleteListener {
             if(it.isSuccessful)
             {
-                viewModelScope.launch {
+                //1)Fb 에서 RtList를 받아옴
+                val rtList = it.result!!.toObjects(RtInTheCloud::class.java)
+
+                //2)RtList 를 -> IAP 에 전달
+                val iapJob = viewModelScope.launch {
                 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨. Async 걱정 안해도 될듯..?
-                    //1) Fb 에서 RtList를 받아옴
-                    val rtList = it.result!!.toObjects(RtInTheCloud::class.java)
-                    //2) IAP 에서 Price, PurchaseBool 을 채워준(+) rtList 를 받아옴.
-                    val rtListPlusIAPInfo = iapV3.iapManager(rtList)
-
-                    //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! --- todo: rcv 에서 iap 에 있는 map 의존 없애기.
+                //B) Fb 에서 받을 리스트를 -> IAP 에 전달
+                    iapV3.iap_B_feedRtList(rtList)
+                //C) BillingClient 를 Ready 시킴 (이미 되어있으면 바로 BillingClient.startConnection)
+                    val billingResult: BillingResult = iapV3.iap_C_prepBillingClient()
+                    if(billingResult.responseCode == BillingClient.BillingResponseCode.OK)
+                    {//each .launch{} running on separate thread
+                        //D) Parallel Job  - D1
+                        launch {
+                            iapV3.iap_D1_addPriceToList()
+                        }
+                        //D) Parallel Job - D2
+                        launch {
+                            iapV3.iap_D2_addPurchaseBoolToList()
+                        }
+                    }
+                }
+                //위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) 다음이 불리면서 LiveData 업데이트
+                iapJob.invokeOnCompletion {
+                //E) IAP 에서 Price, PurchaseBool 을 채워준(+) rtList 를 받아옴.
+                    val rtListPlusIAPInfo = iapV3.iap_E_getFinalList()
                     Log.d(TAG, "refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
-                    //_rtInTheCloudList.value = rtListPlusIAPInfo
-
-                    isFreshList = true //todo: 지우기
-                    Log.d(TAG, "getRtList: <<<<<<<<<getRtList: successful")
+                //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! --- todo: rcv 에서 iap 에 있는 map 의존 없애기.
+                    isFreshList = true
+                    _rtInTheCloudList.value = rtListPlusIAPInfo
+                    Log.d(TAG, "refreshAndUpdateLiveData: <3> <<<<<<<<<getRtList: successful")
                 }
 
-
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.
-                Log.d(TAG, "<<<<<<<getRtList: ERROR!! Exception message: ${it.exception!!.message}")
+                Log.d(TAG, "<<<<<<<refreshAndUpdateLiveData: ERROR!! Exception message: ${it.exception!!.message}")
                 //lottieAnimController(1) // this is useless at the moment..
                 toastMessenger.showMyToast("Unable to fetch Data. Please check your connection.", isShort = false)
             }

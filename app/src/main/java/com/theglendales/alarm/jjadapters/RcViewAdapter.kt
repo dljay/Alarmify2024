@@ -98,6 +98,7 @@ class RcViewAdapter(
         if(MyIAPHelperV2.itemPricesMap.isNotEmpty()) {
             holder.tv3_Price.text = MyIAPHelperV2.itemPricesMap[currentIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
         } else { // 어떤 사유로든 itemPricesMap[] 에서 가격을 갖고 올 수 없을땐 sharedPref 에 저장된 가격을 로딩
+            Log.d(TAG, "onBindViewHolder: using sharedPref to build Price")
             holder.tv3_Price.text =mySharedPrefManager.getItemPricePerIap(currentIapName)
         }
 
@@ -233,9 +234,6 @@ class RcViewAdapter(
         Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${currentRtList.size}")
 
         diffResult.dispatchUpdatesTo(this)
-        //todo: Turn off Lottie Loading
-
-
         //enableHighlightOnTrId(GlbVars.clickedTrId)
     }
 

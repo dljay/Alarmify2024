@@ -25,66 +25,52 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
     init {
         Log.d(TAG, "init MyIapHelperV3 called. ")
-        billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build() //todo: 왜 init 이 안되었지?
+        billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build() //todo: 밑에 C .isReady 는 항상 false 네..
     }
     //todo: Try & Catch
-
-
-    suspend fun iapManager(rtListFromFb: MutableList<RtInTheCloud>): MutableList<RtInTheCloud> {
-        //<0> 우선 받은 리스트를 variable 에 복붙.
-        rtListPlusIAPInfo = rtListFromFb
-        Log.d(TAG, "iapManager: <0> Called: [0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}, [0].purchaseBool=${rtListPlusIAPInfo[0].purchaseBool}")
-
-        //<1> BillingClient Connection 확인
-        Log.d(TAG, "iapManager: <1> Called: [0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}")
-        val billingResult: BillingResult = iap1_prepBillingClient()
-
-        //<1-a> Billing Client: Connection(O) => Start Connection
-        if(billingResult.responseCode == BillingClient.BillingResponseCode.OK)
-        {
-        Log.d(TAG, "iapManager: <1-a> Called: [0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}, [0].purchaseBool=${rtListPlusIAPInfo[0].purchaseBool}")
-
-            //<2> Add price Info to our List
-            iap2_addPriceToList()
-            //<3> Add purchaseBool Info to our list
-            iap3_addPurchaseBoolToList()
-            //<4> 위의 <2>+<3> 이 끝났으면 list 를 반환
-            Log.d(TAG, "iapManager: <4> Called: [0].itemPrice=${rtListPlusIAPInfo[0].itemPrice}, [0].purchaseBool=${rtListPlusIAPInfo[0].purchaseBool}")
-
-        //<1-b> Billing Client: Connection(X) => Show Error Message
-        }else {
-            Log.d(TAG, "iapManager: <1-b> called")
-            toastMessenger.showMyToast("Failed to get IAP info", isShort = false)
-        }
-        return rtListPlusIAPInfo
+    fun iap_A_initBillingClient() {
+        Log.d(TAG, "iap_A_initBillingClient: <A> Called")
+        billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
+        Log.d(TAG, "iap_A_initBillingClient: <A> Finished")
     }
 
-    private suspend fun iap1_prepBillingClient(): BillingResult {
+    fun iap_B_feedRtList(rtListFromFb: MutableList<RtInTheCloud>) {
+        Log.d(TAG, "iap_B_feedRtList: <B> Called")
+        rtListPlusIAPInfo = rtListFromFb}
+
+    suspend fun iap_C_prepBillingClient(): BillingResult {
+        Log.d(TAG, "iap_C_prepBillingClient: <C> Called")
         if(!billingClient!!.isReady) {
-            Log.d(TAG, "iap1_prepBillingClient: <1> BillingClient Not Ready(X)! Re init!")
+            Log.d(TAG, "iap_C_prepBillingClient: <C> BillingClient Not Ready(X)! Re init!")
             billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
         }
         return suspendCoroutine { continuation ->
-            Log.d(TAG, "iap1_prepBillingClient: <1> BillingClient Ready(O)")
+            Log.d(TAG, "iap_C_prepBillingClient: <C> BillingClient Ready(O)")
             billingClient!!.startConnection(object : BillingClientStateListener{
                 override fun onBillingSetupFinished(p0: BillingResult) {
                     continuation.resume(p0)
                 }
                 override fun onBillingServiceDisconnected() {
-                    continuation.resumeWithException(Exception("Error <1> Billing Service Disconnectoed"))
+                    continuation.resumeWithException(Exception("Error <C> Billing Service Disconnectoed"))
+                    //todo:  Try to restart the connection on the next request to
+                    // Google Play by calling the startConnection() method.
                 }
             })
         }
     }
-    private suspend fun iap2_addPriceToList() {
-        Log.d(TAG, "iap2_addPriceToList: <2> called")
+    suspend fun iap_D1_addPriceToList() {
+        Log.d(TAG, "iap_D1_addPriceToList: <D1> called")
         delay(1500L) // 1.5 초 걸린다고 치고.
         rtListPlusIAPInfo[0].itemPrice="$2,000"
     }
-    private suspend fun iap3_addPurchaseBoolToList() {
-        Log.d(TAG, "iap3_addPurchaseBoolToList: <3> called")
+    suspend fun iap_D2_addPurchaseBoolToList() {
+        Log.d(TAG, "iap_D2_addPurchaseBoolToList: <D2> called")
         delay(1000L) // 1.0 초 걸린다고 치고.
         rtListPlusIAPInfo[0].purchaseBool = true
+    }
+    fun iap_E_getFinalList(): MutableList<RtInTheCloud> {
+        Log.d(TAG, "iap_E_getFinalList: <E> called")
+        return rtListPlusIAPInfo
     }
 
 

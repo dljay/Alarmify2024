@@ -320,11 +320,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
             //Firebase 에서 새로운 리스트를 받을 떄 (or 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기)
-            jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListFromFb->
-                Log.d(TAG, "onViewCreated: [MainVModel] rtListFromFb via ViewModel= $rtListFromFb")
-
-                spreadRtList(rtListFromFb, jjMainVModel.isFreshList)
-                jjMainVModel.isFreshList = false // 이제 한번 spread 됐으니 fresh 가 아니지..
+            jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
+                Log.d(TAG, "onViewCreated: [MainVModel] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
+                fullRtClassList = rtListPlusIAPInfo // 추후 Chip Sorting 때 사용
+                mpClassInstance.createMp3UrlMap(rtListPlusIAPInfo)
+                rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
+                lottieAnimController("stop")
             }
             //Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
             jjMainVModel.isNetworkWorking.observe(viewLifecycleOwner) { isNetworkWorking ->
@@ -620,43 +621,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
     }
 //MediaPlayerViewModel 을 Observe
-    //Send RtList to IAP,RCV,MP, etc..
-    private fun spreadRtList(rtList: MutableList<RtInTheCloud>, isFreshList: Boolean) {
-            //신규 로직
-            //if(isFreshList) {
-            //1)mpClassInstance.createMp3UrlMap(rtList)
-            //2)iapInstanceV2.refreshIAP(rtList) -> 끝날때까지 대기 -> rcvUpdate 여기서 (MyIAPHelper 에서 rcVInstance 빼기)
-            //3) Lottie 끄기.
-            //** refreshItemMAp 대신 직접 map 을 rcV 에 전달?
-            //** rcVAdapter 에서 클릭 -> 구입 -> Interface 사용해서 여기서 호출 및 이후 결과 받으면 rcvUpdate 도 여기서. }
 
-
-            //A) 첫 SecondFrag 런칭 후 로딩 or 새로고침(Spinner 휘리릭~)  ==> 모두 업데이트!
-            if(isFreshList) {
-                Log.d(TAG, "spreadRtList: Received new Fresh List from FB! Let's Spread this list!")
-
-                fullRtClassList = rtList // 추후 Chip Sorting 때 사용
-                // Update MediaPlayer.kt 의 URL
-                mpClassInstance.createMp3UrlMap(rtList)
-                // IAP (**여기서 onBillingFinished() 는 Async - 다른 thread 에서 따로 움직임!)
-                iapInstanceV2.refreshItemIdIapNameTitle(rtList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) ** todo: 여기서 refresh?
-                //Log.d(TAG, "spreadRtList: hopefully finished..?")
-
-            } else {
-                //B) listFrag 갔다와서 ViewModel 이 종전에 있던 값 그냥 자동 반사로 또 보냈을 때 (같은 리스트. isFreshList=false)
-                Log.d(TAG, "spreadRtList: This is not a fresh list.. 그냥 RCV 만 업뎃하자 (어쨌든 RcV 는 재구성되야하니깐..)")
-                rcvAdapterInstance.refreshRecyclerView(rtList)
-                //rcvAdapterInstance.updateRingToneMap(rtList)
-            }
-
-            // SwipeRefresh 돌고 있었으면.. 멈춰 (aka 빙글빙글 animation 멈춰..)
-            if (swipeRefreshLayout.isRefreshing) {
-                Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
-                swipeRefreshLayout.isRefreshing = false
-            }
-            //모든게 로딩 완료되었으니 애니메이션 stop! //todo: 진짜 끝났을 떄 실행하기.
-            lottieAnimController("stop")
-    }
     //Firebase ViewModel 을 Observe
     private fun observeAndLoadFireBase() {
         // 현재도 lottie 는 나오는 상황 (setUpLateIniUis() 에서 벌써 loading 실행해놨음)

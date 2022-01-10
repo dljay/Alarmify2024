@@ -55,20 +55,21 @@ class JjMainViewModel : ViewModel() {
                     {//each .launch{} running on separate thread
                         //D) Parallel Job  - D1
                         launch {
-                            iapV3.iap_D1_addPriceToList()
+                            iapV3.iap_D1_addPurchaseBoolToList()
                         }
                         //D) Parallel Job - D2
                         launch {
-                            iapV3.iap_D2_addPurchaseBoolToList()
+                            iapV3.iap_D2_addPriceToList()
                         }
                     }
                 }
                 //위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) 다음이 불리면서 LiveData 업데이트
+                // ** !! 대박!! iapV3.iap_D2_addPriceToList() '실제 실행 후' + 4000L Delay 해주었지만 계속 기다려줌! ㅜ_ㅜ
                 iapJob.invokeOnCompletion {
                 //E) IAP 에서 Price, PurchaseBool 을 채워준(+) rtList 를 받아옴.
-                    Log.d(TAG, "refreshAndUpdateLiveData: invokeOnCompletion called.")
+                    Log.d(TAG, "------refreshAndUpdateLiveData: invokeOnCompletion called.")
                     val rtListPlusIAPInfo = iapV3.iap_E_getFinalList()
-                    Log.d(TAG, "refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
+                    Log.d(TAG, "------refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
             //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                     isFreshList = true
                     _rtInTheCloudList.value = rtListPlusIAPInfo

@@ -292,7 +292,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 lifecycle.repeatOnLifecycle(State.RESUMED) {
                     launch {
                         jjMainVModel.selectedRow.collect { rtInTheCloudObj -> currentClickedTrId = rtInTheCloudObj.id
-                            Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${rtInTheCloudObj.id}, \n currentClickedTrId=$currentClickedTrId")
+                            Log.d(TAG,"onViewCreated: !!! [MainVModel] 옵저버!! 트랙ID= ${rtInTheCloudObj.id}, \n currentClickedTrId=$currentClickedTrId")
                                 updateMiniPlayerUiOnClick(rtInTheCloudObj) // 동시에 ListFrag 갔다왔을때도 이걸 통해서 [복원]
                          }
                     }
@@ -315,7 +315,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
             //Firebase 에서 새로운 리스트를 받을 떄 (or 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기)
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
-                Log.d(TAG, "onViewCreated: [MainVModel] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
+                Log.d(TAG, "onViewCreated:---------------------- [MainVModel] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
                 fullRtClassList = rtListPlusIAPInfo // 추후 Chip Sorting 때 사용
                 mpClassInstance.createMp3UrlMap(rtListPlusIAPInfo)
                 rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
@@ -449,7 +449,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "updateMiniPlayerUiOnClick: called. .. rtObj = $rtObj")
 
         if(rtObj.id < 0) { // 만약 id 가 0 미만 (즉 깡통) 그냥 return..
-            Log.d(TAG, "updateMiniPlayerUiOnClick: Invalid Rt Obj. Return")
+            Log.d(TAG, "updateMiniPlayerUiOnClick: [FLOW] 최초 오픈시 Default 값 예상. Invalid Rt Obj. Return")
             return
         }
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.

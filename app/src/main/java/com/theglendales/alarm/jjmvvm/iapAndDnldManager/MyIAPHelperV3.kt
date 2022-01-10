@@ -58,16 +58,42 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
             })
         }
     }
-    suspend fun iap_D1_addPriceToList() {
-        Log.d(TAG, "iap_D1_addPriceToList: <D1> called")
+    //<D1> 현재 리스트에 상품별 구매 여부 (true,false) 적어주기.
+    suspend fun iap_D1_addPurchaseBoolToList() {
+        Log.d(TAG, "iap_D1_addPurchaseBoolToList: <D1> called")
         // todo: sharedPref 에도 저장하기?
+        delay(2000L) // 2.0 초 걸린다고 치고.
+        rtListPlusIAPInfo[0].itemPrice="$2,000"
+        Log.d(TAG, "iap_D1_addPurchaseBoolToList: <D1> Finished")
+    }
+    //<D2> 현재 리스트에 상품별 가격 적어주기 (ex. $1,000)
+    suspend fun iap_D2_addPriceToList() {
+        Log.d(TAG, "iap_D2_addPriceToList: <D2> called")
+        val itemNameList = ArrayList<String>()
+        rtListPlusIAPInfo.forEach {rtObject -> itemNameList.add(rtObject.iapName)}
+
+        val myParams = SkuDetailsParams.newBuilder()
+        myParams.setSkusList(itemNameList).setType(BillingClient.SkuType.INAPP)
+        //**Very Nice. 아래 callback 을 하나의 thread 로 봐주는 듯 Query 가 .Async 콜임에도 (JJMainViewMode>viewModelScope 에서 벗어나지 않았음!)
+        billingClient!!.querySkuDetailsAsync(myParams.build()) {queryResult, skuDetailsList ->
+            if(queryResult.responseCode == BillingClient.BillingResponseCode.OK && skuDetailsList!=null) {
+                for(skuDetails in skuDetailsList) {
+                    //todo: something better than .single?
+                    rtListPlusIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
+                    Log.d(TAG,"iap_D2_addPriceToList : <D2> a) item title=${skuDetails.title} b)item price= ${skuDetails.price}, c)item sku= ${skuDetails.sku}")
+                }
+            } else {
+                Log.d(TAG, "iap_D2_addPriceToList: <D2> Error! XXX loading price for items")
+                toastMessenger.showMyToast("Unexpected [IAP] error occurred.",isShort = true)
+            }
+            //todo: 다운로드 관련 여기서..?
+
+        }
+        //delay(4000L) // +4.0 초 걸린다고 치고.
+        Log.d(TAG, "iap_D2_addPurchaseBoolToList: <D2> Finished")
 
     }
-    suspend fun iap_D2_addPurchaseBoolToList() {
-        Log.d(TAG, "iap_D2_addPurchaseBoolToList: <D2> called")
-        delay(1000L) // 1.0 초 걸린다고 치고.
-        rtListPlusIAPInfo[0].purchaseBool = true
-    }
+    //<E> 완성 리스트를 전달 -> 라이브데이터 -> SecondFrag -> rcVUpdate
     fun iap_E_getFinalList(): MutableList<RtInTheCloud> {
         Log.d(TAG, "iap_E_getFinalList: <E> called")
         return rtListPlusIAPInfo

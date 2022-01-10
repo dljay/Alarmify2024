@@ -57,11 +57,15 @@ import java.util.Calendar
 
 
 //v3.07.13c [IAP 코루틴으로 수정. 진행 중]
-// JjMainViewModel 로 viewModelScope 로 IAPHelperV3 시도 -> 로딩 성공
-//------------22/1/10 (월) 22시30분
 
-//1-a. SecondFrag 에서 FB로딩->IAP 로딩끝나고 -> rcView>refreshRcV() 불릴 때 lottie꺼주기?(Interface 활용해서 SecondFrag 와 커뮤니케이션?)
-//*1-b. 1-a 에서 Coroutine 으로 모든게 끝난 시점 확인하고 SecondFrag 가 그냥 lottie 꺼주는 방법 없을까?
+//------------22/1/10 (월) 22시30분
+// Achievements:
+// JjMainViewModel 로 viewModelScope 로 IAPHelperV3 시도 -> 로딩 성공 (O)
+// ItemPriceMap 안쓰기(O)
+
+// 할일 :
+//  RcVViewModel -> MainViewModel 로 통합. 계속 flow 사용?
+
 //2. RcV 에서 클릭 했을 때 viewAndTrId 가 아니고 그냥 RtInTheCloud Obj 넣어주기? => 결국 사진 보여주는것만 GLide 로 URL 통해 로딩하면 된다 -> Cache 되있으니 네트워크 쓸걸로 생각은 안된다.
 //3. RcV 구매 클릭 소스 넣어주기 (iapInstaceV2.myOnPurchaseClicked..) [Line 346]
 //4. MYIAPHelperV2.kt >itemPricesMAP 관련. <- 이걸 RecyclerView 에서 쓰는데 별로 바람직하지 않다. JjMainVieweModel 에서 보관? => RcV 에서 결국 필요한 건 ItemPricesMap 과 PurchaseBool 여부(현재는 SharePref)

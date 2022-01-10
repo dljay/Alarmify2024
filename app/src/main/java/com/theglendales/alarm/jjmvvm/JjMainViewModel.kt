@@ -33,7 +33,7 @@ class JjMainViewModel : ViewModel() {
     init {
         Log.d(TAG, "init: called.. ^^ ")
         refreshAndUpdateLiveData()}
-    //ViewModel 최초 로딩시 & Spinner 로 휘리릭~ 새로고침 할 때 아래 function 이 불림.
+//********** FB ->rtList -> IAP -> rtListPlusIAPInfo -> LiveData(rtInTheCloudList) -> SecondFrag-> UI 업데이트 : ViewModel 최초 로딩시 & Spinner 로 휘리릭~ 새로고침 할 때 아래 function 이 불림.
     fun refreshAndUpdateLiveData() {
         Log.d(TAG, "refreshAndUpdateLiveData: called")
         firebaseRepoInstance.getPostList().addOnCompleteListener {
@@ -66,10 +66,11 @@ class JjMainViewModel : ViewModel() {
                 //E) IAP 에서 Price, PurchaseBool 을 채워준(+) rtList 를 받아옴.
                     val rtListPlusIAPInfo = iapV3.iap_E_getFinalList()
                     Log.d(TAG, "refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
-                //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! --- todo: rcv 에서 iap 에 있는 map 의존 없애기.
+                //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                     isFreshList = true
                     _rtInTheCloudList.value = rtListPlusIAPInfo
                     Log.d(TAG, "refreshAndUpdateLiveData: <3> <<<<<<<<<getRtList: successful")
+                //4) todo: 해당 List 를 혹시 모르니 sharedPref 에 GSON 으로 저장?
                 }
 
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.

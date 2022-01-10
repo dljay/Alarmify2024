@@ -38,7 +38,7 @@ interface RcCommIntf {
 }
 
 class RcViewAdapter(
-    var currentRtList: MutableList<RtInTheCloud>,
+    var rtPlusIapInfoList: MutableList<RtInTheCloud>,
     private val receivedActivity: FragmentActivity,
     private val rcViewModel: JjRecyclerViewModel,
     private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
@@ -64,15 +64,15 @@ class RcViewAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
-        val currentItem = currentRtList[position]
-        val currentTrId = currentRtList[position].id
-        val currentIapName = currentRtList[position].iapName
+        val currentRt = rtPlusIapInfoList[position]
+        val currentTrId = rtPlusIapInfoList[position].id
+        val currentIapName = rtPlusIapInfoList[position].iapName
 
         viewHolderMap[currentTrId] = holder
 
 
-        holder.tv1_Title.text = currentItem.title
-        holder.tv2_ShortDescription.text = currentItem.tags
+        holder.tv1_Title.text = currentRt.title
+        holder.tv2_ShortDescription.text = currentRt.tags
         holder.holderTrId = currentTrId
 
 
@@ -93,17 +93,13 @@ class RcViewAdapter(
             disableVMnLC(holder)
         }
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
-
+        //todo: 당분간 이상하게 뜰것임. JjMainViewModel 에서 GSON 으로 저장해주기? 어떤 의미가 있을지 흐음..
         //IAP 관련 1) 가격 표시
-        if(MyIAPHelperV2.itemPricesMap.isNotEmpty()) {
-            holder.tv3_Price.text = MyIAPHelperV2.itemPricesMap[currentIapName].toString() // +",000" 단위 큰것도 잘 표시되네..
-        } else { // 어떤 사유로든 itemPricesMap[] 에서 가격을 갖고 올 수 없을땐 sharedPref 에 저장된 가격을 로딩
-            Log.d(TAG, "onBindViewHolder: using sharedPref to build Price")
-            holder.tv3_Price.text =mySharedPrefManager.getItemPricePerIap(currentIapName)
+        if(currentRt.itemPrice.isNotEmpty()) {
+            holder.tv3_Price.text = currentRt.itemPrice
         }
-
         //IAP 관련 2) Purchase Stat True or False
-        when(mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)) {
+        when(currentRt.purchaseBool) {
             true -> {// Show "Purchased" icon
                 holder.iv_PurchasedTrue.visibility = View.VISIBLE
                 holder.iv_PurchasedFalse.visibility = View.GONE
@@ -112,11 +108,10 @@ class RcViewAdapter(
                 holder.iv_PurchasedTrue.visibility = View.GONE
                 holder.iv_PurchasedFalse.visibility = View.VISIBLE
             }
-            else -> {
-                Toast.makeText(receivedActivity, "Error Displaying Purchased Item for trId=$currentTrId", Toast.LENGTH_SHORT).show()}
         }
 
-        GlideApp.with(receivedActivity).load(currentItem.imageURL).centerCrop()
+
+        GlideApp.with(receivedActivity).load(currentRt.imageURL).centerCrop()
             .error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
@@ -222,16 +217,16 @@ class RcViewAdapter(
 // Utility -----------------------
 
     override fun getItemCount(): Int {
-        return currentRtList.size
+        return rtPlusIapInfoList.size
     }
 
     fun refreshRecyclerView(newList: MutableList<RtInTheCloud>) {
         //Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (BEFORE): ${currentRtList.size}")
-        val oldList = currentRtList
+        val oldList = rtPlusIapInfoList
 
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(MyDiffCallbackClass(oldList, newList))
-        currentRtList = newList
-        Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${currentRtList.size}")
+        rtPlusIapInfoList = newList
+        Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${rtPlusIapInfoList.size}")
 
         diffResult.dispatchUpdatesTo(this)
         //enableHighlightOnTrId(GlbVars.clickedTrId)

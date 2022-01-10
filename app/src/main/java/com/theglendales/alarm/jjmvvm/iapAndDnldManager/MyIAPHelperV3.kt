@@ -60,9 +60,8 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
     }
     suspend fun iap_D1_addPriceToList() {
         Log.d(TAG, "iap_D1_addPriceToList: <D1> called")
-        delay(1500L) // 1.5 초 걸린다고 치고.
-        // sharedPref 에도 저장하기?
-        rtListPlusIAPInfo[0].itemPrice="$2,000"
+        // todo: sharedPref 에도 저장하기?
+
     }
     suspend fun iap_D2_addPurchaseBoolToList() {
         Log.d(TAG, "iap_D2_addPurchaseBoolToList: <D2> called")

@@ -66,7 +66,7 @@ class JjMainViewModel : ViewModel() {
                 //위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) 다음이 불리면서 LiveData 업데이트
                 iapJob.invokeOnCompletion {
                 //E) IAP 에서 Price, PurchaseBool 을 채워준(+) rtList 를 받아옴.
-
+                    Log.d(TAG, "refreshAndUpdateLiveData: invokeOnCompletion called.")
                     val rtListPlusIAPInfo = iapV3.iap_E_getFinalList()
                     Log.d(TAG, "refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
             //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---

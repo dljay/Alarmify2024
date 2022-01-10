@@ -41,10 +41,10 @@ class JjMainViewModel : ViewModel() {
         firebaseRepoInstance.getPostList().addOnCompleteListener {
             if(it.isSuccessful)
             {
-                //1)Fb 에서 RtList를 받아옴
+            //1)Fb 에서 RtList를 받아옴
                 val rtList = it.result!!.toObjects(RtInTheCloud::class.java)
 
-                //2)RtList 를 -> IAP 에 전달
+            //2)RtList 를 -> IAP 에 전달
                 val iapJob = viewModelScope.launch {
                 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨. Async 걱정 안해도 될듯..?
                 //B) Fb 에서 받을 리스트를 -> IAP 에 전달
@@ -66,13 +66,14 @@ class JjMainViewModel : ViewModel() {
                 //위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) 다음이 불리면서 LiveData 업데이트
                 iapJob.invokeOnCompletion {
                 //E) IAP 에서 Price, PurchaseBool 을 채워준(+) rtList 를 받아옴.
+
                     val rtListPlusIAPInfo = iapV3.iap_E_getFinalList()
                     Log.d(TAG, "refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
-                //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+            //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                     isFreshList = true
                     _rtInTheCloudList.value = rtListPlusIAPInfo
                     Log.d(TAG, "refreshAndUpdateLiveData: <3> <<<<<<<<<getRtList: successful")
-                //4) todo: 해당 List 를 혹시 모르니 sharedPref 에 GSON 으로 저장?
+            //4) todo: 해당 List 를 혹시 모르니 sharedPref 에 GSON 으로 저장?
                 }
 
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.

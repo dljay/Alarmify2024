@@ -1,11 +1,12 @@
 package com.theglendales.alarm.jjdata
 
 data class RtInTheCloud(val title: String="", val tags: String="", val description: String="", val imageURL: String="", val mp3URL: String="",
-                        val id: Int = 0, val iapName: String="", val bdgStrArray: ArrayList<String> = arrayListOf())
+                        val id: Int = 0, val iapName: String="", val bdgStrArray: ArrayList<String> = arrayListOf(),
+                        var itemPrice: String="", var purchaseBool: Boolean=false)
 {
     override fun toString(): String
     {
-        return "ringtoneClass: id =$id, title='$title', iapName= $iapName, bdgStrArray=$bdgStrArray, tags ='$tags', description='$description', \nimage='$imageURL', mp3URL = $mp3URL)"
+        return "ringtoneClass: id =$id, title='$title', itemPrice=$itemPrice, purchaseBool=$purchaseBool, iapName= $iapName, bdgStrArray=$bdgStrArray, tags ='$tags', description='$description', \nimage='$imageURL', mp3URL = $mp3URL)"
     }
 //DATA CLASS 이기 때문에 아래 fun equals.. fun hashCode() 는 필요 없다고 하는데. 일단은 넣어놓음.
 

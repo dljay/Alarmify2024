@@ -46,6 +46,7 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.BtmShtSingleDNLDV2
 
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloaderV2
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV2
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
@@ -65,8 +66,9 @@ private const val TAG = "SecondFragment"
 class SecondFragment : androidx.fragment.app.Fragment() {
 
     //IAP
-    //lateinit var iapInstance: MyIAPHelper_v1
+
     lateinit var iapInstanceV2: MyIAPHelperV2
+    private val iapInstanceV3: MyIAPHelperV3 by globalInject()
     //Download 관련
     lateinit var myDownloaderV2: MyDownloaderV2
     lateinit var btmSht_SingleDNLDV: BtmShtSingleDNLDV2
@@ -338,7 +340,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 else if(!jjMainVModel.prevNT && isNetworkWorking) {
                     Log.d(TAG, "onViewCreated: [MainVModel] Network Working Again! Remove Error Lottie and Relaunch FB!!")
                     lottieAnimController("stop")
-                    jjMainVModel.getRtListFromFb() // Relaunch FB! -> 사실 lottie 가 사라지면서 기존 RcView 가 보여서 상관없긴 하지만.애초 Network 불가상태로 접속해 있을 수 있음.
+                    jjMainVModel.refreshAndUpdateLiveData() // Relaunch FB! -> 사실 lottie 가 사라지면서 기존 RcView 가 보여서 상관없긴 하지만.애초 Network 불가상태로 접속해 있을 수 있음.
                 }
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
 
@@ -742,7 +744,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 }
             } else if (!myIsChipChecked) {
                 //Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() } //todo: jjMainVModel.getRtLisFromFb() 로 바꾸기!
-                jjMainVModel.getRtListFromFb()
+                jjMainVModel.refreshAndUpdateLiveData()
             }
         }
     }

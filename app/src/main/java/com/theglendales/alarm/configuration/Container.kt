@@ -18,8 +18,10 @@ import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.jjongadd.TimePickerJjong
 import com.theglendales.alarm.logger.LogcatLogWriter
 import com.theglendales.alarm.logger.Logger
@@ -140,6 +142,8 @@ fun startKoin(context: Context): Koin {
         single<DiskSearcher> { DiskSearcher(context = context)}
         single<SpinnerAdapter> { SpinnerAdapter(context = context) }
         single<TimePickerJjong> {TimePickerJjong()}
+        single<MyIAPHelperV3> { MyIAPHelperV3(context = context) }
+        single<ToastMessenger> {ToastMessenger(context = context)}
 
         // 내가 추가 <--
 

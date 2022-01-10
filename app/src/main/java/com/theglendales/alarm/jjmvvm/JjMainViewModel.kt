@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
+import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.launch
 
 /**
@@ -16,28 +18,43 @@ import kotlinx.coroutines.launch
 private const val TAG="JjMainViewModel"
 
 class JjMainViewModel : ViewModel() {
-
-
-//*******************FireBase LiveData
-    var isFreshList= false
+//ToastMessenger
+    private val toastMessenger: ToastMessenger by globalInject()
+//IAP variable
+    private val iapV3: MyIAPHelperV3 by globalInject()
+//FireBase variables
+    var isFreshList = false
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
     private val _rtInTheCloudList = MutableLiveData<MutableList<RtInTheCloud>>() // Private& Mutable LiveData
     val rtInTheCloudList: LiveData<MutableList<RtInTheCloud>> = _rtInTheCloudList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
 
-    init {viewModelScope.launch {getRtListFromFb()}}
+    init {
+        Log.d(TAG, "init: called.. ^^ ")
+        refreshAndUpdateLiveData()}
     //ViewModel 최초 로딩시 & Spinner 로 휘리릭~ 새로고침 할 때 아래 function 이 불림.
-    fun getRtListFromFb() {
-        // internet check?
+    fun refreshAndUpdateLiveData() {
         firebaseRepoInstance.getPostList().addOnCompleteListener {
             if(it.isSuccessful)
             {
-                Log.d(TAG, "getRtList: <<<<<<<<<getRtList: successful")
-                isFreshList = true
-                _rtInTheCloudList.value = it.result!!.toObjects(RtInTheCloud::class.java)
+                viewModelScope.launch {
+                //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨. Async 걱정 안해도 될듯..?
+                    //1) Fb 에서 RtList를 받아옴
+                    val rtList = it.result!!.toObjects(RtInTheCloud::class.java)
+                    //2) IAP 에서 Price, PurchaseBool 을 채워준(+) rtList 를 받아옴.
+                    val rtListPlusIAPInfo = iapV3.iapManager(rtList)
+                    Log.d(TAG, "refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
+                    //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! --- todo: rcv 에서 iap 에 있는 map 의존 없애기.
+                    
+                    //_rtInTheCloudList.value = rtListPlusIAPInfo
+
+                    isFreshList = true //todo: 지우기
+                    Log.d(TAG, "getRtList: <<<<<<<<<getRtList: successful")
+                }
 
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.
                 Log.d(TAG, "<<<<<<<getRtList: ERROR!! Exception message: ${it.exception!!.message}")
                 //lottieAnimController(1) // this is useless at the moment..
+                toastMessenger.showMyToast("Unable to fetch Data. Please check your connection.", isShort = false)
             }
         }
 

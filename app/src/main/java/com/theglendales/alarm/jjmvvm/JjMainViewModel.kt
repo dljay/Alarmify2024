@@ -12,6 +12,8 @@ import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -90,6 +92,12 @@ class JjMainViewModel : ViewModel() {
         _isNetworkWorking.postValue(isNetworkOK) // .postValue= backgroundThread 사용. // (이 job 은 발생지가 backgrouond thread 니깐 .value=xx 안되고 postValue() 써야함!)
     }
 
+//***********************RecyclerView (클릭 -> SecondFrag 에 RtInTheCloud Obj 전달 -> SecondFrag 에서 UI 업뎃 및 복원(ListFrag 다녀왔을 때)
+    val emptyRtObj = RtInTheCloud(id = -10) // 그냥 빈 깡통 -10 -> SecondFrag.kt > updateMiniPlayerUiOnClick() 에서 .id <0 -> 암것도 안함.
+    private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
+    val selectedRow = _selectedRow.asStateFlow()
+
+    fun updateSelectedRt(rtObj: RtInTheCloud) {_selectedRow.value = rtObj}
 //***********************
     override fun onCleared() {
         super.onCleared()

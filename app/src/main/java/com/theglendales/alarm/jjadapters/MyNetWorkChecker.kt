@@ -8,7 +8,6 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import com.theglendales.alarm.jjmvvm.JjMainViewModel
-import com.theglendales.alarm.jjmvvm.JjNetworkCheckVModel
 
 private const val TAG ="MyNetWorkChecker"
 

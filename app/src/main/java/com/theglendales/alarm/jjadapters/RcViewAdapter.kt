@@ -19,10 +19,10 @@ import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
+import com.theglendales.alarm.jjmvvm.JjMainViewModel
 import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
 import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV2
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.model.mySharedPrefManager
 //import com.theglendales.alarm.jjiap.MyIAPHelper_v1
@@ -40,7 +40,7 @@ interface RcCommIntf {
 class RcViewAdapter(
     var rtPlusIapInfoList: MutableList<RtInTheCloud>,
     private val receivedActivity: FragmentActivity,
-    private val rcViewModel: JjRecyclerViewModel,
+    private val jjMainVModel: JjMainViewModel,
     private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
 
 
@@ -124,21 +124,14 @@ class RcViewAdapter(
                     Log.d(TAG,"onResourceReady: Glide loading success! trId: $currentTrId, Position= ${holder.adapterPosition}") // debug 결과 절대 순.차.적으로 진행되지는 않음!
 
                     // //Glide 가 로딩되기전 클릭하는 상황에 대응하기 위해 -> 열려있는 miniPlayer의 thumbnail에 필요한 사진과 현재 glide로 로딩된 사진의 동일한지 trId로 확인 후
-                    if (currentTrId == GlbVars.clickedTrId) {
+                    /*if (currentTrId == GlbVars.clickedTrId)
+                    {
                         Log.d(TAG, "onResourceReady: (Possible) Early Click!! Setting up image for MiniPlayer's upper/lower ui ")
-
-                    //1안 - 예전 방법
                         val iv_upperUi_thumbNail = receivedActivity.findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)
                         val iv_lowerUi_bigThumbnail = receivedActivity.findViewById<ImageView>(R.id.id_lowerUi_iv_bigThumbnail)
                         iv_upperUi_thumbNail.setImageDrawable(resource)
                         iv_lowerUi_bigThumbnail.setImageDrawable(resource)
-
-                    //2안 - 라이브 데이터 사용하여 한번 더 전달) -> 아래 iv_ThumbNail 에 들어가는건 아래 .into 에서 이뤄지므로.. 이건 안된다! (X) <- 그냥 지워버려..
-//                        val vHolderAndTrId = ViewAndTrIdClass(holder.rl_Including_tv1_2, currentTrId)
-//                        rcViewModel.updateLiveData(vHolderAndTrId) 지워라!!
-
-
-                    }
+                    }*/
 
                     return false
                 }
@@ -313,8 +306,8 @@ class RcViewAdapter(
 
             if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null)
             { // To avoid possible mistake when we delete the item but click it
-                val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
-
+               // val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
+                val currentRt = rtPlusIapInfoList[adapterPosition] // todo: 이거 좀 급하게 바꿨는데 잘되는것 같음 일단은. 면밀한 확인 필요.
             
                 when(v.id) {
                     //1) [하이라이트, 음악 재생] - 구매 제외 부분 클릭  (Rl_including_tv1_2 영역)
@@ -331,7 +324,7 @@ class RcViewAdapter(
                         mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
 
                         // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
-                        rcViewModel.updateLiveData(vHolderAndTrId) // JJRecyclerViewModel.kt - selectedRow(MutableLiveData) 값을 업데이트!
+                        jjMainVModel.updateSelectedRt(currentRt) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!
                     }
                     //2) [구매 클릭]
                     R.id.id_cl_entire_Purchase -> {

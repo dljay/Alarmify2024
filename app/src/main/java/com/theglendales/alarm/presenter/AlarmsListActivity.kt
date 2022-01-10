@@ -56,15 +56,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.13c [IAP 코루틴으로 수정. 진행 중]
-
-//------------22/1/10 (월) 22시30분
+//v3.07.13d [IAP 코루틴으로 수정. 진행 중]
 // Achievements:
 // JjMainViewModel 로 viewModelScope 로 IAPHelperV3 시도 -> 로딩 성공 (O)
 // ItemPriceMap 안쓰기(O)
+//  RcVViewModel -> MainViewModel 로 통합. Track Click -> RtObj 전달!(O)
 
-// 할일 :
-//  RcVViewModel -> MainViewModel 로 통합. 계속 flow 사용?
+
 
 //2. RcV 에서 클릭 했을 때 viewAndTrId 가 아니고 그냥 RtInTheCloud Obj 넣어주기? => 결국 사진 보여주는것만 GLide 로 URL 통해 로딩하면 된다 -> Cache 되있으니 네트워크 쓸걸로 생각은 안된다.
 //3. RcV 구매 클릭 소스 넣어주기 (iapInstaceV2.myOnPurchaseClicked..) [Line 346]

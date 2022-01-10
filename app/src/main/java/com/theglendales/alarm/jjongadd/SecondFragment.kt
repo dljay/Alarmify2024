@@ -3,6 +3,7 @@ package com.theglendales.alarm.jjongadd
 //import android.app.Fragment
 import android.annotation.SuppressLint
 import android.app.DownloadManager
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
@@ -27,12 +28,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.airbnb.lottie.LottieAnimationView
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.snackbar.Snackbar
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
+import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjadapters.RcCommIntf
 import com.theglendales.alarm.jjadapters.RcViewAdapter
@@ -75,11 +81,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Network Checker
     lateinit var myNetworkCheckerInstance: MyNetWorkChecker
     //ViewModel 5종 생성
-    private val jjMainVModel: JjMainViewModel by viewModels()
-    private val jjNtVModelFlow: JjNetworkCheckVModel by viewModels() //[FLOW]
-    private val jjRcvViewModel: JjRecyclerViewModel by viewModels() // [FLOW]
-
-    
+    private val jjMainVModel: JjMainViewModel by viewModels() // [LiveData] + [Flow]
 
 
 
@@ -184,8 +186,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //  LIVEDATA ->
 
         //1) ViewModel 5종 생성(RcvVModel/MediaPlayerVModel)
-            //1-A)  *** JjRcvViewModel 이것은 오롯이 RcView 에서 받은 Data-> MiniPlayer(BtmSlide) Ui 업뎃에 사용됨! ***
-            //val jjRcvViewModel = ViewModelProvider(requireActivity()).get(JjRecyclerViewModel::class.java)
             //1-B) jjMpViewModel 생성
             val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
             //1-C) jjMyDownloaderViewModel 생성
@@ -291,18 +291,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //repeatOnLifeCycle() : 이 블록 안은 이 lifecycle 의 onStart() 에서 실행- onStop() 에서 cancel. lifecycle 시작하면 자동 re-launch!
                 lifecycle.repeatOnLifecycle(State.RESUMED) {
                     launch {
-                        jjNtVModelFlow.isNtWorking.collect {Log.d(TAG, "onViewCreated: [Flow] received Bool=$it")}
-                    }
-                    launch {
-                        jjRcvViewModel.selectedRow.collect { vAndTrIdObj -> currentClickedTrId = vAndTrIdObj.trId
-                            Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${vAndTrIdObj.trId}, \n currentClickedTrId=$currentClickedTrId")
-                            if(vAndTrIdObj.view!=null) {
-                                updateMiniPlayerUiOnClick(vAndTrIdObj) // 동시에 ListFrag 갔다왔을때도 이걸 통해서 [복원]
-                            }
+                        jjMainVModel.selectedRow.collect { rtInTheCloudObj -> currentClickedTrId = rtInTheCloudObj.id
+                            Log.d(TAG,"onViewCreated: !!! 'RcvViewModel' 옵저버!! 트랙ID= ${rtInTheCloudObj.id}, \n currentClickedTrId=$currentClickedTrId")
+                                updateMiniPlayerUiOnClick(rtInTheCloudObj) // 동시에 ListFrag 갔다왔을때도 이걸 통해서 [복원]
                          }
                     }
                 }
-
             }
 
         //3) Firebase ViewModel Initialize
@@ -313,7 +307,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
-            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjRcvViewModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
+            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjMainVModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
             myDownloaderV2 = activity?.let {MyDownloaderV2(it,jjDNLDViewModel)}!!
             iapInstanceV2 = MyIAPHelperV2(requireActivity(), rcvAdapterInstance, myDownloaderV2)
             myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!
@@ -451,10 +445,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)
     // Takes in 'Click Events' and a)Update Mini Player b)Trigger MediaPlayer
 
-    private fun updateMiniPlayerUiOnClick(viewAndTrId: ViewAndTrIdClass) {
-        val rtInTheCloudObj = fullRtClassList.single { rtObj -> rtObj.id == viewAndTrId.trId }
-        val ivInside_Rc = viewAndTrId.view?.findViewById<ImageView>(R.id.id_ivThumbnail) // Recycler View 의 현재 row 에 있는 사진을 variable 로 생성
-        Log.d(TAG, "updateMiniPlayerUiOnClick: called. .. 1)ivInside_Rc=$ivInside_Rc, 2)rtClassFromtheList= $rtInTheCloudObj")
+    private fun updateMiniPlayerUiOnClick(rtObj: RtInTheCloud) {
+        Log.d(TAG, "updateMiniPlayerUiOnClick: called. .. rtObj = $rtObj")
+
+        if(rtObj.id < 0) { // 만약 id 가 0 미만 (즉 깡통) 그냥 return..
+            Log.d(TAG, "updateMiniPlayerUiOnClick: Invalid Rt Obj. Return")
+            return
+        }
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
 
     //Sliding Panel - Upper UI
@@ -463,22 +460,36 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         var spaceTwenty="                    " // 20칸
         var spaceFifty="                                                 " //50칸 (기존 사용)
         var spaceSixty="                                                           " //60칸
-        tv_upperUi_title.text = spaceFifteen+ rtInTheCloudObj?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
-        if(rtInTheCloudObj?.title!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?
+        tv_upperUi_title.text = spaceFifteen+ rtObj.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
+        if(rtObj.title.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?
         else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
         }
 
     //Sliding Panel -  Lower UI
-        tv_lowerUi_about.text = rtInTheCloudObj?.description // Description 채워주기
-        val badgeStrList = rtInTheCloudObj.bdgStrArray// Badge Sort
+        tv_lowerUi_about.text = rtObj.description // Description 채워주기
+        val badgeStrList = rtObj.bdgStrArray// Badge Sort
         showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
         //
         //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
-        if (ivInside_Rc != null) { // 사실 RcView 가 제대로 setup 되어있으면 무조건 null 이 아님! RcView 클릭한 부분에 View 가 로딩된 상태 (사진 로딩 상태 x)
-            Log.d(TAG, "updateMiniPlayerUiOnClick: ivInside_Rc not null. ivInside_Rc=$ivInside_Rc")
-            iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
-            iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
-        }
+        GlideApp.with(requireContext()).load(rtObj.imageURL).centerCrop().error(R.drawable.errordisplay)
+            .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
+                override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
+                    Log.d(TAG, "onLoadFailed: failed ... ")
+                    return false
+                }
+
+                override fun onResourceReady(resource: Drawable?,model: Any?,target: Target<Drawable>?,dataSource: DataSource?,
+                                             isFirstResource: Boolean): Boolean {
+                    iv_upperUi_thumbNail.setImageDrawable(resource) //RcV 현재 row 에 있는 사진으로 설정
+                    iv_lowerUi_bigThumbnail.setImageDrawable(resource) //RcV 현재 row 에 있는 사진으로 설정
+                    //
+                    return false
+                }
+
+            }).into(iv_upperUi_thumbNail)
+        //iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
+        //iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
+
 
         // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
         if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
@@ -487,10 +498,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             //다운로드 Test 용도 - IAP  검증 걸치지 않고 해당 번호에 넣은 RT 다운로드 URL 로 이동. [원복]
 //                val testRtHelixObj = RtInTheCloud(title = "SoundHelix8.mp3","moreshit","desc","imgUrl",
-//                    mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",id=1, iapName = "shitbagHelix")
+//                mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",id=1, iapName = "shitbagHelix")
 //                myDownloaderV2.singleFileDNLD(testRtHelixObj)
-
-
 
     }
 

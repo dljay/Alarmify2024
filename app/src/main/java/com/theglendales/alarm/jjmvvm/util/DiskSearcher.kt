@@ -399,14 +399,14 @@ class DiskSearcher(val context: Context)
     }
 
 
-    fun deleteFromDisk(rtClassObj: RtInTheCloud, fileNameAndFullPath: String) { //todo: rtWithAlbumArt obj 로 교체.
-            val trId=  rtClassObj.id
+    fun deleteFromDisk(fileNameAndFullPath: String) { //todo: rtWithAlbumArt obj 로 교체.
+
 
             try {
                 val fileToDelete = File(fileNameAndFullPath)
                 if(fileToDelete.exists()) {
                     fileToDelete.delete()
-                    Log.d(TAG, "deleteFromDisk: *****Deleting trId=$trId, fileToDelete=$fileToDelete")
+                    Log.d(TAG, "deleteFromDisk: *****Deleting file Name=${fileToDelete.name}")
                 } else if(!fileToDelete.exists()) {
                     Log.d(TAG, "deleteFromDisk: Such File doesn't exist on the drive. FileName= $fileToDelete")
                 }

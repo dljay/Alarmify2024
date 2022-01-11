@@ -64,11 +64,11 @@ class JjMainViewModel : ViewModel() {
                     {
                 //D) Each .launch{} running on separate thread
                         //D) Parallel Job  - D1
-                        val jobD1= launch {
+                        launch {
                         iapV3.iap_D1_addPurchaseBoolToList()
                         }
                         //D) Parallel Job - D2
-                        val jobD2 = launch {
+                        launch {
                             iapV3.iap_D2_addPriceToList()
                         }
                     }
@@ -79,7 +79,7 @@ class JjMainViewModel : ViewModel() {
                     // 에러 있으면  -> (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
                     if(throwable!=null) {
                         Log.d(TAG, "refreshAndUpdateLiveData: (个_个) iapParentJob Failed: $throwable")
-                        val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref
+                        val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref (없을땐 그냥 깡통 arrayListOf<RtInTheCloud>() 를 받음.
                         isFreshList = true
                         _rtInTheCloudList.value = listSavedOnPhone // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         return@invokeOnCompletion
@@ -93,8 +93,10 @@ class JjMainViewModel : ViewModel() {
                         Log.d(TAG, "refreshAndUpdateLiveData: <3> <<<<<<<<<getRtList: successful")
                         //새로운 Coroutine Launch -> SharedPref 에 현재 리스트 저장.
                         viewModelScope.launch {
-                            Log.d(TAG, "refreshAndUpdateLiveData: called")
+                            Log.d(TAG, "refreshAndUpdateLiveData: saving current RtList+IAPInfo to Shared Pref")
                             mySharedPrefManager.saveRtInTheCloudList(rtListPlusIAPInfo)
+                            // todo: download
+                            // todo: delete purchaseBool=false files
                         }
 
                     }

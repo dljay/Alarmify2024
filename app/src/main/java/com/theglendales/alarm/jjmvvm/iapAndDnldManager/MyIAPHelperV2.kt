@@ -3,12 +3,10 @@ package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 import android.app.Activity
 import android.util.Log
 import android.widget.Toast
-import androidx.fragment.app.viewModels
 import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.RtInTheCloud
-import com.theglendales.alarm.jjmvvm.JjMainViewModel
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -66,7 +64,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                             Log.d(TAG, "onQueryPurchasesResponse: called ")
                             //check status of found items and save values to preference//item which are not found simply save false values to their preference
                             //indexOf return index of item in purchase list from 0-2 (because we have 3 items) else returns -1 if not found
-                            val purchaseFound = ArrayList<Int>()
+                            val purchaseFoundItemsTrIds = ArrayList<Int>()
                             if (listOfPurchases.size > 0)
                             {
                                 Log.d(TAG, "C) onBillingSetupFinished: queryPurchases.size = ${listOfPurchases.size}")
@@ -98,11 +96,11 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                                     }
                                     val trackID = rtObject.id
                                     val iapName = purchase.skus[0]
-                                    val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta"
+
                                     //if purchase found. 구입 내역이 있는! item 만 나옴
-                                    if (trackID > 0) // 만약 p1,p7 등 아예 PlayConsole 카탈로그에서 Deactivate 시킨 물품인 경우 -> trackID= 0 임! (rtObject 자체가 깡통이니께)-> 이것들 걸름!
+                                    if (trackID > 0) // rtObject 를 위에.single() 에서 못찾으면 -> trackID= 0 임! -> ex.) p1,p7 등 아예 PlayConsole 카탈로그에서 Deactivate 시킨 물품인 경우  -> 이것들 걸름!
                                     {
-                                        purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
+                                        purchaseFoundItemsTrIds.add(trackID) //For items that are found(purchased), add them to purchaseFound
                                         // ********************************>>>기존 구매건
                                         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED)
                                         {
@@ -113,6 +111,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                                             mySharedPrefManager.saveUrlPerIap(iapName, dnldURL)
 
                                         //********* (기존 구매가 확인되었으나 파일이없다) -> multiDNLDNeededList 에 추가! [멀티]
+                                            val fileNameAndFullPath = receivedActivity.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta"
                                             if(!myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
                                                 Log.d(TAG, "onBillingSetupFinished: [멀티] 복원 다운로드 필요한 리스트에 다음을 추가: $iapName")
                                                 multiDNLDNeededList.add(rtObject)
@@ -131,7 +130,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                                 //indexOf returns -1 when item is not in foundlist. 리스트에 없으면 -1 반환.
 
                                 currentRtList.forEach { rtObject->
-                                    if(purchaseFound.indexOf(rtObject.id) == -1) //현재 우리의 rtList (currentRtList) 중 구매 리스트에 없는 모든 물품들에 대해서..
+                                    if(purchaseFoundItemsTrIds.indexOf(rtObject.id) == -1) //현재 currentRtList 의 rtObj 가 purchaseFound List 에 없다면 -> 즉 'currentRtList' 에서 구매가 안된 모든 물건에 대해
                                     { // itemIDsMap 에서 "구매한목록(purchaseFound)" 에 없는 놈들은 다 false 로!
                                         // 이걸 구매 안한 상품들에 대해서 매번 해줘야 한다는 것= too CPU expensive 지만, IAP 4.0 Library 업뎃-> queryPurchaseAsync 임!
                                         val iapName = rtObject.iapName
@@ -151,7 +150,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                                             .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
                                         if(myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
                                             Log.d(TAG, "onBillingSetupFinished: $iapName 는(은) 산 놈도 아닌데 하드에 있음. 지워야함!! ")
-                                            myDiskSearcher.deleteFromDisk(rtObject, fileNameAndFullPath)
+                                            myDiskSearcher.deleteFromDisk(fileNameAndFullPath)
                                         }
                                     }}
                             }
@@ -485,7 +484,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
         if(!keepTheFile && myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
             // (잘못된 구매 사유 등으로) Keep 할 필요 없는 파일인데 디스크에 있을경우 삭제! //todo: 테스트 필요.
             Log.d(TAG, "downloadOrDeleteSinglePurchase: !![WARNING] Deleting this File!!=$iapName")
-                myDiskSearcher.deleteFromDisk(rtInstance, fileNameAndFullPath)
+                myDiskSearcher.deleteFromDisk(fileNameAndFullPath)
             return
         }
         else if(keepTheFile && myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {

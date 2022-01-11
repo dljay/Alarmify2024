@@ -56,7 +56,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.13f [IAP 코루틴으로 수정. 진행 중-진짜 IAP 기능 심는중- error handling은 완료!]
+//v3.07.13g [IAP 코루틴으로 수정. 진행 중-진짜 IAP 기능 심는중- pt2!]
 //MyIAPHelpeverV3, JJMainVModel - 1. error Handling 및 SharedPref 정리(O)
 
 //todos:

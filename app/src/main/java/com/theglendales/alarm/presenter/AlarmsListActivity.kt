@@ -56,15 +56,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.13e [IAP 코루틴으로 수정. 진행 중-진짜 IAP 기능 심는중- error handling 전!]
-// Achievements:
-// ** !! 대박!! iapV3.iap_D2_addPriceToList() '실제 실행 후' + 4000L Delay 해주었지만 계속 기다려줌! ㅜ_ㅜ
-// JjMainViewModel 로 viewModelScope 로 IAPHelperV3 시도 -> 로딩 성공 (O)
-// ItemPriceMap 안쓰기(O)
-//  RcVViewModel -> MainViewModel 로 통합. Track Click -> RtObj 전달!(O)
+//v3.07.13f [IAP 코루틴으로 수정. 진행 중-진짜 IAP 기능 심는중- error handling은 완료!]
+//MyIAPHelpeverV3, JJMainVModel - 1. error Handling 및 SharedPref 정리(O)
 
 //todos:
-//1. error Handling! 진행 전 https://youtu.be/KWocgiYwwmM
+// 진짜 IAP 기능 심어주기
 //3. RcV 구매 클릭 소스 넣어주기 (iapInstaceV2.myOnPurchaseClicked..) [Line 346]
 //4. 결과적으로 (가급적) JJMainVModel 과 JjMpViewModel 만 남겨두도록 해보기?
 

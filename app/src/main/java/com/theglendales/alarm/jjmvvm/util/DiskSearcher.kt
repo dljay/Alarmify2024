@@ -34,7 +34,7 @@ class DiskSearcher(val context: Context)
     val topFolder = context.getExternalFilesDir(null)!!.absolutePath
     val alarmRtDir = File(topFolder, RTA_FOLDER)
     val artDir = File(topFolder, ART_FOLDER)
-    //val xmlFile = File(topFolder+SH_PREF_FOLDER+ "RtaArtPathList.xml") // RtaArtPathList.xml
+    //val xmlFile = File(topFolder+SH_PREF_FOLDER+ "RtOnThePhoneList.xml") // RtOnThePhoneList.xml
 
 
     // rta & art 파일이 매칭하는지 보완이 필요없는지 확인하는 기능 isRescanNeeded isRtListRebuildNeeded
@@ -45,11 +45,11 @@ class DiskSearcher(val context: Context)
         if(!alarmRtDir.exists()) {alarmRtDir.mkdir()} // <A> /.AlarmRingTones 폴더가 존재하지 않는다. -> 폴더 생성
         if(!artDir.exists()) {artDir.mkdir()} // <B> /.AlbumArt 폴더가 존재하지 않는다.
 
-        // SharedPref (RtaArtPathList.xml)에서 돌려받는 list 는 Disk 에 저장되어있는 RtOnThePhone object 들의 정보를 담고 있음.
-        val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
+        // SharedPref (RtOnThePhoneList.xml)에서 돌려받는 list 는 Disk 에 저장되어있는 RtOnThePhone object 들의 정보를 담고 있음.
+        val listFromSharedPref = mySharedPrefManager.getRtOnThePhoneList()
 
 
-    // 2-A)SharedPref (RtaArtPathList.xml) 파일 자체가 없을때 (즉 최초 실행하여 xml 파일이 없을때) 깡통 List 를 받음.
+    // 2-A)SharedPref (RtOnThePhoneList.xml) 파일 자체가 없을때 (즉 최초 실행하여 xml 파일이 없을때) 깡통 List 를 받음.
         if(listFromSharedPref.isNullOrEmpty()) {
 
             Log.d(TAG, "isDiskScanNeeded: 2-A) We couldn't retrieve sharedPref!")
@@ -68,13 +68,13 @@ class DiskSearcher(val context: Context)
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
-    // 2-D) SharedPref (RtaArtPathList.xml) 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
+    // 2-D) SharedPref (RtOnThePhoneList.xml) 리스트 <-> /.AlarmRtFolder 파일 갯수 비교 (추가 구매건 혹은 삭제된 RT가 있으면 불일치할것임.)
         if(alarmRtDir.listFiles().size != listFromSharedPref.size) {
             Log.d(TAG, "isDiskScanNeeded: 2-D) SharedPref 리스트 <-> /.AlarmRtFolder 파일 갯수 불일치.")
             isDiskRescanNeeded=true
             return isDiskRescanNeeded
         }
-    //2-E) SharedPref (RtaArtPathList.xml) 에서 받은 리스트 안 obj 검색->'artPath' (혹은 audio path)가 null 임.//
+    //2-E) SharedPref (RtOnThePhoneList.xml) 에서 받은 리스트 안 obj 검색->'artPath' (혹은 audio path)가 null 임.//
         val artPathEmptyList = listFromSharedPref.filter { rtWithAlbumArtObj -> rtWithAlbumArtObj.artFilePathStr.isNullOrEmpty()}
 
         if(artPathEmptyList.isNotEmpty()) { //(즉 artPathEmptyList 안 갯수가 > 0)

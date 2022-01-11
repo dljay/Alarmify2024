@@ -61,10 +61,10 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
     //<D1> 현재 리스트에 상품별 구매 여부 (true,false) 적어주기.
     suspend fun iap_D1_addPurchaseBoolToList() {
         Log.d(TAG, "iap_D1_addPurchaseBoolToList: <D1> called")
-        // todo: sharedPref 에도 저장하기?
+        //throw Exception("D1 Error") // 에러 테스팅
         delay(2000L) // 2.0 초 걸린다고 치고.
         rtListPlusIAPInfo[0].itemPrice="$2,000"
-        Log.d(TAG, "iap_D1_addPurchaseBoolToList: <D1> Finished")
+        //Log.d(TAG, "iap_D1_addPurchaseBoolToList: <D1> Finished")
     }
     //<D2> 현재 리스트에 상품별 가격 적어주기 (ex. $1,000)
     suspend fun iap_D2_addPriceToList() {
@@ -74,7 +74,8 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
         val myParams = SkuDetailsParams.newBuilder()
         myParams.setSkusList(itemNameList).setType(BillingClient.SkuType.INAPP)
-        //**Very Nice. 아래 callback 을 하나의 thread 로 봐주는 듯 Query 가 .Async 콜임에도 (JJMainViewMode>viewModelScope 에서 벗어나지 않았음!)
+        //**Very Nice: 아래 querySkuDetailsAsync 는 Async 콜이기 때문에 -> billingClient.query...Async{} 블락 아래 Logd 로 점프함 -> 그렇지만!
+        //이 전체 콜백을 하나의 thread 로 봐주기에 -> 듯 Query 가 .Async 콜임에도 (JJMainViewMode>viewModelScope 에서 벗어나지 않았음!)
         billingClient!!.querySkuDetailsAsync(myParams.build()) {queryResult, skuDetailsList ->
             if(queryResult.responseCode == BillingClient.BillingResponseCode.OK && skuDetailsList!=null) {
                 for(skuDetails in skuDetailsList) {
@@ -82,15 +83,16 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
                     rtListPlusIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
                     Log.d(TAG,"iap_D2_addPriceToList : <D2> a) item title=${skuDetails.title} b)item price= ${skuDetails.price}, c)item sku= ${skuDetails.sku}")
                 }
+                Log.d(TAG, "iap_D2_addPriceToList: <D2> Finished (O)")
             } else {
-                Log.d(TAG, "iap_D2_addPriceToList: <D2> Error! XXX loading price for items")
-                toastMessenger.showMyToast("Unexpected [IAP] error occurred.",isShort = true)
+                Log.d(TAG, "iap_D2_addPriceToList: <D2> Finished(X) - Error! XXX loading price for items")
+                throw Exception("<D2> Error ")
             }
             //todo: 다운로드 관련 여기서..?
 
         }
         //delay(4000L) // +4.0 초 걸린다고 치고.
-        Log.d(TAG, "iap_D2_addPurchaseBoolToList: <D2> Finished")
+
 
     }
     //<E> 완성 리스트를 전달 -> 라이브데이터 -> SecondFrag -> rcVUpdate

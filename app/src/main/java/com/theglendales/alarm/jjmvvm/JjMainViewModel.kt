@@ -10,8 +10,10 @@ import com.android.billingclient.api.BillingResult
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -22,8 +24,9 @@ import kotlinx.coroutines.launch
 private const val TAG="JjMainViewModel"
 
 class JjMainViewModel : ViewModel() {
-//ToastMessenger
-    private val toastMessenger: ToastMessenger by globalInject()
+//Utils
+    private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
+    private val mySharedPrefManager: MySharedPrefManager by globalInject() //SharedPref
 //IAP variable
     private val iapV3: MyIAPHelperV3 by globalInject()
 //FireBase variables
@@ -45,42 +48,64 @@ class JjMainViewModel : ViewModel() {
                 val rtList = it.result!!.toObjects(RtInTheCloud::class.java)
 
             //2)RtList 를 -> IAP 에 전달
-                val iapJob = viewModelScope.launch {
-                //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨. Async 걱정 안해도 될듯..?
-                //B) Fb 에서 받을 리스트를 -> IAP 에 전달
+                //A)Exception handler -> iapParentJob 에서 문제가 생겼을 때 Exception 을 받고 -> 아래 iapParentJob.invokeOnCompletion 에서 sharedPref 에 있는 데이터를 읽기.
+                // Handler 가 있어야 에러나도 Crash 되지 않는다.
+                val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+                    Log.d(TAG, "handler: Exception thrown in one of the children: $throwable")
+                    toastMessenger.showMyToast("Failed to fetch IAP information",isShort = false)
+                }
+                val iapParentJob = viewModelScope.launch(handler) {
+
+                //B) Fb 에서 받을 리스트를 -> IAP 에 전달 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨.
                     iapV3.iap_B_feedRtList(rtList)
                 //C) BillingClient 를 Ready 시킴 (이미 되어있으면 바로 BillingClient.startConnection)
                     val billingResult: BillingResult = iapV3.iap_C_prepBillingClient()
                     if(billingResult.responseCode == BillingClient.BillingResponseCode.OK)
-                    {//each .launch{} running on separate thread
+                    {
+                //D) Each .launch{} running on separate thread
                         //D) Parallel Job  - D1
-                        launch {
-                            iapV3.iap_D1_addPurchaseBoolToList()
+                        val jobD1= launch {
+                        iapV3.iap_D1_addPurchaseBoolToList()
                         }
                         //D) Parallel Job - D2
-                        launch {
+                        val jobD2 = launch {
                             iapV3.iap_D2_addPriceToList()
                         }
                     }
                 }
-                //위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) 다음이 불리면서 LiveData 업데이트
-                // ** !! 대박!! iapV3.iap_D2_addPriceToList() '실제 실행 후' + 4000L Delay 해주었지만 계속 기다려줌! ㅜ_ㅜ
-                iapJob.invokeOnCompletion {
+                //위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) 다음이 불리면서 LiveData 업데이트 // ** !! 대박 iapV3.iap_D2_addPriceToList() '실제 실행 후' + 4000L Delay ->계속 기다려줌! ㅜ_ㅜ
+                iapParentJob.invokeOnCompletion { throwable ->
+                    Log.d(TAG, "refreshAndUpdateLiveData: invoke on Completion called")
+                    // 에러 있으면  -> (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
+                    if(throwable!=null) {
+                        Log.d(TAG, "refreshAndUpdateLiveData: (个_个) iapParentJob Failed: $throwable")
+                        val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref
+                        isFreshList = true
+                        _rtInTheCloudList.value = listSavedOnPhone // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+                        return@invokeOnCompletion
+                    }
+                    //에러 없으면 -> iap 정보 입힌 리스트를 받아서 -> LiveData 전달!
+                    else {
                 //E) IAP 에서 Price, PurchaseBool 을 채워준(+) rtList 를 받아옴.
-                    Log.d(TAG, "------refreshAndUpdateLiveData: invokeOnCompletion called.")
-                    val rtListPlusIAPInfo = iapV3.iap_E_getFinalList()
-                    Log.d(TAG, "------refreshAndUpdateLiveData: rtListPlusIAPInfo[0].itemPrice=${rtListPlusIAPInfo[0].itemPrice} //purchaseBool= ${rtListPlusIAPInfo[0].purchaseBool}")
-            //3) LiveData Update -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
-                    isFreshList = true
-                    _rtInTheCloudList.value = rtListPlusIAPInfo
-                    Log.d(TAG, "refreshAndUpdateLiveData: <3> <<<<<<<<<getRtList: successful")
-            //4) todo: 해당 List 를 혹시 모르니 sharedPref 에 GSON 으로 저장?
+                        val rtListPlusIAPInfo = iapV3.iap_E_getFinalList()
+                        isFreshList = true
+                        _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+                        Log.d(TAG, "refreshAndUpdateLiveData: <3> <<<<<<<<<getRtList: successful")
+                        //새로운 Coroutine Launch -> SharedPref 에 현재 리스트 저장.
+                        viewModelScope.launch {
+                            Log.d(TAG, "refreshAndUpdateLiveData: called")
+                            mySharedPrefManager.saveRtInTheCloudList(rtListPlusIAPInfo)
+                        }
+
+                    }
+                    
                 }
 
+
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.
-                Log.d(TAG, "<<<<<<<refreshAndUpdateLiveData: ERROR!! Exception message: ${it.exception!!.message}")
+                Log.d(TAG, "<<<<<<<refreshAndUpdateLiveData: ERROR!! (个_个) Exception message: ${it.exception!!.message}")
                 //lottieAnimController(1) // this is useless at the moment..
-                toastMessenger.showMyToast("Unable to fetch Data. Please check your connection.", isShort = false)
+                toastMessenger.showMyToast("Unable to fetch data from host. Please check your connection.", isShort = false)
             }
         }
 

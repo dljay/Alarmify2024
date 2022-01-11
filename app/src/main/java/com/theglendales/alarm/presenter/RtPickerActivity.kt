@@ -239,7 +239,7 @@ class RtPickerActivity : AppCompatActivity() {
             //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
 
             // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
-            mySharedPrefManager.saveRtaArtPathList(resultList)
+            mySharedPrefManager.saveRtOnThePhoneList(resultList)
 
             // 1-d) DiskSearcher.kt>finalRtArtPathList [Companion obj 메모리] 에 띄워놓음(갱신)
             myDiskSearcher.updateList(resultList)

@@ -57,7 +57,7 @@ data class AlarmValue(
             if(!rtaPath.isNullOrEmpty()) {
                 return rtaPath
             } else { // 위에서 만약 실패했을 경우
-                val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
+                val listFromSharedPref = mySharedPrefManager.getRtOnThePhoneList()
                 rtaPath = listFromSharedPref[randomNumber].audioFilePath
                 return rtaPath
             }
@@ -71,7 +71,7 @@ data class AlarmValue(
         Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // \nalertSoundUri= ${alertSoundUri}, \nalarmtone=${alarmtone.toString()}, \nartFilePath=$artFilePath \nlabel=$label")
 
         // 여기서
-//        val listFromSharedPref = mySharedPrefManager.getRtaArtPathList()
+//        val listFromSharedPref = mySharedPrefManager.getRtOneThePhoneList()
 //        rtaPath = listFromSharedPref[randomNumber].audioFilePath
 
         val box = if (isEnabled) "[x]" else "[ ]"

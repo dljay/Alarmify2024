@@ -133,7 +133,7 @@ class AlarmsListFragment : Fragment() {
                 //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
 
                 // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
-                mySharedPrefManager.saveRtaArtPathList(resultList)
+                mySharedPrefManager.saveRtOnThePhoneList(resultList)
 
                 // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
                 myDiskSearcher.updateList(resultList)
@@ -148,7 +148,7 @@ class AlarmsListFragment : Fragment() {
 
         //2) Scan 이 필요없음(X)!!! 여기서 SharedPref 에 있는 리스트를 받아서 -> DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
         else if(!myDiskSearcher.isDiskScanNeeded()) {
-            val resultList = mySharedPrefManager.getRtaArtPathList()
+            val resultList = mySharedPrefManager.getRtOnThePhoneList()
 
             Log.d(TAG, "onCreate: XXX no need to scan the disk. Instead let's check the list from Shared Pref => resultList= $resultList")
             myDiskSearcher.updateList(resultList)
@@ -208,7 +208,7 @@ class AlarmsListFragment : Fragment() {
 
             if(artPathFromAlarmValue.isNullOrEmpty()) {
                 Log.d(TAG, "getView: (1-No Art File Found) artPathFromAlarmValue=$artPathFromAlarmValue, \nalarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
-                val currentRtaArtPathList = mySharedPrefManager.getRtaArtPathList()
+                val currentRtaArtPathList = mySharedPrefManager.getRtOnThePhoneList()
                 if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
                         try{
                             val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.fileNameWithoutExt=="defrt01" }.single() // **todo: Safety Check 실제로 뻑남.

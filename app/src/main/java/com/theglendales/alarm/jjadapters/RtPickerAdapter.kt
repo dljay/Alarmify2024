@@ -25,7 +25,7 @@ import com.theglendales.alarm.presenter.AlarmDetailsFragment
 // RcView 싱글 Selection 참고: https://stackoverflow.com/questions/28972049/single-selection-in-recyclerview
 
 private const val TAG="RtPickerAdapter"
-class RtPickerAdapter(var rtaArtPathList: MutableList<RtOnThePhone>,
+class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
                       private val receivedActivity: Activity,
                       private val rtPickerVModel: JjRtPickerVModel,
                       private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RtPickerAdapter.RtPickerVHolder>()
@@ -41,9 +41,9 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtOnThePhone>,
     }
 
     override fun onBindViewHolder(holder: RtPickerVHolder, position: Int) {
-        val currentRtItem = rtaArtPathList[position]
-        val currentRtTitle = rtaArtPathList[position].rtTitle
-        val currentRtFileName = rtaArtPathList[position].fileNameWithoutExt
+        val currentRtItem = rtOnThePhoneList[position]
+        val currentRtTitle = rtOnThePhoneList[position].rtTitle
+        val currentRtFileName = rtOnThePhoneList[position].fileNameWithoutExt
         val holderRadioBtn = holder.radioBtn
         Log.d(TAG, "onBindViewHolder: pos=$position, rtFileName=$currentRtFileName, rtTitle=$currentRtTitle,")
 
@@ -65,15 +65,15 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtOnThePhone>,
             // <0> lastUserCheckedPos 을 업데이트 (이제는 더 이상 -1 이 아니다!!)
                 lastUserCheckedPos = position
             // <1> LiveData 업데이트 - Intent 에 TrTitle, RTA/ArtFilePath 전달 용도
-                val rtWithAlbumArtObj = rtaArtPathList[position]
+                val rtWithAlbumArtObj = rtOnThePhoneList[position]
                 rtPickerVModel.updateLiveData(rtWithAlbumArtObj)
             // <2> RadioBtn 표시 관련
-                //a) rtaArtPathList 의 모든 isRadioBtnChecked variable 을 'false' 로 변경
-                for(i in 0 until rtaArtPathList.size) {
-                    rtaArtPathList[i].isRadioBtnChecked = false
+                //a) rtOnThePhoneList 의 모든 isRadioBtnChecked variable 을 'false' 로 변경
+                for(i in 0 until rtOnThePhoneList.size) {
+                    rtOnThePhoneList[i].isRadioBtnChecked = false
                 }
                 //b) (이제) User 가 클릭한 놈의 isRadioBtnChecked = true 로 변경 (클릭한 position 에 기반)
-                rtaArtPathList.get(lastUserCheckedPos).isRadioBtnChecked = true
+                rtOnThePhoneList.get(lastUserCheckedPos).isRadioBtnChecked = true
                 //c) 만약 현재 클릭하는 llEntireRow 안의 'Radio Button' 이 기존에 선택해놨던 Radio Button 과 '다른 놈'이라면  (기존에 선택되어있던 Radio Btn 의 선택을 해제)
                 // selectedRadioButton = 기존 선택되있던 놈으로 지정되어 있겠지..
                 if(selectedRadioBtn != null && !holderRadioBtn.equals(selectedRadioBtn)) {
@@ -105,14 +105,14 @@ class RtPickerAdapter(var rtaArtPathList: MutableList<RtOnThePhone>,
     }
 
     override fun getItemCount(): Int {
-        return rtaArtPathList.size
+        return rtOnThePhoneList.size
     }
 // My Methods
     fun updateRcV(newList: MutableList<RtOnThePhone>) {
-        val oldList= rtaArtPathList // Constructor 로 받은 리스트
+        val oldList= rtOnThePhoneList // Constructor 로 받은 리스트
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(JjDiffCallback(oldList, newList))
-        rtaArtPathList = newList
-        Log.d(TAG, "updateRcV: !!!!!!! rtaArtPathList.size (AFTER DIFF UTIL) = ${rtaArtPathList.size}")
+        rtOnThePhoneList = newList
+        Log.d(TAG, "updateRcV: !!!!!!! rtOnThePhoneList.size (AFTER DIFF UTIL) = ${rtOnThePhoneList.size}")
         diffResult.dispatchUpdatesTo(this)
     }
 // DiffUtil Class

@@ -56,18 +56,17 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.13e [IAP 코루틴으로 수정. 진행 중-진짜 IAP 기능 심는중]
+//v3.07.13e [IAP 코루틴으로 수정. 진행 중-진짜 IAP 기능 심는중- error handling 전!]
 // Achievements:
 // ** !! 대박!! iapV3.iap_D2_addPriceToList() '실제 실행 후' + 4000L Delay 해주었지만 계속 기다려줌! ㅜ_ㅜ
 // JjMainViewModel 로 viewModelScope 로 IAPHelperV3 시도 -> 로딩 성공 (O)
 // ItemPriceMap 안쓰기(O)
 //  RcVViewModel -> MainViewModel 로 통합. Track Click -> RtObj 전달!(O)
 
-
-
+//todos:
+//1. error Handling! 진행 전 https://youtu.be/KWocgiYwwmM
 //3. RcV 구매 클릭 소스 넣어주기 (iapInstaceV2.myOnPurchaseClicked..) [Line 346]
-//4. MYIAPHelperV2.kt >itemPricesMAP 관련. <- 이걸 RecyclerView 에서 쓰는데 별로 바람직하지 않다. JjMainVieweModel 에서 보관? => RcV 에서 결국 필요한 건 ItemPricesMap 과 PurchaseBool 여부(현재는 SharePref)
-//5. 결과적으로 (가급적) JJMainVModel 과 JjMpViewModel 만 남겨두도록 해보기?
+//4. 결과적으로 (가급적) JJMainVModel 과 JjMpViewModel 만 남겨두도록 해보기?
 
 
 /**

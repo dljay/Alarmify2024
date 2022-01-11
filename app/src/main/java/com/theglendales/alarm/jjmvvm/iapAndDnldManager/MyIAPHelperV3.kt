@@ -17,9 +17,9 @@ import kotlin.coroutines.suspendCoroutine
 private const val TAG="MyIAPHelperV3"
 
 class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
-// ToastMessenger
-    private val toastMessenger: ToastMessenger by globalInject()
-// IAP Related
+
+    private val toastMessenger: ToastMessenger by globalInject() // ToastMessenger
+
     var rtListPlusIAPInfo= mutableListOf<RtInTheCloud>()
     private var billingClient: BillingClient? = null
 
@@ -27,6 +27,7 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
         Log.d(TAG, "init MyIapHelperV3 called. ")
         billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build() //todo: 밑에 C .isReady 는 항상 false 네..
     }
+// ****************** <1> 최초 SecondFrag 로딩 후 (과거 정보) 복원 관련
     //todo: Try & Catch
     fun iap_A_initBillingClient() {
         Log.d(TAG, "iap_A_initBillingClient: <A> Called")
@@ -91,9 +92,7 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
             //todo: 다운로드 관련 여기서..?
 
         }
-        //delay(4000L) // +4.0 초 걸린다고 치고.
-
-
+        //delay(4000L) // Delay Test .. +4.0 초 걸린다고 치고.
     }
     //<E> 완성 리스트를 전달 -> 라이브데이터 -> SecondFrag -> rcVUpdate
     fun iap_E_getFinalList(): MutableList<RtInTheCloud> {
@@ -102,7 +101,7 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
     }
 
 
-
+// ****************** <2> 현재 구매 관련
 
 //**
     override fun onPurchasesUpdated(p0: BillingResult, p1: MutableList<Purchase>?) {

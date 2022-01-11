@@ -101,7 +101,6 @@ class JjMainViewModel : ViewModel() {
                     
                 }
 
-
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.
                 Log.d(TAG, "<<<<<<<refreshAndUpdateLiveData: ERROR!! (个_个) Exception message: ${it.exception!!.message}")
                 //lottieAnimController(1) // this is useless at the moment..

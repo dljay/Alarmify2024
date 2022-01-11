@@ -167,11 +167,8 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
 
                     } )
                 }
-
-
                 Log.d(TAG, "C) onBillingSetupFinished: finished..")
             }
-
             override fun onBillingServiceDisconnected() {
                 Log.d(TAG, "onBillingServiceDisconnected: called")
                 //todo:  Try to restart the connection on the next request to

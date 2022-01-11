@@ -56,13 +56,19 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-//v3.07.13g [IAP 코루틴으로 수정. 진행 중-진짜 IAP 기능 심는중- pt2!]
-//MyIAPHelpeverV3, JJMainVModel - 1. error Handling 및 SharedPref 정리(O)
+//v3.07.14a [IAP 코루틴으로 수정. 진행 중-진짜 IAP 기능 심는중- pt2!]
+
+// 진짜 IAP 기능 심어주기(O)
+//IAP-queryPurchaseAsync 등 코루틴 스코프에서 불러준 suspendFunction 안에 Async 가 있을때 계속 코루틴 스코프 건너뛰는것을 막음.(O)
+// suspendCoroutine{} 과 continuation.resume() 으로 됐음 (O)
 
 //todos:
-// 진짜 IAP 기능 심어주기
-//3. RcV 구매 클릭 소스 넣어주기 (iapInstaceV2.myOnPurchaseClicked..) [Line 346]
-//4. 결과적으로 (가급적) JJMainVModel 과 JjMpViewModel 만 남겨두도록 해보기?
+//0.*** IAPV3.kt>62: OnBillingServiceDisconnected() => java.lang.IllegalStateException: Already resumed : 왜 exception 못잡지?
+//1. RcV 구매 클릭 소스 넣어주기 (iapInstaceV2.myOnPurchaseClicked..) [Line 346] // PurchaseBool 실제 코드 넣기. purchaseToClick- 작동까지..
+//2. IapV2 PDF 만들기 + 삭제-> SharedPref 싹 정리 / SecondFrag - loadFromFirebase() 정리 및 카피.
+//3. 다운로드 작동-> 다운로드 타이틀 보여주기?
+//4. BillingClient Ready(x) issue..
+//5. 결과적으로 (가급적) JJMainVModel 과 JjMpViewModel 만 남겨두도록 해보기?
 
 
 /**

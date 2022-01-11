@@ -87,7 +87,7 @@ class MySharedPrefManager(val context: Context) {
     }
 
     fun saveRtInTheCloudList(rtInTheCloudList: MutableList<RtInTheCloud>) {
-        Log.d(TAG, "saveRtInTheCloudList: called. rtInTheCloudList=$rtInTheCloudList")
+        Log.d(TAG, "saveRtInTheCloudList: called.")
         val jsonStrSave = gson.toJson(rtInTheCloudList)
         prefRtInTheCloud.edit().putString(KEY_2, jsonStrSave).apply()
         Log.d(TAG, "saveRtInTheCloudList: done")

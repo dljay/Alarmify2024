@@ -65,11 +65,13 @@ class JjMainViewModel : ViewModel() {
                 //D) Each .launch{} running on separate thread
                         //D) Parallel Job  - D1
                         launch {
-                        iapV3.iap_D1_addPurchaseBoolToList()
+                            val listOfPurchases = iapV3.iap_D1_A_addPurchaseBoolToList() // D1-A
+                            iapV3.iap_D1_B_addPurchaseBoolToList(listOfPurchases)// D1-B
                         }
                         //D) Parallel Job - D2
                         launch {
-                            iapV3.iap_D2_addPriceToList()
+                            val skuDetailsList = iapV3.iap_D2_A_addPriceToList() // D2-A
+                            iapV3.iap_D2_B_addPriceToList(skuDetailsList)//D2-B
                         }
                     }
                 }

@@ -7,13 +7,9 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import java.io.File
 import kotlin.Exception
 import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 private const val TAG="MyIAPHelperV3"
@@ -55,9 +51,10 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
         return suspendCoroutine { continuation -> // suspendCoroutine -> async Callback 등 잠시 대기가 필요할 때 사용 -> 여기서 잠시 기존 코루틴 정지(JjMainVModel)
 
             billingClient!!.startConnection(object : BillingClientStateListener{
-                override fun onBillingSetupFinished(p0: BillingResult) {
+                override fun onBillingSetupFinished(billingResult: BillingResult) {
                     Log.d(TAG, "iap_C_prepBillingClient: <C> BillingSetupFinished (O)")
-                    continuation.resume(p0) // -> continuation 에서 이어서 진행 (원래 코루틴- JjMainVModel> iapParentJob 으로 복귀)
+
+                    continuation.resume(billingResult) // -> continuation 에서 이어서 진행 (원래 코루틴- JjMainVModel> iapParentJob 으로 복귀)
                 }
                 override fun onBillingServiceDisconnected() {
                     //continuation.resumeWithException(Exception("Error <C> Billing Service Disconnectoed")) :

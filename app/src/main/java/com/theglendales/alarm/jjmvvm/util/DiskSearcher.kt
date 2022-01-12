@@ -382,11 +382,8 @@ class DiskSearcher(val context: Context)
 //*************************** DOWNLOAD 관련해서 필요한 기능들 (기존에 MyDownloader_v1.kt 에 있던 기능들 옮겨옴.)
     // Same File Exists ? + And that Same File need to be replaced?
     fun isSameFileOnThePhone (filePathAndName: String): Boolean { //다운로드 받기 전 이미 Disk 에 File 이 있는지 체크.
-
         val fileToCheck = File(filePathAndName)
-
         return if(fileToCheck.isFile && fileToCheck.exists()) { //true if and only if the file denoted by this abstract pathname exists and is a normal file; false otherwise
-
             Log.d(TAG, "doesSameFileExistOnThePhone: \"File ${fileToCheck.name} exists\"")
             //Toast.makeText(receivedActivity,"File ${fileToCheck.name} exists", Toast.LENGTH_LONG).show()
             // todo: 파일은 있지만 혹시나 불량 파일인지도 확인? (중간에 다운로드 끊기는 등)
@@ -397,11 +394,21 @@ class DiskSearcher(val context: Context)
             false
         }
     }
-
-
-    fun deleteFromDisk(fileNameAndFullPath: String) { //todo: rtWithAlbumArt obj 로 교체.
-
-
+    fun deleteFileByIAPName(iapName: String) {
+        val fileSupposedToBeAt =topFolder + RTA_FOLDER+ File.separator + iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
+        try {
+            val fileToDelete = File(fileSupposedToBeAt)
+            if(fileToDelete.exists()) {
+                fileToDelete.delete()
+                Log.d(TAG, "deleteFileByIAPName: *****Deleting file Name=${fileToDelete.name}")
+            } else if(!fileToDelete.exists()) {
+                Log.d(TAG, "deleteFileByIAPName: Such File doesn't exist on the drive. FileName= $fileToDelete")
+            }
+        }catch (e: Exception) {
+            Log.d(TAG, "deleteFileByIAPName: Maybe fileNameFull variable is null? fileNameFull=$fileSupposedToBeAt ")
+        }
+    }
+    fun deleteFileByPath(fileNameAndFullPath: String) { // IAP_V2 에서 사용되서 남겨놓은것.
             try {
                 val fileToDelete = File(fileNameAndFullPath)
                 if(fileToDelete.exists()) {

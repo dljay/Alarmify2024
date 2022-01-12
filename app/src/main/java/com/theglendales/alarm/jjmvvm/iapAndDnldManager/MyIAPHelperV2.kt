@@ -150,7 +150,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                                             .absolutePath + "/.AlarmRingTones" + File.separator + iapName +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
                                         if(myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
                                             Log.d(TAG, "onBillingSetupFinished: $iapName 는(은) 산 놈도 아닌데 하드에 있음. 지워야함!! ")
-                                            myDiskSearcher.deleteFromDisk(fileNameAndFullPath)
+                                            myDiskSearcher.deleteFileByPath(fileNameAndFullPath)
                                         }
                                     }}
                             }
@@ -484,7 +484,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
         if(!keepTheFile && myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {
             // (잘못된 구매 사유 등으로) Keep 할 필요 없는 파일인데 디스크에 있을경우 삭제! //todo: 테스트 필요.
             Log.d(TAG, "downloadOrDeleteSinglePurchase: !![WARNING] Deleting this File!!=$iapName")
-                myDiskSearcher.deleteFromDisk(fileNameAndFullPath)
+                myDiskSearcher.deleteFileByPath(fileNameAndFullPath)
             return
         }
         else if(keepTheFile && myDiskSearcher.isSameFileOnThePhone(fileNameAndFullPath)) {

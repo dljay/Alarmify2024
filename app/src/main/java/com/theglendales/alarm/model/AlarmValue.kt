@@ -57,6 +57,7 @@ data class AlarmValue(
             if(!rtaPath.isNullOrEmpty()) {
                 return rtaPath
             } else { // 위에서 만약 실패했을 경우
+                Log.d(TAG, "getRandomDefaultRtaPath: else{} called")
                 val listFromSharedPref = mySharedPrefManager.getRtOnThePhoneList()
                 rtaPath = listFromSharedPref[randomNumber].audioFilePath
                 return rtaPath

@@ -81,7 +81,7 @@ class MySharedPrefManager(val context: Context) {
             Log.d(TAG, "getRtInTheCloudList: list = $list")
             list.toMutableList()
         } catch (e: Exception) {
-            Log.d(TAG, "getRtOnThePhoneList: Error retrieving from Shared Prefs..error message=$e")
+            Log.d(TAG, "getRtInTheCloudList: Error retrieving from Shared Prefs..error message=$e")
             arrayListOf<RtInTheCloud>() // 에러 발생시 빈 깡통 List 를 리턴.
         }
     }

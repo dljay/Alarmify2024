@@ -11,6 +11,7 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
@@ -30,8 +31,9 @@ class JjMainViewModel : ViewModel() {
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
     private val mySharedPrefManager: MySharedPrefManager by globalInject() //SharedPref
     private val myDiskSearcher: DiskSearcher by globalInject() // DiskSearcher (PurchaseBool=false 인데 디스크에 있으면 삭제용도)
-//IAP variable
+//IAP & DNLD variables
     private val iapV3: MyIAPHelperV3 by globalInject()
+    //private val myDownloaderV3: MyDownloaderV3 by globalInject()
 //FireBase variables
     var isFreshList = false
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
@@ -40,7 +42,8 @@ class JjMainViewModel : ViewModel() {
 
     init {
         Log.d(TAG, "init: called.. ^^ ")
-        refreshAndUpdateLiveData()}
+        refreshAndUpdateLiveData()
+    }
 //********** FB ->rtList -> IAP -> rtListPlusIAPInfo -> LiveData(rtInTheCloudList) -> SecondFrag-> UI 업데이트 : ViewModel 최초 로딩시 & Spinner 로 휘리릭~ 새로고침 할 때 아래 function 이 불림.
     fun refreshAndUpdateLiveData() {
         Log.d(TAG, "refreshAndUpdateLiveData: (0) called")
@@ -66,7 +69,7 @@ class JjMainViewModel : ViewModel() {
                     val billingResult: BillingResult = iapV3.c_prepBillingClient()
                     if(billingResult.responseCode == BillingClient.BillingResponseCode.OK)
                     {
-                //iapV3-D) Each .launch{} running on separate thread (동시 실행)
+                //iapV3-D) Each .launch{} running on separate thread (동시 실행) //todo: D1&D2 는 같이 시작하지만.. suspendCoroutine() 사용하니깐.. 진정한 의미에서 parallel 이 아님.
                         //D) Parallel Job  - D1
                         launch {
                             val listOfPurchases = iapV3.d1_A_addPurchaseBoolToList() // D1-A ** AsyncCallback 이 있어서 suspendCoroutine->continuation(result)-> d1_b(result)
@@ -144,7 +147,18 @@ class JjMainViewModel : ViewModel() {
     private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
     val selectedRow = _selectedRow.asStateFlow()
 
-    fun updateSelectedRt(rtObj: RtInTheCloud) {_selectedRow.value = rtObj}
+    fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean) {
+    // 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
+        if(!isPurchaseClicked) {_selectedRow.value = rtObj}
+    // purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
+        else {
+            iapV3.myOnPurchaseClicked(rtObj)
+            // 결과 받아서 download 까지..todo: Downloader 에서
+        }
+    }
+   /* fun delshit() {
+        Log.d(TAG, "delshit: dell")
+    }*/
 //***********************
     override fun onCleared() {
         super.onCleared()

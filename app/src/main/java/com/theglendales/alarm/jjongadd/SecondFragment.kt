@@ -86,6 +86,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
 
+
     //SharedPreference 저장 관련 (Koin  으로 대체!) ==> 일단 사용 안함.
     //val mySharedPrefManager: MySharedPrefManager by globalInject()
     //private val playInfo: PlayInfoContainer = PlayInfoContainer(-10,-10,-10, StatusMp.IDLE)

@@ -7,6 +7,8 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import kotlin.Exception
 import kotlin.coroutines.resume
@@ -85,6 +87,7 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
             })
         }
     }
+
     //<D1> 현재 리스트에 상품별 구매 여부 (true,false) 적어주기.
     suspend fun d1_A_addPurchaseBoolToList(): List<Purchase> {
 
@@ -207,9 +210,12 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
 
 
-// ****************** <2> 현재 구매 관련
+// ************************************************** <2> 현재 구매 관련
+    fun myOnPurchaseClicked(rtObj: RtInTheCloud) {
+    Log.d(TAG, "myOnPurchaseClicked: clicked to purchase..")
 
-//**
+    }
+
     override fun onPurchasesUpdated(p0: BillingResult, p1: MutableList<Purchase>?) {
         //TODO("Not yet implemented")
     }

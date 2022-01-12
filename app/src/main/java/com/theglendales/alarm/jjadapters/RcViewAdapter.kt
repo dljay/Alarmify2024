@@ -17,11 +17,11 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
+import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.JjMainViewModel
-import com.theglendales.alarm.jjmvvm.JjRecyclerViewModel
-import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.model.mySharedPrefManager
@@ -44,9 +44,10 @@ class RcViewAdapter(
     private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
 
 
-    companion object {
-        var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()
-    }
+    companion object {var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()}
+
+// IAP
+    private val iapV3: MyIAPHelperV3 by globalInject()
 
 
     var isRVClicked: Boolean = false // 혹시나 미리 클릭되었을 경우를 대비하여 만든 boolean value. 이거 안 쓰이나?
@@ -280,13 +281,10 @@ class RcViewAdapter(
         val iv_PurchasedFalse: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_False)
         val iv_PurchasedTrue: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_True)
         //var tv4_GetThis: TextView = myXmlToViewObject.findViewById(R.id.id_tvGetThis)
-
-
-
         var holderTrId: Int = -10 // 처음엔 의미없는 -10 값을 갖지만, onBindView 에서 제대로 holder.id 로 설정됨.
-        // 아래 trackId 를 없애고 이걸로 사용 가능.
-        // 마찬가지로 clickedPosition 도 아래에서 여기로 옮겨와서 사용 가능 (초기화에만 -10, onBindView 에서 제대로 값 설정)
-        //trackId
+
+
+
 
 
         init {
@@ -300,14 +298,15 @@ class RcViewAdapter(
         override fun onClick(v: View?) {
 
             val clickedView = v
-            val clickedPosition =adapterPosition // todo: 이것도. 위에 holderTrId 처럼 holderPosition 으로 설정후 onBindViewHolder 에서 제대로 position 값 입력 가능. -> smoothScrollToPos()과 연계 사용?
+            val clickedPosition = adapterPosition // todo: 이것도. 위에 holderTrId 처럼 holderPosition 으로 설정후 onBindViewHolder 에서 제대로 position 값 입력 가능. -> smoothScrollToPos()과 연계 사용?
+            val selectedRt = rtPlusIapInfoList[adapterPosition] // todo: 이거 좀 급하게 바꿨는데 잘되는것 같음 일단은. 면밀한 확인 필요.
 
             isRVClicked = true // 이거 안쓰이는것 같음..  Recycle View 를 누른적이 있으면 true (혹시나 미리 누를수도 있으므로)
 
             if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null)
             { // To avoid possible mistake when we delete the item but click it
                // val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
-                val currentRt = rtPlusIapInfoList[adapterPosition] // todo: 이거 좀 급하게 바꿨는데 잘되는것 같음 일단은. 면밀한 확인 필요.
+
             
                 when(v.id) {
                     //1) [하이라이트, 음악 재생] - 구매 제외 부분 클릭  (Rl_including_tv1_2 영역)
@@ -320,21 +319,19 @@ class RcViewAdapter(
                         disableHLAll() // 모든 하이라이트를 끄고
                         enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
-                        //1-c) 음악 플레이
+                        //1-c) 음악 플레이 //todo: 재생중일때 또 클릭하면 그냥 무시하기?
                         mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
 
                         // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
-                        jjMainVModel.updateSelectedRt(currentRt) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!
+                        jjMainVModel.onTrackClicked(selectedRt,isPurchaseClicked = false) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!
                     }
                     //2) [구매 클릭]
                     R.id.id_cl_entire_Purchase -> {
-                        Log.d(TAG, "onClick: !!!!!!!!!!!!!!!!!!!You probably clicked FREE or GET This")
-                        //iapInstanceV2.myOnPurchaseClicked(trId).. todo: 바로 구매창으로
+                        Log.d(TAG, "onClick: !!!!!!!!!!!!!!!!!!!You clicked FREE or GET This. trkId=${selectedRt.id}, iapName= ${selectedRt.iapName}")
+                        jjMainVModel.onTrackClicked(selectedRt,isPurchaseClicked = true) // JjMainViewModel.kt > iapV3.myOnPurchaseClicked() 로 연결 -> 구매 로직 실행.
                         return
                     }
                 }
-
-
             }
 
 

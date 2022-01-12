@@ -234,7 +234,7 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
 
     // b)Online Url 리소스를 가지는 음원 플레이(SecondFrag.kt) 에서 사용:  Called From RcVAdapter> 클릭 ->
     fun prepMusicPlayOnlineSrc(receivedTrId: Int, playWhenReady: Boolean) {
-
+        //todo: 재생중일때 같은 트랙 또 클릭 -> 무시하기?
         removeHandler()
         setSeekbarToZero()
 

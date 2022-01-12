@@ -7,9 +7,11 @@ import android.net.Uri
 import android.util.Log
 import android.webkit.URLUtil
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.JjDNLDViewModel
+import com.theglendales.alarm.jjmvvm.JjMainViewModel
 
 import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 import kotlinx.coroutines.*
@@ -30,6 +32,7 @@ data class DownloadableItem(val trackID: Int=0, val filePathAndName:String="") {
 
 
 class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel: JjDNLDViewModel) : AppCompatActivity() {
+
 
 
 //********Single File Dnld **************
@@ -258,7 +261,6 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
                 Log.d(TAG, "multipleFileDNLD: error trying to retrieve previously purchased. \nError=$e")
 
             }
-
         }//end of For loop
         // 멀티 다운로드 시도 과정 report -> Snackbar 로 바로 "복원 시작" 및 에러여부 Display.
         val arrayBool: Array<Boolean> = arrayOf(true, isErrorOccurred) // true= 멀티다운로드를 가동했다!, isErrorOccurred= 다운과정에서 에러가 있냐 없냐!

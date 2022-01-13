@@ -87,6 +87,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
 
+
     //SharedPreference 저장 관련 (Koin  으로 대체!) ==> 일단 사용 안함.
     //val mySharedPrefManager: MySharedPrefManager by globalInject()
     //private val playInfo: PlayInfoContainer = PlayInfoContainer(-10,-10,-10, StatusMp.IDLE)
@@ -308,7 +309,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
-            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjMainVModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬
+            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjMainVModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬 //todo: okay to pass VModel to Adapter?
             myDownloaderV2 = activity?.let {MyDownloaderV2(it,jjDNLDViewModel)}!!
             iapInstanceV2 = MyIAPHelperV2(requireActivity(), rcvAdapterInstance, myDownloaderV2)
             myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!

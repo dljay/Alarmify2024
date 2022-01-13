@@ -16,7 +16,6 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -33,7 +32,7 @@ class JjMainViewModel : ViewModel() {
     private val myDiskSearcher: DiskSearcher by globalInject() // DiskSearcher (PurchaseBool=false 인데 디스크에 있으면 삭제용도)
 //IAP & DNLD variables
     private val iapV3: MyIAPHelperV3 by globalInject()
-    //private val myDownloaderV3: MyDownloaderV3 by globalInject()
+    private val myDownloaderV3: MyDownloaderV3 by globalInject()
 //FireBase variables
     var isFreshList = false
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
@@ -60,7 +59,8 @@ class JjMainViewModel : ViewModel() {
                     Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
                     toastMessenger.showMyToast("Failed to fetch IAP information",isShort = false)
                 }
-            //** viewModelscope.launch!!!  runs on the Main thread.
+            //** viewModelscope.launch!!!  <<<<<<runs on the Main thread>>>>> !!!!
+
                 val iapParentJob = viewModelScope.launch(handler) {
                     Log.d(TAG, "refreshAndUpdateLiveData: (2) RtList ->IAP")
                 //iapV3-B) Fb 에서 받을 리스트를 -> IAP 에 전달 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨.
@@ -119,7 +119,7 @@ class JjMainViewModel : ViewModel() {
                             val multiDnldNeededList= iapV3.g_getMultiDnldNeededList()
                             if(multiDnldNeededList.size >0) {
                                 Log.d(TAG, "refreshAndUpdateLiveData: (3-d) ↓ ↓ ↓ ↓ Sending for multiDnld ")
-                                //todo: 멀티 다운로드 진행
+                                //todo: 멀티 다운로드 진행: Background Thread (Dispatcher.IO?) 에서 이뤄져야함. User 눈에 안 보이니깐. Snackbar 만 main thread 에서..?
                             }
                         }
                     }
@@ -142,19 +142,56 @@ class JjMainViewModel : ViewModel() {
         _isNetworkWorking.postValue(isNetworkOK) // .postValue= backgroundThread 사용. // (이 job 은 발생지가 backgrouond thread 니깐 .value=xx 안되고 postValue() 써야함!)
     }
 
-//***********************RecyclerView (클릭 -> SecondFrag 에 RtInTheCloud Obj 전달 -> SecondFrag 에서 UI 업뎃 및 복원(ListFrag 다녀왔을 때)
+//***********************RecyclerView & Download (클릭 -> SecondFrag 에 RtInTheCloud Obj 전달 -> SecondFrag 에서 UI 업뎃 및 복원(ListFrag 다녀왔을 때)
     val emptyRtObj = RtInTheCloud(id = -10) // 그냥 빈 깡통 -10 -> SecondFrag.kt > updateMiniPlayerUiOnClick() 에서 .id <0 -> 암것도 안함.
     private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
     val selectedRow = _selectedRow.asStateFlow()
 
     fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean) {
-    // 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
-        if(!isPurchaseClicked) {_selectedRow.value = rtObj}
-    // purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
-        else {
-            iapV3.myOnPurchaseClicked(rtObj)
-            // 결과 받아서 download 까지..todo: Downloader 에서
+    // 1)단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
+        if(!isPurchaseClicked) {
+            _selectedRow.value = rtObj
+            return
         }
+    // 2)Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
+        Log.d(TAG, "onTrackClicked: clicked to purchase..")
+        //Purchase Process -> Return RtObj (만약 구입 취소의 경우에는....)
+        val rtInTheCloudObj = iapV3.myOnPurchaseClicked(rtObj) // => todo: get RtObj or (이미 구입했거나 뭔가 틀어지면 여기서 quit..)
+
+    //3) Download (MainThread 에서 이뤄짐) -> 어차피 Download 과정은 다 화면에 보여줘야 하니깐.
+        //구입 성공(O) -> 다운로드 준비. 오류 때 Crash 안나게 Handler 사용
+        //3-a) 일단 다운로드 창 보여주기
+            //todo: 다운로드 창 보여주기.
+            val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+                Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
+                toastMessenger.showMyToast("Failed to fetch IAP information",isShort = false)
+            }
+        //3-b) initiate Download (and get "downloadId:Long") //
+        val dnldParentJob = viewModelScope.launch(handler) {
+            val dnldId: Long = myDownloaderV3.getDnldId(rtInTheCloudObj) //Long
+            if(dnldId==-444L) { // 뭔가 에러가 있었으면  -444L 을 받음. toast 로 에러메시지 표시  & quite
+                toastMessenger.showMyToast("<B> Error while downloading.",isShort = true)
+                return@launch // dnldParentJob{} 바깥으로 간다.
+            }
+        //3-c) Show download status -- observe dnld status using while loop? and update livedata..
+            var isStillDownloading = true
+            var dnldProgress = -10
+            //Update Progress Bar < -이렇게 하면 안되고 1) 일단 다운로드 Launch! 2)SecondFrag 에서 ViewModel> getDNLDProgress() method 를 observe 중였음 >..
+            //https://stackoverflow.com/questions/48239657/how-to-handle-android-livedataviewmodel-with-progressbar-on-screen-rotate
+            /*while(isStillDownloading) {
+                dnldProgress = myDownloaderV3.getDnldProgress(dnldId)
+
+                //break
+            }*/
+            //Finish DNLD & Close Progress Bar Panel
+
+        // ******* 여기서부터 rtOnThePhoneObj 전달!
+        }
+        // 여기서부터는 코드가 의미 없음 (위에서 dnldParentJob 을 Main thread 에서 실행시키고 (또 다른 main 스레드?)로 요 밑에줄 바로 시킴)
+        //Log.d(TAG, "onTrackClicked: this shall be printed. Thread name= ${Thread.currentThread().name}") // 이게 위에 dnldParentJob 보다 먼저 뜨는데 이것도 main 임.. 흐음..한마디로 main 이 블락 안당했다는뜻.
+
+
+
     }
    /* fun delshit() {
         Log.d(TAG, "delshit: dell")

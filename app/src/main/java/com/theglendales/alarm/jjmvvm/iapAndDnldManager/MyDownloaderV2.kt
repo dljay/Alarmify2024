@@ -1,5 +1,6 @@
 package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
@@ -80,7 +81,9 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
         //get download service, and enqueue file
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         // 다운로드 & 완료 알림(BroadCast) 관련: 1)식별 id 생성 2)Broadcast 등록.
+//**** 요기서 컷?
         val downloadID = dnlManager.enqueue(dnlRequest) // 이 코드는 두가지 역할을 함.
+
         //1) Enqueue a new download. The download will start automatically once the download manager is ready to execute it and connectivity is available.
         // 2)추후 다운로드 완료후-> broadcast 받을것이고-> 여기서 만든 id(LONG) 로 판독 예정!
         runOnUiThread {dnldViewModel.updateDNLDRtObj(dnldAsRtObj) }
@@ -120,6 +123,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
 
     }
 
+    @SuppressLint("Range")
     private fun getResultFromSingleDNLD(dnldID: Long, dnldAsRtObj: RtOnThePhone): Int  {
         val dnlManager = receivedActivity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 

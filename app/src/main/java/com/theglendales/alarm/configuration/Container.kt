@@ -56,6 +56,7 @@ import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 
 
+
 import org.koin.core.Koin
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -146,7 +147,8 @@ fun startKoin(context: Context): Koin {
         single<TimePickerJjong> {TimePickerJjong()}
         single<MyIAPHelperV3> { MyIAPHelperV3(context = context) }
         single<ToastMessenger> {ToastMessenger(context = context)}
-        //single<MyDownloaderV3> { MyDownloaderV3(context = context) }
+        single<MyDownloaderV3> { MyDownloaderV3(context = context) }
+
 
 
         // 내가 추가 <--

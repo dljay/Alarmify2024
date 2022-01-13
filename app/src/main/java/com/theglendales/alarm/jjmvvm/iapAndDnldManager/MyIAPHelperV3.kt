@@ -211,9 +211,9 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
 
 // ************************************************** <2> 현재 구매 관련
-    fun myOnPurchaseClicked(rtObj: RtInTheCloud) {
+    fun myOnPurchaseClicked(rtObj: RtInTheCloud): RtInTheCloud {
     Log.d(TAG, "myOnPurchaseClicked: clicked to purchase..")
-
+        return RtInTheCloud() // todo: 이런저런 jjMainViewModel 과의 협업을 통해 결국 구입 완료된 RtInTheCloud obj 을 뱉어야함!
     }
 
     override fun onPurchasesUpdated(p0: BillingResult, p1: MutableList<Purchase>?) {

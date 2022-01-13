@@ -55,21 +55,22 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
+//v3.07.14f [IAP 코루틴으로 수정. 진짜 IAP 기능 심는중- pt3] <목 오후6:42>
 
-//v3.07.14c [IAP 코루틴으로 수정. 진짜 IAP 기능 심는중- pt3] <수 오후5:43>
-// IAP 기능 심어주기 중 IapV3.kt> myOnPurchaseClicked() 심기전
 
 //todos:
-//0. RcV 구매 클릭 -> JjMainView 로 가서 > onTrackClicked > iapV3 까지 연결은 성공 -> 그러나 추후 jjMainVMode<->myDownloaderV3(쌍뱡향) 소통이 문제..(모두 "Koin Inject" 로 깔끔하게..?)
+// IAP 기능 심어주기 중 IapV3.kt> myOnPurchaseClicked() 심는중.
+//0. 다운로드<-> UI 업뎃 메커니즘 심는 중. (myDownloaderV3). 올바른 방법으로 심는지라 공부시간이 좀 걸렸음.
+// 다음 방식 따라할것: https://stackoverflow.com/questions/48239657/how-to-handle-android-livedataviewmodel-with-progressbar-on-screen-rotate
 //1. 현재 JjMainViewModel 에서 iapV3 로 호출하는 d1,d2 가 진정한 의미의 Parallel 이 아님. 이거 참 Parallel 로 해보기. (suspendCoroutine 안 쓰고 .launch(Dispatchers.IO) 혹은 withContext(..) 써보기?
-
+// interface <-> ?
 // 기타 :
 //2. IapV2 PDF 만들기 + 삭제-> SharedPref 싹 정리 / SecondFrag - loadFromFirebase() 정리 및 카피.
 //3. 다운로드 작동-> 다운로드 타이틀 보여주기?
 //4. BillingClient Ready(x) issue..
 //*** IAPV3.kt>62: OnBillingServiceDisconnected() => java.lang.IllegalStateException: Already resumed : 왜 exception 못잡지?
 //5. 결과적으로 (가급적) JJMainVModel 과 JjMpViewModel 만 남겨두도록 해보기?
-
+// Passing ViewModel -> RecyclerViewAdapter -> 단순 클릭용도로.. // https://www.py4u.net/discuss/702329
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

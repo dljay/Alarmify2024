@@ -2,20 +2,29 @@ package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 
 import android.content.Context
 import android.util.Log
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import com.theglendales.alarm.jjmvvm.JjMainViewModel
+import com.theglendales.alarm.jjdata.RtInTheCloud
+import kotlinx.coroutines.delay
 
 private const val TAG="MyDownloaderV3"
 class MyDownloaderV3(val context: Context) {
-    // 여기서 위에 : AppCompatActivity() 받게 하면 -> val jjMViewModel by viewmodels() -> 활성화는 된다. 하지만  :AppCompatAcitivty() 는 fragment 나 activity 에서 쓰는거니깐..
-    // Your activity is not yet attached to the Application instance. You can't request ViewModel before onCreate call.  <- 이런 문제가.
 
-    fun callme() {
-        Log.d(TAG, "callme: called")
+    suspend fun getDnldId(rtClassObj: RtInTheCloud): Long {
+        Log.d(TAG, "getDnldId: <A> Begins. TrId= ${rtClassObj.id}, rtTitle=${rtClassObj.title}, rtClassObj=${rtClassObj}, ")
+
+        //A) Download Prep - 여기서 try{} catch{} 쓰면 이미 Exception 이 여기서 잡혀서 Parent 코루틴 Handler 로 전달 안됨 (dnldParentJob)
+        delay(1000L)
+        try{
+            //Download Process (...)
+            val dnldId= 500L // .. enqueue - 다운로드 시작
+            return dnldId
+        } catch (e: Exception) {
+            Log.d(TAG, "getDnldId: <A> caught Exception.")
+            return -444L
+        }
+
     }
-    fun callYou() {
-        Log.d(TAG, "callYou: called")
-        //jjMainViewModel.delshit()
+    suspend fun getDnldProgress(dnldId: Long){
     }
+
+
 }

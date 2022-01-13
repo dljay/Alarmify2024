@@ -166,36 +166,23 @@ class JjMainViewModel : ViewModel() {
                 Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
                 toastMessenger.showMyToast("Failed to fetch IAP information",isShort = false)
             }
-        //3-b) initiate Download (and get "downloadId:Long") //
+        //3-b) MyDNLDV3.kt> launchDownload -> and get "downloadId:Long") -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
         val dnldParentJob = viewModelScope.launch(handler) {
-            val dnldId: Long = myDownloaderV3.getDnldId(rtInTheCloudObj) //Long
+            val dnldId: Long = myDownloaderV3.launchDNLD(rtInTheCloudObj) //Long
             if(dnldId==-444L) { // 뭔가 에러가 있었으면  -444L 을 받음. toast 로 에러메시지 표시  & quite
                 toastMessenger.showMyToast("<B> Error while downloading.",isShort = true)
                 return@launch // dnldParentJob{} 바깥으로 간다.
             }
-        //3-c) Show download status -- observe dnld status using while loop? and update livedata..
-            var isStillDownloading = true
-            var dnldProgress = -10
-            //Update Progress Bar < -이렇게 하면 안되고 1) 일단 다운로드 Launch! 2)SecondFrag 에서 ViewModel> getDNLDProgress() method 를 observe 중였음 >..
-            //https://stackoverflow.com/questions/48239657/how-to-handle-android-livedataviewmodel-with-progressbar-on-screen-rotate
-            /*while(isStillDownloading) {
-                dnldProgress = myDownloaderV3.getDnldProgress(dnldId)
-
-                //break
-            }*/
-            //Finish DNLD & Close Progress Bar Panel
-
-        // ******* 여기서부터 rtOnThePhoneObj 전달!
+        //3-c)
+            myDownloaderV3.updateDnldProgress(dnldId) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
         }
         // 여기서부터는 코드가 의미 없음 (위에서 dnldParentJob 을 Main thread 에서 실행시키고 (또 다른 main 스레드?)로 요 밑에줄 바로 시킴)
         //Log.d(TAG, "onTrackClicked: this shall be printed. Thread name= ${Thread.currentThread().name}") // 이게 위에 dnldParentJob 보다 먼저 뜨는데 이것도 main 임.. 흐음..한마디로 main 이 블락 안당했다는뜻.
-
-
-
     }
-   /* fun delshit() {
-        Log.d(TAG, "delshit: dell")
-    }*/
+    fun getDnldStatus(dnldId: Long): LiveData<Boolean> { // todo: 이거 DnldInfoClass ?로 바꾸기. // SecondFrag 에서 해당 Method Observe 하고 있기.
+        val isDownloading : LiveData<Boolean> = myDownloaderV3.getLiveData()
+        return isDownloading
+    }
 //***********************
     override fun onCleared() {
         super.onCleared()

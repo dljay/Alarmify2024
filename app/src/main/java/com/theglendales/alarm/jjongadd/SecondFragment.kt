@@ -342,6 +342,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
 
             }
+        //(구매 후) DNLD 상태 업뎃 -> UI 반영 (DnldPanel 보여주기 등)
+            jjMainVModel.getLiveDataInDownloaderV3().observe(viewLifecycleOwner) {dnldPrgrs->
+                Log.d(TAG, "onViewCreated: [MainVModel] dnldPrgrs=$dnldPrgrs ")
+            }
 
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance

@@ -55,7 +55,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.14f [IAP 코루틴으로 수정. 진짜 IAP 기능 심는중- pt3] <목 오후7:29>
+//v3.07.15a [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <월 00:50>
 
 
 //todos:

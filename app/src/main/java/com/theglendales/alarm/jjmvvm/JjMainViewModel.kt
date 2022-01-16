@@ -169,19 +169,21 @@ class JjMainViewModel : ViewModel() {
         //3-b) MyDNLDV3.kt> launchDownload -> and get "downloadId:Long") -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
         val dnldParentJob = viewModelScope.launch(handler) {
             val dnldId: Long = myDownloaderV3.launchDNLD(rtInTheCloudObj) //Long
-            if(dnldId==-444L) { // 뭔가 에러가 있었으면  -444L 을 받음. toast 로 에러메시지 표시  & quite
+            // 3-b-1) 에러 발생 ->
+            if(dnldId==-444L) { // 뭔가 에러가 있었으면  -444L 을 받음. toast 로 에러메시지 표시  & quit
                 toastMessenger.showMyToast("<B> Error while downloading.",isShort = true)
                 return@launch // dnldParentJob{} 바깥으로 간다.
             }
-        //3-c)
+
+        //3-c) 현재 실행중인 다운로드 Status Update!
             myDownloaderV3.updateDnldProgress(dnldId) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
         }
         // 여기서부터는 코드가 의미 없음 (위에서 dnldParentJob 을 Main thread 에서 실행시키고 (또 다른 main 스레드?)로 요 밑에줄 바로 시킴)
         //Log.d(TAG, "onTrackClicked: this shall be printed. Thread name= ${Thread.currentThread().name}") // 이게 위에 dnldParentJob 보다 먼저 뜨는데 이것도 main 임.. 흐음..한마디로 main 이 블락 안당했다는뜻.
     }
-    fun getDnldStatus(dnldId: Long): LiveData<Boolean> { // todo: 이거 DnldInfoClass ?로 바꾸기. // SecondFrag 에서 해당 Method Observe 하고 있기.
-        val isDownloading : LiveData<Boolean> = myDownloaderV3.getLiveData()
-        return isDownloading
+    fun getLiveDataInDownloaderV3(): LiveData<Int> { // todo: 이거 DnldInfoClass ?로 바꾸기. // SecondFrag 에서 해당 Method Observe 하고 있기.
+        val dnldPrgrs : LiveData<Int> = myDownloaderV3.getMyDnldPrgrs()
+        return dnldPrgrs
     }
 //***********************
     override fun onCleared() {

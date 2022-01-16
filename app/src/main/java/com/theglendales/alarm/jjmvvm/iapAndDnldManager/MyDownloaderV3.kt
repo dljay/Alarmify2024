@@ -9,11 +9,11 @@ import kotlinx.coroutines.delay
 
 private const val TAG="MyDownloaderV3"
 class MyDownloaderV3(val context: Context) {
-    private val _isWorkingTest = MutableLiveData<Boolean>() // Private& Mutable LiveData
-    val isWorkingTest: LiveData<Boolean> = _isWorkingTest
+    private val _dnldPrgrs = MutableLiveData<Int>() // Private& Mutable LiveData
+    val dnldPrgrs: LiveData<Int> = _dnldPrgrs
 
     suspend fun launchDNLD(rtClassObj: RtInTheCloud): Long {
-        Log.d(TAG, "getDnldId: <A> Begins. TrId= ${rtClassObj.id}, rtTitle=${rtClassObj.title}, rtClassObj=${rtClassObj}, ")
+        Log.d(TAG, "launchDNLD: <A> Begins. TrId= ${rtClassObj.id}, rtTitle=${rtClassObj.title}, rtClassObj=${rtClassObj}, ")
 
         //A) Download Prep - 여기서 try{} catch{} 쓰면 이미 Exception 이 여기서 잡혀서 Parent 코루틴 Handler 로 전달 안됨 (dnldParentJob)
         delay(1000L)
@@ -22,16 +22,20 @@ class MyDownloaderV3(val context: Context) {
             val dnldId= 500L // .. enqueue - 다운로드 시작
             return dnldId
         } catch (e: Exception) {
-            Log.d(TAG, "getDnldId: <A> caught Exception.")
+            Log.d(TAG, "launchDNLD: <A> caught Exception.")
             return -444L
         }
 
     }
-    suspend fun updateDnldProgress(dnldId: Long){
+    fun updateDnldProgress(dnldId: Long){
+        Log.d(TAG, "updateDnldProgress: called. dnldId=$dnldId")
+        // 다운로드 Prgrs 확인 후 -> dnldPrgrs 업뎃
+        // . ... .. (while loop)
+        _dnldPrgrs.value = 20
+
     }
-    fun getLiveData():LiveData<Boolean> {
-    return isWorkingTest
-    }
+    fun getMyDnldPrgrs(): LiveData<Int> = dnldPrgrs // todo: 이거 DnldInfoClass ?로 바꾸기.
+
 
 
 }

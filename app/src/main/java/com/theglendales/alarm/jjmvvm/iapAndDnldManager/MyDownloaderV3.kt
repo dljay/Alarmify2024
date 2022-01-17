@@ -4,7 +4,6 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.webkit.URLUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.theglendales.alarm.configuration.globalInject
@@ -32,13 +31,11 @@ class MyDownloaderV3(val context: Context) {
         Log.d(TAG, "launchDNLD: %%%%%%%%%%% <1> DNLD Attempt Begins!! TrId= ${rtInTheCloud.id}, rtTitle=${rtInTheCloud.title}, rtClassObj=${rtInTheCloud}, ")
         //** 테스트 다운로드 URL 시도>>
 
-        //A) 다운로드 attempt ! -> liveData 업뎃 -> SecondFrag 에서 바로 DNLD BtmSheet 을 열어줌
+        //A) LiveData 업뎃으로 다운로드 attempt 시작과 동시에-> [DNLD BTMSHEET 바로 열어주기]
         dnldInfoObj.dnldTrTitle = rtInTheCloud.title
+        dnldInfoObj.status = 0 // status -> 0 -> SecondFrag -> BtmShtDNLDV2 show!
         dnldInfoObj.isRunning = true
-        withContext(Dispatchers.Main) {
-            _dnldInfoLiveData.value= dnldInfoObj// [LIVEDATA 업데이트!!]
-        }
-
+        updateLiveDataOnMainThread(dnldInfoObj)
 
 
         //B) 필요한 정보 추출.
@@ -66,7 +63,7 @@ class MyDownloaderV3(val context: Context) {
 
     }
 //<2> <1> 에서 다운로드 진행 시도가 성공 -> 진행중인 다운로드 상태를 LiveData 에 업데이트.
-    fun watchDnldProgress(dnldId: Long, rtInTheCloud: RtInTheCloud){ // 현재 진행중인 DNLD 를 관찰하며 -> LiveData 에 상황을 전달 -> SecondFrag 에서 BTMSheet 업데이트.
+    suspend fun watchDnldProgress(dnldId: Long, rtInTheCloud: RtInTheCloud){ // 현재 진행중인 DNLD 를 관찰하며 -> LiveData 에 상황을 전달 -> SecondFrag 에서 BTMSheet 업데이트.
         Log.d(TAG, "watchDnldProgress: %%%%%%%%% called. TrTitle=${rtInTheCloud.title}, dnldId=$dnldId")
 
     //A) *** rtInTheCloud -> rtOnThePhone 으로 변경 *** :
@@ -104,7 +101,8 @@ class MyDownloaderV3(val context: Context) {
                     Log.d(TAG, "watchDnldProgress: (A) [다운로드 완료] @@@@@@myDownloadProgress=${currentPrgrs}, time:$currentTime")
                     dnldInfoObj.isRunning = false
                     dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL // 8
-                    updateDnldLiveData(dnldInfoObj)
+                    dnldInfoObj.prgrs = currentPrgrs
+                    updateLiveDataOnMainThread(dnldInfoObj)
                     break // Finish! escape from While Loop!
                 }
                 //B) Progress 가 변했을때만 ViewModel 에 전달
@@ -114,7 +112,7 @@ class MyDownloaderV3(val context: Context) {
                     Log.d(TAG, "watchDnldProgress: (B) (After) prevPrgrs=$prevPrgrs, currentPrgrs=$currentPrgrs")
 
                     dnldInfoObj.prgrs = currentPrgrs
-                    updateDnldLiveData(dnldInfoObj)
+                    updateLiveDataOnMainThread(dnldInfoObj)
                 }
                 //C) Status 가 변했을 때만 ViewModel 에 전달
                 if(prevStatus != currentStatus) {
@@ -126,11 +124,11 @@ class MyDownloaderV3(val context: Context) {
                         DownloadManager.STATUS_PENDING -> {//1, 참고로 이거 제끼고 바로 running 으로 가는 경우도 많음. //todo: Timeout? https://stackoverflow.com/questions/28782311/timeout-for-android-downloadmanager
                             Log.d(TAG, "watchDnldProgress: (C-1) CurrentStatus=PENDING")
                             dnldInfoObj.status = currentStatus
-                            updateDnldLiveData(dnldInfoObj) }
+                            updateLiveDataOnMainThread(dnldInfoObj) }
 
                         DownloadManager.STATUS_RUNNING -> {Log.d(TAG, "watchDnldProgress: (C-1) CurrentStatus=RUNNING")
                             dnldInfoObj.status = currentStatus
-                            updateDnldLiveData(dnldInfoObj) } //2
+                            updateLiveDataOnMainThread(dnldInfoObj) } //2
 
                         DownloadManager.STATUS_PAUSED -> {
                             //B-1)** 다운이 다 됐음에도 STATUS_PAUSED 에서 10초 이상씩 머무는 경우->
@@ -140,7 +138,7 @@ class MyDownloaderV3(val context: Context) {
 
                                 dnldInfoObj.isRunning = false
                                 dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL
-                                updateDnldLiveData(dnldInfoObj)
+                                updateLiveDataOnMainThread(dnldInfoObj)
                                 break // while loop 종료
                             }
                         }
@@ -150,7 +148,7 @@ class MyDownloaderV3(val context: Context) {
 
                             dnldInfoObj.isRunning = false
                             dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL
-                            updateDnldLiveData(dnldInfoObj)
+                            updateLiveDataOnMainThread(dnldInfoObj)
                             break // while loop 종료
                         }
                         DownloadManager.STATUS_FAILED -> { //16
@@ -158,7 +156,7 @@ class MyDownloaderV3(val context: Context) {
 
                             dnldInfoObj.isRunning = false
                             dnldInfoObj.status = DownloadManager.STATUS_FAILED
-                            updateDnldLiveData(dnldInfoObj)
+                            updateLiveDataOnMainThread(dnldInfoObj)
                             break // while loop 종료
                         }
                     }
@@ -168,16 +166,19 @@ class MyDownloaderV3(val context: Context) {
         }
     }
 //<3> <1> & <2> 실행 중 필요할때마다 라이브데이터 업데이트 -> SecondFrag 에서 반영 (진즉에 Observe 중)
-    fun updateDnldLiveData(dnldInfoObj: DNLDInfoContainer) {
-        //_dnldInfoLiveData.value = dnldInfoObj
-    _dnldInfoLiveData.postValue(dnldInfoObj)
+    suspend fun updateLiveDataOnMainThread(dnldInfoObj: DNLDInfoContainer) {
+        withContext(Dispatchers.Main) { // 잠시 Thread 를 IO -> Main 으로 변경 (UI 업뎃되기 때문에)
+            _dnldInfoLiveData.value = dnldInfoObj
+        }
+
     }
 //<4> 위의 <1> & 2> 과정에서 에러가 발생했을 시 -> Coroutine Scope 에서 .invokeOnCompletion 에서 확인 후 아래를 실행 -> LiveDATA 업데이트
     fun errorWhileDownloading() {
     Log.d(TAG, "errorWhileDownloading: called")
         dnldInfoObj.isRunning = false
         dnldInfoObj.status = -444 // 임의 숫자
-        updateDnldLiveData(dnldInfoObj) // [LIVEDATA 업데이트!!] -> SecondFrag 에서 btmSht 없애주기
+        _dnldInfoLiveData.postValue(dnldInfoObj) // 진행중인 MainThread(DNLD 진행 상황 report) 가 다 끝나면 이 값을 실행 (근데 어차피 이게 불리는 곳이 .invokeOnCompletion 이니 상관없을듯.)
+        //updateLiveDataOnMainThread(dnldInfoObj) // [LIVEDATA 업데이트!!] -> SecondFrag 에서 btmSht 없애주기
     }
 
 //** Utility Methods

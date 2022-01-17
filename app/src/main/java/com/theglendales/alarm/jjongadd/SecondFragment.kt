@@ -270,7 +270,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //2-C-다 DNLD: (UI 갱신: Prgrs 애니메이션 보여주기)
             jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, {dnldPrgrs ->
                 Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
-                btmSht_SingleDNLDV.prepAnim(dnldPrgrs) // 여기서 prgrs 확인 및 기존 Animation 작동중인지 확인 후 Progress Bar Animation 작동.
+                btmSht_SingleDNLDV.prepAndAnimateLPI(dnldPrgrs) // 여기서 prgrs 확인 및 기존 Animation 작동중인지 확인 후 Progress Bar Animation 작동.
             })
             //2-C-라 MultiDNLD 진행되었을때 SnackBar 로 알림 (다운로드 결과까지 포함) //todo: 과연 boolArray 가 최선일지..
             jjDNLDViewModel.isMultiDnldRunning.observe(viewLifecycleOwner, {arrayBool ->
@@ -341,42 +341,48 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
             //[MainVModel-3] (구매 후) DNLD 상태 업뎃 -> UI 반영 (DnldPanel 보여주기 등)
             jjMainVModel.getLiveDataFromDownloaderV3().observe(viewLifecycleOwner) { dnldInfo->
-                Log.d(TAG, "[MainVModel-DNLD] A)Title=${dnldInfo.dnldTrTitle}, isRunning=${dnldInfo.isRunning}, C)Status=${dnldInfo.status}, D) Prgrs=${dnldInfo.prgrs} ")
+                Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle}, isRunning=${dnldInfo.isRunning}, C)Status=${dnldInfo.status}, D) Prgrs=${dnldInfo.prgrs} ")
                 //A) 다운로드 진행 시작 -> BTMSheet 열기
 //                when(dnldInfo.isRunning) {
 //                    true -> {btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag)
 //                        btmSht_SingleDNLDV.showTitle(dnldInfo.dnldTrTitle)} //todo: 중복 주문 확인.
 //                    //false -> {btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()} //1 초 Delay 후 btmSheet 없애주기.
 //                }
-                //B) Dnld 오류 났을 때 -> BtmSheet 없애주고 + SnackBar Message
+                //B) STATUS 에 따라서 BtmSheet 열기 & 닫기
                 when(dnldInfo.status) { // 참고** Pending=1 , Running=2, Paused=4, Successful=8, Failed=16
-                    0 -> { // 내가 지정한 숫자. '0' 이면 BtmSheet 을 열어줘!
-                        Log.d(TAG, "[MainVModel-DNLD] STATUS=0 ")
+                    0 -> { // 내가 지정한 숫자. '0' 이면 (다운로드 attemp 시작하자마자) -> BtmSheet 을 열어줘!
+                        Log.d(TAG, "[MainVModel-DNLD-B] STATUS=0 ")
                             btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag)
                             btmSht_SingleDNLDV.showTitle(dnldInfo.dnldTrTitle)}
 
                     DownloadManager.STATUS_FAILED -> { //16
-                        Log.d(TAG, "[MainVModel-DNLD] STATUS=FAILED(16) Observer: !!!! DNLD FAILED (XX) !!!!! ")
+                        Log.d(TAG, "[MainVModel-DNLD-B] STATUS=FAILED(16) Observer: !!!! DNLD FAILED (XX) !!!!! ")
                         //remove BTMSHEET & Show Warning Snackbar
                         btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Download Failed. Please check your network connectivity", false)
-
+                        return@observe
                     }
                     DownloadManager.STATUS_SUCCESSFUL-> { //8 <- 다시 secondFrag 들어왔을 때 뜰 수 있음.
-                        Log.d(TAG, "[MainVModel-DNLD] STATUS=SUCCESSFUL(8) Observer: DNLD SUCCESS (O)  ")
+                        Log.d(TAG, "[MainVModel-DNLD-B] STATUS=SUCCESSFUL(8) Observer: DNLD SUCCESS (O)  ")
                         // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
                         btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅!
                         btmSht_SingleDNLDV.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "DOWNLOAD COMPLETED.", false)
+                        return@observe
                     }
                     -444 -> { // VModel> Coroutine > .invokeOnCompletion 에서 handler 가 에러 감지 (내가 임의로 넣은 숫자 -444)
-                        Log.d(TAG, "[MainVModel-DNLD] STATUS=-444")
+                        Log.d(TAG, "[MainVModel-DNLD-B] STATUS=-444")
                         btmSht_SingleDNLDV.removeBtmSheetImmediately() // 에러메시지는 ViewModel 에서 Toast 로 전파. // todo: 오류 테스트
+                        return@observe
                     }
                     /*else -> {btmSht_SingleDNLDV.removeBtmSheetImmediately()
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Unknown Download Status received. Status Code=${dnldInfo.status}", false)
                     }*/ // todo: xx
-
+                }
+                //C) Progress Animation
+                if(dnldInfo.prgrs >0 ) {
+                    Log.d(TAG, "[MainVModel-DNLD-C] Prgrs Animation! (prgrs=${dnldInfo.prgrs})")
+                    btmSht_SingleDNLDV.prepAndAnimateLPI(dnldInfo.prgrs)
                 }
 
             }

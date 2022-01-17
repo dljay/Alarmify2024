@@ -107,13 +107,26 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         }
     }
 // Animation
+    fun prepAndAnimateLPI(prgrsReceived: Int) {
+        // 우선 objAnim 이나, linearPrgsIndicator 가 Init 이 안됐으면 바로 종료
+        if(!this::linearPrgsIndicator.isInitialized||!this::objAnim.isInitialized) {
+            Log.d(TAG, "prepAnim: linearPrgsBar or ObjAnim not initialized yet. return!")
+            return
+        }
+    //        if(isAnimationRunning()) { // 간혹 Prgrs 가 1초만에 두번 입력되는 경우가 있음( 1->85..) 이런식으로. 그랬을때 85로 뛰는 Prgrs 는 진행이 안되고 멈춰있는것처럼 보임. 일단 없애도 문제는 없는것처럼 보이기는 함.
+    //            Log.d(TAG, "prepAnim: Animation is already running!")
+    //            return
+    //        }
+        Log.d(TAG, "prepAnim: PrgrsReceived=$prgrsReceived ")
+        val randomDuration = (2000L..5000L).random() // 그래프 차는 빠르기 랜덤 시간 값.
+        animateLPI(prgrsReceived, randomDuration)
+    }
     fun animateLPI(progressReceived: Int, durationMs: Long) { // LPI = Linear Progress Indicator
         Log.d(TAG, "animateLPI: called!")
     // 우선 objAnim 이나, linearPrgsIndicator 가 Init 이 안됐으면 바로 종료
-        if(!this::linearPrgsIndicator.isInitialized||!this::objAnim.isInitialized) {
-        Log.d(TAG, "prepAnim: linearPrgsBar or ObjAnim not initialized yet. return!")
-        return
-        }
+        if(!this::linearPrgsIndicator.isInitialized||!this::objAnim.isInitialized) {Log.d(TAG, "prepAnim: linearPrgsBar or ObjAnim not initialized yet. return!")
+        return}
+
         objAnim = ObjectAnimator.ofInt(linearPrgsIndicator,"progress",progressReceived). apply {
             setAutoCancel(true)
             duration = durationMs
@@ -124,23 +137,7 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         Log.d(TAG, "isAnimationRunning: objAnim.isRunning=${objAnim.isRunning}")
         return objAnim.isRunning 
     }
-    fun prepAnim(prgrsReceived: Int) {
-        // 우선 objAnim 이나, linearPrgsIndicator 가 Init 이 안됐으면 바로 종료
-        if(!this::linearPrgsIndicator.isInitialized||!this::objAnim.isInitialized) {
-            Log.d(TAG, "prepAnim: linearPrgsBar or ObjAnim not initialized yet. return!")
-            return
 
-        }
-//        if(isAnimationRunning()) { // 간혹 Prgrs 가 1초만에 두번 입력되는 경우가 있음( 1->85..) 이런식으로. 그랬을때 85로 뛰는 Prgrs 는 진행이 안되고 멈춰있는것처럼 보임. 일단 없애도 문제는 없는것처럼 보이기는 함.
-//            Log.d(TAG, "prepAnim: Animation is already running!")
-//            return
-//        }
-        Log.d(TAG, "prepAnim: PrgrsReceived=$prgrsReceived ")
-        val randomDuration = (2000L..5000L).random() // 그래프 차는 빠르기 랜덤 시간 값.
-        animateLPI(prgrsReceived, randomDuration)
-
-
-    }
 // 다운시작하면 TextView 에 현재 다운 받는 곡 명 써주기.
     fun updateTextView(rtTitle: String?) {
         if(!this::tvRtTitle.isInitialized) {

@@ -166,20 +166,15 @@ class JjMainViewModel : ViewModel() {
                 toastMessenger.showMyToast("Failed to Download. Error=$throwable", isShort = false)
             }
 
-
+    //2) 다운로드 Process
         val dnldParentJob = viewModelScope.launch(handler) {
-            //2) 다운로드: DNLD BtmSheet 열기->
-            myDownloaderV3.dnldInfoObj.status = 0 // '0' 은 내가 지정한 숫자 // -> 이거 변경하면 SecondFrag 에 자동으로 전달 -> DNLD BtmSheet 열기
-
-            //3-a) 코루틴 스코프 (Main) dnldId 받기: MyDNLDV3.kt> launchDownload -> and get "downloadId:Long") -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
+        //2-a) Background Thread 에서 dnldId 받기: MyDNLDV3.kt> launchDownload -> and get "downloadId:Long" -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
             launch(Dispatchers.IO) {
                 val dnldId: Long = myDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 여기서 문제가 발생하면 다음 줄로 진행이 안되고 바로 위에 handler 가 잡아서 exception 을 던짐.
-                //3-b)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달함!
+        //2-b)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달 -> main Thread 에서 UI 업데이트.
                 Log.d(TAG, "onTrackClicked: dnldID=$dnldId")
                 myDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
             }
-
-
         }
     //3-c) (a)~(c) 과정에서 에러가 발생했다면
         dnldParentJob.invokeOnCompletion { throwable->
@@ -188,8 +183,9 @@ class JjMainViewModel : ViewModel() {
                 myDownloaderV3.errorWhileDownloading() // A)SecondFrag 에서 BtmSht 없애주기 (toastMessage 는 위에 Handler 로 자동으로 보여주기)
             } else {
                 Log.d(TAG, "onTrackClicked: dnldParentJob.invokeOnCompletion : No Error!")
+                //todo:혹시 모르니 /4) 다운로드: DNLD BtmSheet 닫아주기->
             }
-    //4) 다운로드: DNLD BtmSheet 닫아주기->
+
         }
 
         // ********** 여기서부터는 '순차적' 코드가 의미 없음 (위에서 dnldParentJob 을 Main thread 에서 실행시키고 (또 다른 main 스레드?)로 요 밑에줄 써놓으면 바로 concurrent 로 바로 실행됨)

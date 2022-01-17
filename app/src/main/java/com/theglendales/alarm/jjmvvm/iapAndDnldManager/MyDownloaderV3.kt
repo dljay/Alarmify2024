@@ -17,14 +17,14 @@ import java.util.*
 
 private const val TAG="MyDownloaderV3"
 
-data class DNLDInfoContainer(var dnldTrTitle:String ="", var prgrs:Int=0, var status:Int=DownloadManager.STATUS_PENDING, var isRunning:Boolean=false) //Pending=1
+data class DNLDInfoContainer(var dnldTrTitle:String ="", var prgrs:Int=0, var status:Int=DownloadManager.STATUS_PENDING) //Pending=1
 
 class MyDownloaderV3(val context: Context) {
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
 
     private val _dnldInfoLiveData = MutableLiveData<DNLDInfoContainer>() // Private& Mutable LiveData
     val dnldInfoLiveData: LiveData<DNLDInfoContainer> = _dnldInfoLiveData
-    val dnldInfoObj= DNLDInfoContainer("", -1,-1,false) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
+    val dnldInfoObj= DNLDInfoContainer("", -1,-1) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
 
 //<1> 다운로드 시도
     suspend fun launchDNLD(rtInTheCloud: RtInTheCloud): Long {
@@ -34,7 +34,6 @@ class MyDownloaderV3(val context: Context) {
         //A) LiveData 업뎃으로 다운로드 attempt 시작과 동시에-> [DNLD BTMSHEET 바로 열어주기]
         dnldInfoObj.dnldTrTitle = rtInTheCloud.title
         dnldInfoObj.status = 0 // status -> 0 -> SecondFrag -> BtmShtDNLDV2 show!
-        dnldInfoObj.isRunning = true
         updateLiveDataOnMainThread(dnldInfoObj)
 
 
@@ -89,6 +88,8 @@ class MyDownloaderV3(val context: Context) {
 
             if(cursor.moveToFirst())
             {
+                //throw Exception("SSSIBAL") Error Teste
+
                 val bytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
                 val totalBytesToDNLD = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
                 val currentPrgrs = ((bytesDownloadedSoFar * 100L)/totalBytesToDNLD).toInt() // changed from *100 to *99
@@ -96,10 +97,9 @@ class MyDownloaderV3(val context: Context) {
 
                 //A) Download 가 98% 이상 진행되었다고 'DownloadManager' 가 전달했을 떄:
                 if(currentPrgrs >= 98) { //위에서 제공받은 bytesDownloadedSoFar 에 의존
-
                     val currentTime= Calendar.getInstance().time
                     Log.d(TAG, "watchDnldProgress: (A) [다운로드 완료] @@@@@@myDownloadProgress=${currentPrgrs}, time:$currentTime")
-                    dnldInfoObj.isRunning = false
+
                     dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL // 8
                     dnldInfoObj.prgrs = currentPrgrs
                     updateLiveDataOnMainThread(dnldInfoObj)
@@ -107,16 +107,14 @@ class MyDownloaderV3(val context: Context) {
                 }
                 //B) Progress 가 변했을때만 ViewModel 에 전달
                 if(prevPrgrs != currentPrgrs) {
-                    Log.d(TAG, "watchDnldProgress: (B) (Before) prevPrgrs=$prevPrgrs, currentPrgrs=$currentPrgrs")
                     prevPrgrs = currentPrgrs
                     Log.d(TAG, "watchDnldProgress: (B) (After) prevPrgrs=$prevPrgrs, currentPrgrs=$currentPrgrs")
 
                     dnldInfoObj.prgrs = currentPrgrs
                     updateLiveDataOnMainThread(dnldInfoObj)
                 }
-                //C) Status 가 변했을 때만 ViewModel 에 전달
+                //C) Status 가 처음 변했을 때만 ViewModel 에 전달 (While loop 에 의해 계속 currentStatus 를 체크하겠지만 값이 변했을 때만 VModel 에 반영 (ex. PENDING-> RUNNING ->SUCCESSFUL )
                 if(prevStatus != currentStatus) {
-                    Log.d(TAG, "watchDnldProgress: (C) (Before) prevStatus=$prevStatus, currentStatus=$currentStatus")
                     prevStatus = currentStatus
                     Log.d(TAG, "watchDnldProgress: (C) (After) prevStatus=$prevStatus, currentStatus=$currentStatus")
 
@@ -126,17 +124,16 @@ class MyDownloaderV3(val context: Context) {
                             dnldInfoObj.status = currentStatus
                             updateLiveDataOnMainThread(dnldInfoObj) }
 
-                        DownloadManager.STATUS_RUNNING -> {Log.d(TAG, "watchDnldProgress: (C-1) CurrentStatus=RUNNING")
+                        DownloadManager.STATUS_RUNNING -> {Log.d(TAG, "watchDnldProgress: (C-2) CurrentStatus=RUNNING")
                             dnldInfoObj.status = currentStatus
                             updateLiveDataOnMainThread(dnldInfoObj) } //2
 
-                        DownloadManager.STATUS_PAUSED -> {
+                        DownloadManager.STATUS_PAUSED -> { //4
                             //B-1)** 다운이 다 됐음에도 STATUS_PAUSED 에서 10초 이상씩 머무는 경우->
                             val prgrsBasedOnActualDNLDSize = actualDnldSizeCheck(rtOnThePhone, totalBytesToDNLD) //-> 실제 폰에 '다운된 용량/다운받을 전체 파일 사이즈' 로 확인하여
                             if(prgrsBasedOnActualDNLDSize > 98) { // -> 98% 이상이면 무조건 SUCCESS 로 해주고 종료.
-                                Log.d(TAG, "watchDnldProgress: (C-1) 다운로드 STATUS_PAUSED 지만 다운이 다 된것으로 보임. Status->SUCCESSFUL 로 변경. \n prgrsBasedOnActualDNLDSize=$prgrsBasedOnActualDNLDSize")
+                                Log.d(TAG, "watchDnldProgress: (C-4) CurrentStatus=PAUSED 지만 다운이 다 된것으로 보임. Status->SUCCESSFUL 로 변경. \n prgrsBasedOnActualDNLDSize=$prgrsBasedOnActualDNLDSize")
 
-                                dnldInfoObj.isRunning = false
                                 dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL
                                 updateLiveDataOnMainThread(dnldInfoObj)
                                 break // while loop 종료
@@ -144,17 +141,15 @@ class MyDownloaderV3(val context: Context) {
                         }
                         // C-2) ** 다운 성공. 그런데 굉장한 Delay 가 있음. 실 다운로드가 끝나고도 10~15초 이상 걸린뒤 여기에 들어옴.
                         DownloadManager.STATUS_SUCCESSFUL -> { //8
-                            Log.d(TAG, "watchDnldProgress: (C-2) STATUS SUCCESSFUL, Progress= $currentPrgrs, TRK ID=trkId=${rtOnThePhone.trIdStr}")
+                            Log.d(TAG, "watchDnldProgress: (C-8) CurrentStatus=SUCCESSFUL, Progress= $currentPrgrs, TRK ID=trkId=${rtOnThePhone.trIdStr}")
 
-                            dnldInfoObj.isRunning = false
                             dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL
                             updateLiveDataOnMainThread(dnldInfoObj)
                             break // while loop 종료
                         }
                         DownloadManager.STATUS_FAILED -> { //16
-                            Log.d(TAG, "watchDnldProgress: (C-2) STATUS FAILED! ")
+                            Log.d(TAG, "watchDnldProgress: (C-16) CurrentStatus=FAILED!XX ")
 
-                            dnldInfoObj.isRunning = false
                             dnldInfoObj.status = DownloadManager.STATUS_FAILED
                             updateLiveDataOnMainThread(dnldInfoObj)
                             break // while loop 종료
@@ -175,10 +170,9 @@ class MyDownloaderV3(val context: Context) {
 //<4> 위의 <1> & 2> 과정에서 에러가 발생했을 시 -> Coroutine Scope 에서 .invokeOnCompletion 에서 확인 후 아래를 실행 -> LiveDATA 업데이트
     fun errorWhileDownloading() {
     Log.d(TAG, "errorWhileDownloading: called")
-        dnldInfoObj.isRunning = false
         dnldInfoObj.status = -444 // 임의 숫자
         _dnldInfoLiveData.postValue(dnldInfoObj) // 진행중인 MainThread(DNLD 진행 상황 report) 가 다 끝나면 이 값을 실행 (근데 어차피 이게 불리는 곳이 .invokeOnCompletion 이니 상관없을듯.)
-        //updateLiveDataOnMainThread(dnldInfoObj) // [LIVEDATA 업데이트!!] -> SecondFrag 에서 btmSht 없애주기
+
     }
 
 //** Utility Methods

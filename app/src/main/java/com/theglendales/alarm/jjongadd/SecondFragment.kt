@@ -55,6 +55,7 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
+import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.launch
 
 
@@ -81,7 +82,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var myNetworkCheckerInstance: MyNetWorkChecker
     //ViewModel 5종 생성
     private val jjMainVModel: JjMainViewModel by viewModels() // [LiveData] + [Flow]
-
+    //Toast Messenger
+    private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
 
 
 
@@ -328,7 +330,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 if(jjMainVModel.prevNT && !isNetworkWorking || !jjMainVModel.prevNT && !isNetworkWorking  ) {
                     Log.d(TAG, "[MainVModel-NT] Network Error! Launch Lottie!")
                     lottieAnimController("error")
-                    Toast.makeText(this.context,"Error: Unable to connect",Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(this.context,"Error: Unable to connect",Toast.LENGTH_SHORT).show()
+                    toastMessenger.showMyToast("Error: Unable to connect",isShort = true)
                 }
                 //B) false && true (기존에 X 지금은 O)
                 else if(!jjMainVModel.prevNT && isNetworkWorking) {
@@ -341,19 +344,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
             //[MainVModel-3] (구매 후) DNLD 상태 업뎃 -> UI 반영 (DnldPanel 보여주기 등)
             jjMainVModel.getLiveDataFromDownloaderV3().observe(viewLifecycleOwner) { dnldInfo->
-                Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle}, isRunning=${dnldInfo.isRunning}, C)Status=${dnldInfo.status}, D) Prgrs=${dnldInfo.prgrs} ")
+                Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle},Status=${dnldInfo.status},Prgrs=${dnldInfo.prgrs} ")
                 //A) 다운로드 진행 시작 -> BTMSheet 열기
 //                when(dnldInfo.isRunning) {
 //                    true -> {btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag)
 //                        btmSht_SingleDNLDV.showTitle(dnldInfo.dnldTrTitle)} //todo: 중복 주문 확인.
 //                    //false -> {btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()} //1 초 Delay 후 btmSheet 없애주기.
 //                }
-                //B) STATUS 에 따라서 BtmSheet 열기 & 닫기
+                //B) STATUS 에 따라서 BtmSheet 열기 & 닫기 (모든 Status 는 한번씩만 받는다)
                 when(dnldInfo.status) { // 참고** Pending=1 , Running=2, Paused=4, Successful=8, Failed=16
                     0 -> { // 내가 지정한 숫자. '0' 이면 (다운로드 attemp 시작하자마자) -> BtmSheet 을 열어줘!
                         Log.d(TAG, "[MainVModel-DNLD-B] STATUS=0 ")
                             btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag)
-                            btmSht_SingleDNLDV.showTitle(dnldInfo.dnldTrTitle)}
+                            btmSht_SingleDNLDV.updateTitleTextView(dnldInfo.dnldTrTitle)}
 
                     DownloadManager.STATUS_FAILED -> { //16
                         Log.d(TAG, "[MainVModel-DNLD-B] STATUS=FAILED(16) Observer: !!!! DNLD FAILED (XX) !!!!! ")
@@ -365,24 +368,27 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     DownloadManager.STATUS_SUCCESSFUL-> { //8 <- 다시 secondFrag 들어왔을 때 뜰 수 있음.
                         Log.d(TAG, "[MainVModel-DNLD-B] STATUS=SUCCESSFUL(8) Observer: DNLD SUCCESS (O)  ")
                         // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
-                        btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅!
+                        btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅= 120 으로 설정해줬음.
                         btmSht_SingleDNLDV.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "DOWNLOAD COMPLETED.", false)
                         return@observe
                     }
-                    -444 -> { // VModel> Coroutine > .invokeOnCompletion 에서 handler 가 에러 감지 (내가 임의로 넣은 숫자 -444)
+                    /*-444 -> { // VModel> Coroutine > .invokeOnCompletion 에서 handler 가 에러 감지 (내가 임의로 넣은 숫자 -444)
                         Log.d(TAG, "[MainVModel-DNLD-B] STATUS=-444")
-                        btmSht_SingleDNLDV.removeBtmSheetImmediately() // 에러메시지는 ViewModel 에서 Toast 로 전파. // todo: 오류 테스트
+                        btmSht_SingleDNLDV.removeBtmSheetImmediately() // 에러메시지는 ViewModel 에서 Toast 로 전파. //
+                        toastMessenger.showMyToast("Download Failed..",isShort = false)
                         return@observe
+                    }*/
+                    else -> {btmSht_SingleDNLDV.removeBtmSheetImmediately() // 다운로드 실패- 내가 만든 -444 코드나 그 외 Status 를 받으면 -> 바로 BtmSht 없애고 + Toast 메시지
+                        toastMessenger.showMyToast("Download Failed..Status Code=${dnldInfo.status}",isShort = false)
+                        return@observe
+                        //snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Unknown Download Status received. Status Code=${dnldInfo.status}", false)
                     }
-                    /*else -> {btmSht_SingleDNLDV.removeBtmSheetImmediately()
-                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Unknown Download Status received. Status Code=${dnldInfo.status}", false)
-                    }*/ // todo: xx
                 }
                 //C) Progress Animation
                 if(dnldInfo.prgrs >0 ) {
                     Log.d(TAG, "[MainVModel-DNLD-C] Prgrs Animation! (prgrs=${dnldInfo.prgrs})")
-                    btmSht_SingleDNLDV.prepAndAnimateLPI(dnldInfo.prgrs)
+                    btmSht_SingleDNLDV.prepAndAnimateLPI(dnldInfo.prgrs) // 그래프 만땅= 100 .
                 }
 
             }

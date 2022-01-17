@@ -55,12 +55,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15b [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <월 17:40>
+//v3.07.15c [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <월 17:40>
 
 
 //todos:
+//처음에 prgrs bar 너무 늦게 뜨는거..(STATUS=RUNNING 이후 Prgrs 받기까지. 길면 3초나 걸리네.)
 // IAP 기능 심어주기 중 IapV3.kt> myOnPurchaseClicked() 심는중.
-//0. 다운로드<-> UI 업뎃 메커니즘 심는 중. (myDownloaderV3). 올바른 방법으로 심는지라 공부시간이 좀 걸렸음.
 // 다음 방식 따라할것: https://stackoverflow.com/questions/48239657/how-to-handle-android-livedataviewmodel-with-progressbar-on-screen-rotate
 //1. 현재 JjMainViewModel 에서 iapV3 로 호출하는 d1,d2 가 진정한 의미의 Parallel 이 아님. 이거 참 Parallel 로 해보기. (suspendCoroutine 안 쓰고 .launch(Dispatchers.IO) 혹은 withContext(..) 써보기?
 // interface <-> ?

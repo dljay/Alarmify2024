@@ -213,7 +213,7 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 // ************************************************** <2> 현재 구매 관련
     fun myOnPurchaseClicked(rtObj: RtInTheCloud): RtInTheCloud {
     Log.d(TAG, "myOnPurchaseClicked: clicked to purchase..")
-    val testRt= RtInTheCloud("TestDNLD TITLE", mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3")
+    val testRt= RtInTheCloud("TestDNLD TITLE", mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3")
         return testRt // todo: 이런저런 jjMainViewModel 과의 협업을 통해 결국 구입 완료된 RtInTheCloud obj 을 뱉어야함!
     }
 

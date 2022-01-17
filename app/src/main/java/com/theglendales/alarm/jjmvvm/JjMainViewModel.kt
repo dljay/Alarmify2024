@@ -59,7 +59,7 @@ class JjMainViewModel : ViewModel() {
 
                 val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
                     Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
-                    toastMessenger.showMyToast("Failed to fetch IAP information",isShort = false)
+                    toastMessenger.showMyToast("Failed to fetch IAP information. Error=$throwable",isShort = false)
                 }
             //** viewModelscope.launch!!!  <<<<<<runs on the Main thread>>>>> !!!!
 
@@ -163,7 +163,8 @@ class JjMainViewModel : ViewModel() {
     //1-b)구입 성공(O) -> 다운로드 준비. 오류 때 Crash 안나게 Handler 사용
             val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
                 Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
-                toastMessenger.showMyToast("Failed to Download. Error=$throwable", isShort = false)
+
+                //toastMessenger.showMyToast("Failed to Download. Error=$throwable", isShort = false)
             }
 
     //2) 다운로드 Process
@@ -176,14 +177,15 @@ class JjMainViewModel : ViewModel() {
                 myDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
             }
         }
-    //3-c) (a)~(c) 과정에서 에러가 발생했다면
+    //3-c) (2-a)~(2-c) 과정에서 에러가 발생했다면
         dnldParentJob.invokeOnCompletion { throwable->
             if(throwable!=null) {
-                Log.d(TAG, "onTrackClicked: [invokeOnCompletion] called")
+                Log.d(TAG, "onTrackClicked: [invokeOnCompletion] ERROR!! called")
                 myDownloaderV3.errorWhileDownloading() // A)SecondFrag 에서 BtmSht 없애주기 (toastMessage 는 위에 Handler 로 자동으로 보여주기)
+                //toastMessenger.showMyToast("Failed to Download. Error= $throwable", isShort = false) // 이;거 안돼.. thread 문제. CompletionHandler exception?
             } else {
                 Log.d(TAG, "onTrackClicked: dnldParentJob.invokeOnCompletion : No Error!")
-                //todo:혹시 모르니 /4) 다운로드: DNLD BtmSheet 닫아주기->
+                //todo:혹시 모르니 /4) 다운로드: DNLD BtmSheet 닫아주기?->
             }
 
         }

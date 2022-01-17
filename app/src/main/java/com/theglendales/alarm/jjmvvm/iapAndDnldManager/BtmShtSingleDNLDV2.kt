@@ -67,13 +67,7 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         }
         
     }
-    fun showTitle(title:String) {
-        if(isAdded) {
 
-            Log.d(TAG, "showTitle: title=$title")
-            tvRtTitle.text= title
-        }
-    }
     fun removeBtmSheetImmediately() {
         Log.d(TAG, "removeBtmSheetImmediately: called!")
         this.apply {
@@ -122,7 +116,7 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         animateLPI(prgrsReceived, randomDuration)
     }
     fun animateLPI(progressReceived: Int, durationMs: Long) { // LPI = Linear Progress Indicator
-        Log.d(TAG, "animateLPI: called!")
+        Log.d(TAG, "animateLPI: called! PrgrsReceived=$progressReceived")
     // 우선 objAnim 이나, linearPrgsIndicator 가 Init 이 안됐으면 바로 종료
         if(!this::linearPrgsIndicator.isInitialized||!this::objAnim.isInitialized) {Log.d(TAG, "prepAnim: linearPrgsBar or ObjAnim not initialized yet. return!")
         return}
@@ -139,7 +133,7 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
     }
 
 // 다운시작하면 TextView 에 현재 다운 받는 곡 명 써주기.
-    fun updateTextView(rtTitle: String?) {
+    fun updateTitleTextView(rtTitle: String?) {
         if(!this::tvRtTitle.isInitialized) {
             return
         }

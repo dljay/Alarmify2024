@@ -11,6 +11,7 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DNLDInfoContainer
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -153,37 +154,38 @@ class JjMainViewModel : ViewModel() {
             _selectedRow.value = rtObj
             return
         }
-    // 2)Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
+    //2)Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
         Log.d(TAG, "onTrackClicked: clicked to purchase..")
         //Purchase Process -> Return RtObj (만약 구입 취소의 경우에는....)
         val rtInTheCloudObj = iapV3.myOnPurchaseClicked(rtObj) // => todo: get RtObj or (이미 구입했거나 뭔가 틀어지면 여기서 quit..)
 
-    //3) Download (MainThread 에서 이뤄짐) -> 어차피 Download 과정은 다 화면에 보여줘야 하니깐.
-        //구입 성공(O) -> 다운로드 준비. 오류 때 Crash 안나게 Handler 사용
-        //3-a) 일단 다운로드 창 보여주기
-            //todo: 다운로드 창 보여주기.
+    //2-a)구입 성공(O) -> 다운로드 준비. 오류 때 Crash 안나게 Handler 사용
             val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
                 Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
-                toastMessenger.showMyToast("Failed to fetch IAP information",isShort = false)
+                toastMessenger.showMyToast("Failed to Download. Error=$throwable", isShort = false)
             }
-        //3-b) MyDNLDV3.kt> launchDownload -> and get "downloadId:Long") -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
+    //2-b) dnldId 받기: MyDNLDV3.kt> launchDownload -> and get "downloadId:Long") -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
         val dnldParentJob = viewModelScope.launch(handler) {
-            val dnldId: Long = myDownloaderV3.launchDNLD(rtInTheCloudObj) //Long
-            // 3-b-1) 에러 발생 ->
-            if(dnldId==-444L) { // 뭔가 에러가 있었으면  -444L 을 받음. toast 로 에러메시지 표시  & quit
-                toastMessenger.showMyToast("<B> Error while downloading.",isShort = true)
-                return@launch // dnldParentJob{} 바깥으로 간다.
-            }
-
-        //3-c) 현재 실행중인 다운로드 Status Update!
-            myDownloaderV3.updateDnldProgress(dnldId) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
+            val dnldId: Long = myDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 여기서 문제가 발생하면 다음 줄로 진행이 안되고 바로 위에 handler 가 잡아서 exception 을 던짐.
+    //2-c)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달함!
+            Log.d(TAG, "onTrackClicked: dnldID=$dnldId")
+            myDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
         }
-        // 여기서부터는 코드가 의미 없음 (위에서 dnldParentJob 을 Main thread 에서 실행시키고 (또 다른 main 스레드?)로 요 밑에줄 바로 시킴)
+    //2-d) (a)~(c) 과정에서 에러가 발생했다면
+        dnldParentJob.invokeOnCompletion { throwable->
+            if(throwable!=null) {
+                Log.d(TAG, "onTrackClicked: [invokeOnCompletion] called")
+                myDownloaderV3.errorWhileDownloading() // A)SecondFrag 에서 BtmSht 없애주기 (toastMessage 는 위에 Handler 로 자동으로 보여주기)
+            } else {
+                Log.d(TAG, "onTrackClicked: dnldParentJob.invokeOnCompletion : No Error!")
+            }
+        }
+        // ********** 여기서부터는 '순차적' 코드가 의미 없음 (위에서 dnldParentJob 을 Main thread 에서 실행시키고 (또 다른 main 스레드?)로 요 밑에줄 써놓으면 바로 concurrent 로 바로 실행됨)
         //Log.d(TAG, "onTrackClicked: this shall be printed. Thread name= ${Thread.currentThread().name}") // 이게 위에 dnldParentJob 보다 먼저 뜨는데 이것도 main 임.. 흐음..한마디로 main 이 블락 안당했다는뜻.
     }
-    fun getLiveDataInDownloaderV3(): LiveData<Int> { // todo: 이거 DnldInfoClass ?로 바꾸기. // SecondFrag 에서 해당 Method Observe 하고 있기.
-        val dnldPrgrs : LiveData<Int> = myDownloaderV3.getMyDnldPrgrs()
-        return dnldPrgrs
+    fun getLiveDataFromDownloaderV3(): LiveData<DNLDInfoContainer> { //SecondFrag 에서  해당 method (와 이로 인한 결과값을) ** Observe!! ***  하고 있음.
+        val dnldInfoObj: LiveData<DNLDInfoContainer> = myDownloaderV3.getMyDnldLiveData()
+        return dnldInfoObj
     }
 //***********************
     override fun onCleared() {

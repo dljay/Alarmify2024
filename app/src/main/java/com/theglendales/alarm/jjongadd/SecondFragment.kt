@@ -46,7 +46,6 @@ import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.*
-import com.theglendales.alarm.jjmvvm.data.ViewAndTrIdClass
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.BtmShtSingleDNLDV2
 
@@ -235,9 +234,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {rtWithAlbumArtObj ->
                 Log.d(TAG, "onViewCreated: trId= ${rtWithAlbumArtObj.trIdStr}, received rtObj = $rtWithAlbumArtObj")
                 // Show BtmSht_SingleDNLD Frag
-
                 btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag) // <-- listFrag 갔다 복귀했을 때 다시 DNLDFrag 열어주는 문제때문에 없앰.
-                // btmSht_SingleDNLDV.updateTextView(rtWithAlbumArtObj.rtTitle) <- 시간차때문에 이렇게 넣으면 안될듯..
                 //todo: viewmodel 에 getCurrentRtObj() 만들고 -> 다운로드중인 RT 제목 + 그래픽 보여주기?
                 
             })
@@ -315,36 +312,67 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!
 
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
-            //Firebase 에서 새로운 리스트를 받을 떄 (or 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기)
+            //[MainVModel-1] Firebase 에서 새로운 리스트를 받을 떄 (or 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기)
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
-                Log.d(TAG, "onViewCreated:---------------------- [MainVModel] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
+                Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
                 fullRtClassList = rtListPlusIAPInfo // 추후 Chip Sorting 때 사용
                 mpClassInstance.createMp3UrlMap(rtListPlusIAPInfo)
                 rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
                 lottieAnimController("stop")
             }
-            //Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
+            //[MainVModel-2] Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
             jjMainVModel.isNetworkWorking.observe(viewLifecycleOwner) { isNetworkWorking ->
-                Log.d(TAG, "onViewCreated: [MainVModel] Network Availability detected, isNetworkWorking=[$isNetworkWorking] ")
+                Log.d(TAG, "[MainVModel-NT] Network Availability detected, isNetworkWorking=[$isNetworkWorking] ")
 
                 //A-1) true && false (기존에 O 지금은 X) or A-2) false && false (기존도 X 지금도 X) - 혹시 몰라서 넣음.
                 if(jjMainVModel.prevNT && !isNetworkWorking || !jjMainVModel.prevNT && !isNetworkWorking  ) {
-                    Log.d(TAG, "onViewCreated: [MainVModel] Network Error! Launch Lottie!")
+                    Log.d(TAG, "[MainVModel-NT] Network Error! Launch Lottie!")
                     lottieAnimController("error")
                     Toast.makeText(this.context,"Error: Unable to connect",Toast.LENGTH_SHORT).show()
                 }
                 //B) false && true (기존에 X 지금은 O)
                 else if(!jjMainVModel.prevNT && isNetworkWorking) {
-                    Log.d(TAG, "onViewCreated: [MainVModel] Network Working Again! Remove Error Lottie and Relaunch FB!!")
+                    Log.d(TAG, "[MainVModel-NT] Network Working Again! Remove Error Lottie and Relaunch FB!!")
                     lottieAnimController("stop")
                     jjMainVModel.refreshAndUpdateLiveData() // Relaunch FB! -> 사실 lottie 가 사라지면서 기존 RcView 가 보여서 상관없긴 하지만.애초 Network 불가상태로 접속해 있을 수 있음.
                 }
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
 
             }
-        //(구매 후) DNLD 상태 업뎃 -> UI 반영 (DnldPanel 보여주기 등)
-            jjMainVModel.getLiveDataInDownloaderV3().observe(viewLifecycleOwner) {dnldPrgrs->
-                Log.d(TAG, "onViewCreated: [MainVModel] dnldPrgrs=$dnldPrgrs ")
+            //[MainVModel-3] (구매 후) DNLD 상태 업뎃 -> UI 반영 (DnldPanel 보여주기 등)
+            jjMainVModel.getLiveDataFromDownloaderV3().observe(viewLifecycleOwner) { dnldInfo->
+                Log.d(TAG, "[MainVModel-DNLD] A)Title=${dnldInfo.dnldTrTitle}, isRunning=${dnldInfo.isRunning}, C)Status=${dnldInfo.status}, D) Prgrs=${dnldInfo.prgrs} ")
+                //A) 다운로드 진행 시작 -> BTMSheet 열기
+                when(dnldInfo.isRunning) {
+                    true -> {btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag)
+                        btmSht_SingleDNLDV.showTitle(dnldInfo.dnldTrTitle)} //todo: 중복 주문 확인.
+                    //false -> {btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()} //1 초 Delay 후 btmSheet 없애주기.
+                }
+                //B) Dnld 오류 났을 때 -> BtmSheet 없애주고 + SnackBar Message
+                when(dnldInfo.status) { // 참고** Pending=1 , Running=2, Paused=4, Successful=8, Failed=16
+                    DownloadManager.STATUS_FAILED -> { //16
+                        Log.d(TAG, "[MainVModel-DNLD] Observer: !!!! DNLD FAILED (XX) !!!!! ")
+                        //remove BTMSHEET & Show Warning Snackbar
+                        btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()
+                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Download Failed. Please check your network connectivity", false)
+
+                    }
+                    DownloadManager.STATUS_SUCCESSFUL-> { //8 <- 다시 secondFrag 들어왔을 때 뜰 수 있음.
+                        Log.d(TAG, "[MainVModel-DNLD] Observer: DNLD SUCCESS (O)  ")
+                        // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
+                        btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅!
+                        btmSht_SingleDNLDV.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
+                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "DOWNLOAD COMPLETED.", false)
+                    }
+                    -444 -> { // VModel> Coroutine > .invokeOnCompletion 에서 handler 가 에러 감지 (내가 임의로 넣은 숫자 -444)
+                        btmSht_SingleDNLDV.removeBtmSheetImmediately() // 에러메시지는 ViewModel 에서 Toast 로 전파. // todo: 오류 테스트
+                    }
+                    /*else -> {btmSht_SingleDNLDV.removeBtmSheetImmediately()
+                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Unknown Download Status received. Status Code=${dnldInfo.status}", false)
+                    }*/ // todo: xx
+
+                }
+
             }
 
     //  < -- LIVEDATA
@@ -396,6 +424,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     override fun onPause() {
         super.onPause()
+
         Log.d(TAG, "onPause: 2nd Frag! // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState}")
         Log.d(TAG, "onPause: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
         //collapseSlidingPanel()

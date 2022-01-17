@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.theglendales.alarm.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private const val TAG="BtmShtSingleDNLDV2"
 
@@ -36,6 +38,7 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated: called!")
     // 이 Btm Frag 에 대한 설정
+
         this.apply {
             setStyle(STYLE_NORMAL, R.style.BottomSheetDialogStyle)
             isCancelable = false // 배경 클릭 금지.
@@ -55,12 +58,30 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
             Log.d(TAG, "show: Already showing BtmSheetFrag. return!")
             return
         } else {
-            Log.d(TAG, "show: Show BtmSheetFrag now. There's (presumably) nothing showing. ")
+            Log.d(TAG, "show: Show BtmSheetFrag now. 기존에 띄워있던 창이 없는듯.. ")
             val ft = manager.beginTransaction()
             ft.add(this, tag)
             ft.commitAllowingStateLoss()
         }
         
+    }
+    fun showTitle(title:String) {
+        if(isAdded) {
+
+            Log.d(TAG, "showTitle: title=$title")
+            tvRtTitle.text= title
+        }
+    }
+    fun removeBtmSheetImmediately() {
+        Log.d(TAG, "removeBtmSheetImmediately: called!")
+        this.apply {
+            if(isAdded) { //1) BottomSheet 이 화면에 보이거나 존재하는 상태?. (isAdded=true) if the fragment is currently added to its activity.
+                Log.d(TAG, "removeBtmSheetImmediately: Dismiss BOTTOM Sheet- 없앨놈 있음! ^^ (OO)")
+                dismiss()
+            }else { // 2) Bottom Fragment 가 없음= Permission Granted 된 상황일듯.
+                Log.d(TAG, "removeBtmSheetImmediately: Downloading Single item: 없앨 Bottom Fragment 가 없음! T_T")
+            }
+        }
     }
     fun removeBtmSheetAfterOneSec() {
         Log.d(TAG, "removeBtmSheetAfterOneSec: called!")

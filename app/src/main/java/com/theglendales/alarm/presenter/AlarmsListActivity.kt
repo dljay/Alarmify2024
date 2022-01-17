@@ -55,9 +55,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15c [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <월 17:40>
+//v3.07.15d [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <월 17:40>
 
-
+// Achievements :
+//다운로드:onViewCreate=> Lottie 로딩 Circle(O), PrgrsBar(GONE). => 첫 Prgrs 받는 순간 반배+text 에 Tr title 보여주기.
 //todos:
 //처음에 prgrs bar 너무 늦게 뜨는거..(STATUS=RUNNING 이후 Prgrs 받기까지. 길면 3초나 걸리네.)
 // IAP 기능 심어주기 중 IapV3.kt> myOnPurchaseClicked() 심는중.

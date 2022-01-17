@@ -17,14 +17,14 @@ import java.util.*
 
 private const val TAG="MyDownloaderV3"
 
-data class DNLDInfoContainer(var dnldTrTitle:String ="", var prgrs:Int=0, var status:Int=DownloadManager.STATUS_PENDING) //Pending=1
+data class DNLDInfoContainer(var dnldTrTitle:String ="", var prgrs:Int=-1, var status:Int= -1, var isPreparingToDNLD: Boolean = true) //Pending=1
 
 class MyDownloaderV3(val context: Context) {
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
 
     private val _dnldInfoLiveData = MutableLiveData<DNLDInfoContainer>() // Private& Mutable LiveData
     val dnldInfoLiveData: LiveData<DNLDInfoContainer> = _dnldInfoLiveData
-    val dnldInfoObj= DNLDInfoContainer("", -1,-1) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
+    val dnldInfoObj= DNLDInfoContainer("", -1,-1, isPreparingToDNLD = true) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
 
 //<1> 다운로드 시도
     suspend fun launchDNLD(rtInTheCloud: RtInTheCloud): Long {
@@ -34,6 +34,7 @@ class MyDownloaderV3(val context: Context) {
         //A) LiveData 업뎃으로 다운로드 attempt 시작과 동시에-> [DNLD BTMSHEET 바로 열어주기]
         dnldInfoObj.dnldTrTitle = rtInTheCloud.title
         dnldInfoObj.status = 0 // status -> 0 -> SecondFrag -> BtmShtDNLDV2 show!
+        dnldInfoObj.isPreparingToDNLD = true // -> 이게 true 인 동안은 Lottie 빙글빙글 애니메이션 + PrgrsBar(의 View= Gone 상태)
         updateLiveDataOnMainThread(dnldInfoObj)
 
 
@@ -77,7 +78,7 @@ class MyDownloaderV3(val context: Context) {
     //B) 실제 다운로드 Prgrs/Status Watch & Report to LiveData
         val dnlManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         var isStillDownloading=true
-        var prevPrgrs: Int = -77 // progress 가 변했을때만 ViewModel 에 전달!
+        var prevPrgrs: Int = 0 // progress 가 변했을때만 ViewModel 에 전달!
         var prevStatus = -77 // Status 가 변했을때만 ViewModel 에 전달!
 
         while(isStillDownloading)
@@ -88,7 +89,7 @@ class MyDownloaderV3(val context: Context) {
 
             if(cursor.moveToFirst())
             {
-                //throw Exception("SSSIBAL") Error Teste
+                //throw Exception("SSSIBAL") Error Test
 
                 val bytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
                 val totalBytesToDNLD = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
@@ -107,6 +108,7 @@ class MyDownloaderV3(val context: Context) {
                 }
                 //B) Progress 가 변했을때만 ViewModel 에 전달
                 if(prevPrgrs != currentPrgrs) {
+                    dnldInfoObj.isPreparingToDNLD = false // 첫 Prgrs 를 받는 순간 Lottie 빙글빙글 Animation (View=Gone) + Linear Prgrs Bar(Visibility=Show)
                     prevPrgrs = currentPrgrs
                     Log.d(TAG, "watchDnldProgress: (B) (After) prevPrgrs=$prevPrgrs, currentPrgrs=$currentPrgrs")
 

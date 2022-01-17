@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.FragmentManager
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.theglendales.alarm.R
@@ -26,6 +27,7 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
     lateinit var tvRtTitle: TextView
     lateinit var linearPrgsIndicator : LinearProgressIndicator
     lateinit var objAnim: ObjectAnimator
+    lateinit var lottieCircle: LottieAnimationView
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View? {
         Log.d(TAG, "onCreateView: BtmSht_Single_DNLD2_Called!")
@@ -45,17 +47,23 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         }
     // INIT! always initialize other view here!! onCreateView 에서는 'v' 가 proper 하게 init 되지 않아서 뻑나는 경우가 있음
         tvRtTitle = view.findViewById(R.id.tv_dnldRtTitle)
+        lottieCircle = view.findViewById(R.id.id_lottie_loading_circle)
         linearPrgsIndicator = view.findViewById(R.id.id_dnld_linearPrgsBar)
         linearPrgsIndicator.progress = 0 // 다음 다운로드를 위해 Prgrs 를 '0' 으로 초기화.
+        // Dnld_BtmSheet 이 열린 순간에 : LottieCircle(VISIBLE), LPI(GONE) [추후 첫 DNLD PRGRS 받자마자 반대로 Lottie(X) LPI(O), tvRtTitle=곡제목
+        lottieCircle.visibility = LottieAnimationView.VISIBLE
+        linearPrgsIndicator.visibility = View.GONE
+        updateTitleTextView(null) // title=Null -> PREPARING TO DOWNLOAD 라고 뜸
+
+
+
         objAnim = ObjectAnimator.ofInt(linearPrgsIndicator,"progress", 0) // 최초 progress 는 0으로 초기화.
 
 
     }
 // Show & Remove -->
     override fun show(manager: FragmentManager, tag: String?) {
-    Log.d(TAG, "show: called.....#$@$@$$#")
         //super.show(manager, tag)
-        
         if(isAdded) {
             Log.d(TAG, "show: Already showing BtmSheetFrag. return!")
             return
@@ -131,6 +139,15 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         Log.d(TAG, "isAnimationRunning: objAnim.isRunning=${objAnim.isRunning}")
         return objAnim.isRunning 
     }
+    fun showLPIAndHideLottieCircle(isPreparingToDNLD: Boolean) {
+        
+        if(!isPreparingToDNLD && this::linearPrgsIndicator.isInitialized && this::lottieCircle.isInitialized) {
+            //b) MyDownloaderV3.kt > 첫 DNLD 프로그레스 받는 순간 -> isPreparingToDNLD.false ->  LottieCircle(GONE), LPI(VISIBLE))\
+            Log.d(TAG, "showLPIAndHideLottieCircle: Lottie(X) LPI(O)")
+            lottieCircle.visibility = LottieAnimationView.GONE
+            linearPrgsIndicator.visibility = View.VISIBLE
+        }
+    }
 
 // 다운시작하면 TextView 에 현재 다운 받는 곡 명 써주기.
     fun updateTitleTextView(rtTitle: String?) {
@@ -138,9 +155,9 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
             return
         }
         if(rtTitle.isNullOrEmpty()) {
-            tvRtTitle.text = "DOWNLOADING PURCHASED ITEM .."
+            tvRtTitle.text = "PREPARING TO DOWNLOAD .."
         } else {
-            tvRtTitle.text = "DOWNLOADING $rtTitle .."
+            tvRtTitle.text = "DOWNLOADING $rtTitle "
         }
     }
     

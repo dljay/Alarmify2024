@@ -55,7 +55,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15b [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <월 16:04>
+//v3.07.15b [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <월 17:40>
 
 
 //todos:

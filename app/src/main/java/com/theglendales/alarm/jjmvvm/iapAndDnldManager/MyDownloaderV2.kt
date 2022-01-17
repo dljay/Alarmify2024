@@ -90,6 +90,7 @@ class MyDownloaderV2 (private val receivedActivity: Activity, val dnldViewModel:
 
 
 
+
         // BackgroundThread (Dispatchers.IO) 에서 안해주면 UI 가 멈춤 (Progress 보여줄 수 없다..)
         CoroutineScope(Dispatchers.IO).launch {
 

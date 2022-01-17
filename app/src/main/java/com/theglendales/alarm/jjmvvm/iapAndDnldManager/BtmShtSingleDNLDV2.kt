@@ -53,7 +53,9 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
     }
 // Show & Remove -->
     override fun show(manager: FragmentManager, tag: String?) {
+    Log.d(TAG, "show: called.....#$@$@$$#")
         //super.show(manager, tag)
+        
         if(isAdded) {
             Log.d(TAG, "show: Already showing BtmSheetFrag. return!")
             return

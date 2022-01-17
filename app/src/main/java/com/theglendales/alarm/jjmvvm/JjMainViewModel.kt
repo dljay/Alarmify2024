@@ -17,6 +17,7 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -149,29 +150,38 @@ class JjMainViewModel : ViewModel() {
     val selectedRow = _selectedRow.asStateFlow()
 
     fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean) {
-    // 1)단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
+//단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
         if(!isPurchaseClicked) {
             _selectedRow.value = rtObj
             return
         }
-    //2)Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
+//Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
         Log.d(TAG, "onTrackClicked: clicked to purchase..")
-        //Purchase Process -> Return RtObj (만약 구입 취소의 경우에는....)
+    //1-a) 구입시도 Purchase Process -> Return RtObj (만약 구입 취소의 경우에는....)
         val rtInTheCloudObj = iapV3.myOnPurchaseClicked(rtObj) // => todo: get RtObj or (이미 구입했거나 뭔가 틀어지면 여기서 quit..)
 
-    //2-a)구입 성공(O) -> 다운로드 준비. 오류 때 Crash 안나게 Handler 사용
+    //1-b)구입 성공(O) -> 다운로드 준비. 오류 때 Crash 안나게 Handler 사용
             val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
                 Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
                 toastMessenger.showMyToast("Failed to Download. Error=$throwable", isShort = false)
             }
-    //2-b) dnldId 받기: MyDNLDV3.kt> launchDownload -> and get "downloadId:Long") -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
+
+
         val dnldParentJob = viewModelScope.launch(handler) {
-            val dnldId: Long = myDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 여기서 문제가 발생하면 다음 줄로 진행이 안되고 바로 위에 handler 가 잡아서 exception 을 던짐.
-    //2-c)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달함!
-            Log.d(TAG, "onTrackClicked: dnldID=$dnldId")
-            myDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
+            //2) 다운로드: DNLD BtmSheet 열기->
+            myDownloaderV3.dnldInfoObj.status = 0 // '0' 은 내가 지정한 숫자 // -> 이거 변경하면 SecondFrag 에 자동으로 전달 -> DNLD BtmSheet 열기
+
+            //3-a) 코루틴 스코프 (Main) dnldId 받기: MyDNLDV3.kt> launchDownload -> and get "downloadId:Long") -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
+            launch(Dispatchers.IO) {
+                val dnldId: Long = myDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 여기서 문제가 발생하면 다음 줄로 진행이 안되고 바로 위에 handler 가 잡아서 exception 을 던짐.
+                //3-b)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달함!
+                Log.d(TAG, "onTrackClicked: dnldID=$dnldId")
+                myDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
+            }
+
+
         }
-    //2-d) (a)~(c) 과정에서 에러가 발생했다면
+    //3-c) (a)~(c) 과정에서 에러가 발생했다면
         dnldParentJob.invokeOnCompletion { throwable->
             if(throwable!=null) {
                 Log.d(TAG, "onTrackClicked: [invokeOnCompletion] called")
@@ -179,7 +189,9 @@ class JjMainViewModel : ViewModel() {
             } else {
                 Log.d(TAG, "onTrackClicked: dnldParentJob.invokeOnCompletion : No Error!")
             }
+    //4) 다운로드: DNLD BtmSheet 닫아주기->
         }
+
         // ********** 여기서부터는 '순차적' 코드가 의미 없음 (위에서 dnldParentJob 을 Main thread 에서 실행시키고 (또 다른 main 스레드?)로 요 밑에줄 써놓으면 바로 concurrent 로 바로 실행됨)
         //Log.d(TAG, "onTrackClicked: this shall be printed. Thread name= ${Thread.currentThread().name}") // 이게 위에 dnldParentJob 보다 먼저 뜨는데 이것도 main 임.. 흐음..한마디로 main 이 블락 안당했다는뜻.
     }

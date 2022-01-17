@@ -25,7 +25,7 @@ class MyDownloaderV3(val context: Context) {
 
     private val _dnldInfoLiveData = MutableLiveData<DNLDInfoContainer>() // Private& Mutable LiveData
     val dnldInfoLiveData: LiveData<DNLDInfoContainer> = _dnldInfoLiveData
-    val dnldInfoObj= DNLDInfoContainer("", 0,0,false) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
+    val dnldInfoObj= DNLDInfoContainer("", -1,-1,false) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
 
 //<1> 다운로드 시도
     suspend fun launchDNLD(rtInTheCloud: RtInTheCloud): Long {
@@ -35,7 +35,11 @@ class MyDownloaderV3(val context: Context) {
         //A) 다운로드 attempt ! -> liveData 업뎃 -> SecondFrag 에서 바로 DNLD BtmSheet 을 열어줌
         dnldInfoObj.dnldTrTitle = rtInTheCloud.title
         dnldInfoObj.isRunning = true
-        _dnldInfoLiveData.value= dnldInfoObj// [LIVEDATA 업데이트!!]
+        withContext(Dispatchers.Main) {
+            _dnldInfoLiveData.value= dnldInfoObj// [LIVEDATA 업데이트!!]
+        }
+
+
 
         //B) 필요한 정보 추출.
         val fileNameWithoutExt = rtInTheCloud.iapName // ex) iapName= p1000, p1001 ...
@@ -164,7 +168,10 @@ class MyDownloaderV3(val context: Context) {
         }
     }
 //<3> <1> & <2> 실행 중 필요할때마다 라이브데이터 업데이트 -> SecondFrag 에서 반영 (진즉에 Observe 중)
-    fun updateDnldLiveData(dnldInfoObj: DNLDInfoContainer) {_dnldInfoLiveData.value = dnldInfoObj }
+    fun updateDnldLiveData(dnldInfoObj: DNLDInfoContainer) {
+        //_dnldInfoLiveData.value = dnldInfoObj
+    _dnldInfoLiveData.postValue(dnldInfoObj)
+    }
 //<4> 위의 <1> & 2> 과정에서 에러가 발생했을 시 -> Coroutine Scope 에서 .invokeOnCompletion 에서 확인 후 아래를 실행 -> LiveDATA 업데이트
     fun errorWhileDownloading() {
     Log.d(TAG, "errorWhileDownloading: called")

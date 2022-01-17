@@ -71,8 +71,10 @@ private const val TAG = "SecondFragment"
 
 class SecondFragment : androidx.fragment.app.Fragment() {
 
-    //IAP
 
+
+
+    //IAP
     lateinit var iapInstanceV2: MyIAPHelperV2
     private val iapInstanceV3: MyIAPHelperV3 by globalInject()
     //Download 관련
@@ -84,9 +86,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     private val jjMainVModel: JjMainViewModel by viewModels() // [LiveData] + [Flow]
     //Toast Messenger
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
-
-
-
 
 
     //SharedPreference 저장 관련 (Koin  으로 대체!) ==> 일단 사용 안함.
@@ -155,6 +154,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
+
         isFireBaseFetchDone=false // ListFrag 갔을 때 이 값이 계속 true 로 있길래. 여기서 false 로 해줌. -> fb 로딩 끝나면 true 로 변함.
         Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isFireBaseFetchDone, currentClickedTrId=$currentClickedTrId")
         super.onCreate(savedInstanceState)
@@ -344,9 +344,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
             //[MainVModel-3] (구매 후) DNLD 상태 업뎃 -> UI 반영 (DnldPanel 보여주기 등)
             jjMainVModel.getLiveDataFromDownloaderV3().observe(viewLifecycleOwner) { dnldInfo->
-                Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle},Status=${dnldInfo.status},Prgrs=${dnldInfo.prgrs} ")
+                Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle}, Status=${dnldInfo.status}, Prgrs=${dnldInfo.prgrs} ")
+
+                if(dnldInfo.prgrs==-1 && dnldInfo.status==-1) { // ListFrag 복귀 후 용도면 해당값은 false  -> 아무것도 안하고 끝!
+                    Log.d(TAG, "onViewCreated: 아마도 ListFrag 다녀오신듯..? 암것도 안하고 여기서 quit!")
+                    return@observe
+                }
                 //A) Prgrs 를 받는순간 isPreparingToDNLD -> false -> Lottie Loading Circle (GONE), ProgressBar(VISIBLE)
-                when(dnldInfo.isPreparingToDNLD) {
+                when(dnldInfo.isBufferingToDNLD) { // isBufferingToDNLD
                     false -> {btmSht_SingleDNLDV.showLPIAndHideLottieCircle(isPreparingToDNLD = false)}
                 }
 

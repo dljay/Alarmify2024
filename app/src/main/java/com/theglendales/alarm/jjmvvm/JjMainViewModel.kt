@@ -12,7 +12,7 @@ import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DNLDInfoContainer
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloaderV3
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.SingleDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
@@ -34,7 +34,7 @@ class JjMainViewModel : ViewModel() {
     private val myDiskSearcher: DiskSearcher by globalInject() // DiskSearcher (PurchaseBool=false 인데 디스크에 있으면 삭제용도)
 //IAP & DNLD variables
     private val iapV3: MyIAPHelperV3 by globalInject()
-    private val myDownloaderV3: MyDownloaderV3 by globalInject()
+    private val singleDownloaderV3: SingleDownloaderV3 by globalInject()
 //FireBase variables
     var isFreshList = false
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
@@ -116,7 +116,7 @@ class JjMainViewModel : ViewModel() {
                                 rtInTheCloud -> myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
                             }
                         }
-                //3-d) iapV3-G) (폰에 없는것 확인되어서!) 다운 필요한 리스트를 받음 (새로운 coroutine)
+                //3-d) iapV3-G) (폰에 없는 RT(s) 확인되어서!) 다운 필요한 리스트를 받음 (새로운 coroutine)
                         viewModelScope.launch {
                             val multiDnldNeededList= iapV3.g_getMultiDnldNeededList()
                             if(multiDnldNeededList.size >0) {
@@ -144,26 +144,27 @@ class JjMainViewModel : ViewModel() {
         _isNetworkWorking.postValue(isNetworkOK) // .postValue= backgroundThread 사용. // (이 job 은 발생지가 backgrouond thread 니깐 .value=xx 안되고 postValue() 써야함!)
     }
 
-//***********************RecyclerView & Download (클릭 -> SecondFrag 에 RtInTheCloud Obj 전달 -> SecondFrag 에서 UI 업뎃 및 복원(ListFrag 다녀왔을 때)
+//***********************Click a) 단순 UI 업데이트 (클릭 -> SecondFrag 에 RtInTheCloud Obj 전달 -> SecondFrag 에서 UI 업뎃 및 복원(ListFrag 다녀왔을 때) &&
+// **************************  b)IAP ->  Download
     val emptyRtObj = RtInTheCloud(id = -10) // 그냥 빈 깡통 -10 -> SecondFrag.kt > updateMiniPlayerUiOnClick() 에서 .id <0 -> 암것도 안함.
     private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
     val selectedRow = _selectedRow.asStateFlow()
 
     fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean) {
-//단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
+//[A] 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
         if(!isPurchaseClicked) {
             _selectedRow.value = rtObj
             return
         }
-//Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
-        Log.d(TAG, "onTrackClicked: clicked to purchase..")
+//[B] Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
+
+        Log.d(TAG, "onTrackClicked: clicked to purchase..isPurchaseClicked=true")
     //1-a) 구입시도 Purchase Process -> Return RtObj (만약 구입 취소의 경우에는....)
         val rtInTheCloudObj = iapV3.myOnPurchaseClicked(rtObj) // => todo: get RtObj or (이미 구입했거나 뭔가 틀어지면 여기서 quit..)
 
     //1-b)구입 성공(O) -> 다운로드 준비. 오류 때 Crash 안나게 Handler 사용
             val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
                 Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
-
                 //toastMessenger.showMyToast("Failed to Download. Error=$throwable", isShort = false)
             }
 
@@ -171,20 +172,22 @@ class JjMainViewModel : ViewModel() {
         val dnldParentJob = viewModelScope.launch(handler) {
         //2-a) Background Thread 에서 dnldId 받기: MyDNLDV3.kt> launchDownload -> and get "downloadId:Long" -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
             launch(Dispatchers.IO) {
-                val dnldId: Long = myDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 여기서 문제가 발생하면 다음 줄로 진행이 안되고 바로 위에 handler 가 잡아서 exception 을 던짐.
+                val dnldId: Long = singleDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 여기서 문제가 발생하면 다음 줄로 진행이 안되고 바로 위에 handler 가 잡아서 exception 을 던짐.
         //2-b)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달 -> main Thread 에서 UI 업데이트.
                 Log.d(TAG, "onTrackClicked: dnldID=$dnldId")
-                myDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
+                singleDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
             }
         }
     //3-c) (2-a)~(2-c) 과정에서 에러가 발생했다면
         dnldParentJob.invokeOnCompletion { throwable->
             if(throwable!=null) {
-                Log.d(TAG, "onTrackClicked: [invokeOnCompletion] ERROR!! called")
-                myDownloaderV3.errorWhileDownloading() // A)SecondFrag 에서 BtmSht 없애주기 (toastMessage 는 위에 Handler 로 자동으로 보여주기)
-                //toastMessenger.showMyToast("Failed to Download. Error= $throwable", isShort = false) // 이;거 안돼.. thread 문제. CompletionHandler exception?
+                Log.d(TAG, "onTrackClicked: [invokeOnCompletion] ERROR!! called. Throwable=$throwable")
+                singleDownloaderV3.errorWhileDownloading() // A)SecondFrag 에서 BtmSht 없애주기 (toastMessage 는 위에 Handler 로 자동으로 보여주기)
+                //singleDownloaderV3.resetDnldInfoToInitialState()
+
             } else {
-                Log.d(TAG, "onTrackClicked: dnldParentJob.invokeOnCompletion : No Error!")
+                Log.d(TAG, "onTrackClicked: dnldParentJob.invokeOnCompletion : No Error! Now Resetting DNLDINFO to initial state")
+                //singleDownloaderV3.resetDnldInfoToInitialState()
                 //todo:혹시 모르니 /4) 다운로드: DNLD BtmSheet 닫아주기?->
             }
 
@@ -194,7 +197,7 @@ class JjMainViewModel : ViewModel() {
         //Log.d(TAG, "onTrackClicked: this shall be printed. Thread name= ${Thread.currentThread().name}") // 이게 위에 dnldParentJob 보다 먼저 뜨는데 이것도 main 임.. 흐음..한마디로 main 이 블락 안당했다는뜻.
     }
     fun getLiveDataFromDownloaderV3(): LiveData<DNLDInfoContainer> { //SecondFrag 에서  해당 method (와 이로 인한 결과값을) ** Observe!! ***  하고 있음.
-        val dnldInfoObj: LiveData<DNLDInfoContainer> = myDownloaderV3.getMyDnldLiveData()
+        val dnldInfoObj: LiveData<DNLDInfoContainer> = singleDownloaderV3.getMyDnldLiveData()
         return dnldInfoObj
     }
 //***********************

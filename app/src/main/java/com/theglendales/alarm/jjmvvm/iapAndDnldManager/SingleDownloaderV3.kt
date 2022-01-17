@@ -10,21 +10,22 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
+import junit.framework.Test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.*
 
-private const val TAG="MyDownloaderV3"
+private const val TAG="SingleDownloaderV3"
 
-data class DNLDInfoContainer(var dnldTrTitle:String ="", var prgrs:Int=-1, var status:Int= -1, var isPreparingToDNLD: Boolean = true) //Pending=1
+data class DNLDInfoContainer(var dnldTrTitle:String ="", var prgrs:Int=-1, var status:Int= -1, var isBufferingToDNLD: Boolean = true) //Pending=1
 
-class MyDownloaderV3(val context: Context) {
+class SingleDownloaderV3(val context: Context) {
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
 
     private val _dnldInfoLiveData = MutableLiveData<DNLDInfoContainer>() // Private& Mutable LiveData
     val dnldInfoLiveData: LiveData<DNLDInfoContainer> = _dnldInfoLiveData
-    val dnldInfoObj= DNLDInfoContainer("", -1,-1, isPreparingToDNLD = true) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
+    val dnldInfoObj= DNLDInfoContainer("", -1,-1, isBufferingToDNLD = true) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
 
 //<1> 다운로드 시도
     suspend fun launchDNLD(rtInTheCloud: RtInTheCloud): Long {
@@ -34,7 +35,7 @@ class MyDownloaderV3(val context: Context) {
         //A) LiveData 업뎃으로 다운로드 attempt 시작과 동시에-> [DNLD BTMSHEET 바로 열어주기]
         dnldInfoObj.dnldTrTitle = rtInTheCloud.title
         dnldInfoObj.status = 0 // status -> 0 -> SecondFrag -> BtmShtDNLDV2 show!
-        dnldInfoObj.isPreparingToDNLD = true // -> 이게 true 인 동안은 Lottie 빙글빙글 애니메이션 + PrgrsBar(의 View= Gone 상태)
+        dnldInfoObj.isBufferingToDNLD = true // -> 이게 true 인 동안은 Lottie 빙글빙글 애니메이션 + PrgrsBar(의 View= Gone 상태)
         updateLiveDataOnMainThread(dnldInfoObj)
 
 
@@ -89,7 +90,7 @@ class MyDownloaderV3(val context: Context) {
 
             if(cursor.moveToFirst())
             {
-                //throw Exception("SSSIBAL") Error Test
+                //throw Exception("SSSIBAL") //Error Test
 
                 val bytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
                 val totalBytesToDNLD = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
@@ -108,7 +109,7 @@ class MyDownloaderV3(val context: Context) {
                 }
                 //B) Progress 가 변했을때만 ViewModel 에 전달
                 if(prevPrgrs != currentPrgrs) {
-                    dnldInfoObj.isPreparingToDNLD = false // 첫 Prgrs 를 받는 순간 Lottie 빙글빙글 Animation (View=Gone) + Linear Prgrs Bar(Visibility=Show)
+                    dnldInfoObj.isBufferingToDNLD = false // 첫 Prgrs 를 받는 순간 Lottie 빙글빙글 Animation (View=Gone) + Linear Prgrs Bar(Visibility=Show)
                     prevPrgrs = currentPrgrs
                     Log.d(TAG, "watchDnldProgress: (B) (After) prevPrgrs=$prevPrgrs, currentPrgrs=$currentPrgrs")
 
@@ -127,6 +128,7 @@ class MyDownloaderV3(val context: Context) {
                             updateLiveDataOnMainThread(dnldInfoObj) }
 
                         DownloadManager.STATUS_RUNNING -> {Log.d(TAG, "watchDnldProgress: (C-2) CurrentStatus=RUNNING")
+
                             dnldInfoObj.status = currentStatus
                             updateLiveDataOnMainThread(dnldInfoObj) } //2
 
@@ -143,6 +145,7 @@ class MyDownloaderV3(val context: Context) {
                         }
                         // C-2) ** 다운 성공. 그런데 굉장한 Delay 가 있음. 실 다운로드가 끝나고도 10~15초 이상 걸린뒤 여기에 들어옴.
                         DownloadManager.STATUS_SUCCESSFUL -> { //8
+                            dnldInfoObj.isBufferingToDNLD = false // 혹시나 (파일이 너무 작아서) progress 안 받고 바로 Success 되는 경우 대비.
                             Log.d(TAG, "watchDnldProgress: (C-8) CurrentStatus=SUCCESSFUL, Progress= $currentPrgrs, TRK ID=trkId=${rtOnThePhone.trIdStr}")
 
                             dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL
@@ -176,11 +179,17 @@ class MyDownloaderV3(val context: Context) {
         _dnldInfoLiveData.postValue(dnldInfoObj) // 진행중인 MainThread(DNLD 진행 상황 report) 가 다 끝나면 이 값을 실행 (근데 어차피 이게 불리는 곳이 .invokeOnCompletion 이니 상관없을듯.)
 
     }
+//<5> DNLDInfo to Initial State -> 이건 다운로드  종료(혹은 error) 일때 설정 (.invokeOnCompletion) ==> ListFrag 갔다오거나 했을때 LiveData 자동 복구 되어도 SecondFrag 에서 확인 후 거를 수 있게끔!
+    fun resetDnldInfoToInitialState(){
+        Log.d(TAG, "resetDnldInfoToInitialState: called")
+        val dnldInfoInitialState = DNLDInfoContainer("", prgrs = -1, status = -1, true)
+        _dnldInfoLiveData.postValue(dnldInfoInitialState)
+    }
 
 //** Utility Methods
-//<5> LiveData 를 ViewModel 에서 받아갈 때:
+//<6> LiveData 를 ViewModel 에서 받아갈 때:
     fun getMyDnldLiveData(): LiveData<DNLDInfoContainer> = dnldInfoLiveData
-//<6> 현재 다운로드 받고 있는 파일이 실제 디스크에 얼만큼 다운받았는지 확인 ->  받아야할 사이즈로 나눠서 ->  prgrsBasedOnActualDNLDSize Return..
+//<7> 현재 다운로드 받고 있는 파일이 실제 디스크에 얼만큼 다운받았는지 확인 ->  받아야할 사이즈로 나눠서 ->  prgrsBasedOnActualDNLDSize Return..
     fun actualDnldSizeCheck(rtOnThePhone: RtOnThePhone, totalBytesToDNLD: Int): Int {
         Log.d(TAG, "actualDnldSizeCheck: calledf")
         return if(!rtOnThePhone.audioFilePath.isNullOrEmpty() && File(rtOnThePhone.audioFilePath).exists()) {

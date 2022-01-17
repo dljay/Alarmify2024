@@ -55,19 +55,26 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15d [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <월 17:40>
+//v3.07.15e [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <화 01:50>
 
 // Achievements :
-//다운로드:onViewCreate=> Lottie 로딩 Circle(O), PrgrsBar(GONE). => 첫 Prgrs 받는 순간 반배+text 에 Tr title 보여주기.
-//todos:
-//처음에 prgrs bar 너무 늦게 뜨는거..(STATUS=RUNNING 이후 Prgrs 받기까지. 길면 3초나 걸리네.)
-// IAP 기능 심어주기 중 IapV3.kt> myOnPurchaseClicked() 심는중.
-// 다음 방식 따라할것: https://stackoverflow.com/questions/48239657/how-to-handle-android-livedataviewmodel-with-progressbar-on-screen-rotate
+//다운로드:onViewCreate=> Lottie 로딩 Circle(O), PrgrsBar(GONE). => 첫 Prgrs 받는 순간 반대로 + text 에 Tr title 보여주기.
+
+//최우선 Error)
+//1) ListFrag 갔다왔을 때 클릭하면 [invokeOnCompleteion] Error! called.
+//Throwable=kotlinx.coroutines.JobCancellationException: Job was cancelled; job=SupervisorJobImpl{Cancelled}@c11f8ad
+//2) 연속 구매 클릭-> 다운로드 Prgrs Bar 리셋 안되고 또 까꾸리로 시작 하는 문제.
+//3) 1) 해결 후 resetDnldInfoToInitialState() 넣어서 ListFrag 갔다왔을때 DNLD 관련 LiveData 복원 못하게끔.
+//
+//Todos)
+//IAP + MultiDNLD 기능 => IapV2 PDF 만들기 + 삭제-> SharedPref 싹 정리 / SecondFrag - loadFromFirebase() 정리 및 카피.
+//dnldViewModel 및 기타 코드 삭제  (MyDownloaderV2 .. ) 등// isFireBaseFetchDone
+//RCV Click -> viewModel + 등?
+//원래 계획였던 listFrag 갔다왔을 때의 UI 복원!!
 //1. 현재 JjMainViewModel 에서 iapV3 로 호출하는 d1,d2 가 진정한 의미의 Parallel 이 아님. 이거 참 Parallel 로 해보기. (suspendCoroutine 안 쓰고 .launch(Dispatchers.IO) 혹은 withContext(..) 써보기?
-// interface <-> ?
-// 기타 :
-//2. IapV2 PDF 만들기 + 삭제-> SharedPref 싹 정리 / SecondFrag - loadFromFirebase() 정리 및 카피.
-//3. 다운로드 작동-> 다운로드 타이틀 보여주기?
+// 다음 방식 따라할것: https://stackoverflow.com/questions/48239657/how-to-handle-android-livedataviewmodel-with-progressbar-on-screen-rotate
+
+
 //4. BillingClient Ready(x) issue..
 //*** IAPV3.kt>62: OnBillingServiceDisconnected() => java.lang.IllegalStateException: Already resumed : 왜 exception 못잡지?
 //5. 결과적으로 (가급적) JJMainVModel 과 JjMpViewModel 만 남겨두도록 해보기?

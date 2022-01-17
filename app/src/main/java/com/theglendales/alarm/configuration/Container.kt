@@ -13,13 +13,10 @@ import com.theglendales.alarm.background.KlaxonPlugin
 import com.theglendales.alarm.background.PlayerWrapper
 import com.theglendales.alarm.bugreports.BugReporter
 import com.theglendales.alarm.interfaces.IAlarmsManager
-import com.theglendales.alarm.jjadapters.MyNetWorkChecker
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
-import com.theglendales.alarm.jjmvvm.JjMainViewModel
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloaderV3
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.SingleDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -147,7 +144,7 @@ fun startKoin(context: Context): Koin {
         single<TimePickerJjong> {TimePickerJjong()}
         single<MyIAPHelperV3> { MyIAPHelperV3(context = context) }
         single<ToastMessenger> {ToastMessenger(context = context)}
-        single<MyDownloaderV3> { MyDownloaderV3(context = context) }
+        single<SingleDownloaderV3> { SingleDownloaderV3(context = context) }
 
 
 

@@ -142,7 +142,7 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
     fun showLPIAndHideLottieCircle(isPreparingToDNLD: Boolean) {
         
         if(!isPreparingToDNLD && this::linearPrgsIndicator.isInitialized && this::lottieCircle.isInitialized) {
-            //b) MyDownloaderV3.kt > 첫 DNLD 프로그레스 받는 순간 -> isPreparingToDNLD.false ->  LottieCircle(GONE), LPI(VISIBLE))\
+            //b) SingleDownloaderV3.kt > 첫 DNLD 프로그레스 받는 순간 -> isPreparingToDNLD.false ->  LottieCircle(GONE), LPI(VISIBLE))\
             Log.d(TAG, "showLPIAndHideLottieCircle: Lottie(X) LPI(O)")
             lottieCircle.visibility = LottieAnimationView.GONE
             linearPrgsIndicator.visibility = View.VISIBLE

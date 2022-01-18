@@ -230,61 +230,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //GlbVars.playbackPos = playbackPos
                 })
 
-        //DNLD ViewMODEL Observe //한번 btmSht_SingleDNLDV Frag 를 보여준뒤-> ListFrag -> SecondFrag 복귀 했을 때 아래 LiveData 가 후루루룩 다 불리는 문제 => onDestroy() 에서 강제 VModel Clear 해줬음!
-            //2-C-가) DNLD: RtOnThePhone Obj 받기 (UI 갱신: DNLD Dialogue 열어주고 곡 제목 표시)
-            jjDNLDViewModel.dnldRtObj.observe(viewLifecycleOwner, {rtWithAlbumArtObj ->
-                Log.d(TAG, "onViewCreated: trId= ${rtWithAlbumArtObj.trIdStr}, received rtObj = $rtWithAlbumArtObj")
-                // Show BtmSht_SingleDNLD Frag
-                btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag) // <-- listFrag 갔다 복귀했을 때 다시 DNLDFrag 열어주는 문제때문에 없앰.
-                //todo: viewmodel 에 getCurrentRtObj() 만들고 -> 다운로드중인 RT 제목 + 그래픽 보여주기?
-                
-            })
-
-            //2-C-나) DNLD: Status Observe. (UI 갱신: 종료[성공 or Fail])
-            jjDNLDViewModel.dnldStatus.observe(viewLifecycleOwner, {dnldStatusInt ->
-
-                Log.d(TAG, "onViewCreated: current DNLD Status is=$dnldStatusInt")
-                when(dnldStatusInt) {
-                    DownloadManager.STATUS_PENDING -> {} //1
-                    DownloadManager.STATUS_RUNNING -> {}//2
-                    DownloadManager.STATUS_PAUSED -> {}//4
-                    DownloadManager.STATUS_FAILED -> {//16
-                        Log.d(TAG, "onViewCreated: Observer: !!!! DNLD FAILED (XX) !!!!! ")
-                        //remove BTMSHEET & Show Warning Snackbar
-                        btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()
-                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Download Failed. Please check your network connectivity", false)
-
-                    }
-                    DownloadManager.STATUS_SUCCESSFUL-> {//8 <- 다시 secondFrag 들어왔을 때 뜰 수 있음.
-                        Log.d(TAG, "onViewCreated: Observer: DNLD SUCCESS (O)  ")
-                        // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
-                        btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅!
-                        btmSht_SingleDNLDV.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
-                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "DOWNLOAD COMPLETED.", false)
-                    }
-                    else -> {btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()
-                        snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Unknown Download Status received. Status Code=$dnldStatusInt", false)
-                        }
-
-                }
-            })
-            //2-C-다 DNLD: (UI 갱신: Prgrs 애니메이션 보여주기)
-            jjDNLDViewModel.dnldPrgrs.observe(viewLifecycleOwner, {dnldPrgrs ->
-                Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
-                btmSht_SingleDNLDV.prepAndAnimateLPI(dnldPrgrs) // 여기서 prgrs 확인 및 기존 Animation 작동중인지 확인 후 Progress Bar Animation 작동.
-            })
-           /* //2-C-라 MultiDNLD 진행되었을때 SnackBar 로 알림 (다운로드 결과까지 포함) //todo: 과연 boolArray 가 최선일지..
-            jjDNLDViewModel.isMultiDnldRunning.observe(viewLifecycleOwner, {arrayBool ->
-                if(arrayBool.size == 2) { // 정상이라면 arrayBool 은 값을 두개만 포함해야한다. ex.) true, true = 작동ok, 에러없음.
-                    Log.d(TAG, "onViewCreated: **[멀티] 다운로드 가동됨=${arrayBool[0]} 에러여부=${arrayBool[1]}")
-                    when(arrayBool[1]) {
-                        true -> { snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RECOVER SOME OF THE PURCHASED ITEMS.", false)}
-                        false -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
-                    }
-                }
-            })*/
-            //2-D-가 NetworkCheck [FLOW] StateFlow 사용!(O)
-            // viewlifecycleowner: 현재 생성되는 view 의 lifecycle. 그리고 그것에 종속된 coroutineScope= lifecyclescope?
 
             //Fragments should always use the viewLifecycleOwner to trigger UI updates.
              viewLifecycleOwner.lifecycleScope.launch {
@@ -308,7 +253,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!
 
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
-            //[MainVModel-1] Firebase 에서 새로운 리스트를 받을 떄 (or 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기)
+        //[MainVModel-1] Firebase 에서 새로운 리스트를 받을 떄 (or 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기)
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
                 Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
                 fullRtClassList = rtListPlusIAPInfo // 추후 Chip Sorting 때 사용
@@ -316,7 +261,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
                 lottieAnimController("stop")
             }
-            //[MainVModel-2] Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
+        //[MainVModel-2] Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
             jjMainVModel.isNetworkWorking.observe(viewLifecycleOwner) { isNetworkWorking ->
                 Log.d(TAG, "[MainVModel-NT] Network Availability detected, isNetworkWorking=[$isNetworkWorking] ")
 
@@ -336,7 +281,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
 
             }
-            //[MainVModel-3] (구매 후) Single DNLD -> UI 반영 (DnldPanel 보여주기 등)
+        //[MainVModel-3] (구매 후) Single DNLD -> UI 반영 (DnldPanel 보여주기 등)
             jjMainVModel.getLiveDataSingleDownloader().observe(viewLifecycleOwner) { dnldInfo->
                 Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle}, Status=${dnldInfo.status}, Prgrs=${dnldInfo.prgrs} ")
 
@@ -454,12 +399,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             mpClassInstance.pauseMusic() // a)일단 PAUSE 때리고
             mpClassInstance.removeHandler() // b)handler 없애기
         Log.d(TAG, "onPause: GlbVars 정보: CurrentTrId=${GlbVars.clickedTrId}")
-
-        //2) 최종적으로 선택해놓은 트랙 아이디
-        //3) 다시 돌아왔을 때 Slide 의 upperUi 에서 빨간색 앨범커버가 보였다 다른 앨범으로 교체되는 현상을 막기 위해.
-
-        //3) 그리고 나서 save current play data to SharedPref using gson.
-        //mySharedPrefManager.savePlayInfo(playInfo)
 
     }
     override fun onDestroy() {

@@ -167,14 +167,13 @@ class JjMainViewModel : ViewModel() {
     private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
     val selectedRow = _selectedRow.asStateFlow()
 
-    fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean) {
+    fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean) { // todo: Click <-> RCV ViewModel 더 정석으로 찾아서 바꿔보기.
 //[A] 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
         if(!isPurchaseClicked) {
             _selectedRow.value = rtObj
             return
         }
 //[B] Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
-
         Log.d(TAG, "onTrackClicked: clicked to purchase..isPurchaseClicked=true")
     //1-a) 구입시도 Purchase Process -> Return RtObj (만약 구입 취소의 경우에는....)
         val rtInTheCloudObj = iapV3.myOnPurchaseClicked(rtObj) // => todo: get RtObj or (이미 구입했거나 뭔가 틀어지면 여기서 quit..)

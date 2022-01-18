@@ -12,6 +12,7 @@ import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DNLDInfoContainer
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MultiDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.SingleDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -36,6 +37,7 @@ class JjMainViewModel : ViewModel() {
 //IAP & DNLD variables
     private val iapV3: MyIAPHelperV3 by globalInject()
     private val singleDownloaderV3: SingleDownloaderV3 by globalInject()
+    private val multiDownloaderV3: MultiDownloaderV3 by globalInject()
 //FireBase variables
     var isFreshList = false
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
@@ -85,45 +87,52 @@ class JjMainViewModel : ViewModel() {
                         }
                     }
                 }
-            //3) 위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) => a) LiveData 업데이트, b)sharedPref 에 리스트 저장 c) 삭제 필요한 파일 삭제 d) 멀티 다운로드 필요하면 실행 //
+            //3) 위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) => **** 드디어 LiveData 업데이트
                 iapParentJob.invokeOnCompletion { throwable ->
                     Log.d(TAG, "refreshAndUpdateLiveData: (3) invoke on Completion called")
-                    // 에러 있으면  -> (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
+                // 3-a) 에러 있으면  -> (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
                     if(throwable!=null) {
-                        Log.d(TAG, "refreshAndUpdateLiveData: ERROR (3) (个_个) iapParentJob Failed: $throwable")
+                        Log.d(TAG, "refreshAndUpdateLiveData: ERROR (3-a) (个_个) iapParentJob Failed: $throwable")
                         val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref (없을땐 그냥 깡통 arrayListOf<RtInTheCloud>() 를 받음.
                         isFreshList = true
                         _rtInTheCloudList.value = listSavedOnPhone // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         return@invokeOnCompletion
                     }
-
+                //3-b) *** 에러 없으면 '최종 리스트' iapV3-E) iap 정보(price/purchaseBool) 입힌 리스트를 받아서 -> LiveData 전달 + sharedPref 에 저장.
                     else //에러 없으면
                     {
-                //3-a) iapV3-E) iap 정보(price/purchaseBool) 입힌 리스트를 받아서 -> LiveData 전달 + sharedPref 에 저장.
                         val rtListPlusIAPInfo = iapV3.e_getFinalList()
                         isFreshList = true
                         _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
-                        Log.d(TAG, "refreshAndUpdateLiveData: (3-a) <<<<<<<<<getRtList: updated LiveData!")
-                //3-b) SharedPref 에 현재 리스트 저장. (새로운 coroutine)
-                        viewModelScope.launch {
-                            Log.d(TAG, "refreshAndUpdateLiveData: (3-b) saving current RtList+IAPInfo to Shared Pref")
-                            mySharedPrefManager.saveRtInTheCloudList(rtListPlusIAPInfo)
-                        }
-                //3-c) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
-                        viewModelScope.launch {
-                            Log.d(TAG, "refreshAndUpdateLiveData: (3-c) xxxxx deleting where purchaseBool=false")
-                            val neverPurchasedList = iapV3.f_getPurchaseFalseRtList()
-                            neverPurchasedList.forEach {
-                                rtInTheCloud -> myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
+                        Log.d(TAG, "refreshAndUpdateLiveData: (3-b) <<<<<<<<<getRtList: updated LiveData!")
+
+            //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
+                        // a), b), c) 는 모두 동시 실행(Parallel)
+
+                        viewModelScope.launch(Dispatchers.IO) {
+                        //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
+                            launch {
+                                Log.d(TAG, "refreshAndUpdateLiveData: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
+                                mySharedPrefManager.saveRtInTheCloudList(rtListPlusIAPInfo)
                             }
-                        }
-                //3-d) iapV3-G) (폰에 없는 RT(s) 확인되어서!) 다운 필요한 리스트를 받음 (새로운 coroutine)
-                        viewModelScope.launch {
-                            val multiDnldNeededList= iapV3.g_getMultiDnldNeededList()
-                            if(multiDnldNeededList.size >0) {
-                                Log.d(TAG, "refreshAndUpdateLiveData: (3-d) ↓ ↓ ↓ ↓ Sending for multiDnld ")
-                                //todo: 멀티 다운로드 진행: Background Thread (Dispatcher.IO?) 에서 이뤄져야함. User 눈에 안 보이니깐. Snackbar 만 main thread 에서..?
+                        //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
+                            launch {
+                                Log.d(TAG, "refreshAndUpdateLiveData: (4-b) xxxxx deleting where purchaseBool=false. Thread=${Thread.currentThread().name}")
+                                val neverPurchasedList = iapV3.f_getPurchaseFalseRtList()
+                                neverPurchasedList.forEach {
+                                        rtInTheCloud -> myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
+                                }
                             }
+                        //4-c)  구입했으나 폰에 없는 RT(s) list 확인-> 다운로드 (새로운 coroutine) (iapV3-G)
+                            launch {
+                                //Log.d(TAG, "refreshAndUpdateLiveData: (4-c) ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
+                                val multiDnldNeededList= iapV3.g_getMultiDnldNeededList()
+                                if(multiDnldNeededList.size >0) {
+                                    Log.d(TAG, "refreshAndUpdateLiveData: (4-c) [멀티] ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
+                                    multiDownloaderV3.launchMultipleFileDNLD(multiDnldNeededList)
+                                }
+                            }
+
                         }
                     }
                 }
@@ -136,6 +145,11 @@ class JjMainViewModel : ViewModel() {
         }
 
     }
+//*********************Multi Downloader
+    fun getLiveDataMultiDownloader(): LiveData<Array<Boolean>> {
+        val arrayBool = multiDownloaderV3.getArrayBool()
+        return arrayBool
+    }
 //*******************Network Detector -> LottieAnim 까지 연결
     var prevNT = true
     private val _isNetworkWorking = MutableLiveData<Boolean>() // Private& Mutable LiveData
@@ -145,8 +159,9 @@ class JjMainViewModel : ViewModel() {
         _isNetworkWorking.postValue(isNetworkOK) // .postValue= backgroundThread 사용. // (이 job 은 발생지가 backgrouond thread 니깐 .value=xx 안되고 postValue() 써야함!)
     }
 
-//***********************Click a) 단순 UI 업데이트 (클릭 -> SecondFrag 에 RtInTheCloud Obj 전달 -> SecondFrag 에서 UI 업뎃 및 복원(ListFrag 다녀왔을 때) &&
-// **************************  b)IAP ->  Download
+//*********************** [CLICK] a) 단순 UI 업데이트 (클릭-> SecondFrag 에 RtInTheCloud Obj 전달 -> UI 업뎃 + 복원(ListFrag 다녀왔을 때)
+//******************************* b) IAP & Download (Single)
+
     val emptyRtObj = RtInTheCloud(id = -10) // 그냥 빈 깡통 -10 -> SecondFrag.kt > updateMiniPlayerUiOnClick() 에서 .id <0 -> 암것도 안함.
     private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
     val selectedRow = _selectedRow.asStateFlow()
@@ -185,12 +200,10 @@ class JjMainViewModel : ViewModel() {
                 Log.d(TAG, "onTrackClicked: [invokeOnCompletion] ERROR!! called. Throwable=$throwable")
                 singleDownloaderV3.errorWhileDownloading() // A)SecondFrag 에서 BtmSht 없애주기 (toastMessage 는 위에 Handler 로 자동으로 보여주기)
                 singleDownloaderV3.resetLiveDataToInitialState()
-
-
             } else {
                 Log.d(TAG, "onTrackClicked: dnldParentJob.invokeOnCompletion : No Error! Now Resetting DNLDINFO to initial state")
                 singleDownloaderV3.resetLiveDataToInitialState()
-                //todo:혹시 모르니 /4) 다운로드: DNLD BtmSheet 닫아주기?->
+
             }
 
         }
@@ -198,10 +211,13 @@ class JjMainViewModel : ViewModel() {
         // ********** 여기서부터는 '순차적' 코드가 의미 없음 (위에서 dnldParentJob 을 Main thread 에서 실행시키고 (또 다른 main 스레드?)로 요 밑에줄 써놓으면 바로 concurrent 로 바로 실행됨)
         //Log.d(TAG, "onTrackClicked: this shall be printed. Thread name= ${Thread.currentThread().name}") // 이게 위에 dnldParentJob 보다 먼저 뜨는데 이것도 main 임.. 흐음..한마디로 main 이 블락 안당했다는뜻.
     }
-    fun getLiveDataFromDownloaderV3(): LiveData<DNLDInfoContainer> { //SecondFrag 에서  해당 method (와 이로 인한 결과값을) ** Observe!! ***  하고 있음.
+    fun getLiveDataSingleDownloader(): LiveData<DNLDInfoContainer> { //SecondFrag 에서  해당 method (와 이로 인한 결과값을) ** Observe!! ***  하고 있음.
         val dnldInfoObj: LiveData<DNLDInfoContainer> = singleDownloaderV3.getMyDnldLiveData()
         return dnldInfoObj
     }
+
+
+
 //***********************
     override fun onCleared() {
         super.onCleared()

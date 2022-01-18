@@ -62,7 +62,6 @@ class SingleDownloaderV3(val context: Context) {
         val downloadID = dnlManager.enqueue(dnlRequest) // 이 코드는 두가지 역할을 함. a)다운로드를 실행하고 b) Dnld Task Id 부여. enqueue - 다운로드 시작
 
         return downloadID
-
     }
 //<2> <1> 에서 다운로드 진행 시도가 성공 -> 진행중인 다운로드 상태를 LiveData 에 업데이트.
     suspend fun watchDnldProgress(dnldId: Long, rtInTheCloud: RtInTheCloud){ // 현재 진행중인 DNLD 를 관찰하며 -> LiveData 에 상황을 전달 -> SecondFrag 에서 BTMSheet 업데이트.

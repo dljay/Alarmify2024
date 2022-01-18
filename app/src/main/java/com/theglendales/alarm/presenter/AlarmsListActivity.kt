@@ -55,10 +55,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15g [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <화 14:30>
+//v3.07.15h [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <화 14:30>
 
 // Achievements :
-//다운로드:onViewCreate=> Lottie 로딩 Circle(O), PrgrsBar(GONE). => 첫 Prgrs 받는 순간 반대로 + text 에 Tr title 보여주기.
+// 멀티다운로드(O) :
+// todo: 복귀 후 라이브데이터 지랄 snackbar
 
 //최우선 Error)
 //

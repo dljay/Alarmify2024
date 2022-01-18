@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -277,7 +276,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 Log.d(TAG, "onViewCreated: current DNLD Progress is=$dnldPrgrs")
                 btmSht_SingleDNLDV.prepAndAnimateLPI(dnldPrgrs) // 여기서 prgrs 확인 및 기존 Animation 작동중인지 확인 후 Progress Bar Animation 작동.
             })
-            //2-C-라 MultiDNLD 진행되었을때 SnackBar 로 알림 (다운로드 결과까지 포함) //todo: 과연 boolArray 가 최선일지..
+           /* //2-C-라 MultiDNLD 진행되었을때 SnackBar 로 알림 (다운로드 결과까지 포함) //todo: 과연 boolArray 가 최선일지..
             jjDNLDViewModel.isMultiDnldRunning.observe(viewLifecycleOwner, {arrayBool ->
                 if(arrayBool.size == 2) { // 정상이라면 arrayBool 은 값을 두개만 포함해야한다. ex.) true, true = 작동ok, 에러없음.
                     Log.d(TAG, "onViewCreated: **[멀티] 다운로드 가동됨=${arrayBool[0]} 에러여부=${arrayBool[1]}")
@@ -286,7 +285,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         false -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
                     }
                 }
-            })
+            })*/
             //2-D-가 NetworkCheck [FLOW] StateFlow 사용!(O)
             // viewlifecycleowner: 현재 생성되는 view 의 lifecycle. 그리고 그것에 종속된 coroutineScope= lifecyclescope?
 
@@ -302,11 +301,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
                 }
             }
-
-        //3) Firebase ViewModel Initialize
-
-
-        //4) IAP ViewModel
 
 
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
@@ -345,8 +339,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
 
             }
-            //[MainVModel-3] (구매 후) DNLD 상태 업뎃 -> UI 반영 (DnldPanel 보여주기 등)
-            jjMainVModel.getLiveDataFromDownloaderV3().observe(viewLifecycleOwner) { dnldInfo->
+            //[MainVModel-3] (구매 후) Single DNLD -> UI 반영 (DnldPanel 보여주기 등)
+            jjMainVModel.getLiveDataSingleDownloader().observe(viewLifecycleOwner) { dnldInfo->
                 Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle}, Status=${dnldInfo.status}, Prgrs=${dnldInfo.prgrs} ")
 
                 //A) Prgrs 를 받는순간 isPreparingToDNLD -> false -> Lottie Loading Circle (X), ProgressBar(O)
@@ -395,6 +389,16 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
             }
+        //[MainVModel-4] [멀티 다운로드]
+            jjMainVModel.getLiveDataMultiDownloader().observe(viewLifecycleOwner, {arrayBool ->
+                if(arrayBool.size == 2) { // 정상이라면 arrayBool 은 값을 두개만 포함해야한다. ex.) true, true = 작동ok, 에러없음.
+                    Log.d(TAG, "onViewCreated: [MainVModel-멀티_DNLD] 다운로드 가동됨=${arrayBool[0]} 에러여부=${arrayBool[1]}, Thread=${Thread.currentThread().name}")
+                    when(arrayBool[1]) {
+                        true -> { snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RECOVER SOME OF THE PURCHASED ITEMS.", false)}
+                        false -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
+                    }
+                }
+            })
 
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance

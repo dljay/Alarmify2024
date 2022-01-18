@@ -16,6 +16,7 @@ import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MultiDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.SingleDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
@@ -145,9 +146,7 @@ fun startKoin(context: Context): Koin {
         single<MyIAPHelperV3> { MyIAPHelperV3(context = context) }
         single<ToastMessenger> {ToastMessenger(context = context)}
         single<SingleDownloaderV3> { SingleDownloaderV3(context = context) }
-
-
-
+        single<MultiDownloaderV3> {MultiDownloaderV3(context = context)}
         // 내가 추가 <--
 
         factory(named("volumePreferenceDemo")) {

@@ -11,10 +11,7 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DNLDInfoContainer
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MultiDownloaderV3
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.SingleDownloaderV3
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -110,12 +107,12 @@ class JjMainViewModel : ViewModel() {
                         // a), b), c) 는 모두 동시 실행(Parallel)
 
                         viewModelScope.launch(Dispatchers.IO) {
-                        //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
+//[Background Thread]   //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
                             launch {
                                 Log.d(TAG, "refreshAndUpdateLiveData: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
                                 mySharedPrefManager.saveRtInTheCloudList(rtListPlusIAPInfo)
                             }
-                        //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
+//[Background Thread]   //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
                             launch {
                                 Log.d(TAG, "refreshAndUpdateLiveData: (4-b) xxxxx deleting where purchaseBool=false. Thread=${Thread.currentThread().name}")
                                 val neverPurchasedList = iapV3.f_getPurchaseFalseRtList()
@@ -123,14 +120,18 @@ class JjMainViewModel : ViewModel() {
                                         rtInTheCloud -> myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
                                 }
                             }
-                        //4-c)  구입했으나 폰에 없는 RT(s) list 확인-> 다운로드 (새로운 coroutine) (iapV3-G)
-                            launch {
+//[Background Thread]   //4-c) [멀티 DNLD] 구입했으나 폰에 없는 RT(s) list 확인-> 다운로드 (새로운 coroutine) (iapV3-G)
+                            val multiDnldJob = launch {
                                 //Log.d(TAG, "refreshAndUpdateLiveData: (4-c) ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
                                 val multiDnldNeededList= iapV3.g_getMultiDnldNeededList()
                                 if(multiDnldNeededList.size >0) {
                                     Log.d(TAG, "refreshAndUpdateLiveData: (4-c) [멀티] ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
                                     multiDownloaderV3.launchMultipleFileDNLD(multiDnldNeededList)
                                 }
+                            }
+/*[Background Thread] */     multiDnldJob.invokeOnCompletion {// 어차피 Throwable 은 MultiDownloaderV3.kt 에서 try/catch 로 잡아줘서 여기까지 전달 안되는 상황 (으로 추측됨..)
+                                Log.d(TAG, "refreshAndUpdateLiveData: [멀티DNLD] invokeOnCompletion, thread=${Thread.currentThread().name} ") // thread=DefaultDispatch.. (BackgroundThread)
+                                multiDownloaderV3.resetCurrentStateToIdle() // 다 끝났으면 이제 .IDLE 상태로 ENUm 바꿔주기 -> SecondFrag 에서 ListFrag 다녀와서 호출되도 괜찮게끔..
                             }
 
                         }
@@ -146,9 +147,9 @@ class JjMainViewModel : ViewModel() {
 
     }
 //*********************Multi Downloader
-    fun getLiveDataMultiDownloader(): LiveData<Array<Boolean>> {
-        val arrayBool = multiDownloaderV3.getArrayBool()
-        return arrayBool
+    fun getLiveDataMultiDownloader(): LiveData<MultiDnldState> {
+        val multiState = multiDownloaderV3.getMultiDnldState()
+        return multiState
     }
 //*******************Network Detector -> LottieAnim 까지 연결
     var prevNT = true
@@ -156,7 +157,7 @@ class JjMainViewModel : ViewModel() {
     val isNetworkWorking: LiveData<Boolean> = _isNetworkWorking // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
 
     fun updateNTWKStatus(isNetworkOK: Boolean) {
-        _isNetworkWorking.postValue(isNetworkOK) // .postValue= backgroundThread 사용. // (이 job 은 발생지가 backgrouond thread 니깐 .value=xx 안되고 postValue() 써야함!)
+        _isNetworkWorking.postValue(isNetworkOK) // .postValue= backgroundThread 사용->Main 쓰레드에서 반영하게 schedule.. // (이 job 은 발생지가 backgrouond thread 니깐 .value=xx 안되고 postValue() 써야함!)
     }
 
 //*********************** [CLICK] a) 단순 UI 업데이트 (클릭-> SecondFrag 에 RtInTheCloud Obj 전달 -> UI 업뎃 + 복원(ListFrag 다녀왔을 때)

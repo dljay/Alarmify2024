@@ -55,11 +55,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15h [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <화 14:30>
+//v3.07.15i [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <화 14:30>
 
 // Achievements :
-// 멀티다운로드(O) :
-// todo: 복귀 후 라이브데이터 지랄 snackbar
+// 멀티다운로드(O) - 쓰레드 분류하여 SnackBar 표시 (O) // ListFrag 갔다 복귀했을 때 SecondFrag 에서 .IDLE -> 암것도 안함! : )
+
 
 //최우선 Error)
 //

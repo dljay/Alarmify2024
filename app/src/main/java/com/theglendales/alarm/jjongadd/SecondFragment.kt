@@ -46,11 +46,8 @@ import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.*
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.BtmShtSingleDNLDV2
+import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyDownloaderV2
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV2
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
@@ -390,13 +387,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             }
         //[MainVModel-4] [멀티 다운로드]
-            jjMainVModel.getLiveDataMultiDownloader().observe(viewLifecycleOwner, {arrayBool ->
-                if(arrayBool.size == 2) { // 정상이라면 arrayBool 은 값을 두개만 포함해야한다. ex.) true, true = 작동ok, 에러없음.
-                    Log.d(TAG, "onViewCreated: [MainVModel-멀티_DNLD] 다운로드 가동됨=${arrayBool[0]} 에러여부=${arrayBool[1]}, Thread=${Thread.currentThread().name}")
-                    when(arrayBool[1]) {
-                        true -> { snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RECOVER SOME OF THE PURCHASED ITEMS.", false)}
-                        false -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
-                    }
+            jjMainVModel.getLiveDataMultiDownloader().observe(viewLifecycleOwner, {stateEnum ->
+                Log.d(TAG, "onViewCreated:[MainVModel-멀티다운로드] StateEnum=$stateEnum , Thread=${Thread.currentThread().name}")
+                when(stateEnum) {
+                    MultiDnldState.IDLE -> {
+                        Log.d(TAG, "onViewCreated: received idle, do nothing..")}
+                    MultiDnldState.ERROR -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RECOVER PURCHASED ITEMS.", false)}
+                    MultiDnldState.SUCCESSFUL -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
                 }
             })
 

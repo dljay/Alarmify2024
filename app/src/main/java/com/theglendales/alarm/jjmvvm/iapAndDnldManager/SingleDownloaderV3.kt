@@ -25,6 +25,7 @@ class SingleDownloaderV3(val context: Context) {
 
     private val _dnldInfoLiveData = MutableLiveData<DNLDInfoContainer>() // Private& Mutable LiveData
     val dnldInfoLiveData: LiveData<DNLDInfoContainer> = _dnldInfoLiveData
+
     val dnldInfoObj= DNLDInfoContainer("", 0,-1, isBufferingToDNLD = true) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
 
 //<1> 다운로드 시도

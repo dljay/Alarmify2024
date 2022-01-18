@@ -212,8 +212,15 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
 // ************************************************** <2> Clicked to buy
     fun myOnPurchaseClicked(rtObj: RtInTheCloud): RtInTheCloud {
-    Log.d(TAG, "myOnPurchaseClicked: clicked to purchase..Thread=${Thread.currentThread().name}") //Thread=Main
-    val testRt= RtInTheCloud("TestDNLD TITLE", mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3")
+        var testRt= RtInTheCloud("hehe")
+        Log.d(TAG, "myOnPurchaseClicked: clicked to purchase..Thread=${Thread.currentThread().name}") //Thread=Main
+        // ** Test Code : 삭제해!
+        billingClient!!.queryPurchasesAsync(BillingClient.SkuType.INAPP) { _, listOfPurchases ->
+            Log.d(TAG, "myOnPurchaseClicked: <CALLBACK TEST> called ") // ****** 과연 이게 제일 늦게 뜬다!!
+            testRt= RtInTheCloud("TestDNLD TITLE", mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3")
+        }
+    //val testRt= RtInTheCloud("TestDNLD TITLE", mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3")
+    Log.d(TAG, "myOnPurchaseClicked: after callback?")
         return testRt // todo: 이런저런 jjMainViewModel 과의 협업을 통해 결국 구입 완료된 RtInTheCloud obj 을 뱉어야함!
     }
 

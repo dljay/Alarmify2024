@@ -176,14 +176,18 @@ class JjMainViewModel : ViewModel() {
 //[B] Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
         Log.d(TAG, "onTrackClicked: clicked to purchase..isPurchaseClicked=true")
     //1-a) 구입시도 Purchase Process -> Return RtObj (만약 구입 취소의 경우에는....)
-        val rtInTheCloudObj = iapV3.myOnPurchaseClicked(rtObj) // => todo: get RtObj or (이미 구입했거나 뭔가 틀어지면 여기서 quit..)
+        val rtInTheCloudObj = iapV3.myOnPurchaseClicked(rtObj)
+        // => todo: 실제 구입과정까지 여러 Async 콜백등이 있어서 여기서부터 suspendCoroutine 잘 써서 풀어가는게 맞을듯..
+        // todo: parentJob 쓰고 invokeOnCompletion 등?
     //1-b)구입 성공(O) -> 다운로드 실행
+
         Log.d(TAG, "onTrackClicked: before dowloadPurchased")
         downloadPurchased(rtInTheCloudObj)
     }
     //2) 다운로드 Process
     private fun downloadPurchased(rtInTheCloudObj: RtInTheCloud) {
         Log.d(TAG, "downloadPurchased: called")
+
         val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
             Log.d(TAG, "downloadPurchased: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
             //toastMessenger.showMyToast("Failed to Download. Error=$throwable", isShort = false)

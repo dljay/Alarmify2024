@@ -290,8 +290,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     false -> {btmSht_SingleDNLDV.showLPIAndHideLottieCircle()} // 계속 불리게 되지만 showLPIAndHideLottieCircle() 안에서 자체적으로 중복 call 확인 후 return.
                 }
                 //B) STATUS 에 따라서 BtmSheet 열기 & 닫기 (모든 Status 는 한번씩만 받는다)
-                when(dnldInfo.status) { // 참고** Pending=1 , Running=2, Paused=4, Successful=8, Failed=16
-                    0 -> { // : 다운로드 attempt 시작하자마자. (0 은 그냥 내가 지정한 숫자) -> BtmSheet 을 열어줘! +
+                when(dnldInfo.status) { // 참고** -1= IDLE 암것도 안한 상태, 0= Download 준비 시작!, Pending=1 , Running=2, Paused=4, Successful=8, Failed=16
+                    -1 -> { // 내가 지정- IDLE 상태
+                        //btmSht_SingleDNLDV.removeBtmSheetImmediately() // 없어도 됨. 그리고 이거 있으면 -> Successful 해서 1초간 만땅 Prgrs Bar 보여주던게 바로 꺼짐. very unsatisfying..
+                    }
+                    0 -> { // 내가 지정- 다운로드 attempt 시작하자마자. (0 은 그냥 내가 지정한 숫자) -> BtmSheet 을 열어줘! +
                         Log.d(TAG, "[MainVModel-DNLD-B] STATUS=0 ")
                             btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag)}
 

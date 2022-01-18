@@ -174,20 +174,20 @@ class SingleDownloaderV3(val context: Context) {
     }
 //<4> 위의 <1> & 2> 과정에서 에러가 발생했을 시 -> Coroutine Scope 에서 .invokeOnCompletion 에서 확인 후 아래를 실행 -> LiveDATA 업데이트
     fun errorWhileDownloading() {
-    Log.d(TAG, "errorWhileDownloading: called")
+    Log.d(TAG, "errorWhileDownloading: called. Thread=${Thread.currentThread().name} ") //MAIN Thread
         dnldInfoObj.status = -444 // 임의 숫자
-        _dnldInfoLiveData.postValue(dnldInfoObj) // 진행중인 MainThread(DNLD 진행 상황 report) 가 다 끝나면 이 값을 실행 (근데 어차피 이게 불리는 곳이 .invokeOnCompletion 이니 상관없을듯.)
+        _dnldInfoLiveData.value = dnldInfoObj
 
     }
 //<5> DNLDInfo to Initial State -> 이건 다운로드  종료(혹은 error) 일때 설정 (.invokeOnCompletion) ==> ListFrag 갔다오거나 했을때 LiveData 자동 복구 되어도 SecondFrag 에서 확인 후 거를 수 있게끔!
     fun resetLiveDataToInitialState(){
-        Log.d(TAG, "resetLiveDataToInitialState: called")
+        Log.d(TAG, "resetLiveDataToInitialState: called. Thread=${Thread.currentThread().name}")
         dnldInfoObj.apply {
             dnldTrTitle=""
             prgrs = 0
             status = -1
         }
-        _dnldInfoLiveData.postValue(dnldInfoObj)
+        _dnldInfoLiveData.value = dnldInfoObj
     }
 
 //** Utility Methods

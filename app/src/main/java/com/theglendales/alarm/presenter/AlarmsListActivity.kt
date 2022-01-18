@@ -55,7 +55,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15K [온갖 파일 삭제 전!!] + MultiDnld 코루틴 코드 약간 수정 (JjMainVModel)
+//v3.07.15L [온갖 파일 삭제 전!!] + MultiDnld 코루틴 코드 약간 수정 (JjMainVModel)
+// ** 구입 클릭 코드 작성 전 (IAPV3) - JjMainVModel> donwloadPurchased() 코드 일부 수정.
 
 // Achievements :
 // 멀티다운로드(O) - 쓰레드 분류하여 SnackBar 표시 (O) // ListFrag 갔다 복귀했을 때 SecondFrag 에서 .IDLE -> 암것도 안함! : )

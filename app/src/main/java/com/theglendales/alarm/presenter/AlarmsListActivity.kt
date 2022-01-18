@@ -55,7 +55,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15J [온갖 파일 삭제 전!!]
+//v3.07.15K [온갖 파일 삭제 전!!]
 
 // Achievements :
 // 멀티다운로드(O) - 쓰레드 분류하여 SnackBar 표시 (O) // ListFrag 갔다 복귀했을 때 SecondFrag 에서 .IDLE -> 암것도 안함! : )

@@ -14,11 +14,9 @@ import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 
 /**
  * 쫑 한말씀: This ViewModel should follow Activity(AlarmsListActivity)'s life cycle.
@@ -121,17 +119,19 @@ class JjMainViewModel : ViewModel() {
                                 }
                             }
 //[Background Thread]   //4-c) [멀티 DNLD] 구입했으나 폰에 없는 RT(s) list 확인-> 다운로드 (새로운 coroutine) (iapV3-G)
-                            val multiDnldJob = launch {
-                                //Log.d(TAG, "refreshAndUpdateLiveData: (4-c) ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
+                            launch {
                                 val multiDnldNeededList= iapV3.g_getMultiDnldNeededList()
                                 if(multiDnldNeededList.size >0) {
-                                    Log.d(TAG, "refreshAndUpdateLiveData: (4-c) [멀티] ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
-                                    multiDownloaderV3.launchMultipleFileDNLD(multiDnldNeededList)
+                                    Log.d(TAG, "refreshAndUpdateLiveData: (4-c-1) [멀티] ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
+                                    val resultEnum: MultiDnldState = multiDownloaderV3.launchMultipleFileDNLD(multiDnldNeededList)
+                                    // 여기서 Coroutine 이 기다려줌.
+/*[Main Thread 로 전환]*/                withContext(Dispatchers.Main) {
+                                        Log.d(TAG, "refreshAndUpdateLiveData: (4-c-2)")
+                                        multiDownloaderV3.updateLiveDataEnum(resultEnum) // 이제 .ERROR 든 .SUCCESSFUL 이든 SecondFrag 에 보고 -> SnackBar 출력 목표는 달성했으니
+                                        multiDownloaderV3.resetCurrentStateToIdle() // .IDLE 로 상태 변경->LiveData 에 전달 -> 추후 ListFrag 등 갔다와도 복원 지랄 안나게.
+                                        Log.d(TAG, "refreshAndUpdateLiveData: (4-c-3)")
+                                    }
                                 }
-                            }
-/*[Background Thread] */     multiDnldJob.invokeOnCompletion {// 어차피 Throwable 은 MultiDownloaderV3.kt 에서 try/catch 로 잡아줘서 여기까지 전달 안되는 상황 (으로 추측됨..)
-                                Log.d(TAG, "refreshAndUpdateLiveData: [멀티DNLD] invokeOnCompletion, thread=${Thread.currentThread().name} ") // thread=DefaultDispatch.. (BackgroundThread)
-                                multiDownloaderV3.resetCurrentStateToIdle() // 다 끝났으면 이제 .IDLE 상태로 ENUm 바꿔주기 -> SecondFrag 에서 ListFrag 다녀와서 호출되도 괜찮게끔..
                             }
 
                         }

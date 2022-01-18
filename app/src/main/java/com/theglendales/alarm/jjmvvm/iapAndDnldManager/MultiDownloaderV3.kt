@@ -4,12 +4,9 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import android.webkit.URLUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.theglendales.alarm.jjdata.RtInTheCloud
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import java.io.File
 
 private const val TAG="MultiDownloaderV3"
@@ -25,7 +22,7 @@ class MultiDownloaderV3(val context: Context) {
     var currentStateObj = MultiDnldState.IDLE // IDLE 로 시작.
 
 
-    suspend fun launchMultipleFileDNLD(multipleRtList: List<RtInTheCloud>) {
+    suspend fun launchMultipleFileDNLD(multipleRtList: List<RtInTheCloud>): MultiDnldState {
         // 현재는 단순히 바로 다운로드 실행 -> Snackbar 로 "Recovering purchased items" 정도로만 뜸. 나중에 Single DNLD 처럼 Prgrs BtmSheet 쓸지 고민.."
         Log.d(TAG, "launchMultipleFileDNLD: [멀티] 파일 복원 필요 갯수:${multipleRtList.size}, Received list=$multipleRtList")
         var isErrorOccurred = false
@@ -60,7 +57,18 @@ class MultiDownloaderV3(val context: Context) {
             }
         }//end of For loop
         // 멀티 다운로드 시도 과정 report -> Snackbar 로 바로 "복원 시작" 및 에러여부 Display.
-        when(isErrorOccurred) {
+        return when(isErrorOccurred) {
+            // 이 method 자체가 JjMainViewModel 에서 Background Thread 에서 불렸으나 -> SnackBar 결과 표시는 SecondFrag - Main Thread 에서 해줘야됨.
+            true -> {
+                currentStateObj = MultiDnldState.ERROR
+                currentStateObj
+            }
+            false -> {
+                currentStateObj = MultiDnldState.SUCCESSFUL
+                currentStateObj
+            }
+        }
+       /* when(isErrorOccurred) {
             // 이 method 자체가 JjMainViewModel 에서 Background Thread 에서 불렸으나 -> SnackBar 결과 표시는 SecondFrag - Main Thread 에서 해줘야됨.
             true -> {
                 currentStateObj = MultiDnldState.ERROR
@@ -68,23 +76,18 @@ class MultiDownloaderV3(val context: Context) {
             false -> {
                 currentStateObj = MultiDnldState.SUCCESSFUL
                 updateLiveDataOnMainThread(currentStateObj)}
-        }
+        }*/
 
          // 결과 라이브데이터에 입력-> postValue: 현재 우리는 IO 쓰레드에 있지만 (다 끝나고?) MainThread 로 전달 -> 자동으로 SecondFrag 에서 확인 (observe 중였으니깐)
     }
     fun getMultiDnldState(): LiveData<MultiDnldState> = multiDnldLiveData
     fun resetCurrentStateToIdle() { // 요걸 해줘야 listFrag 갔다왔을때 지랄 안 남.
         currentStateObj = MultiDnldState.IDLE
-        scheduleUpdateOnMainThread(currentStateObj)
+        updateLiveDataEnum(currentStateObj)
     }
 // ** Utility Method **
-    suspend fun updateLiveDataOnMainThread(currentStateObj: MultiDnldState) {
-        withContext(Dispatchers.Main) {
-            _multiDnldLiveData.value = currentStateObj // 즉각 Main Thread 에서 반영!
-        }
-    }
-    fun scheduleUpdateOnMainThread(currentStateObj: MultiDnldState) {
-        _multiDnldLiveData.postValue(currentStateObj) // ** 출발점이 Background Thread 고 MainThread 에 틈이 날때? 전달~
+    fun updateLiveDataEnum(currentStateObj: MultiDnldState) {
+        _multiDnldLiveData.value = currentStateObj // 즉각 Main Thread 에서 반영!
     }
 
 }

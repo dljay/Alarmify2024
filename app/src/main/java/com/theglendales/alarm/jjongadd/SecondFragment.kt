@@ -335,8 +335,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjMainVModel.getLiveDataMultiDownloader().observe(viewLifecycleOwner, {stateEnum ->
                 Log.d(TAG, "onViewCreated:[MainVModel-멀티다운로드] StateEnum=$stateEnum , Thread=${Thread.currentThread().name}")
                 when(stateEnum) {
-                    MultiDnldState.IDLE -> {
-                        Log.d(TAG, "onViewCreated: received idle, do nothing..")}
+                    MultiDnldState.IDLE -> {Log.d(TAG, "onViewCreated: received idle, do nothing..")}
                     MultiDnldState.ERROR -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RECOVER PURCHASED ITEMS.", false)}
                     MultiDnldState.SUCCESSFUL -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
                 }

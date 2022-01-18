@@ -82,8 +82,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var btmSht_SingleDNLDV: BtmShtSingleDNLDV2
     //Network Checker
     lateinit var myNetworkCheckerInstance: MyNetWorkChecker
-    //ViewModel 5종 생성
-    private val jjMainVModel: JjMainViewModel by viewModels() // [LiveData] + [Flow]
+    //Main ViewModel  생성
+    lateinit var jjMainVModel: JjMainViewModel // [LiveData] + [Flow]
+    //private val jjMainVModel: JjMainViewModel by viewModels()  // <- 이렇게 등록했을 때 listFrag 갔다와서 구입 클릭하면 -> coroutines.JobCancellationException: Job was cancelled 에러뜸..
     //Toast Messenger
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
 
@@ -189,6 +190,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //  LIVEDATA ->
 
         //1) ViewModel 5종 생성(RcvVModel/MediaPlayerVModel)
+            //1-A) jjMainViewModel 생성
+            jjMainVModel = ViewModelProvider(requireActivity()).get(JjMainViewModel::class.java)
             //1-B) jjMpViewModel 생성
             val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
             //1-C) jjMyDownloaderViewModel 생성
@@ -346,18 +349,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjMainVModel.getLiveDataFromDownloaderV3().observe(viewLifecycleOwner) { dnldInfo->
                 Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle}, Status=${dnldInfo.status}, Prgrs=${dnldInfo.prgrs} ")
 
-                if(dnldInfo.prgrs==-1 && dnldInfo.status==-1) { // ListFrag 복귀 후 용도면 해당값은 false  -> 아무것도 안하고 끝!
-                    Log.d(TAG, "onViewCreated: 아마도 ListFrag 다녀오신듯..? 암것도 안하고 여기서 quit!")
-                    return@observe
-                }
-                //A) Prgrs 를 받는순간 isPreparingToDNLD -> false -> Lottie Loading Circle (GONE), ProgressBar(VISIBLE)
-                when(dnldInfo.isBufferingToDNLD) { // isBufferingToDNLD
-                    false -> {btmSht_SingleDNLDV.showLPIAndHideLottieCircle(isPreparingToDNLD = false)}
-                }
+
+
 
                 //B) STATUS 에 따라서 BtmSheet 열기 & 닫기 (모든 Status 는 한번씩만 받는다)
                 when(dnldInfo.status) { // 참고** Pending=1 , Running=2, Paused=4, Successful=8, Failed=16
-                    0 -> { // 내가 지정한 숫자. '0' 이면 (다운로드 attempt 시작하자마자) -> BtmSheet 을 열어줘!
+                    0 -> { // 내가 지정한 숫자. '0' 이면 (다운로드 attempt 시작하자마자) -> BtmSheet 을 열어줘! + //todo: Init Prgrs Bar (혹시 이전 다운로드로 만땅일수 있으니 '0' 으로)
                         Log.d(TAG, "[MainVModel-DNLD-B] STATUS=0 ")
                             btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag)}
 
@@ -371,7 +368,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     DownloadManager.STATUS_SUCCESSFUL-> { //8 <- 다시 secondFrag 들어왔을 때 뜰 수 있음.
                         Log.d(TAG, "[MainVModel-DNLD-B] STATUS=SUCCESSFUL(8) Observer: DNLD SUCCESS (O)  ")
                         // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
-                        btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅= 120 으로 설정해줬음.
+                        btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅= 100 으로 설정해줬음.
                         btmSht_SingleDNLDV.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "DOWNLOAD COMPLETED.", false)
                         return@observe
@@ -393,6 +390,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     Log.d(TAG, "[MainVModel-DNLD-C] Prgrs Animation! (prgrs=${dnldInfo.prgrs})")
                     btmSht_SingleDNLDV.prepAndAnimateLPI(dnldInfo.prgrs) // 그래프 만땅= 100 .
                     btmSht_SingleDNLDV.updateTitleTextView(dnldInfo.dnldTrTitle) // Tr Title 보여주기 (첫 Prgrs 받는 순간 반영. 이후 prgrs 받을 때마다 setText 되지만. 상관 없을듯..)
+                }
+                //A) Prgrs 를 받는순간 isPreparingToDNLD -> false -> Lottie Loading Circle (X), ProgressBar(O)
+                when(dnldInfo.isBufferingToDNLD) { // isBufferingToDNLD(X)
+                    false -> {btmSht_SingleDNLDV.showLPIAndHideLottieCircle()} // 계속 불리게 되지만 showLPIAndHideLottieCircle() 안에서 자체적으로 중복 call 확인 후 return.
                 }
 
             }

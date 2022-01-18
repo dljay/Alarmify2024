@@ -55,8 +55,6 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         linearPrgsIndicator.visibility = View.GONE
         updateTitleTextView(null) // title=Null -> PREPARING TO DOWNLOAD 라고 뜸
 
-
-
         objAnim = ObjectAnimator.ofInt(linearPrgsIndicator,"progress", 0) // 최초 progress 는 0으로 초기화.
 
 
@@ -139,10 +137,12 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         Log.d(TAG, "isAnimationRunning: objAnim.isRunning=${objAnim.isRunning}")
         return objAnim.isRunning 
     }
-    fun showLPIAndHideLottieCircle(isPreparingToDNLD: Boolean) {
+    fun showLPIAndHideLottieCircle() {
         
-        if(!isPreparingToDNLD && this::linearPrgsIndicator.isInitialized && this::lottieCircle.isInitialized) {
-            //b) SingleDownloaderV3.kt > 첫 DNLD 프로그레스 받는 순간 -> isPreparingToDNLD.false ->  LottieCircle(GONE), LPI(VISIBLE))\
+        if(this::linearPrgsIndicator.isInitialized && this::lottieCircle.isInitialized) { //a) 우선 초기화가 됐는지 확인
+            if(lottieCircle.visibility == LottieAnimationView.GONE && linearPrgsIndicator.visibility == View.VISIBLE ) {
+                return // b) 이미 한번 실행된적이 있으면 그냥 return..
+            }
             Log.d(TAG, "showLPIAndHideLottieCircle: Lottie(X) LPI(O)")
             lottieCircle.visibility = LottieAnimationView.GONE
             linearPrgsIndicator.visibility = View.VISIBLE
@@ -160,11 +160,16 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
             tvRtTitle.text = "DOWNLOADING $rtTitle "
         }
     }
-    
-    /*fun cancelAndNullifyAnim() {
-        objAnim.cancel()
-        objAnim = null
-    }*/
+
+    override fun dismiss() {
+        super.dismiss()
+        if(this::linearPrgsIndicator.isInitialized) {
+            linearPrgsIndicator.progress = 0 // this works!!
+            Log.d(TAG, "dismiss: +++++ called")
+        }
+
+
+    }
 
 
 }

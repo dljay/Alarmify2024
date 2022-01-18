@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 
 /**
  * 쫑 한말씀: This ViewModel should follow Activity(AlarmsListActivity)'s life cycle.
+ *
  */
 private const val TAG="JjMainViewModel"
 
@@ -183,11 +184,12 @@ class JjMainViewModel : ViewModel() {
             if(throwable!=null) {
                 Log.d(TAG, "onTrackClicked: [invokeOnCompletion] ERROR!! called. Throwable=$throwable")
                 singleDownloaderV3.errorWhileDownloading() // A)SecondFrag 에서 BtmSht 없애주기 (toastMessage 는 위에 Handler 로 자동으로 보여주기)
-                //singleDownloaderV3.resetDnldInfoToInitialState()
+                singleDownloaderV3.resetLiveDataToInitialState()
+
 
             } else {
                 Log.d(TAG, "onTrackClicked: dnldParentJob.invokeOnCompletion : No Error! Now Resetting DNLDINFO to initial state")
-                //singleDownloaderV3.resetDnldInfoToInitialState()
+                singleDownloaderV3.resetLiveDataToInitialState()
                 //todo:혹시 모르니 /4) 다운로드: DNLD BtmSheet 닫아주기?->
             }
 

@@ -55,15 +55,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15e [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <화 01:50>
+//v3.07.15g [다운로드<-> UI 업뎃 메커니즘 JjMainVModel 라이브데이터로 변경 중] <화 14:30>
 
 // Achievements :
 //다운로드:onViewCreate=> Lottie 로딩 Circle(O), PrgrsBar(GONE). => 첫 Prgrs 받는 순간 반대로 + text 에 Tr title 보여주기.
 
 //최우선 Error)
-//1) ListFrag 갔다왔을 때 클릭하면 [invokeOnCompleteion] Error! called.
-//Throwable=kotlinx.coroutines.JobCancellationException: Job was cancelled; job=SupervisorJobImpl{Cancelled}@c11f8ad
-//2) 연속 구매 클릭-> 다운로드 Prgrs Bar 리셋 안되고 또 까꾸리로 시작 하는 문제.
 //3) 1) 해결 후 resetDnldInfoToInitialState() 넣어서 ListFrag 갔다왔을때 DNLD 관련 LiveData 복원 못하게끔.
 //
 //Todos)

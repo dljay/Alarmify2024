@@ -25,7 +25,7 @@ class SingleDownloaderV3(val context: Context) {
 
     private val _dnldInfoLiveData = MutableLiveData<DNLDInfoContainer>() // Private& Mutable LiveData
     val dnldInfoLiveData: LiveData<DNLDInfoContainer> = _dnldInfoLiveData
-    val dnldInfoObj= DNLDInfoContainer("", -1,-1, isBufferingToDNLD = true) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
+    val dnldInfoObj= DNLDInfoContainer("", 0,-1, isBufferingToDNLD = true) //-> isRunning = true (SecondFrag 에서 observe 중) -> 바로 Dnld BtmSheet 보여줌!
 
 //<1> 다운로드 시도
     suspend fun launchDNLD(rtInTheCloud: RtInTheCloud): Long {
@@ -34,6 +34,7 @@ class SingleDownloaderV3(val context: Context) {
 
         //A) LiveData 업뎃으로 다운로드 attempt 시작과 동시에-> [DNLD BTMSHEET 바로 열어주기]
         dnldInfoObj.dnldTrTitle = rtInTheCloud.title
+        dnldInfoObj.prgrs = 0
         dnldInfoObj.status = 0 // status -> 0 -> SecondFrag -> BtmShtDNLDV2 show!
         dnldInfoObj.isBufferingToDNLD = true // -> 이게 true 인 동안은 Lottie 빙글빙글 애니메이션 + PrgrsBar(의 View= Gone 상태)
         updateLiveDataOnMainThread(dnldInfoObj)
@@ -180,10 +181,14 @@ class SingleDownloaderV3(val context: Context) {
 
     }
 //<5> DNLDInfo to Initial State -> 이건 다운로드  종료(혹은 error) 일때 설정 (.invokeOnCompletion) ==> ListFrag 갔다오거나 했을때 LiveData 자동 복구 되어도 SecondFrag 에서 확인 후 거를 수 있게끔!
-    fun resetDnldInfoToInitialState(){
+    fun resetLiveDataToInitialState(){
         Log.d(TAG, "resetDnldInfoToInitialState: called")
-        val dnldInfoInitialState = DNLDInfoContainer("", prgrs = -1, status = -1, true)
-        _dnldInfoLiveData.postValue(dnldInfoInitialState)
+        dnldInfoObj.apply {
+            dnldTrTitle=""
+            prgrs = 0
+            status = -1
+        }
+        _dnldInfoLiveData.postValue(dnldInfoObj)
     }
 
 //** Utility Methods

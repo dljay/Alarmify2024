@@ -18,7 +18,7 @@ import java.util.*
 
 private const val TAG="SingleDownloaderV3"
 
-data class DNLDInfoContainer(var dnldTrTitle:String ="", var prgrs:Int=-1, var status:Int= -1, var isBufferingToDNLD: Boolean = true) //Pending=1
+data class DNLDInfoContainer(var dnldTrTitle:String ="", var prgrs:Int=0, var status:Int= -1, var isBufferingToDNLD: Boolean = true) //Pending=1
 
 class SingleDownloaderV3(val context: Context) {
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
@@ -182,7 +182,7 @@ class SingleDownloaderV3(val context: Context) {
     }
 //<5> DNLDInfo to Initial State -> 이건 다운로드  종료(혹은 error) 일때 설정 (.invokeOnCompletion) ==> ListFrag 갔다오거나 했을때 LiveData 자동 복구 되어도 SecondFrag 에서 확인 후 거를 수 있게끔!
     fun resetLiveDataToInitialState(){
-        Log.d(TAG, "resetDnldInfoToInitialState: called")
+        Log.d(TAG, "resetLiveDataToInitialState: called")
         dnldInfoObj.apply {
             dnldTrTitle=""
             prgrs = 0

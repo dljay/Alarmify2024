@@ -61,7 +61,6 @@ import java.util.Calendar
 //다운로드:onViewCreate=> Lottie 로딩 Circle(O), PrgrsBar(GONE). => 첫 Prgrs 받는 순간 반대로 + text 에 Tr title 보여주기.
 
 //최우선 Error)
-//3) 1) 해결 후 resetDnldInfoToInitialState() 넣어서 ListFrag 갔다왔을때 DNLD 관련 LiveData 복원 못하게끔.
 //
 //Todos)
 //IAP + MultiDNLD 기능 => IapV2 PDF 만들기 + 삭제-> SharedPref 싹 정리 / SecondFrag - loadFromFirebase() 정리 및 카피.

@@ -165,7 +165,7 @@ class BtmShtSingleDNLDV2 : BottomSheetDialogFragment() {
         super.dismiss()
         if(this::linearPrgsIndicator.isInitialized) {
             linearPrgsIndicator.progress = 0 // this works!!
-            Log.d(TAG, "dismiss: +++++ called")
+            Log.d(TAG, "dismiss: xxxx. PrgrsBar.progress=0 ")
         }
 
 

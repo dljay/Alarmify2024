@@ -349,12 +349,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjMainVModel.getLiveDataFromDownloaderV3().observe(viewLifecycleOwner) { dnldInfo->
                 Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle}, Status=${dnldInfo.status}, Prgrs=${dnldInfo.prgrs} ")
 
-
-
-
+                //A) Prgrs 를 받는순간 isPreparingToDNLD -> false -> Lottie Loading Circle (X), ProgressBar(O)
+                when(dnldInfo.isBufferingToDNLD) { // isBufferingToDNLD(X)
+                    false -> {btmSht_SingleDNLDV.showLPIAndHideLottieCircle()} // 계속 불리게 되지만 showLPIAndHideLottieCircle() 안에서 자체적으로 중복 call 확인 후 return.
+                }
                 //B) STATUS 에 따라서 BtmSheet 열기 & 닫기 (모든 Status 는 한번씩만 받는다)
                 when(dnldInfo.status) { // 참고** Pending=1 , Running=2, Paused=4, Successful=8, Failed=16
-                    0 -> { // 내가 지정한 숫자. '0' 이면 (다운로드 attempt 시작하자마자) -> BtmSheet 을 열어줘! + //todo: Init Prgrs Bar (혹시 이전 다운로드로 만땅일수 있으니 '0' 으로)
+                    0 -> { // : 다운로드 attempt 시작하자마자. (0 은 그냥 내가 지정한 숫자) -> BtmSheet 을 열어줘! +
                         Log.d(TAG, "[MainVModel-DNLD-B] STATUS=0 ")
                             btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag)}
 
@@ -376,7 +377,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     -444 -> { // VModel> Coroutine > .invokeOnCompletion 에서 handler 가 에러 감지 (내가 임의로 넣은 숫자 -444)
                         Log.d(TAG, "[MainVModel-DNLD-B] STATUS=-444")
                         btmSht_SingleDNLDV.removeBtmSheetImmediately() // 에러메시지는 ViewModel 에서 Toast 로 전파. //
-                        toastMessenger.showMyToast("Download Failed..",isShort = false)
+                        toastMessenger.showMyToast("Download Failed..", isShort = false)
                         return@observe
                     }
                    /* else -> {btmSht_SingleDNLDV.removeBtmSheetImmediately() // 다운로드 실패- 내가 만든 -444 코드나 그 외 Status 를 받으면 -> 바로 BtmSht 없애고 + Toast 메시지
@@ -386,15 +387,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }*/
                 }
                 //C) Progress Animation
-                if(dnldInfo.prgrs >0 ) {
+                if(dnldInfo.prgrs > 0 ) {
                     Log.d(TAG, "[MainVModel-DNLD-C] Prgrs Animation! (prgrs=${dnldInfo.prgrs})")
                     btmSht_SingleDNLDV.prepAndAnimateLPI(dnldInfo.prgrs) // 그래프 만땅= 100 .
                     btmSht_SingleDNLDV.updateTitleTextView(dnldInfo.dnldTrTitle) // Tr Title 보여주기 (첫 Prgrs 받는 순간 반영. 이후 prgrs 받을 때마다 setText 되지만. 상관 없을듯..)
                 }
-                //A) Prgrs 를 받는순간 isPreparingToDNLD -> false -> Lottie Loading Circle (X), ProgressBar(O)
-                when(dnldInfo.isBufferingToDNLD) { // isBufferingToDNLD(X)
-                    false -> {btmSht_SingleDNLDV.showLPIAndHideLottieCircle()} // 계속 불리게 되지만 showLPIAndHideLottieCircle() 안에서 자체적으로 중복 call 확인 후 return.
-                }
+
 
             }
 

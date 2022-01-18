@@ -171,7 +171,6 @@ class SingleDownloaderV3(val context: Context) {
         withContext(Dispatchers.Main) { // 잠시 Thread 를 IO -> Main 으로 변경 (UI 업뎃되기 때문에)
             _dnldInfoLiveData.value = dnldInfoObj
         }
-
     }
 //<4> 위의 <1> & 2> 과정에서 에러가 발생했을 시 -> Coroutine Scope 에서 .invokeOnCompletion 에서 확인 후 아래를 실행 -> LiveDATA 업데이트
     fun errorWhileDownloading() {

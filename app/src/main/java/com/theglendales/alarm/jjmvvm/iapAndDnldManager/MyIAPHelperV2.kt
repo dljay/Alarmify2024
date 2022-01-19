@@ -271,10 +271,10 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
         }
     }
     //(a)initiatePurhcase() 이거 Async 임!! - (b)Display Purchase Dialog ->  (c) onPurchaseUpdated
-    private fun initiatePurchase(PRODUCT_ID: String) { //(a) initiatePurchase
+    private fun initiatePurchase(iapName: String) { //(a) initiatePurchase
         Log.d(TAG, "initiatePurchase: begins..")
         val skuList: MutableList<String> = ArrayList()
-        skuList.add(PRODUCT_ID)
+        skuList.add(iapName)
         val params = SkuDetailsParams.newBuilder()
         params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
 
@@ -288,7 +288,7 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
                 }
                 else {
                     //try to add item/product id "p1" "p2" "p3" inside managed product in google play console
-                    Toast.makeText(receivedActivity, "Purchase Item $PRODUCT_ID not Found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(receivedActivity, "Purchase Item $iapName not Found", Toast.LENGTH_SHORT).show()
                 }
             }
             else {

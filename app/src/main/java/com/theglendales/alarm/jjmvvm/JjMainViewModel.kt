@@ -5,8 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.billingclient.api.BillingClient
-import com.android.billingclient.api.BillingResult
+import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
@@ -81,6 +80,7 @@ class JjMainViewModel : ViewModel() {
                             iapV3.d2_B_addPriceToList(skuDetailsList)//D2-B
                         }
                     }
+                    //todo: billingResult.response 가 문제 있을 때 아래 throwable 에서 잘 잡히는지 확인 필요.
                 }
             //3) 위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) => **** 드디어 LiveData 업데이트
                 iapParentJob.invokeOnCompletion { throwable ->
@@ -174,15 +174,29 @@ class JjMainViewModel : ViewModel() {
             return
         }
 //[B] Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
-        Log.d(TAG, "onTrackClicked: clicked to purchase..isPurchaseClicked=true")
-    //1-a) 구입시도 Purchase Process -> Return RtObj (만약 구입 취소의 경우에는....)
-        val rtInTheCloudObj = iapV3.myOnPurchaseClicked(rtObj)
-        // => todo: 실제 구입과정까지 여러 Async 콜백등이 있어서 여기서부터 suspendCoroutine 잘 써서 풀어가는게 맞을듯..
-        // todo: parentJob 쓰고 invokeOnCompletion 등?
+
+    //1) 디스크에 파일이 이미 있으면 -> return // 유저 입장에서는 클릭-> 무반응 (어차피 유저가 보고있는RcV 리스트에 'Purchased' 아이콘이 뜬 상태여서 이게 맞는듯)
+        if(myDiskSearcher.isSameFileOnThePhone_RtObj(rtObj)) return //
+    //2) 구입시도 Purchase Process -> [Sequential] & 최종적으로 Returns RtObj! (만약 구입 취소의 경우에는....)
+
+        //2-a) iap 이름을 String List 로 만들어서 -> myParams 생성 -> 2-b) querySkuDetails 에서 사용됨. //todo: handler?
+        val purchaseParentJob = viewModelScope.launch {
+            val iapAsList: List<String> = listOf(rtObj.iapName)
+            val myParams = SkuDetailsParams.newBuilder().apply {setSkusList(iapAsList).setType(BillingClient.SkuType.INAPP)}.build()
+        //2-b) Get the list of SkuDetails [SuspendCoroutine 사용] => 구매창 보여주기에 필요한 purchaseParams 작성
+            val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(myParams) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
+            val purchaseParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
+
+        //2-c) 구매창 보여주기 + User 가 구매한 결과 받기
+        val purchases: List<Purchase> = iapV3.i_startPurchaseFlow(purchaseParams).purchases
+            Log.d(TAG, "onTrackClicked: purchase=$purchases")
+        }
+        //val rtInTheCloudObj = iapV3.a_OnPurchaseClicked(rtObj)
+
     //1-b)구입 성공(O) -> 다운로드 실행
 
         Log.d(TAG, "onTrackClicked: before dowloadPurchased")
-        downloadPurchased(rtInTheCloudObj)
+        //downloadPurchased(rtInTheCloudObj)
     }
     //2) 다운로드 Process
     private fun downloadPurchased(rtInTheCloudObj: RtInTheCloud) {

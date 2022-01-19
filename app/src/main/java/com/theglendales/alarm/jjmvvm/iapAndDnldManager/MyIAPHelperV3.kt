@@ -1,14 +1,15 @@
 package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.util.Log
 import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.channels.Channel
 import java.io.File
 import kotlin.Exception
 import kotlin.coroutines.resume
@@ -75,7 +76,6 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
             billingClient!!.startConnection(object : BillingClientStateListener{
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
                     Log.d(TAG, "c_prepBillingClient: <C> BillingSetupFinished (O)")
-
                     continuation.resume(billingResult) // -> continuation 에서 이어서 진행 (원래 코루틴- JjMainVModel> iapParentJob 으로 복귀)
                 }
                 override fun onBillingServiceDisconnected() {
@@ -211,21 +211,37 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
 
 // ************************************************** <2> Clicked to buy
-    fun myOnPurchaseClicked(rtObj: RtInTheCloud): RtInTheCloud {
-        var testRt= RtInTheCloud("hehe")
-        Log.d(TAG, "myOnPurchaseClicked: clicked to purchase..Thread=${Thread.currentThread().name}") //Thread=Main
-        // ** Test Code : 삭제해!
-        billingClient!!.queryPurchasesAsync(BillingClient.SkuType.INAPP) { _, listOfPurchases ->
-            Log.d(TAG, "myOnPurchaseClicked: <CALLBACK TEST> called ") // ****** 과연 이게 제일 늦게 뜬다!!
-            testRt= RtInTheCloud("TestDNLD TITLE", mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3")
+    //h) SkuDetail 받기
+    suspend fun h_getSkuDetails(myParams: SkuDetailsParams): List<SkuDetails> {
+        Log.d(TAG, "h_getSkuDetails: called")
+        return suspendCoroutine { continuation ->
+            billingClient!!.querySkuDetailsAsync(myParams) {billingResult, skuDetailsList ->
+                if(billingResult.responseCode == BillingClient.BillingResponseCode.OK && !skuDetailsList.isNullOrEmpty()) {
+                    continuation.resume(skuDetailsList)
+                } else {
+                    continuation.resumeWithException(Exception("billingResult-ResponseCode=${billingResult.responseCode}"))
+                }
+            }
         }
-    //val testRt= RtInTheCloud("TestDNLD TITLE", mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3")
-    Log.d(TAG, "myOnPurchaseClicked: after callback?")
-        return testRt // todo: 이런저런 jjMainViewModel 과의 협업을 통해 결국 구입 완료된 RtInTheCloud obj 을 뱉어야함!
+    }
+
+    //i) 구매창 보여주고-> 그 결과 확인까지 잠시 현재 진행중인 coroutine 을 suspend 시켜줌. (현재 코루틴: jjMainViewModel>purchaseParentJob)
+
+    // Data class to wrap responseCode and purchases
+    data class PurchaseResult(val responseCode: Int, val purchases: List<Purchase>)
+    // Channel to receive PurchaseResult // <- todo: 공부해야됨..
+    private val purchaseChannel: Channel<PurchaseResult> = Channel(Channel.UNLIMITED) // Channel will allow us to buffer all the results and avoid race conditions ???
+
+    suspend fun i_startPurchaseFlow(billingFlowParams: BillingFlowParams): PurchaseResult {
+        Log.d(TAG, "i_startPurchaseFlow: called")
+        val currentActivity: Activity = context.applicationContext as Activity
+        billingClient!!.launchBillingFlow(currentActivity, billingFlowParams)
+        return purchaseChannel.receive()
     }
 
     override fun onPurchasesUpdated(p0: BillingResult, p1: MutableList<Purchase>?) {
-        //TODO("Not yet implemented")
+        Log.d(TAG, "onPurchasesUpdated: called")
     }
+
 
 }

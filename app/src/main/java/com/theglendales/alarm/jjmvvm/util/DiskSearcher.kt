@@ -384,12 +384,26 @@ class DiskSearcher(val context: Context)
     fun isSameFileOnThePhone (filePathAndName: String): Boolean { //다운로드 받기 전 이미 Disk 에 File 이 있는지 체크.
         val fileToCheck = File(filePathAndName)
         return if(fileToCheck.isFile && fileToCheck.exists()) { //true if and only if the file denoted by this abstract pathname exists and is a normal file; false otherwise
-            Log.d(TAG, "doesSameFileExistOnThePhone: \"File ${fileToCheck.name} exists\"")
+            Log.d(TAG, "isSameFileOnThePhone: \"File ${fileToCheck.name} exists\"")
             //Toast.makeText(receivedActivity,"File ${fileToCheck.name} exists", Toast.LENGTH_LONG).show()
             // todo: 파일은 있지만 혹시나 불량 파일인지도 확인? (중간에 다운로드 끊기는 등)
             true
         }else{
             Log.d(TAG, "doesSameFileExistOnThePhone: \"File ${fileToCheck.name} DOES NOT!!XX exist!!\"")
+            //Toast.makeText(receivedActivity,"File ${fileToCheck.name} does not exist!!", Toast.LENGTH_SHORT).show()
+            false
+        }
+    }
+    fun isSameFileOnThePhone_RtObj(rtObj: RtInTheCloud): Boolean {
+        val fileSupposedToBeAt =topFolder + RTA_FOLDER+ File.separator + rtObj.iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
+        val fileToCheck = File(fileSupposedToBeAt)
+        return if(fileToCheck.isFile && fileToCheck.exists()) { //true if and only if the file denoted by this abstract pathname exists and is a normal file; false otherwise
+            Log.d(TAG, "isSameFileOnThePhone_RtObj: \"File ${fileToCheck.name} exists\"")
+            //Toast.makeText(receivedActivity,"File ${fileToCheck.name} exists", Toast.LENGTH_LONG).show()
+            // todo: 파일은 있지만 혹시나 불량 파일인지도 확인? (중간에 다운로드 끊기는 등)
+            true
+        }else{
+            Log.d(TAG, "isSameFileOnThePhone_RtObj: \"File ${fileToCheck.name} DOES NOT!!XX exist!!\"")
             //Toast.makeText(receivedActivity,"File ${fileToCheck.name} does not exist!!", Toast.LENGTH_SHORT).show()
             false
         }

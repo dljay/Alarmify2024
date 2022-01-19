@@ -9,10 +9,13 @@ import androidx.lifecycle.MutableLiveData
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import java.io.File
 
+
+/**
+ * 기존 구입했으나 유실된 건 복원 역할 (Recover Previously Purchased & Downloaded)
+ */
+
 private const val TAG="MultiDownloaderV3"
-
 enum class MultiDnldState { IDLE, SUCCESSFUL, ERROR}
-
 
 class MultiDownloaderV3(val context: Context) {
 

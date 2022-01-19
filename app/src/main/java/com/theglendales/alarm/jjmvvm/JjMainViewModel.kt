@@ -191,9 +191,14 @@ class JjMainViewModel : ViewModel() {
             val flowParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
 
         //2-c) 구매창 보여주기 + User 가 구매한 결과 받기
-            iapV3.i_launchBillingFlow(receivedActivity, flowParams) // -> 여기서 User 가 구매 Yes or No 시전 -> (..콜백) onPurchasesUpdated() -> iapV3.handlePurchases 로 넘어감.
-            Log.d(TAG, "onTrackClicked: ...윗줄과 상관없이 여기가 먼저 출려됨.. 기다려줄수 있다면 참 좋을텐데..")
+            iapV3.i_launchBillingFlow(receivedActivity, flowParams)
+            Log.d(TAG, "purchaseParentJob: ...윗줄과 상관없이 여기가 먼저 출력됨.. 기다려줄수 있다면 참 좋을텐데..")
         }
+        purchaseParentJob.invokeOnCompletion {
+            Log.d(TAG, "purchaseParentJob: invokeOnCompletion Called..")
+        }
+        //2-d) 이미 2-c) 에서 purchaseParentJob 코루틴은 끝난 상태.  -> 여기서 User 가 구매 Yes or No 시전 -> (콜백) onPurchasesUpdated() -> iapV3.handlePurchaseResult() 로 넘어감.
+        //handlePurchaseResult() 에서 LiveData 업뎃(MyPurchaseStateENUM) -> SecondFrag 에서 여기 viewModel 로 지시 다운로드 or
     }
 
     //2) 다운로드 Process

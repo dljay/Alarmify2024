@@ -3,6 +3,7 @@ package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
@@ -35,7 +36,7 @@ import kotlin.coroutines.suspendCoroutine
 
 private const val TAG="MyIAPHelperV3"
 
-enum class PurchaseStateENUM { IDLE, PURCHASED, CANCELED, ERROR }
+enum class MyPurchaseStateENUM { IDLE, PURCHASED, CANCELED, ERROR }
 
 class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
@@ -117,6 +118,7 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
                  */
                 ///** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
                 val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
+
                 // 우리가 구매한 물품이 현재 rtListPlusIAPInfo 에 없는 물품이면 (ex. p1,p7 등 아예 PlayConsole 카탈로그에서 Deactivate 시킨 물품인 경우) -> 다음 for loop 으로 넘어가기
                 if (purchase.quantity != 1 || indexOfRtObj < 0) { // 갯수가 1개 초과 or rtListPlusIAPInfo 리스트에 우리가 찾는 rtObj 이 없는 경우
                     if (purchase.quantity != 1) {
@@ -151,7 +153,7 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
             // **** D1-B-3: 구매한적이 있으나 뭔가 문제가 생겨서 PurchaseState.Purchased 가 아닐때 여기로 들어옴. 애당초 구입한적이 없는 물품은 여기 뜨지도 않음!
                 else {
                     Log.d(TAG,"d1_B_addPurchaseBoolToList: <D1-B-3> iapName=$iapName, trkID=$trackID, 구매 기록은 있으나 (for some reason) PurchaseState.Purchased(X)- Phone 에서 삭제 요청 ")
-                    //myDiskSearcher.deleteFromDisk(fileSupposedToBeAt)
+
                 }
             }//end of for loop
         // **** D1-B-4: purchaseBool=false 인 item 들 -> 삭제할 리스트에 추가해줌.
@@ -225,13 +227,13 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
         }
     }
 
-//***** i) 구매창 보여주고-> 결과는 LiveData 에 업뎃 -> SecondFrag 전달 -> MainViewModel -> deliverPurchaseResult() -> 다시 여기 handlePurchaseResult() 로..
+//***** i) 구매창 보여주고-> 다시 여기 handlePurchaseResult() 로..
 
 
     /*private val _purchaseStateLiveData = MutableLiveData<PurchaseStateENUM>() // Private& Mutable LiveData
     val purchaseStateLiveData: LiveData<PurchaseStateENUM> = _purchaseStateLiveData*/
 
-    fun i_launchBillingFlow(receivedActivity: Activity, flowParams: BillingFlowParams) {
+    fun i_launchBillingFlow(receivedActivity: Activity, flowParams: BillingFlowParams) { // 여기서 purchaseParentJob (코루틴) 은 이미 끝이 난 상태.
         Log.d(TAG, "i_startPurchaseFlow: called")
         billingClient!!.launchBillingFlow(receivedActivity, flowParams) // todo: 여기서 잠시 SecondFrag Pause 되는것 확인 필요.
     }
@@ -239,16 +241,35 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
     override fun onPurchasesUpdated(billingResult: BillingResult, purchaseList: MutableList<Purchase>?) {
         Log.d(TAG, "onPurchasesUpdated: called. purchaseList=$purchaseList")
 
-        if(!purchaseList.isNullOrEmpty()) {
-            Log.d(TAG, "onPurchasesUpdated: called. xx isNull Empty. 다시 써 ㅆㅂ.")
-            j_handlePurchaseResult(purchaseList) //
-        } else {
-            Log.d(TAG, "onPurchasesUpdated: 업뎃 라이브뎅히터?")
+        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchaseList != null)
+        {
+            Log.d(TAG, "onPurchasesUpdated: A- 정상 신규 구매! (파일 확인 후 없으면)다운로드 진행!")
+            j_handlePurchaseResult(purchaseList) // !! ** !! //
+        }
+        else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED)
+        {// RcV 에서 이미 구입한 물건은 사진 아이콘 등으로 Purchased 구분이 되고-> 클릭했을 때 아무 반응 X -> 따라서 여기로 들어올 확률은 거의 없음.
+            Log.d(TAG, "onPurchasesUpdated: B- 이미 있는 물품 구매! [매우 드문 에러: Ex. P1002 구매 클릭-> Google IAP 에서 (이미 구입한) P1001 로 등록되어있는 경우.]  ")
+            // 혹시라도 어떤 연유로 이미 구입한 물건이 클릭 가능하게되어 재구매-> 이쪽으로 들어오게되도 다운받을 이유는 없다 ( 이미 구입한 물품들은 MultiDnldV3.kt 로 시작과 동시에 복원작업해주니깐)
+        } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED)
+        {
+            Log.d(TAG, "onPurchasesUpdated: C- 구매 취소!!") // User 가 백그라운드 클릭 등..
+            toastMessenger.showMyToast("Purchase Canceled", isShort = true)
+
+        } else
+        {
+            Log.d(TAG, "onPurchasesUpdated: D -기타 에러.. ")
+            toastMessenger.showMyToast("Purchase Error: ${billingResult.debugMessage}",isShort = false )
         }
     }
 //***** j) 구매창 결과 Handle ( 취소든 구매든. 오류든..)
-    fun j_handlePurchaseResult(purchases: List<Purchase>) {
-    Log.d(TAG, "j_handlePurchaseResult: called")
+    fun j_handlePurchaseResult(purchaseList: List<Purchase>) {
+    //val rtInTheCloudObj = rtListPlusIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
+    Log.d(TAG, "j_handlePurchaseResult: called. PurchaseList.size=${purchaseList.size}")
+    // 정상 구입 ->  rtInTheCloudObj (요기) 업뎃 ->LiveData 에 통보 -> SecondFrag -> ViewModel 다운로드 실행-> ..  Shared PRef 저장 -> RcV 업데이트
+
+    // rtListPlusIapInfo 업뎃.
+    /*val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
+    rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경*/
     }
 
 

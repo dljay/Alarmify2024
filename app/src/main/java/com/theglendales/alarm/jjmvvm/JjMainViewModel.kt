@@ -190,36 +190,41 @@ class JjMainViewModel : ViewModel() {
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(myParams) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
             val flowParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
 
-        //2-c) 구매창 보여주기 + User 가 구매한 결과 받기
-            iapV3.i_launchBillingFlow(receivedActivity, flowParams)
+        //2-c) 구매창 보여주기 + User 가 구매한 결과 (Yes or No) 받기
+            val purchaseList = iapV3.i_launchBillingFlow(receivedActivity, flowParams) //todo: activity 이렇게 전달하지 않았으면?
+
+            Log.d(TAG, "purchaseParentJob:  purchaseList=${purchaseList}")
             Log.d(TAG, "purchaseParentJob: ...윗줄과 상관없이 여기가 먼저 출력됨.. 기다려줄수 있다면 참 좋을텐데..")
+        //2-d) 결과에 따라 handlePurchaseResult: OK(2차 확인 후 다운로드)/ ALREADY_OWNED / CANCELED
+        //2-e) buyItemOrNot
         }
         purchaseParentJob.invokeOnCompletion {
             Log.d(TAG, "purchaseParentJob: invokeOnCompletion Called..")
         }
-        //2-d) 이미 2-c) 에서 purchaseParentJob 코루틴은 끝난 상태.  -> 여기서 User 가 구매 Yes or No 시전 -> (콜백) onPurchasesUpdated() -> iapV3.handlePurchaseResult() 로 넘어감.
+        Log.d(TAG, "onTrackClicked: here..Thread=${Thread.currentThread().name}")
         //handlePurchaseResult() 에서 LiveData 업뎃(MyPurchaseStateENUM) -> SecondFrag 에서 여기 viewModel 로 지시 다운로드 or
     }
+    //fun getPurchaseState(): LiveData<PurchaseResultContainer> = iapV3.getPurchStateLiveData()
 
-    //2) 다운로드 Process
+    //3) 다운로드 Process
     fun downloadPurchased(rtInTheCloudObj: RtInTheCloud) {
-        Log.d(TAG, "downloadPurchased: called")
+        Log.d(TAG, "downloadPurchased: called. Thread=${Thread.currentThread().name}")
 
         val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
             Log.d(TAG, "downloadPurchased: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
             //toastMessenger.showMyToast("Failed to Download. Error=$throwable", isShort = false)
         }
         val dnldParentJob = viewModelScope.launch(handler) {
-        //2-a) Background Thread 에서 dnldId 받기: MyDNLDV3.kt> launchDownload -> and get "downloadId:Long" -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
+        //3-a) Background Thread 에서 dnldId 받기: MyDNLDV3.kt> launchDownload -> and get "downloadId:Long" -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
             launch(Dispatchers.IO) {
                 val dnldId: Long = singleDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 여기서 문제가 발생하면 다음 줄로 진행이 안되고 바로 위에 handler 가 잡아서 exception 을 던짐.
-        //2-b)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달 -> main Thread 에서 UI 업데이트.
+        //3-b)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달 -> main Thread 에서 UI 업데이트.
                 Log.d(TAG, "downloadPurchased: dnldID=$dnldId")
                 // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getLiveDataSingleDownloader() 값을 observe 하기에 -> 자동으로 UI 업뎃.
                 singleDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj)
             }
         }
-        //2-c) (2-a)~(2-c) 과정에서 에러가 발생했다면
+        //3-c) (3-a)~(3-c) 과정에서 에러가 발생했다면
         dnldParentJob.invokeOnCompletion { throwable->
             if(throwable!=null) {
                 //**Main Thread**

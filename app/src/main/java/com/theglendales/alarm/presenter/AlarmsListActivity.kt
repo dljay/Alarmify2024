@@ -55,11 +55,20 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15L2 [온갖 파일 삭제 전!!] + MultiDnld 코루틴 코드 약간 수정 (JjMainVModel)
+//v3.07.15N [IAP 클릭 구매 -> launchBillingFlow() 콜백을 (진행중인 Viewmodel 코루틴) 정지시켜주며 받아주기- 성공]
 // ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
 
-// Achievements :
-// 멀티다운로드(O) - 쓰레드 분류하여 SnackBar 표시 (O) // ListFrag 갔다 복귀했을 때 SecondFrag 에서 .IDLE -> 암것도 안함! : )
+// issues:
+// 1.Flow 관련:
+// a) Flow 기초 유튭 영상 보기.
+// b) 왜 .last() 썼을때는 viewModel 의 coroutine 이 더 이상 진행 안되었는지?
+// c) IAP 코루틴으로 -> https://stackoverflow.com/questions/61388646/billingclient-billingclientstatelistener-onbillingsetupfinished-is-called-multip 참조.
+
+//2. Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인듯..
+//https://medium.com/@gunayadem.dev/add-a-click-listener-to-your-adapter-using-mvvm-in-kotlin-part-2-9dce852e96d5
+//https://stackoverflow.com/questions/49513993/where-to-put-click-listeners-in-mvvm-android
+//
+//If you were to place a click handler inside a viewmodel and the activity got killed, your viewmodel would be holding on to a dead listener and this would be a memory leak.
 
 
 //최우선 Error)

@@ -343,6 +343,17 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     MultiDnldState.SUCCESSFUL -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
                 }
             })
+      /*  //[MainVModel-5] [PurchaseState] // 유저가 구매창 입력한 결과 Observe
+        jjMainVModel.getPurchaseState().observe(viewLifecycleOwner, {purchaseStateEnum ->
+            Log.d(TAG, "onViewCreated:[MainVModel-PURCHASE STATE] PurchaseState=$purchaseStateEnum , Thread=${Thread.currentThread().name}")
+            when(purchaseStateEnum) {
+                PurchaseStateENUM.IDLE -> {Log.d(TAG, "onViewCreated: [purchase state] received idle, do nothing..")}
+                PurchaseStateENUM.PURCHASED -> {jjMainVModel.downloadPurchased()}
+                PurchaseStateENUM.ERROR -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RECOVER PURCHASED ITEMS.", false)}
+                PurchaseStateENUM.CANCELED -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"RECOVERING PREVIOUSLY OWNED ITEMS ..", false)}
+
+            }
+        })*/
 
 
 

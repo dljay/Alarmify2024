@@ -3,12 +3,13 @@ package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.*
 import java.io.File
 import kotlin.Exception
 import kotlin.coroutines.resume
@@ -36,9 +37,8 @@ import kotlin.coroutines.suspendCoroutine
 
 private const val TAG="MyIAPHelperV3"
 
-enum class MyPurchaseStateENUM { IDLE, PURCHASED, CANCELED, ERROR }
 
-class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
+class MyIAPHelperV3(val context: Context ) {
 
     private val toastMessenger: ToastMessenger by globalInject() // ToastMessenger
 //IAP
@@ -49,10 +49,22 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
     var purchaseFalseRtList: MutableList<RtInTheCloud> = ArrayList() // 현재 PurchaseState=false 이 놈들 -> JjMainViewModel 로 전달-> myDiskSearcher.deleteFromDisk(fileSupposedToBeAt)
     private val myDiskSearcher: DiskSearcher by globalInject()
 //PurchaseBool=false 인 놈들 (Disk 에 있다면 삭제 필요) -> JjMainVModel 로 전달.
+    var testWrapper = PurchaseResultContainer(BillingResult(), ArrayList<Purchase>())
 
     init {
-        Log.d(TAG, "init MyIapHelperV3 called. ")
-        billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build() //todo: 밑에 C .isReady 는 항상 false 네..
+        Log.d(TAG, "init MyIapHelperV3 called. Thread=${Thread.currentThread().name}")
+        //billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build() //기존 init 코드.
+        billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener{ bResultReceived, purchasesListReceived ->
+        //if(bResultReceived.responseCode== .xxxxxx ) {}
+            if(purchasesListReceived.isNullOrEmpty()) {
+                Log.d(TAG, "init .. empty!!: Thread=${Thread.currentThread().name}")
+                testWrapper = PurchaseResultContainer(bResultReceived, purchasesListReceived)
+                flowTest.tryEmit(testWrapper) // 여기서 밑에 i_launchBillingFlow 에서 suspend 됐던 return 이 해제 -> viewModel 코루틴으로 복귀 -> 끝나면 ->밑에 logd 출력
+            }
+
+            Log.d(TAG, "init listener!!... .. .. .: Thread=${Thread.currentThread().name}")
+
+        }.build() //여기서 billingClient (lateinit) 을 init 해줌.
     }
 // ****************** <1> 최초 SecondFrag 로딩 후 (과거 정보) 복원 관련
 
@@ -68,10 +80,10 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
     suspend fun c_prepBillingClient(): BillingResult {
         Log.d(TAG, "c_prepBillingClient: <C> Called")
-        if(!billingClient!!.isReady) {
+        /*if(!billingClient!!.isReady) {
             Log.d(TAG, "c_prepBillingClient: <C> BillingClient Not Ready(X)! Re init!")
             billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
-        }
+        }*/
         return suspendCoroutine { continuation -> // suspendCoroutine -> async Callback 등 잠시 대기가 필요할 때 사용 -> 여기서 잠시 기존 코루틴 정지(JjMainVModel)
 
             billingClient!!.startConnection(object : BillingClientStateListener{
@@ -227,50 +239,31 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
         }
     }
 
-//***** i) 구매창 보여주고-> 다시 여기 handlePurchaseResult() 로..
-
-
-    /*private val _purchaseStateLiveData = MutableLiveData<PurchaseStateENUM>() // Private& Mutable LiveData
-    val purchaseStateLiveData: LiveData<PurchaseStateENUM> = _purchaseStateLiveData*/
-
-    fun i_launchBillingFlow(receivedActivity: Activity, flowParams: BillingFlowParams) { // 여기서 purchaseParentJob (코루틴) 은 이미 끝이 난 상태.
+//***** i) 구매창 보여주기->
+    suspend fun i_launchBillingFlow(receivedActivity: Activity, flowParams: BillingFlowParams): PurchaseResultContainer  { // 여기서 purchaseParentJob (코루틴) 은 이미 끝이 난 상태.
         Log.d(TAG, "i_startPurchaseFlow: called")
         billingClient!!.launchBillingFlow(receivedActivity, flowParams) // todo: 여기서 잠시 SecondFrag Pause 되는것 확인 필요.
+        return flowTest.first() // launchBillingFlow() 의 콜백은 -> 위에 init{} 에서 받아주고 emit => 여기서 flow.first() 는 값을 receive 할때까지 function 을 suspend 시킴. 받을때까지 기다렸다가 리턴?
+    //todo: 왜 .last() 썼을때는 viewModel 의 coroutine 이 더 이상 진행 안되었는지?
     }
 
-    override fun onPurchasesUpdated(billingResult: BillingResult, purchaseList: MutableList<Purchase>?) {
-        Log.d(TAG, "onPurchasesUpdated: called. purchaseList=$purchaseList")
 
-        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK && purchaseList != null)
-        {
-            Log.d(TAG, "onPurchasesUpdated: A- 정상 신규 구매! (파일 확인 후 없으면)다운로드 진행!")
-            j_handlePurchaseResult(purchaseList) // !! ** !! //
-        }
-        else if (billingResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED)
-        {// RcV 에서 이미 구입한 물건은 사진 아이콘 등으로 Purchased 구분이 되고-> 클릭했을 때 아무 반응 X -> 따라서 여기로 들어올 확률은 거의 없음.
-            Log.d(TAG, "onPurchasesUpdated: B- 이미 있는 물품 구매! [매우 드문 에러: Ex. P1002 구매 클릭-> Google IAP 에서 (이미 구입한) P1001 로 등록되어있는 경우.]  ")
-            // 혹시라도 어떤 연유로 이미 구입한 물건이 클릭 가능하게되어 재구매-> 이쪽으로 들어오게되도 다운받을 이유는 없다 ( 이미 구입한 물품들은 MultiDnldV3.kt 로 시작과 동시에 복원작업해주니깐)
-        } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED)
-        {
-            Log.d(TAG, "onPurchasesUpdated: C- 구매 취소!!") // User 가 백그라운드 클릭 등..
-            toastMessenger.showMyToast("Purchase Canceled", isShort = true)
+//***** iap 구입시 구입창(launchBillingFlow)- user 입력에 대한 반응!! -> 기존 override fun onPurchaseUpdated() 를 초기 init{} 에서 LiveData 로 대신 받게끔 listener 등록 !!!! ^^
 
-        } else
-        {
-            Log.d(TAG, "onPurchasesUpdated: D -기타 에러.. ")
-            toastMessenger.showMyToast("Purchase Error: ${billingResult.debugMessage}",isShort = false )
-        }
-    }
-//***** j) 구매창 결과 Handle ( 취소든 구매든. 오류든..)
-    fun j_handlePurchaseResult(purchaseList: List<Purchase>) {
+    //a) LiveData as a container for PurchaseResultContainer
+    private val flowTest = MutableSharedFlow<PurchaseResultContainer>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST) // Private& Mutable StateFlow
+
+    fun j_verifyPurchaseResult(purchaseList: List<Purchase>) { //verify
     //val rtInTheCloudObj = rtListPlusIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
-    Log.d(TAG, "j_handlePurchaseResult: called. PurchaseList.size=${purchaseList.size}")
+    Log.d(TAG, "j_verifyPurchaseResult: called. PurchaseList.size=${purchaseList.size}")
     // 정상 구입 ->  rtInTheCloudObj (요기) 업뎃 ->LiveData 에 통보 -> SecondFrag -> ViewModel 다운로드 실행-> ..  Shared PRef 저장 -> RcV 업데이트
-
     // rtListPlusIapInfo 업뎃.
     /*val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
     rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경*/
     }
-
+    //fun getPurchStateLiveData(): LiveData<PurchaseResultContainer> = responseLiveData
 
 }
+//a) Data class - responseCode and Purchases (포맷 제공)
+data class PurchaseResultContainer(val billingResult: BillingResult, val purchasesList: List<Purchase>?)
+

@@ -57,6 +57,7 @@ class AlarmApplication : Application() {
 
         val koin = startKoin(applicationContext)
 
+
         //koin.get<BugReporter>().attachToMainThread(this)
 
         // must be after sContainer

@@ -280,17 +280,20 @@ class MyIAPHelperV2(private val receivedActivity: Activity,
 
         billingClient!!.querySkuDetailsAsync(params.build()) { billingResult, skuDetailsList ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+            // (b)Display purchase dialog
                 if (skuDetailsList != null && skuDetailsList.size > 0) {
                     val flowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
-    // (b)Display purchase dialog
+
                     billingClient!!.launchBillingFlow(receivedActivity, flowParams)
 
                 }
+            // (c) 구입하려했던 상품이 없음 오류 등
                 else {
                     //try to add item/product id "p1" "p2" "p3" inside managed product in google play console
                     Toast.makeText(receivedActivity, "Purchase Item $iapName not Found", Toast.LENGTH_SHORT).show()
                 }
             }
+            // (d) BillingClient.response Code 오류
             else {
                 Toast.makeText(receivedActivity," Error " + billingResult.debugMessage, Toast.LENGTH_SHORT).show()
             }

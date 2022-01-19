@@ -2,14 +2,12 @@ package com.theglendales.alarm.jjmvvm.iapAndDnldManager
 
 import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.util.Log
 import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
-import kotlinx.coroutines.channels.Channel
 import java.io.File
 import kotlin.Exception
 import kotlin.coroutines.resume
@@ -37,6 +35,8 @@ import kotlin.coroutines.suspendCoroutine
 
 private const val TAG="MyIAPHelperV3"
 
+enum class PurchaseStateENUM { IDLE, PURCHASED, CANCELED, ERROR }
+
 class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
     private val toastMessenger: ToastMessenger by globalInject() // ToastMessenger
@@ -55,12 +55,12 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
     }
 // ****************** <1> 최초 SecondFrag 로딩 후 (과거 정보) 복원 관련
 
-    fun a_initBillingClient() {
+  /*  fun a_initBillingClient() {
         Log.d(TAG, "a_initBillingClient: <A> Called")
         billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
         Log.d(TAG, "a_initBillingClient: <A> Finished")
     }
-
+*/
     fun b_feedRtList(rtListFromFb: MutableList<RtInTheCloud>) {
         Log.d(TAG, "b_feedRtList: <B> Called")
         rtListPlusIAPInfo = rtListFromFb}
@@ -211,7 +211,7 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
 
 
 // ************************************************** <2> Clicked to buy
-    //h) SkuDetail 받기
+//****** h) SkuDetail 받기
     suspend fun h_getSkuDetails(myParams: SkuDetailsParams): List<SkuDetails> {
         Log.d(TAG, "h_getSkuDetails: called")
         return suspendCoroutine { continuation ->
@@ -225,22 +225,30 @@ class MyIAPHelperV3(val context: Context ) : PurchasesUpdatedListener {
         }
     }
 
-    //i) 구매창 보여주고-> 그 결과 확인까지 잠시 현재 진행중인 coroutine 을 suspend 시켜줌. (현재 코루틴: jjMainViewModel>purchaseParentJob)
+//***** i) 구매창 보여주고-> 결과는 LiveData 에 업뎃 -> SecondFrag 전달 -> MainViewModel -> deliverPurchaseResult() -> 다시 여기 handlePurchaseResult() 로..
 
-    // Data class to wrap responseCode and purchases
-    data class PurchaseResult(val responseCode: Int, val purchases: List<Purchase>)
-    // Channel to receive PurchaseResult // <- todo: 공부해야됨..
-    private val purchaseChannel: Channel<PurchaseResult> = Channel(Channel.UNLIMITED) // Channel will allow us to buffer all the results and avoid race conditions ???
 
-    suspend fun i_startPurchaseFlow(billingFlowParams: BillingFlowParams): PurchaseResult {
+    /*private val _purchaseStateLiveData = MutableLiveData<PurchaseStateENUM>() // Private& Mutable LiveData
+    val purchaseStateLiveData: LiveData<PurchaseStateENUM> = _purchaseStateLiveData*/
+
+    fun i_launchBillingFlow(receivedActivity: Activity, flowParams: BillingFlowParams) {
         Log.d(TAG, "i_startPurchaseFlow: called")
-        val currentActivity: Activity = context.applicationContext as Activity
-        billingClient!!.launchBillingFlow(currentActivity, billingFlowParams)
-        return purchaseChannel.receive()
+        billingClient!!.launchBillingFlow(receivedActivity, flowParams) // todo: 여기서 잠시 SecondFrag Pause 되는것 확인 필요.
     }
 
-    override fun onPurchasesUpdated(p0: BillingResult, p1: MutableList<Purchase>?) {
-        Log.d(TAG, "onPurchasesUpdated: called")
+    override fun onPurchasesUpdated(billingResult: BillingResult, purchaseList: MutableList<Purchase>?) {
+        Log.d(TAG, "onPurchasesUpdated: called. purchaseList=$purchaseList")
+
+        if(!purchaseList.isNullOrEmpty()) {
+            Log.d(TAG, "onPurchasesUpdated: called. xx isNull Empty. 다시 써 ㅆㅂ.")
+            j_handlePurchaseResult(purchaseList) //
+        } else {
+            Log.d(TAG, "onPurchasesUpdated: 업뎃 라이브뎅히터?")
+        }
+    }
+//***** j) 구매창 결과 Handle ( 취소든 구매든. 오류든..)
+    fun j_handlePurchaseResult(purchases: List<Purchase>) {
+    Log.d(TAG, "j_handlePurchaseResult: called")
     }
 
 

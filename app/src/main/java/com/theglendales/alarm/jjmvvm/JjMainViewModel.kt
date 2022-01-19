@@ -1,5 +1,6 @@
 package com.theglendales.alarm.jjmvvm
 
+import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -62,6 +63,7 @@ class JjMainViewModel : ViewModel() {
 
                 val iapParentJob = viewModelScope.launch(handler) {
                     Log.d(TAG, "refreshAndUpdateLiveData: (2) RtList ->IAP")
+
                 //iapV3-B) Fb 에서 받을 리스트를 -> IAP 에 전달 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨.
                     iapV3.b_feedRtList(rtList)
                 //iapV3-C) BillingClient 를 Ready 시킴 (이미 되어있으면 바로 BillingClient.startConnection)
@@ -146,10 +148,10 @@ class JjMainViewModel : ViewModel() {
         }
 
     }
-//*********************Multi Downloader
-    fun getLiveDataMultiDownloader(): LiveData<MultiDnldState> {
-        val multiState = multiDownloaderV3.getMultiDnldState()
-        return multiState
+
+    //*********************Multi Downloader
+    fun getLiveDataMultiDownloader(): LiveData<MultiDnldState> { // SecondFrag 에서 Observe 중
+        return multiDownloaderV3.getMultiDnldState()
     }
 //*******************Network Detector -> LottieAnim 까지 연결
     var prevNT = true
@@ -167,7 +169,7 @@ class JjMainViewModel : ViewModel() {
     private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
     val selectedRow = _selectedRow.asStateFlow()
 
-    fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean) { // todo: Click <-> RCV ViewModel 더 정석으로 찾아서 바꿔보기.
+    fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean, receivedActivity: Activity) { // todo: Click <-> RCV ViewModel 더 정석으로 찾아서 바꿔보기 + Activity 에 대한 고민..
 //[A] 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
         if(!isPurchaseClicked) {
             _selectedRow.value = rtObj
@@ -180,26 +182,22 @@ class JjMainViewModel : ViewModel() {
     //2) 구입시도 Purchase Process -> [Sequential] & 최종적으로 Returns RtObj! (만약 구입 취소의 경우에는....)
 
         //2-a) iap 이름을 String List 로 만들어서 -> myParams 생성 -> 2-b) querySkuDetails 에서 사용됨. //todo: handler?
+        // [**SEQUENTIAL**]
         val purchaseParentJob = viewModelScope.launch {
             val iapAsList: List<String> = listOf(rtObj.iapName)
             val myParams = SkuDetailsParams.newBuilder().apply {setSkusList(iapAsList).setType(BillingClient.SkuType.INAPP)}.build()
         //2-b) Get the list of SkuDetails [SuspendCoroutine 사용] => 구매창 보여주기에 필요한 purchaseParams 작성
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(myParams) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
-            val purchaseParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
+            val flowParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
 
         //2-c) 구매창 보여주기 + User 가 구매한 결과 받기
-        val purchases: List<Purchase> = iapV3.i_startPurchaseFlow(purchaseParams).purchases
-            Log.d(TAG, "onTrackClicked: purchase=$purchases")
+            iapV3.i_launchBillingFlow(receivedActivity, flowParams) // -> 여기서 User 가 구매 Yes or No 시전 -> (..콜백) onPurchasesUpdated() -> iapV3.handlePurchases 로 넘어감.
+            Log.d(TAG, "onTrackClicked: ...윗줄과 상관없이 여기가 먼저 출려됨.. 기다려줄수 있다면 참 좋을텐데..")
         }
-        //val rtInTheCloudObj = iapV3.a_OnPurchaseClicked(rtObj)
-
-    //1-b)구입 성공(O) -> 다운로드 실행
-
-        Log.d(TAG, "onTrackClicked: before dowloadPurchased")
-        //downloadPurchased(rtInTheCloudObj)
     }
+
     //2) 다운로드 Process
-    private fun downloadPurchased(rtInTheCloudObj: RtInTheCloud) {
+    fun downloadPurchased(rtInTheCloudObj: RtInTheCloud) {
         Log.d(TAG, "downloadPurchased: called")
 
         val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
@@ -212,7 +210,8 @@ class JjMainViewModel : ViewModel() {
                 val dnldId: Long = singleDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 여기서 문제가 발생하면 다음 줄로 진행이 안되고 바로 위에 handler 가 잡아서 exception 을 던짐.
         //2-b)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달 -> main Thread 에서 UI 업데이트.
                 Log.d(TAG, "downloadPurchased: dnldID=$dnldId")
-                singleDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj) // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getDnldStatus() 값을 observe 하기에 -> 자동으로 UI 업뎃.
+                // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getLiveDataSingleDownloader() 값을 observe 하기에 -> 자동으로 UI 업뎃.
+                singleDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj)
             }
         }
         //2-c) (2-a)~(2-c) 과정에서 에러가 발생했다면

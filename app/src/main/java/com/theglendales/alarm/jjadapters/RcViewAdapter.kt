@@ -323,12 +323,12 @@ class RcViewAdapter(
                         mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
 
                         // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
-                        jjMainVModel.onTrackClicked(selectedRt,isPurchaseClicked = false) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!
+                        jjMainVModel.onTrackClicked(selectedRt,isPurchaseClicked = false, receivedActivity) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!
                     }
                     //2) [구매 클릭]
                     R.id.id_cl_entire_Purchase -> {
                         Log.d(TAG, "onClick: !!!!!!!!!!!!!!!!!!!You clicked FREE or GET This. trkId=${selectedRt.id}, iapName= ${selectedRt.iapName}")
-                        jjMainVModel.onTrackClicked(selectedRt,isPurchaseClicked = true) // JjMainViewModel.kt > iapV3.myOnPurchaseClicked() 로 연결 -> 구매 로직 실행.
+                        jjMainVModel.onTrackClicked(selectedRt,isPurchaseClicked = true, receivedActivity) // JjMainViewModel.kt > iapV3.myOnPurchaseClicked() 로 연결 -> 구매 로직 실행.
                         return
                     }
                 }

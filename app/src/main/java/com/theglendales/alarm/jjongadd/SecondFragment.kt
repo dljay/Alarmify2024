@@ -344,6 +344,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 }
             })
 
+
+
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance
         rcView.setHasFixedSize(true)

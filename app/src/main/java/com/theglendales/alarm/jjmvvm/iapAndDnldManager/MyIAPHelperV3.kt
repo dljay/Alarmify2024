@@ -9,7 +9,9 @@ import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.CompletableDeferred
+import org.koin.core.definition.indexKey
 import java.io.File
+import java.io.IOException
 import kotlin.Exception
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -73,29 +75,30 @@ class MyIAPHelperV3(val context: Context ) {
                 for(purchase in purchasesListReceived) { // List 에는 딱 한개만 들어있어야 한다! (우리는 1개 이상 구매를 허용하지 않으니깐!)
 
                     if(purchase.skus.size !=1) { // 절대 여기에 들어와서는 안되지만. 어떤 이유로 1개 이상의 ringtone 갯수가 구입이 되었다면.
-
+                    emptyMapAndThrowExceptionToDeferred("purchase.skus.size != 1")
+                    } else {
+                        //*** i_launchBillingFlow() 에서 등록된 oldDeferredPurchase 를 이어받고! 여기서 .complete 으로 때린 결과를 -> i_launchBillingFlow() 의 old 가 이어받음. => 즉 old=new! ***
+                        val newDeferredPurchase: CompletableDeferred<Purchase>? = purchaseMap[purchase.skus[0]]
+                        newDeferredPurchase!!.complete(purchase) // .complete = Completes this Deferred value with a given value.
                     }
-                    //*** i_launchBillingFlow() 에서 등록된 oldDeferredPurchase 를 이어받고! 여기서 .complete 으로 때린 결과를 -> i_launchBillingFlow() 의 old 가 이어받음. => 즉 old=new! ***
-                    val newDeferredPurchase: CompletableDeferred<Purchase>? = purchaseMap[purchase.skus[0]]
-                    newDeferredPurchase!!.complete(purchase) // .complete = Completes this Deferred value with a given value.
                 }
             }
             else if (bResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED)
             {// RcV 에서 이미 구입한 물건은 사진 아이콘 등으로 Purchased 구분이 되고-> 클릭했을 때 아무 반응 X -> 따라서 여기로 들어올 확률은 거의 없음.
                 Log.d(TAG, "i-1) PurchaseResult Listener: B- 이미 있는 물품 구매! [매우 드문 에러: Ex. P1002 구매 클릭-> Google IAP 에서 (이미 구입한) P1001 로 등록되어있는 경우.]  ")
-                removeFromMapAndThrowExceptionToDeferred("ITEM_ALREADY_OWNED") // 구매창에서 "You already own this Item" 이라고 뜬다. -> 토스트 메시지(X) 할 필요 없음.
+                emptyMapAndThrowExceptionToDeferred("ITEM_ALREADY_OWNED") // 구매창에서 "You already own this Item" 이라고 뜬다. -> 토스트 메시지(X) 할 필요 없음.
 
                 // 혹시라도 어떤 연유로 이미 구입한 물건이 클릭 가능하게되어 재구매-> 이쪽으로 들어오게되도 다운받을 이유는 없다 ( 이미 구입한 물품들은 MultiDnldV3.kt 로 시작과 동시에 복원작업해주니깐)
             } else if (bResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED)
             {
                 Log.d(TAG, "i-1) PurchaseResult Listener: C- 구매 취소") // User 가 백그라운드 클릭 등..
-                removeFromMapAndThrowExceptionToDeferred("USER_CANCELED")
-                toastMessenger.showMyToast("Purchase Canceled", isShort = true)
+                emptyMapAndThrowExceptionToDeferred("USER_CANCELED")
+                //toastMessenger.showMyToast("Purchase Canceled", isShort = true)
             } else
             {
                 Log.d(TAG, "i-1) PurchaseResult Listener: D -기타 에러.. ")
-                removeFromMapAndThrowExceptionToDeferred(bResult.debugMessage)
-                toastMessenger.showMyToast("Purchase Error: ${bResult.debugMessage}",isShort = false )
+                emptyMapAndThrowExceptionToDeferred(bResult.debugMessage)
+
             }
         }.build()
         Log.d(TAG, "a_initBillingClient: <A> Finished")
@@ -272,40 +275,116 @@ class MyIAPHelperV3(val context: Context ) {
 //***** i) 구매창 보여주기-> i_launchBilliFlow 에서 실행한 구매창->콜백 받는동안 코루틴 멈춰주는것이 굉장히 힘들었으나 결국 Deferred 로 해냈음. [**CompletableDeferred 관련해서 스샷으로 정리해뒀음 **]
 // SharedFlow(replay=1) 도 대안이었으나 아직 생경하여 CompletableDeferred 로 해결. (특히 ListFrag 돌아왓을 때 복원 지랄 문제)
 
-
-    //i-1) user 의 구매창 입력(YES or Cancel) 에 따른 결과 처리 Listener 익명함수 => 등록은 위에 a_initBillingClient() 에서 해줬음.
-    //val onPurchaseResultReceived = PurchasesUpdatedListener {} // < - Listener 를 Variable 로 따로 떼서 여기 넣어줬더니 위 a_initBillingClient() ... .build() 가 안되는 문제..원복해줬음.
     //i-2) 구매창 띄워주기
     suspend fun i_launchBillingFlow(receivedActivity: Activity, skuDetailsList: List<SkuDetails>): Purchase  {
         Log.d(TAG, "i_launchBillingFlow: called")
+        // 여기서 if 썼을 때 error throw catch 확인?
         val oldDeferredPurchase = CompletableDeferred<Purchase>() // 나중에 값을 받는 놈!
-        purchaseMap[skuDetailsList[0].sku] = oldDeferredPurchase // [*** purchaseMap 에 해당 'CompletableDeferred<Purchase>' 를 등록**] <K,V> = <p1001, CompletableDeferred<Purchase>>
-        //todo: [0]
+        if(skuDetailsList.size != 1) {
+            emptyMapAndThrowExceptionToDeferred("skuDetailsList size !=1 ")
+        }
+    /**
+     * [*** purchaseMap 에 해당 'CompletableDeferred<Purchase>' 를 등록**]
+     */
+        purchaseMap[skuDetailsList[0].sku] = oldDeferredPurchase //  <K,V> = <p1001, CompletableDeferred<Purchase>> //todo: test... actual purchase
+
         val flowParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
         billingClient!!.launchBillingFlow(receivedActivity, flowParams) // ->결제창 열기 -> User 인풋 받으면 -> a_initBillingClient() 안에 있는 Listener 에서 반응
-        return oldDeferredPurchase.await() // purchase 가 값을 받을때까지 ViewModel 에서 시작된 코루틴 대기(suspend) -> 값을 받는대로 return + 코루틴 재개
+        return oldDeferredPurchase.await() // oldDeferredPurchase 가 값을 받을때까지 ViewModel 에서 시작된 코루틴 대기(suspend) -> 값을 받는대로 return + 코루틴 재개
     }
 
-    fun j_verifyPurchaseResult(purchaseList: List<Purchase>) { //verify
-    //val rtInTheCloudObj = rtListPlusIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
-    Log.d(TAG, "j_verifyPurchaseResult: called. PurchaseList.size=${purchaseList.size}")
+    suspend fun j_verifyPurchaseResult(purchaseResult: Purchase, rtInTheCloud: RtInTheCloud) { //verify
+        Log.d(TAG, "j_verifyPurchaseResult: called. PurchaseResult= $purchaseResult, \n rtInTheCloud=$rtInTheCloud")
+        //1) 구입은 되었는데->
+        if(purchaseResult.purchaseState == Purchase.PurchaseState.PURCHASED) {
+            //1-A) (X) 문제 발생(Signature 문제) - 해커등..
+            if (!verifyValidSignature(purchaseResult.originalJson, purchaseResult.signature))
+            {
+                Log.d(TAG, "j_verifyPurchaseResult: 1-A) Signature 문제 발생")
+                throw Exception("Verify Valid Signature Error")
+            }
+            //1-B) 구입 인정(acknowledge) 안된 경우 -> 구입 인정! [한 마디로 이 사람은 제대로 산게 맞다! 라고 인정!]
+
+            //1-C) (O) !! 제대로 구매인데.. (그러나 인식문제가 발생) -> 구매 인정.
+            if(!purchaseResult.isAcknowledged)
+            {
+
+            }
+
+
+
+
+
+        }
+        //2) Pending 등 기타 이슈가 있을 경우 ->
+
+
     // 정상 구입 ->  rtInTheCloudObj (요기) 업뎃 ->LiveData 에 통보 -> SecondFrag -> ViewModel 다운로드 실행-> ..  Shared PRef 저장 -> RcV 업데이트
+
+
+
+
+
     /*val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
     rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경*/
     }
 
 // ** Utility Methods
-    private fun removeFromMapAndThrowExceptionToDeferred(errorReason: String) { // Map 에 등록된 모든걸 삭제+ 개별 Deferred 구매건에 Exception 을 주며 i_launchBillingFlow() 에서 return 이 진행가능하게끔 한다!
+    //결재창 에러 대응용도: Map 을 다 비워주고 Exception 을 던져 대기중인 oldPurchaseDeferred 가 대기하지 않도록 한다.
+    private fun emptyMapAndThrowExceptionToDeferred(errorReason: String) { // Map 에 등록된 모든걸 삭제+ 개별 Deferred 구매건에 Exception 을 주며 i_launchBillingFlow() 에서 return 이 진행가능하게끔 한다!
     // (그래봤자 우리는 구매가 1개만 가능해서 결국 1개여야만 한다!)
-    Log.d(TAG, "removeFromMapAndThrowExceptionToDeferred: [BEFORE] Map=$purchaseMap, ErrorReason=$errorReason")
+    Log.d(TAG, "emptyMapAndThrowExceptionToDeferred: [BEFORE] Map=$purchaseMap, ErrorReason=$errorReason")
     val mapIterator = purchaseMap.iterator() // HashMap 속 털기
-    while(mapIterator.hasNext()) {
-        val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
-        val deferredPurchase = itemInMap.value
-        deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. Error= USER_CANCELED")) //Completes this deferred value exceptionally with a given exception.
-        mapIterator.remove() // 현재 Map 에서 삭제(?)
+        while(mapIterator.hasNext())
+        {
+            val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
+            val deferredPurchase = itemInMap.value
+            deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. Error= USER_CANCELED")) //Completes this deferred value exceptionally with a given exception.
+            mapIterator.remove() // 현재 Map 에서 삭제(?)
         }
-    Log.d(TAG, "removeFromMapAndThrowExceptionToDeferred: [AFTER] Map=$purchaseMap")
+    Log.d(TAG, "emptyMapAndThrowExceptionToDeferred: [AFTER] Map=$purchaseMap")
+    }
+    
+    //Reflect purchase to the list: 정상 구매가 이뤄진 경우 List 두군데에 반영=> (어차피 refresh 하면 다 반영 되지만 굳이 billingClient 연결 안하고도 즉각 RcV 반영 위해)
+    private fun reflectPurchaseToOurLists(rtReceived: RtInTheCloud) {
+        Log.d(TAG, "reflectPurchaseToOurLists: called")
+        //a) rtListPlusIAPInfo 에서 해당 rt 를 찾아 -> purchaseBool -> true 로 변경
+        //Log.d(TAG, "reflectPurchaseToOurLists:[BEFORE] rtListPlusIAPInfo= $rtListPlusIAPInfo")
+        val index1 = rtListPlusIAPInfo.indexOf(rtReceived)
+        if(index1 != -1) {
+            rtListPlusIAPInfo[index1].purchaseBool = true
+            //Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] rtListPlusIAPInfo= $rtListPlusIAPInfo")
+        }
+        //b) purchaseFalseRtList 에서 해당 rt 를 삭제
+        //Log.d(TAG, "reflectPurchaseToOurLists: [BEFORE] purchaseFalseRtList = $purchaseFalseRtList")
+        val index2 = purchaseFalseRtList.indexOf(rtReceived)
+        if(index2 != -1) {
+            purchaseFalseRtList.removeAt(index2)
+            //Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] purchaseFalseRtList = $purchaseFalseRtList")
+        }
+    }
+
+    /**
+     * Verifies that the purchase was signed correctly for this developer's public key.
+     *
+     * Note: It's strongly recommended to perform such check on your backend since hackers can
+     * replace this method with "constant true" if they decompile/rebuild your app.
+     *
+     */
+    private fun verifyValidSignature(signedData: String, signature: String): Boolean {
+        Log.d(TAG, "verifyValidSignature: begins..")
+        return try {
+            //for old playconsole
+            // To get key go to Developer Console > Select your app > Development Tools > Services & APIs.
+            //for new play console
+            //To get key go to Developer Console > Select your app > Monetize > Monetization setup
+
+            val base64Key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjxP65hcVxu3nM/XR89EoZzEwK1itdhPcTOT+itC6Guf5omQLHe3A4cDLlTSjZqoNMy3jzNK7mSiPG8NRTa6waHaaHx3fxatR4Or8KeS8WzFNQsKbFz2OCt3kTRQ5lUuoIvyjj+VjEv9XwyPrFRb8Lxq47KqHnjiJyeBcXznLXD//4YOsTaTp2dBxuLXjJQEzkp4EPgvhNh6BE+bX+SvXRPc3x3dghqAUtdaoM3C77QgCnRc94nYnWyXyQqqX2PvEX3KNKM//nQbKtJbNUB/NpKlzodiY3WdFMVNS3ySw9S9irikhDv7jOQ1OnI+dzKMLCeQIRTxqFHB2RxkqpzOHtQIDAQAB"
+
+            Security.verifyPurchase(base64Key, signedData, signature)
+        } catch (e: IOException) {
+            false
+        }
     }
 
 }

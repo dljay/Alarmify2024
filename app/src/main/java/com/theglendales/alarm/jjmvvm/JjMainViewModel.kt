@@ -193,16 +193,21 @@ class JjMainViewModel : ViewModel() {
 
         //2-c) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
+        //2-d) [구입]했다면 -> verify now!
+            //iapV3.j_verifyPurchaseResult(purchaseResult, rtObj)
 
-            Log.d(TAG, "purchaseParentJob:  purchaseResult=${purchaseResult}")
-            Log.d(TAG, "purchaseParentJob: ...윗줄과 상관없이 여기가 먼저 출력됨.. 기다려줄수 있다면 참 좋을텐데..")
-        //2-d) 결과에 따라 handlePurchaseResult: OK(2차 확인 후 다운로드)/ ALREADY_OWNED / CANCELED
-        //2-e) buyItemOrNot
+
+
+        //2-e) Call Download!
         }
         purchaseParentJob.invokeOnCompletion {throwable->
             Log.d(TAG, "purchaseParentJob: invokeOnCompletion Called..")
-            if(throwable!=null) {
-                Log.d(TAG, "purchaseParentJob: invokeOnCompletion - Error. throwable=$throwable ")
+            if(throwable!=null && !throwable.message.isNullOrEmpty()) {
+                if(throwable.message!!.contains("USER_CANCELED")) {return@invokeOnCompletion} // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지 아무것도 안 보여주기.
+                else {
+                    Log.d(TAG, "purchaseParentJob: invokeOnCompletion - Error. throwable=$throwable ")
+                    toastMessenger.showMyToast("Purchase Error: $throwable",isShort = false)
+                }
             } else {
                 Log.d(TAG, "onTrackClicked: no error occurred..")
             }

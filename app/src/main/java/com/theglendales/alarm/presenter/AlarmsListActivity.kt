@@ -55,12 +55,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15N [IAP 클릭 구매 -> launchBillingFlow() 콜백을 (진행중인 Viewmodel 코루틴) 정지시켜주며 받아주기- 성공]
+//v3.07.15O [IAP 클릭 구매 -> launchBillingFlow() 콜백을 CompletableDeferred 사용해서 진행중. Flow 는 어려워서 때려침. 테스트전]
 // ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
 
 // issues:
 // 1.Flow 관련:
-// a) Flow 기초 유튭 영상 보기.
+// a) Flow 기초 유튭 영상 보기. emit() vs tryEmit()?
 // b) 왜 .last() 썼을때는 viewModel 의 coroutine 이 더 이상 진행 안되었는지?
 // c) IAP 코루틴으로 -> https://stackoverflow.com/questions/61388646/billingclient-billingclientstatelistener-onbillingsetupfinished-is-called-multip 참조.
 

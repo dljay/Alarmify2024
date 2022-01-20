@@ -181,19 +181,19 @@ class JjMainViewModel : ViewModel() {
         if(myDiskSearcher.isSameFileOnThePhone_RtObj(rtObj)) return //
     //2) 구입시도 Purchase Process -> [Sequential] & 최종적으로 Returns RtObj! (만약 구입 취소의 경우에는....)
 
-        //2-a) iap 이름을 String List 로 만들어서 -> myParams 생성 -> 2-b) querySkuDetails 에서 사용됨. //todo: handler?
+        //2-a) iap 이름을 String List 로 만들어서 -> myParams 생성 -> 2-b) querySkuDetails 에서 사용됨.
         // [**SEQUENTIAL**]
-        val purchaseParentJob = viewModelScope.launch {
+        val purchaseParentJob = viewModelScope.launch {//todo: handler?
             val iapAsList: List<String> = listOf(rtObj.iapName)
             val myParams = SkuDetailsParams.newBuilder().apply {setSkusList(iapAsList).setType(BillingClient.SkuType.INAPP)}.build()
         //2-b) Get the list of SkuDetails [SuspendCoroutine 사용] => 구매창 보여주기에 필요한 purchaseParams 작성
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(myParams) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
-            val flowParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
+
 
         //2-c) 구매창 보여주기 + User 가 구매한 결과 (Yes or No) 받기
-            val purchaseList = iapV3.i_launchBillingFlow(receivedActivity, flowParams) //todo: activity 이렇게 전달하지 않았으면?
+            val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
 
-            Log.d(TAG, "purchaseParentJob:  purchaseList=${purchaseList}")
+            Log.d(TAG, "purchaseParentJob:  purchaseResult=${purchaseResult}")
             Log.d(TAG, "purchaseParentJob: ...윗줄과 상관없이 여기가 먼저 출력됨.. 기다려줄수 있다면 참 좋을텐데..")
         //2-d) 결과에 따라 handlePurchaseResult: OK(2차 확인 후 다운로드)/ ALREADY_OWNED / CANCELED
         //2-e) buyItemOrNot
@@ -204,7 +204,7 @@ class JjMainViewModel : ViewModel() {
         Log.d(TAG, "onTrackClicked: here..Thread=${Thread.currentThread().name}")
         //handlePurchaseResult() 에서 LiveData 업뎃(MyPurchaseStateENUM) -> SecondFrag 에서 여기 viewModel 로 지시 다운로드 or
     }
-    //fun getPurchaseState(): LiveData<PurchaseResultContainer> = iapV3.getPurchStateLiveData()
+    //fun getPurchaseState(): LiveData<MyPurchResultENUM> = iapV3.getPurchStateLiveData()
 
     //3) 다운로드 Process
     fun downloadPurchased(rtInTheCloudObj: RtInTheCloud) {

@@ -182,10 +182,8 @@ class JjMainViewModel : ViewModel() {
     //2) 구입시도 Purchase Process -> [Sequential] & 최종적으로 Returns RtObj! (만약 구입 취소의 경우에는....)
 
         // [**SEQUENTIAL**] // 기존 구입 과정을 Coroutine 으로 blocking+순차적 라인으로 보기 쉽게 했음.
-        val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
+        val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler - 원래 logd 넣어줬으나 그냥 뺴줌.
 
-        }
         val purchaseParentJob = viewModelScope.launch(handler) {//todo: handler?
         //2-a) iap 이름을 String List 로 만들어서 ->
             val iapNameAsList: List<String> = listOf(rtObj.iapName)

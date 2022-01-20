@@ -55,7 +55,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15O [IAP 클릭 구매 -> launchBillingFlow() 콜백을 CompletableDeferred 사용해서 진행중. Flow 는 어려워서 때려침. 테스트전]
+//v3.07.15P [IAP 클릭 구매 -> launchBillingFlow() 콜백을 CompletableDeferred 사용해서 진행중. 잘되는중.]
 // ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
 
 // issues:

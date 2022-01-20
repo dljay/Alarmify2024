@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.android.billingclient.api.*
-import com.google.api.Billing
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -47,11 +46,15 @@ class MyIAPHelperV3(val context: Context ) {
 //IAP
     var rtListPlusIAPInfo= mutableListOf<RtInTheCloud>()
     private var billingClient: BillingClient? = null
+
 //복원(Multi DNLD) 및 삭제 관련
     var multiDNLDNeededList: MutableList<RtInTheCloud> = ArrayList() // ##### <기존 구매했는데 a) 삭제 후 재설치 b) Pxx.rta 파일 소실 등으로 복원이 필요한 파일들 리스트> [멀티]
     var purchaseFalseRtList: MutableList<RtInTheCloud> = ArrayList() // 현재 PurchaseState=false 이 놈들 -> JjMainViewModel 로 전달-> myDiskSearcher.deleteFromDisk(fileSupposedToBeAt)
     private val myDiskSearcher: DiskSearcher by globalInject()
-//PurchaseBool=false 인 놈들 (Disk 에 있다면 삭제 필요) -> JjMainVModel 로 전달.
+
+//purchaseMap
+    private val purchaseMap = HashMap<String, CompletableDeferred<Purchase>>() // <K,V> = ex) <p1001, PurchaseObject>
+
 
     init {
         Log.d(TAG, "init MyIapHelperV3 called. Thread=${Thread.currentThread().name}")
@@ -66,48 +69,32 @@ class MyIAPHelperV3(val context: Context ) {
             if (bResult.responseCode == BillingClient.BillingResponseCode.OK && purchasesListReceived != null)
             {
                 Log.d(TAG, "i-1) PurchaseResult Listener: A- 정상 신규 구매! (파일 확인 후 없으면)다운로드 진행!. Thread=${Thread.currentThread().name}")
-                val purchase = purchasesListReceived[0]
-                if(purchase.skus.size == 1) {
-                    val deferredPurchase: CompletableDeferred<Purchase>? = purchaseMap[purchase.skus[0]] //todo: nullable 처리.
-                    deferredPurchase!!.complete(purchase) // .complete = Completes this Deferred value with a given value.
-                }
+            //***** 여러 종류의 물건을 여러개 살 수 있는 IAP4.0 기능 떄문에 다음과 같은 forLoop 과 purchase.skus[0] 이런 수식이 나왔음. 그러나 우리는 오로지 '단일 종류, 1개 구매' 만 가능.
+                for(purchase in purchasesListReceived) { // List 에는 딱 한개만 들어있어야 한다! (우리는 1개 이상 구매를 허용하지 않으니깐!)
 
+                    if(purchase.skus.size !=1) { // 절대 여기에 들어와서는 안되지만. 어떤 이유로 1개 이상의 ringtone 갯수가 구입이 되었다면.
+
+                    }
+                    //*** i_launchBillingFlow() 에서 등록된 oldDeferredPurchase 를 이어받고! 여기서 .complete 으로 때린 결과를 -> i_launchBillingFlow() 의 old 가 이어받음. => 즉 old=new! ***
+                    val newDeferredPurchase: CompletableDeferred<Purchase>? = purchaseMap[purchase.skus[0]]
+                    newDeferredPurchase!!.complete(purchase) // .complete = Completes this Deferred value with a given value.
+                }
             }
             else if (bResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED)
             {// RcV 에서 이미 구입한 물건은 사진 아이콘 등으로 Purchased 구분이 되고-> 클릭했을 때 아무 반응 X -> 따라서 여기로 들어올 확률은 거의 없음.
                 Log.d(TAG, "i-1) PurchaseResult Listener: B- 이미 있는 물품 구매! [매우 드문 에러: Ex. P1002 구매 클릭-> Google IAP 에서 (이미 구입한) P1001 로 등록되어있는 경우.]  ")
-                val mapIterator = purchaseMap.iterator() // HashMap 속 털기
-                while(mapIterator.hasNext()) {
-                    val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
-                    val deferredPurchase = itemInMap.value
-                    deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. Error= ITEM_ALREADY_OWNED")) //Completes this deferred value exceptionally with a given exception.
-                    mapIterator.remove() // 현재 Map 에서 삭제(?)
-                }
-                toastMessenger.showMyToast("Unable to finish billing process. Error= ITEM_ALREADY_OWNED", isShort = true)
+                removeFromMapAndThrowExceptionToDeferred("ITEM_ALREADY_OWNED") // 구매창에서 "You already own this Item" 이라고 뜬다. -> 토스트 메시지(X) 할 필요 없음.
+
                 // 혹시라도 어떤 연유로 이미 구입한 물건이 클릭 가능하게되어 재구매-> 이쪽으로 들어오게되도 다운받을 이유는 없다 ( 이미 구입한 물품들은 MultiDnldV3.kt 로 시작과 동시에 복원작업해주니깐)
             } else if (bResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED)
             {
-                Log.d(TAG, "i-1) PurchaseResult Listener: C- 구매 취소!!") // User 가 백그라운드 클릭 등..
-
-                val mapIterator = purchaseMap.iterator() // HashMap 속 털기
-                while(mapIterator.hasNext()) {
-                    val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
-                    val deferredPurchase = itemInMap.value
-                    deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. Error= USER_CANCELED")) //Completes this deferred value exceptionally with a given exception.
-                    mapIterator.remove() // 현재 Map 에서 삭제(?)
-                }
+                Log.d(TAG, "i-1) PurchaseResult Listener: C- 구매 취소") // User 가 백그라운드 클릭 등..
+                removeFromMapAndThrowExceptionToDeferred("USER_CANCELED")
                 toastMessenger.showMyToast("Purchase Canceled", isShort = true)
-
             } else
             {
                 Log.d(TAG, "i-1) PurchaseResult Listener: D -기타 에러.. ")
-                val mapIterator = purchaseMap.iterator() // HashMap 속 털기
-                while(mapIterator.hasNext()) {
-                    val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
-                    val deferredPurchase = itemInMap.value
-                    deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. ${bResult.debugMessage}")) //Completes this deferred value exceptionally with a given exception.
-                    mapIterator.remove() // 현재 Map 에서 삭제(?)
-                }
+                removeFromMapAndThrowExceptionToDeferred(bResult.debugMessage)
                 toastMessenger.showMyToast("Purchase Error: ${bResult.debugMessage}",isShort = false )
             }
         }.build()
@@ -284,19 +271,19 @@ class MyIAPHelperV3(val context: Context ) {
 
 //***** i) 구매창 보여주기-> i_launchBilliFlow 에서 실행한 구매창->콜백 받는동안 코루틴 멈춰주는것이 굉장히 힘들었으나 결국 Deferred 로 해냈음. [**CompletableDeferred 관련해서 스샷으로 정리해뒀음 **]
 // SharedFlow(replay=1) 도 대안이었으나 아직 생경하여 CompletableDeferred 로 해결. (특히 ListFrag 돌아왓을 때 복원 지랄 문제)
-    private val purchaseMap = HashMap<String, CompletableDeferred<Purchase>>() // <K,V> = ex) <p1001, PurchaseObject>
+
 
     //i-1) user 의 구매창 입력(YES or Cancel) 에 따른 결과 처리 Listener 익명함수 => 등록은 위에 a_initBillingClient() 에서 해줬음.
     //val onPurchaseResultReceived = PurchasesUpdatedListener {} // < - Listener 를 Variable 로 따로 떼서 여기 넣어줬더니 위 a_initBillingClient() ... .build() 가 안되는 문제..원복해줬음.
     //i-2) 구매창 띄워주기
     suspend fun i_launchBillingFlow(receivedActivity: Activity, skuDetailsList: List<SkuDetails>): Purchase  {
         Log.d(TAG, "i_launchBillingFlow: called")
-        val purchaseVariable = CompletableDeferred<Purchase>() // 나중에 값을 받는 놈!
-        purchaseMap[skuDetailsList[0].sku] = purchaseVariable // [purchaseMap 에 해당 'CompletableDeferred<Purchase>' 를 등록] <K,V> = <p1001, CompletableDeferred<Purchase>>
-
+        val oldDeferredPurchase = CompletableDeferred<Purchase>() // 나중에 값을 받는 놈!
+        purchaseMap[skuDetailsList[0].sku] = oldDeferredPurchase // [*** purchaseMap 에 해당 'CompletableDeferred<Purchase>' 를 등록**] <K,V> = <p1001, CompletableDeferred<Purchase>>
+        //todo: [0]
         val flowParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
-        billingClient!!.launchBillingFlow(receivedActivity, flowParams) // ->결제창 열기 -> User 인풋 받으면 ->
-        return purchaseVariable.await() // purchase 가 값을 받을때까지 ViewModel 에서 시작된 코루틴 대기(suspend) -> 값을 받는대로 return + 코루틴 재개
+        billingClient!!.launchBillingFlow(receivedActivity, flowParams) // ->결제창 열기 -> User 인풋 받으면 -> a_initBillingClient() 안에 있는 Listener 에서 반응
+        return oldDeferredPurchase.await() // purchase 가 값을 받을때까지 ViewModel 에서 시작된 코루틴 대기(suspend) -> 값을 받는대로 return + 코루틴 재개
     }
 
     fun j_verifyPurchaseResult(purchaseList: List<Purchase>) { //verify
@@ -306,6 +293,21 @@ class MyIAPHelperV3(val context: Context ) {
     /*val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
     rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경*/
     }
+
+// ** Utility Methods
+    private fun removeFromMapAndThrowExceptionToDeferred(errorReason: String) { // Map 에 등록된 모든걸 삭제+ 개별 Deferred 구매건에 Exception 을 주며 i_launchBillingFlow() 에서 return 이 진행가능하게끔 한다!
+    // (그래봤자 우리는 구매가 1개만 가능해서 결국 1개여야만 한다!)
+    Log.d(TAG, "removeFromMapAndThrowExceptionToDeferred: [BEFORE] Map=$purchaseMap, ErrorReason=$errorReason")
+    val mapIterator = purchaseMap.iterator() // HashMap 속 털기
+    while(mapIterator.hasNext()) {
+        val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
+        val deferredPurchase = itemInMap.value
+        deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. Error= USER_CANCELED")) //Completes this deferred value exceptionally with a given exception.
+        mapIterator.remove() // 현재 Map 에서 삭제(?)
+        }
+    Log.d(TAG, "removeFromMapAndThrowExceptionToDeferred: [AFTER] Map=$purchaseMap")
+    }
+
 }
 //a) Data class - responseCode and Purchases (포맷 제공)
 //data class MyPurchResultENUM(val billingResult: BillingResult, val purchasesList: List<Purchase>?)

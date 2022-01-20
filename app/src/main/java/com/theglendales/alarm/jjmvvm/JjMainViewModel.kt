@@ -181,16 +181,19 @@ class JjMainViewModel : ViewModel() {
         if(myDiskSearcher.isSameFileOnThePhone_RtObj(rtObj)) return //
     //2) 구입시도 Purchase Process -> [Sequential] & 최종적으로 Returns RtObj! (만약 구입 취소의 경우에는....)
 
-        //2-a) iap 이름을 String List 로 만들어서 -> myParams 생성 -> 2-b) querySkuDetails 에서 사용됨.
-        // [**SEQUENTIAL**]
-        val purchaseParentJob = viewModelScope.launch {//todo: handler?
-            val iapAsList: List<String> = listOf(rtObj.iapName)
-            val myParams = SkuDetailsParams.newBuilder().apply {setSkusList(iapAsList).setType(BillingClient.SkuType.INAPP)}.build()
-        //2-b) Get the list of SkuDetails [SuspendCoroutine 사용] => 구매창 보여주기에 필요한 purchaseParams 작성
-            val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(myParams) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
+        // [**SEQUENTIAL**] // 기존 구입 과정을 Coroutine 으로 blocking+순차적 라인으로 보기 쉽게 했음.
+        val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
+            toastMessenger.showMyToast("Failed to purchase. Error=$throwable", isShort = false)
+        }
+        val purchaseParentJob = viewModelScope.launch(handler) {//todo: handler?
+        //2-a) iap 이름을 String List 로 만들어서 ->
+            val iapNameAsList: List<String> = listOf(rtObj.iapName)
 
+        //2-b) Get the list of SkuDetails [SuspendCoroutine 사용] =>
+            val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
 
-        //2-c) 구매창 보여주기 + User 가 구매한 결과 (Yes or No) 받기
+        //2-c) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
 
             Log.d(TAG, "purchaseParentJob:  purchaseResult=${purchaseResult}")
@@ -198,8 +201,13 @@ class JjMainViewModel : ViewModel() {
         //2-d) 결과에 따라 handlePurchaseResult: OK(2차 확인 후 다운로드)/ ALREADY_OWNED / CANCELED
         //2-e) buyItemOrNot
         }
-        purchaseParentJob.invokeOnCompletion {
+        purchaseParentJob.invokeOnCompletion {throwable->
             Log.d(TAG, "purchaseParentJob: invokeOnCompletion Called..")
+            if(throwable!=null) {
+                Log.d(TAG, "purchaseParentJob: invokeOnCompletion - Error. throwable=$throwable ")
+            } else {
+                Log.d(TAG, "onTrackClicked: no error occurred..")
+            }
         }
         Log.d(TAG, "onTrackClicked: here..Thread=${Thread.currentThread().name}")
         //handlePurchaseResult() 에서 LiveData 업뎃(MyPurchaseStateENUM) -> SecondFrag 에서 여기 viewModel 로 지시 다운로드 or

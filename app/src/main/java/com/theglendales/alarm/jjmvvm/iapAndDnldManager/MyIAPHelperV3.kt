@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.android.billingclient.api.*
+import com.google.api.Billing
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
@@ -32,6 +33,9 @@ import kotlin.coroutines.suspendCoroutine
     f_getPurchaseFalseRtList() => 폰에 있다면 삭제되어야할 리스트를 요청차(JjMainVModel) 에게 전달
     g_getMultiDnldNeededList() => 복원 다운로드 필요한 리스트를 요청차(JjMainVModel) 에게 전달
 
+ 참고:
+1)IAP 의 코루틴화:  https://proandroiddev.com/google-play-billing-library-meets-kotlin-coroutine-c68e10553786
+2) 1)에서 Channel 부분은 CompletableDeferred 로 다음 코드 보며 대체 : https://stackoverflow.com/questions/61388646/billingclient-billingclientstatelistener-onbillingsetupfinished-is-called-multip
 ********************************************************************************************************************************************************************************************/
 
 private const val TAG="MyIAPHelperV3"
@@ -57,11 +61,28 @@ class MyIAPHelperV3(val context: Context ) {
         a_initBillingClient()
     }
 // ****************** <1> 최초 SecondFrag 로딩 후 (과거 정보) 복원 관련
-
-
     fun a_initBillingClient() { //여기서 billingClient (lateinit) 을 init + setup Listener!
         Log.d(TAG, "a_initBillingClient: <A> Called")
-        billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(onPurchaseResultReceived).build()
+        billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener { bResult, purchasesListReceived ->
+            if(!purchasesListReceived.isNullOrEmpty()) // 구매가 진행되었을때 (purchaseList != null)
+            {
+                Log.d(TAG, "i-1) : Thread=${Thread.currentThread().name}")
+                val purchase = purchasesListReceived[0]
+                if(purchase.skus.size == 1) {
+                    val deferredPurchase: CompletableDeferred<Purchase>? = purchaseMap[purchase.skus[0]] //todo: nullable 처리.
+                    deferredPurchase!!.complete(purchase) // .complete = Completes this Deferred value with a given value.
+                }
+            } else { // User 가 구매 취소 ->
+                Log.d(TAG, "i-1) : possible user cancellation of purchase?")
+                val mapIterator = purchaseMap.iterator() // HashMap 속 털기
+                while(mapIterator.hasNext()) {
+                    val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
+                    val deferredPurchase = itemInMap.value
+                    deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. Error Code= ${bResult.responseCode}")) //Completes this deferred value exceptionally with a given exception.
+                    mapIterator.remove()
+                }
+            }
+        }.build()
         Log.d(TAG, "a_initBillingClient: <A> Finished")
     }
     fun b_feedRtList(rtListFromFb: MutableList<RtInTheCloud>) {
@@ -216,8 +237,10 @@ class MyIAPHelperV3(val context: Context ) {
 
 // ************************************************** <2> Clicked to buy
 //****** h) SkuDetail 받기
-    suspend fun h_getSkuDetails(myParams: SkuDetailsParams): List<SkuDetails> {
+    suspend fun h_getSkuDetails(iapNameAsList: List<String>): List<SkuDetails> {
         Log.d(TAG, "h_getSkuDetails: called")
+        val myParams = SkuDetailsParams.newBuilder().apply {setSkusList(iapNameAsList).setType(BillingClient.SkuType.INAPP)}.build()
+
         return suspendCoroutine { continuation ->
             billingClient!!.querySkuDetailsAsync(myParams) {billingResult, skuDetailsList ->
                 if(billingResult.responseCode == BillingClient.BillingResponseCode.OK && !skuDetailsList.isNullOrEmpty()) {
@@ -229,25 +252,12 @@ class MyIAPHelperV3(val context: Context ) {
         }
     }
 
-//***** i) 구매창 보여주기->
+//***** i) 구매창 보여주기-> i_launchBilliFlow 에서 실행한 구매창->콜백 받는동안 코루틴 멈춰주는것이 굉장히 힘들었으나 결국 Deferred 로 해냈음. [**CompletableDeferred 관련해서 스샷으로 정리해뒀음 **]
+// SharedFlow(replay=1) 도 대안이었으나 아직 생경하여 CompletableDeferred 로 해결. (특히 ListFrag 돌아왓을 때 복원 지랄 문제)
     private val purchaseMap = HashMap<String, CompletableDeferred<Purchase>>() // <K,V> = ex) <p1001, PurchaseObject>
 
-    //i-1) user 의 구매창 입력(YES or Cancel) 에 따른 결과 처리 Listener => 등록은 위에 a_initBillingClient() 에서 해줌.
-    val onPurchaseResultReceived = PurchasesUpdatedListener { bResultReceived, purchasesListReceived ->
-        if(!purchasesListReceived.isNullOrEmpty()) // 구매가 진행되었을때 (purchaseList != null)
-        {
-            Log.d(TAG, "i-1) : Thread=${Thread.currentThread().name}")
-            val purchase = purchasesListReceived[0]
-            if(purchase.skus.size == 1) {
-                val deferredPurchase: CompletableDeferred<Purchase>? = purchaseMap[purchase.skus[0]]
-                deferredPurchase!!.complete(purchase) // .complete = Completes this Deferred value with a given value.
-            }
-        } else { // User 가 구매 취소 ->
-            Log.d(TAG, "i-1) : possible user cancellation of purchase?")
-//            val deferredPurchase: CompletableDeferred<Purchase>? = null
-//            deferredPurchase.complete(null)
-        }
-    }
+    //i-1) user 의 구매창 입력(YES or Cancel) 에 따른 결과 처리 Listener 익명함수 => 등록은 위에 a_initBillingClient() 에서 해줬음.
+    //val onPurchaseResultReceived = PurchasesUpdatedListener {} // < - Listener 를 Variable 로 따로 떼서 여기 넣어줬더니 위 a_initBillingClient() ... .build() 가 안되는 문제..원복해줬음.
     //i-2) 구매창 띄워주기
     suspend fun i_launchBillingFlow(receivedActivity: Activity, skuDetailsList: List<SkuDetails>): Purchase  {
         Log.d(TAG, "i_startPurchaseFlow: called")
@@ -261,12 +271,6 @@ class MyIAPHelperV3(val context: Context ) {
 
     }
 
-
-//***** iap 구입시 구입창(launchBillingFlow)- user 입력에 대한 반응!! -> 기존 override fun onPurchaseUpdated() 를 초기 init{} 에서 LiveData 로 대신 받게끔 listener 등록 !!!! ^^
-    //a) LiveData as a container for MyPurchResultENUM
-    //private val flowTest = MutableSharedFlow<MyPurchResultENUM>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST) // Private& Mutable StateFlow
-    // replay: Collect 시점에서 놓친- 이전 emit 데이터 받는 갯수 ( a b .. [Collect] c d e .. : replay 가 1이면 b 부터, 2면 a부터) // replay= 0 -> init{} 에서 에러발생! (Instance Creation Exception)
-    //private val flowTest = MutableStateFlow<MyPurchResultENUM>(testWrapper) // Private& Mutable StateFlow
     fun j_verifyPurchaseResult(purchaseList: List<Purchase>) { //verify
     //val rtInTheCloudObj = rtListPlusIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
     Log.d(TAG, "j_verifyPurchaseResult: called. PurchaseList.size=${purchaseList.size}")

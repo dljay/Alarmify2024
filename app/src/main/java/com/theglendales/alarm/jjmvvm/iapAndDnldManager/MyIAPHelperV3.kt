@@ -53,38 +53,68 @@ class MyIAPHelperV3(val context: Context ) {
     private val myDiskSearcher: DiskSearcher by globalInject()
 //PurchaseBool=false 인 놈들 (Disk 에 있다면 삭제 필요) -> JjMainVModel 로 전달.
 
-
-
-
     init {
         Log.d(TAG, "init MyIapHelperV3 called. Thread=${Thread.currentThread().name}")
         a_initBillingClient()
     }
-// ****************** <1> 최초 SecondFrag 로딩 후 (과거 정보) 복원 관련
+// ****************** <0> billingClient Init + Purchase Result Listener (유저 구매창 반응에 따른 Listener) i_launchBillingFlow() 와 연계되서 사용.
+
     fun a_initBillingClient() { //여기서 billingClient (lateinit) 을 init + setup Listener!
         Log.d(TAG, "a_initBillingClient: <A> Called")
         billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener { bResult, purchasesListReceived ->
-            if(!purchasesListReceived.isNullOrEmpty()) // 구매가 진행되었을때 (purchaseList != null)
+
+            if (bResult.responseCode == BillingClient.BillingResponseCode.OK && purchasesListReceived != null)
             {
-                Log.d(TAG, "i-1) : Thread=${Thread.currentThread().name}")
+                Log.d(TAG, "i-1) PurchaseResult Listener: A- 정상 신규 구매! (파일 확인 후 없으면)다운로드 진행!. Thread=${Thread.currentThread().name}")
                 val purchase = purchasesListReceived[0]
                 if(purchase.skus.size == 1) {
                     val deferredPurchase: CompletableDeferred<Purchase>? = purchaseMap[purchase.skus[0]] //todo: nullable 처리.
                     deferredPurchase!!.complete(purchase) // .complete = Completes this Deferred value with a given value.
                 }
-            } else { // User 가 구매 취소 ->
-                Log.d(TAG, "i-1) : possible user cancellation of purchase?")
+
+            }
+            else if (bResult.responseCode == BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED)
+            {// RcV 에서 이미 구입한 물건은 사진 아이콘 등으로 Purchased 구분이 되고-> 클릭했을 때 아무 반응 X -> 따라서 여기로 들어올 확률은 거의 없음.
+                Log.d(TAG, "i-1) PurchaseResult Listener: B- 이미 있는 물품 구매! [매우 드문 에러: Ex. P1002 구매 클릭-> Google IAP 에서 (이미 구입한) P1001 로 등록되어있는 경우.]  ")
                 val mapIterator = purchaseMap.iterator() // HashMap 속 털기
                 while(mapIterator.hasNext()) {
                     val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
                     val deferredPurchase = itemInMap.value
-                    deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. Error Code= ${bResult.responseCode}")) //Completes this deferred value exceptionally with a given exception.
-                    mapIterator.remove()
+                    deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. Error= ITEM_ALREADY_OWNED")) //Completes this deferred value exceptionally with a given exception.
+                    mapIterator.remove() // 현재 Map 에서 삭제(?)
                 }
+                toastMessenger.showMyToast("Unable to finish billing process. Error= ITEM_ALREADY_OWNED", isShort = true)
+                // 혹시라도 어떤 연유로 이미 구입한 물건이 클릭 가능하게되어 재구매-> 이쪽으로 들어오게되도 다운받을 이유는 없다 ( 이미 구입한 물품들은 MultiDnldV3.kt 로 시작과 동시에 복원작업해주니깐)
+            } else if (bResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED)
+            {
+                Log.d(TAG, "i-1) PurchaseResult Listener: C- 구매 취소!!") // User 가 백그라운드 클릭 등..
+
+                val mapIterator = purchaseMap.iterator() // HashMap 속 털기
+                while(mapIterator.hasNext()) {
+                    val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
+                    val deferredPurchase = itemInMap.value
+                    deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. Error= USER_CANCELED")) //Completes this deferred value exceptionally with a given exception.
+                    mapIterator.remove() // 현재 Map 에서 삭제(?)
+                }
+                toastMessenger.showMyToast("Purchase Canceled", isShort = true)
+
+            } else
+            {
+                Log.d(TAG, "i-1) PurchaseResult Listener: D -기타 에러.. ")
+                val mapIterator = purchaseMap.iterator() // HashMap 속 털기
+                while(mapIterator.hasNext()) {
+                    val itemInMap = mapIterator.next() //Map 안의 물건 <String, CompletableDeferred<Purchase>>
+                    val deferredPurchase = itemInMap.value
+                    deferredPurchase.completeExceptionally(Exception("Unable to finish billing process. ${bResult.debugMessage}")) //Completes this deferred value exceptionally with a given exception.
+                    mapIterator.remove() // 현재 Map 에서 삭제(?)
+                }
+                toastMessenger.showMyToast("Purchase Error: ${bResult.debugMessage}",isShort = false )
             }
         }.build()
         Log.d(TAG, "a_initBillingClient: <A> Finished")
     }
+
+// ****************** <1> 최초 SecondFrag 로딩 후 (과거 정보) 복원 관련
     fun b_feedRtList(rtListFromFb: MutableList<RtInTheCloud>) {
         Log.d(TAG, "b_feedRtList: <B> Called")
         rtListPlusIAPInfo = rtListFromFb}
@@ -260,15 +290,13 @@ class MyIAPHelperV3(val context: Context ) {
     //val onPurchaseResultReceived = PurchasesUpdatedListener {} // < - Listener 를 Variable 로 따로 떼서 여기 넣어줬더니 위 a_initBillingClient() ... .build() 가 안되는 문제..원복해줬음.
     //i-2) 구매창 띄워주기
     suspend fun i_launchBillingFlow(receivedActivity: Activity, skuDetailsList: List<SkuDetails>): Purchase  {
-        Log.d(TAG, "i_startPurchaseFlow: called")
-
-        val purchaseVariable = CompletableDeferred<Purchase>()
-        purchaseMap[skuDetailsList[0].sku] = purchaseVariable // purchaseMap 에 해당 'CompletableDeferred<Purchase>' 를 등록 <K,V> = <p1001, CompletableDeferred<Purchase>>
+        Log.d(TAG, "i_launchBillingFlow: called")
+        val purchaseVariable = CompletableDeferred<Purchase>() // 나중에 값을 받는 놈!
+        purchaseMap[skuDetailsList[0].sku] = purchaseVariable // [purchaseMap 에 해당 'CompletableDeferred<Purchase>' 를 등록] <K,V> = <p1001, CompletableDeferred<Purchase>>
 
         val flowParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
         billingClient!!.launchBillingFlow(receivedActivity, flowParams) // ->결제창 열기 -> User 인풋 받으면 ->
         return purchaseVariable.await() // purchase 가 값을 받을때까지 ViewModel 에서 시작된 코루틴 대기(suspend) -> 값을 받는대로 return + 코루틴 재개
-
     }
 
     fun j_verifyPurchaseResult(purchaseList: List<Purchase>) { //verify

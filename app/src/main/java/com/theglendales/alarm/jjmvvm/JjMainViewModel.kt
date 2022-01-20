@@ -184,7 +184,7 @@ class JjMainViewModel : ViewModel() {
         // [**SEQUENTIAL**] // 기존 구입 과정을 Coroutine 으로 blocking+순차적 라인으로 보기 쉽게 했음.
         val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
             Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
-            toastMessenger.showMyToast("Failed to purchase. Error=$throwable", isShort = false)
+
         }
         val purchaseParentJob = viewModelScope.launch(handler) {//todo: handler?
         //2-a) iap 이름을 String List 로 만들어서 ->

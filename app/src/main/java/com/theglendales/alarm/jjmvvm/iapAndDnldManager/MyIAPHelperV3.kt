@@ -148,9 +148,9 @@ class MyIAPHelperV3(val context: Context ) {
     }
     fun d1_B_addPurchaseBoolToList(listOfPurchases: List<Purchase>) {
 
-        if (listOfPurchases.size > 0) // 구매건이 한 개 이상.
+        if (listOfPurchases.size > 0) // 구매건이 한 개 이상. // [모든 구매건을 포함하는듯 refund 포함?]
         {
-            Log.d(TAG, "d1_B_addPurchaseBoolToList: <D1-B> 총 구매 갯수=listPurchs.size=${listOfPurchases.size}")
+            Log.d(TAG, "d1_B_addPurchaseBoolToList: <D1-B> 총 구매 갯수=listPurchs.size=${listOfPurchases.size} \n listOfPurchases=$listOfPurchases")
             //myQryPurchListSize = listOfPurchases.size // 추후 MyDownloader_v1.kt > multiDownloadOrNot() 에서 활용.
         //**** [D1-B-1]: 구매 기록이 있는 모든건에 대해 [(구매유효=PurchaseState.PURCHASED) + (구매했으나 Refund 등으로 PurchaseState.PURCHASED 가 아닌것도 포함))
             for (purchase in listOfPurchases)
@@ -182,7 +182,8 @@ class MyIAPHelperV3(val context: Context ) {
                 Log.d(TAG,"d1_B_addPurchaseBoolToList: trackId=$trackID, purchase.skus[0]=${purchase.skus[0]}, p.skus(list)=${purchase.skus}")
 
                 //purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
-        // **** [D1-B-2] :********************************>>> 구매 확인된 건
+        // **** [D1-B-2] :********************************>>> 구매 확인된 건 //todo: Refund 건 처리 + Acknowledge 가 false 로 처리된 경우도 가능성 있음 (구매중 폰 끊김 등..) -> handle purchase?
+                // 인도놈 튜토리얼 참고: https://programtown.com/how-to-make-multiple-in-app-purchase-in-android-kotlin-using-google-play-billing-library/
                 if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED)
                 {
                     Log.d(TAG,"d1_B_addPurchaseBoolToList: <D1-B-2> ☺ PurchaseState is PURCHASED for trackID=$trackID, itemName=$iapName")
@@ -294,41 +295,49 @@ class MyIAPHelperV3(val context: Context ) {
         return oldDeferredPurchase.await() // oldDeferredPurchase 가 값을 받을때까지 ViewModel 에서 시작된 코루틴 대기(suspend) -> 값을 받는대로 return + 코루틴 재개
     }
 
-    suspend fun j_verifyPurchaseResult(purchaseResult: Purchase, rtInTheCloud: RtInTheCloud) { //verify
-        Log.d(TAG, "j_verifyPurchaseResult: called. PurchaseResult= $purchaseResult, \n rtInTheCloud=$rtInTheCloud")
+    fun j_checkVerification(purchaseResult: Purchase) { //verify
+        Log.d(TAG, "j_checkVerification: called. PurchaseResult= $purchaseResult")
         //1) 구입은 되었는데->
         if(purchaseResult.purchaseState == Purchase.PurchaseState.PURCHASED) {
             //1-A) (X) Verification 문제 발생(Signature 문제) - 해커등..
             if (!verifyValidSignature(purchaseResult.originalJson, purchaseResult.signature))
             {
-                Log.d(TAG, "j_verifyPurchaseResult: 1-A) Signature 문제 발생")
+                Log.d(TAG, "j_checkVerification: 1-A) Signature 문제 발생")
                 throw Exception("Verify Valid Signature Error")
             }
-            //1-B) 1-A) 문제 없으면 구입 인정(acknowledge)
-
-
-            //1-C) (O) !! 제대로 구매인데.. (그러나 인식문제가 발생) -> 구매 인정.
+/*            //1-B) 1-A) 문제 없으면 구입 인정(acknowledge) -- 이거 구입 후 72시간 내로 안되면 refund 처리됨. // todo: Connection 문제 등의 이슈 생겼을 때 대응 (앱 재시작시?)
             if(!purchaseResult.isAcknowledged)
             {
 
             }
-
-
-
-
-
+            // 여기서 else 는. 인도놈 코딩때처럼 '기존 구입된 물품에 대해 체크 했을때. 이미 purchaseResult.isAcknowledged =true 일때 들어 오는것으로. 위의 purchaseBool 값 변경 반영 정도만 해주면 된다.
+            // 현재는 여기서 따로 확인을 해주지 않아서 일단 없애놓은 상태. 추후 refund 등 확인 위해 여기로 들어와야할듯..
+//            else {
+//                Log.d(TAG, "j_verifyPurchaseResult: else called. ")
+//            }*/
+        } else {
+            throw Exception("if문 통과못했음. Verify Valid Signature Error")
         }
-        //2) Pending 등 기타 이슈가 있을 경우 ->
+    }
 
-
-    // 정상 구입 ->  rtInTheCloudObj (요기) 업뎃 ->LiveData 에 통보 -> SecondFrag -> ViewModel 다운로드 실행-> ..  Shared PRef 저장 -> RcV 업데이트
-
-
-
-
-
-    /*val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
-    rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경*/
+    suspend fun k_acknowledgePurchase(purchaseResult: Purchase, rtInTheCloud: RtInTheCloud): Boolean {
+        return suspendCoroutine { continuation ->
+            val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseResult.purchaseToken).build()
+            billingClient!!.acknowledgePurchase(acknowledgePurchaseParams)
+            { billingResult ->
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
+                {
+                    // ############################## 신규 구매 정상적으로 완료 #######################
+                    //[구입인정] + purchaseBool 값 변경 반영(true)
+                    reflectPurchaseToOurLists(true, rtInTheCloud)
+                    continuation.resume(true) // isPurchaseCompleted =true 로 모든 구입 절차가 끝났음을 알림.
+                } else {
+                    //문제 발생으로 -> [구입인정X] + purchaseBool 값 변경 반영(false)
+                    reflectPurchaseToOurLists(false, rtInTheCloud)
+                    continuation.resumeWithException(Exception("isAcknowledged 부여중 Error 흐음. billingResult.responseCode= ${billingResult.responseCode} "))
+                }
+            }
+        }
     }
 
 // ** Utility Methods
@@ -348,22 +357,33 @@ class MyIAPHelperV3(val context: Context ) {
     }
     
     //Reflect purchase to the list: 정상 구매가 이뤄진 경우 List 두군데에 반영=> (어차피 refresh 하면 다 반영 되지만 굳이 billingClient 연결 안하고도 즉각 RcV 반영 위해)
-    private fun reflectPurchaseToOurLists(rtReceived: RtInTheCloud) {
-        Log.d(TAG, "reflectPurchaseToOurLists: called")
-        //a) rtListPlusIAPInfo 에서 해당 rt 를 찾아 -> purchaseBool -> true 로 변경
-        //Log.d(TAG, "reflectPurchaseToOurLists:[BEFORE] rtListPlusIAPInfo= $rtListPlusIAPInfo")
+    private fun reflectPurchaseToOurLists(isOkayToOwn: Boolean, rtReceived: RtInTheCloud) {
+        Log.d(TAG, "reflectPurchaseToOurLists:[BEFORE] rtListPlusIAPInfo= $rtListPlusIAPInfo")
+        Log.d(TAG, "reflectPurchaseToOurLists: [BEFORE] purchaseFalseRtList = $purchaseFalseRtList")
+
+        Log.d(TAG, "reflectPurchaseToOurLists: isOkayToOwn=$isOkayToOwn")
+        //a) rtListPlusIAPInfo 에서 해당 rt 를 찾아 -> purchaseBool -> true/false 로 변경
+
         val index1 = rtListPlusIAPInfo.indexOf(rtReceived)
         if(index1 != -1) {
-            rtListPlusIAPInfo[index1].purchaseBool = true
-            //Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] rtListPlusIAPInfo= $rtListPlusIAPInfo")
+            rtListPlusIAPInfo[index1].purchaseBool = isOkayToOwn
+
         }
-        //b) purchaseFalseRtList 에서 해당 rt 를 삭제
-        //Log.d(TAG, "reflectPurchaseToOurLists: [BEFORE] purchaseFalseRtList = $purchaseFalseRtList")
-        val index2 = purchaseFalseRtList.indexOf(rtReceived)
-        if(index2 != -1) {
-            purchaseFalseRtList.removeAt(index2)
-            //Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] purchaseFalseRtList = $purchaseFalseRtList")
+        when(isOkayToOwn) {
+            true-> { //b-1) isOkayToOwn= true => purchaseFalseRtList 에서 해당 rt 를 삭제
+                val index2 = purchaseFalseRtList.indexOf(rtReceived)
+                if(index2 != -1) {purchaseFalseRtList.removeAt(index2)}
+            }
+            false -> { //b-1) isOkayToOwn= false => purchaseFalseRtList 는 전 품목중 purchaseBool=false 전체가 기록되어 있기에 이미 항목이 리스트에 존재 되있어야 한다. 
+                // 그럼에도 혹시 모르니 리스트에 이미 있는지 확인후 없으면 해당 rt 를 추가!
+                if(!purchaseFalseRtList.contains(rtReceived)) {
+                    purchaseFalseRtList.add(rtReceived)
+                }
+            }
         }
+        Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] rtListPlusIAPInfo= $rtListPlusIAPInfo")
+        Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] purchaseFalseRtList = $purchaseFalseRtList")
+
     }
 
     /**

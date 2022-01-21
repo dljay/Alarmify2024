@@ -75,6 +75,7 @@ class JjMainViewModel : ViewModel() {
                         launch {
                             val listOfPurchases = iapV3.d1_A_addPurchaseBoolToList() // D1-A ** AsyncCallback 이 있어서 suspendCoroutine->continuation(result)-> d1_b(result)
                             iapV3.d1_B_addPurchaseBoolToList(listOfPurchases)// D1-B
+                            //todo: [D1-B-2] 혹은 다른 곳에서라도 구입했으나 acknowledge 가 안된 물품들+ refund 된 i 들  -> 원래는 handlePurchaseResult.. isAcknowledged=true 로 변경필요!
                         }
                         //D) Parallel Job - D2
                         launch {
@@ -190,15 +191,19 @@ class JjMainViewModel : ViewModel() {
         //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
             val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
-
         //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
-        //2-j) Verify -> 문제없으면 [구매인정!] Acknowledge => 여기서 구매절차는 끝!! COMPLETE!
-            //iapV3.j_verifyPurchaseResult(purchaseResult, rtObj)
+        //2-j) Verify ->
+            iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
+        //2-k) [구매인정!] Acknowledge => 여기서 구매절차는 COMPLETE! => invokeOnCompletion 으로 이동
+            if(! purchaseResult.isAcknowledged){ //기본적으로 신규 물품은 우리가 직접 구매확인(isAcknowledged) 을 해줘야함!
+                val isPurchaseAllCompleted = iapV3.k_acknowledgePurchase(purchaseResult, rtObj) // acknowledge 를 여기서 해주고 이제 모든 구입 절차가 끝이 남.
+                Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 O] isPurchaseAllCompleted=$isPurchaseAllCompleted")
+            } else {
+                Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 X] purchaseResult.isAcknowledged= ${purchaseResult.isAcknowledged}")
+            }
 
 
-
-        //2-e) Call Download!
         }
         purchaseParentJob.invokeOnCompletion {throwable->
             Log.d(TAG, "purchaseParentJob: invokeOnCompletion Called..")

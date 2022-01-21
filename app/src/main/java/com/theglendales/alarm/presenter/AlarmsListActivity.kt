@@ -55,16 +55,22 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15P [IAP 클릭 구매 -> launchBillingFlow() 콜백을 CompletableDeferred 사용해서 진행중. 잘되는중.]
+//v3.07.15S [구매 하자마자 purchasedIcon (큐빅박스) 안 바뀌는 문제 - 간접 테스트중]
 // ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
 
 // issues:
-// 1.Flow 관련:
-// a) Flow 기초 유튭 영상 보기. emit() vs tryEmit()?
-// b) 왜 .last() 썼을때는 viewModel 의 coroutine 이 더 이상 진행 안되었는지?
-// c) IAP 코루틴으로 -> https://stackoverflow.com/questions/61388646/billingclient-billingclientstatelistener-onbillingsetupfinished-is-called-multip 참조.
+/*1) 구매 하자마자 purchasedIcon(Cubik박스)가 안바뀌는 문제- p1004 클릭하여 테스트
+- 현재 트랙부분 클릭-> 음악 재생 대신 리스트 교체해서 diffUtil 로 호출하는 것 테스트중.
+- rcvClick->vModel- 조작 -> SecondFrag -> RcV 업뎃 구조.
+- 현재 Rcv 에서 refreshRcView 에서  oldList & newList 둘다 p1004 purchaseBool= true 로 들어옴.
+- 즉 클릭할때 어디선가 rcV 는 최신 리스트를 받는거였음.
+- 최종적으로  data class 에서 .equal 파트 purchaseBool != other. xx 여기 없애보고 컨펌하기.
+- 테스트 끝나면 주석 및 바꾼 부분 삭제 or Comment out (RcV 어답터 - 트랙클릭-> 음악재생되게. ViewModel testDiffiUtil 없애기)
 
-//2. Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인듯..
+2) 구매시 .acknowledged 챙겨주기(커네션 끊기거나 등의 문제 발생시) + refund 된 물품 처리.*/
+
+
+//3. Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인듯.. ?
 //https://medium.com/@gunayadem.dev/add-a-click-listener-to-your-adapter-using-mvvm-in-kotlin-part-2-9dce852e96d5
 //https://stackoverflow.com/questions/49513993/where-to-put-click-listeners-in-mvvm-android
 //

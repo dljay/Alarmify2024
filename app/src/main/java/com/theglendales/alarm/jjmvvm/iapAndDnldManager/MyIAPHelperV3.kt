@@ -159,7 +159,7 @@ class MyIAPHelperV3(val context: Context ) {
                  * IAP Library 4.0 업뎃 => .sku 가 없어지고 .skus => List<String> 을 반환함. (여러개 살 수 있는 기능이 생겨서)
                  * 우리는 해당 기능 사용 계획이 없으므로 무조건 우리의 .skus list 는 1개여야만 한다! 만약 1개가 아니면 for loop 에서 다음 iteration 으로 이동
                  */
-                Log.d(TAG, "d1_B_addPurchaseBoolToList: purchase=$purchase")
+                Log.d(TAG, "d1_B_addPurchaseBoolToList: purchase=$purchase") // todo: 여기서 acknowledged 확인 가능!
 
                 ///** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
                 val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.

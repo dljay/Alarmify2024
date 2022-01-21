@@ -216,8 +216,9 @@ class RcViewAdapter(
 
     fun refreshRecyclerView(newList: MutableList<RtInTheCloud>) {
         //Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (BEFORE): ${currentRtList.size}")
-        val oldList = rtPlusIapInfoList
 
+        val oldList = rtPlusIapInfoList // 현재 메모리에 떠있던 rtList
+        Log.d(TAG, "refreshRecyclerView: oldList=$oldList, newList=$newList")
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(MyDiffCallbackClass(oldList, newList))
         rtPlusIapInfoList = newList
         Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${rtPlusIapInfoList.size}")
@@ -238,14 +239,13 @@ class RcViewAdapter(
 
         // 1차로 여기서 id 로 판별. (기존 리스트 item 과 새로 받은 리스트 item)
         override fun areItemsTheSame(oldItemPosition: Int,newItemPosition: Int): Boolean { // check if two items represent the same item. 흠.. 다 똑같은지말고 id 만 같아도 true 라는듯..
-            //Log.d(TAG, "areItemsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition, bool result: ${oldRingToneList[oldItemPosition].id == newRingToneList[newItemPosition].id}")
-            return (oldRingToneList[oldItemPosition].id == newRingToneList[newItemPosition].id)
+            Log.d(TAG, "areItemsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition, bool result: ${oldRingToneList[oldItemPosition].id == newRingToneList[newItemPosition].id}")
+            return (oldRingToneList[oldItemPosition].id == newRingToneList[newItemPosition].id) // id 의존 왜냐면 id is unique and unchangeable.
         }
 
-        // 1차 선발된 놈들을 2차로 여기서 아예 동일한 놈인지(data 로 파악) 판명.
-        override fun areContentsTheSame(oldItemPosition: Int,newItemPosition: Int
-        ): Boolean { // 모든 field 가 아예 똑같은건지 확인! (id/url/image 등등) //todo: 신규 구매후 purchaseBool 변경이 감지되서 rcV 업뎃된느지 확인 필요.
-            //Log.d(TAG, "areContentsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition,  ${oldRingToneList[oldItemPosition] == newRingToneList[newItemPosition]}")
+        // 1차 결과가 true 일때만 불림-> 1차 선발된 놈들을 2차로 여기서 아예 동일한 놈인지(data 로 파악) 판명.
+        override fun areContentsTheSame(oldItemPosition: Int,newItemPosition: Int): Boolean { // 모든 field 가 아예 똑같은건지 확인! (id/url/image 등등) //todo: 신규 구매후 purchaseBool 변경이 감지되서 rcV 업뎃된느지 확인 필요.
+            Log.d(TAG, "areContentsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition,  ${oldRingToneList[oldItemPosition] == newRingToneList[newItemPosition]}")
             return (oldRingToneList[oldItemPosition] == newRingToneList[newItemPosition])
         }
 
@@ -301,8 +301,6 @@ class RcViewAdapter(
             if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null)
             { // To avoid possible mistake when we delete the item but click it
                // val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
-
-            
                 when(v.id) {
                     //1) [하이라이트, 음악 재생] - 구매 제외 부분 클릭  (Rl_including_tv1_2 영역)
                     R.id.id_rL_including_title_description -> {
@@ -315,7 +313,11 @@ class RcViewAdapter(
                         enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
                         //1-c) 음악 플레이 //todo: 재생중일때 또 클릭하면 그냥 무시하기?
-                        mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+                        //mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+
+//[음악 재생 대신 Diffutil Test 용 코드] - 구매 후 즉각 RcV 아이콘 변경되는지 확인하기 위한 간접 테스트=> 클릭한 아이템 purchaseBool 값을 인위적으로 true 로 바꿔줌 => 바로 RcV 에 반영되야함!
+jjMainVModel.testDiffutil(oldRtList = rtPlusIapInfoList, clickedPos = adapterPosition)
+
 
                         // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
                         jjMainVModel.onTrackClicked(selectedRt,isPurchaseClicked = false, receivedActivity) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!

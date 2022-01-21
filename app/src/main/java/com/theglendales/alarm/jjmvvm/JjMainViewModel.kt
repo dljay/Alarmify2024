@@ -214,7 +214,7 @@ class JjMainViewModel : ViewModel() {
                 Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(O)] - !!No problemo!!!")
                 //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
                 val rtListPlusIAPInfo = iapV3.e_getFinalList()
-                _rtInTheCloudList.value =rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+                _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                 Log.d(TAG, "onTrackClicked: (3) <<<<<<<<<getRtList: update LiveData!")
 
                 //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
@@ -283,6 +283,12 @@ class JjMainViewModel : ViewModel() {
     fun getLiveDataSingleDownloader(): LiveData<DNLDInfoContainer> { //SecondFrag 에서  해당 method (와 이로 인한 결과값을) ** Observe!! ***  하고 있음.
         val dnldInfoObj: LiveData<DNLDInfoContainer> = singleDownloaderV3.getMyDnldLiveData()
         return dnldInfoObj
+    }
+    fun testDiffutil(oldRtList: MutableList<RtInTheCloud>, clickedPos: Int) { // 클릭한 놈의 purchaseBool=true 로 바꿔서 이게 바로 화면에 반영되는지 확인 (구매시 바로 icon 바뀌는 기능 확인 위해)
+        Log.d(TAG, "testDiffutil: <1> called. oldRtList= $oldRtList, clickedPos= $clickedPos")
+         oldRtList[clickedPos].purchaseBool = true// 리스트 조작!
+        Log.d(TAG, "testDiffutil: <2> 조작된 oldRtList[clickedPos].purchaseBool=${oldRtList[clickedPos].purchaseBool}")
+        _rtInTheCloudList.value = oldRtList // SecondFrag 에서 RcV 화면 갱신!
     }
 
 

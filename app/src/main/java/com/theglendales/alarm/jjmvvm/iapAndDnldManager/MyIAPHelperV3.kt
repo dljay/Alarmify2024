@@ -141,7 +141,7 @@ class MyIAPHelperV3(val context: Context ) {
 
         return suspendCoroutine { continuation ->
             billingClient!!.queryPurchasesAsync(BillingClient.SkuType.INAPP) { _, listOfPurchases ->
-                Log.d(TAG, "d1_A_addPurchaseBoolToList: <D1-A> called ")
+                Log.d(TAG, "d1_A_addPurchaseBoolToList: <D1-A> called. ")
                 continuation.resume(listOfPurchases)
             }
         }
@@ -159,6 +159,7 @@ class MyIAPHelperV3(val context: Context ) {
                  * IAP Library 4.0 업뎃 => .sku 가 없어지고 .skus => List<String> 을 반환함. (여러개 살 수 있는 기능이 생겨서)
                  * 우리는 해당 기능 사용 계획이 없으므로 무조건 우리의 .skus list 는 1개여야만 한다! 만약 1개가 아니면 for loop 에서 다음 iteration 으로 이동
                  */
+                //Log.d(TAG, "d1_B_addPurchaseBoolToList: purchase=$purchase")
                 ///** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
                 val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
@@ -297,13 +298,14 @@ class MyIAPHelperV3(val context: Context ) {
         Log.d(TAG, "j_verifyPurchaseResult: called. PurchaseResult= $purchaseResult, \n rtInTheCloud=$rtInTheCloud")
         //1) 구입은 되었는데->
         if(purchaseResult.purchaseState == Purchase.PurchaseState.PURCHASED) {
-            //1-A) (X) 문제 발생(Signature 문제) - 해커등..
+            //1-A) (X) Verification 문제 발생(Signature 문제) - 해커등..
             if (!verifyValidSignature(purchaseResult.originalJson, purchaseResult.signature))
             {
                 Log.d(TAG, "j_verifyPurchaseResult: 1-A) Signature 문제 발생")
                 throw Exception("Verify Valid Signature Error")
             }
-            //1-B) 구입 인정(acknowledge) 안된 경우 -> 구입 인정! [한 마디로 이 사람은 제대로 산게 맞다! 라고 인정!]
+            //1-B) 1-A) 문제 없으면 구입 인정(acknowledge)
+
 
             //1-C) (O) !! 제대로 구매인데.. (그러나 인식문제가 발생) -> 구매 인정.
             if(!purchaseResult.isAcknowledged)

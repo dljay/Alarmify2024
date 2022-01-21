@@ -180,20 +180,20 @@ class JjMainViewModel : ViewModel() {
     //1) 디스크에 파일이 이미 있으면 -> return // 유저 입장에서는 클릭-> 무반응 (어차피 유저가 보고있는RcV 리스트에 'Purchased' 아이콘이 뜬 상태여서 이게 맞는듯)
         if(myDiskSearcher.isSameFileOnThePhone_RtObj(rtObj)) return //
     //2) 구입시도 Purchase Process -> [Sequential] & 최종적으로 Returns RtObj! (만약 구입 취소의 경우에는....)
+/*알파벳은 IAPV3 안 method 를 따라감*/
 
         // [**SEQUENTIAL**] // 기존 구입 과정을 Coroutine 으로 blocking+순차적 라인으로 보기 쉽게 했음.
         val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler - 원래 logd 넣어줬으나 그냥 뺴줌.
 
         val purchaseParentJob = viewModelScope.launch(handler) {//todo: handler?
-        //2-a) iap 이름을 String List 로 만들어서 ->
-            val iapNameAsList: List<String> = listOf(rtObj.iapName)
 
-        //2-b) Get the list of SkuDetails [SuspendCoroutine 사용] =>
+        //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
+            val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
 
-        //2-c) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
+        //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
-        //2-d) [구입]했다면 -> verify now!
+        //2-j) Verify -> 문제없으면 [구매인정!] Acknowledge => 여기서 구매절차는 끝!! COMPLETE!
             //iapV3.j_verifyPurchaseResult(purchaseResult, rtObj)
 
 
@@ -210,6 +210,7 @@ class JjMainViewModel : ViewModel() {
                 }
             } else {
                 Log.d(TAG, "onTrackClicked: no error occurred..")
+                //todo: run download
             }
         }
         Log.d(TAG, "onTrackClicked: here..Thread=${Thread.currentThread().name}")

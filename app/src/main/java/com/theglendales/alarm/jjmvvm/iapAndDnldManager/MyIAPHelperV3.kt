@@ -159,7 +159,8 @@ class MyIAPHelperV3(val context: Context ) {
                  * IAP Library 4.0 업뎃 => .sku 가 없어지고 .skus => List<String> 을 반환함. (여러개 살 수 있는 기능이 생겨서)
                  * 우리는 해당 기능 사용 계획이 없으므로 무조건 우리의 .skus list 는 1개여야만 한다! 만약 1개가 아니면 for loop 에서 다음 iteration 으로 이동
                  */
-                //Log.d(TAG, "d1_B_addPurchaseBoolToList: purchase=$purchase")
+                Log.d(TAG, "d1_B_addPurchaseBoolToList: purchase=$purchase")
+
                 ///** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
                 val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
@@ -237,6 +238,7 @@ class MyIAPHelperV3(val context: Context ) {
 
     }
     fun d2_B_addPriceToList(skuDetailsList: List<SkuDetails>) {
+
         for(skuDetails in skuDetailsList)
         {
             //something better than .single? -> 근데 실제 연산 속도가 개당 .001 초니깐
@@ -334,7 +336,7 @@ class MyIAPHelperV3(val context: Context ) {
                     {
                         // ############################## 신규 구매 정상적으로 완료 #######################
                         //[구입인정] + purchaseBool 값 변경 반영(true)
-                        Log.d(TAG, "k_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 구매인정 부가 결과 ->> purchaseResult.isAcknowledged=${purchaseResult.isAcknowledged}")
+                        Log.d(TAG, "k_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 구매인정 부가 했음!!")
                         reflectPurchaseToOurLists(true, rtInTheCloud)
                         continuation.resume(true) // isPurchaseCompleted =true 로 모든 구입 절차가 끝났음을 알림.
                     } else {
@@ -365,8 +367,8 @@ class MyIAPHelperV3(val context: Context ) {
     
     //Reflect purchase to the list: 정상 구매가 이뤄진 경우 List 두군데에 반영=> (어차피 refresh 하면 다 반영 되지만 굳이 billingClient 연결 안하고도 즉각 RcV 반영 위해)
     private fun reflectPurchaseToOurLists(isOkayToOwn: Boolean, rtReceived: RtInTheCloud) {
-        Log.d(TAG, "reflectPurchaseToOurLists:[BEFORE] rtListPlusIAPInfo= $rtListPlusIAPInfo")
-        Log.d(TAG, "reflectPurchaseToOurLists: [BEFORE] purchaseFalseRtList = $purchaseFalseRtList")
+        /*Log.d(TAG, "reflectPurchaseToOurLists:[BEFORE] rtListPlusIAPInfo= $rtListPlusIAPInfo")
+        Log.d(TAG, "reflectPurchaseToOurLists: [BEFORE] purchaseFalseRtList = $purchaseFalseRtList")*/
 
         Log.d(TAG, "reflectPurchaseToOurLists: isOkayToOwn=$isOkayToOwn")
         //a) rtListPlusIAPInfo 에서 해당 rt 를 찾아 -> purchaseBool -> true/false 로 변경
@@ -388,8 +390,8 @@ class MyIAPHelperV3(val context: Context ) {
                 }
             }
         }
-        Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] rtListPlusIAPInfo= $rtListPlusIAPInfo")
-        Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] purchaseFalseRtList = $purchaseFalseRtList")
+        /*Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] rtListPlusIAPInfo= $rtListPlusIAPInfo")
+        Log.d(TAG, "reflectPurchaseToOurLists: [AFTER] purchaseFalseRtList = $purchaseFalseRtList")*/
 
     }
 

@@ -100,7 +100,6 @@ class JjMainViewModel : ViewModel() {
                     else //에러 없으면
                     {
                         val rtListPlusIAPInfo = iapV3.e_getFinalList()
-
                         _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         Log.d(TAG, "refreshAndUpdateLiveData: (3-b) <<<<<<<<<getRtList: updated LiveData!")
 
@@ -240,7 +239,7 @@ class JjMainViewModel : ViewModel() {
             }
         }// end of invokeOnCompletion.
 
-        Log.d(TAG, "onTrackClicked: here..Thread=${Thread.currentThread().name}")
+        Log.d(TAG, "onTrackClicked: [outside-purchaseParentJob] here..Thread=${Thread.currentThread().name}")
         //handlePurchaseResult() 에서 LiveData 업뎃(MyPurchaseStateENUM) -> SecondFrag 에서 여기 viewModel 로 지시 다운로드 or
     }
     //fun getPurchaseState(): LiveData<MyPurchResultENUM> = iapV3.getPurchStateLiveData()

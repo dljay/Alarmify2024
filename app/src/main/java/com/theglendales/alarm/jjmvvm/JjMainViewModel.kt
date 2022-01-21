@@ -34,7 +34,7 @@ class JjMainViewModel : ViewModel() {
     private val singleDownloaderV3: SingleDownloaderV3 by globalInject()
     private val multiDownloaderV3: MultiDownloaderV3 by globalInject()
 //FireBase variables
-    var isFreshList = false
+
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
     private val _rtInTheCloudList = MutableLiveData<MutableList<RtInTheCloud>>() // Private& Mutable LiveData
     val rtInTheCloudList: LiveData<MutableList<RtInTheCloud>> = _rtInTheCloudList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
@@ -92,7 +92,7 @@ class JjMainViewModel : ViewModel() {
                     if(throwable!=null) {
                         Log.d(TAG, "refreshAndUpdateLiveData: ERROR (3-a) (个_个) iapParentJob Failed: $throwable")
                         val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref (없을땐 그냥 깡통 arrayListOf<RtInTheCloud>() 를 받음.
-                        isFreshList = true
+
                         _rtInTheCloudList.value = listSavedOnPhone // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         return@invokeOnCompletion
                     }
@@ -100,7 +100,7 @@ class JjMainViewModel : ViewModel() {
                     else //에러 없으면
                     {
                         val rtListPlusIAPInfo = iapV3.e_getFinalList()
-                        isFreshList = true
+
                         _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         Log.d(TAG, "refreshAndUpdateLiveData: (3-b) <<<<<<<<<getRtList: updated LiveData!")
 
@@ -195,29 +195,51 @@ class JjMainViewModel : ViewModel() {
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
         //2-j) Verify ->
             iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
-        //2-k) [구매인정!] Acknowledge => 여기서 구매절차는 COMPLETE! => invokeOnCompletion 으로 이동
-            if(! purchaseResult.isAcknowledged){ //기본적으로 신규 물품은 우리가 직접 구매확인(isAcknowledged) 을 해줘야함!
-                val isPurchaseAllCompleted = iapV3.k_acknowledgePurchase(purchaseResult, rtObj) // acknowledge 를 여기서 해주고 이제 모든 구입 절차가 끝이 남.
-                Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 O] isPurchaseAllCompleted=$isPurchaseAllCompleted")
-            } else {
-                Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 X] purchaseResult.isAcknowledged= ${purchaseResult.isAcknowledged}")
-            }
-
+        //2-k) [구매인정!] Acknowledge!!
+            val isPurchaseAllCompleted = iapV3.k_acknowledgePurchase(purchaseResult, rtObj) // acknowledge 를 여기서 해주고 이제 모든 구입 절차가 끝이 남.
+            Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 O] isPurchaseAllCompleted=$isPurchaseAllCompleted")
+        // => 여기서 구매절차는 COMPLETE! => invokeOnCompletion 으로 이동
 
         }
-        purchaseParentJob.invokeOnCompletion {throwable->
-            Log.d(TAG, "purchaseParentJob: invokeOnCompletion Called..")
-            if(throwable!=null && !throwable.message.isNullOrEmpty()) {
-                if(throwable.message!!.contains("USER_CANCELED")) {return@invokeOnCompletion} // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지 아무것도 안 보여주기.
+        purchaseParentJob.invokeOnCompletion { throwable ->
+            Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..")
+            if (throwable != null && !throwable.message.isNullOrEmpty()) {
+                if (throwable.message!!.contains("USER_CANCELED")) {
+                    return@invokeOnCompletion
+                } // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지 아무것도 안 보여주기.
                 else {
-                    Log.d(TAG, "purchaseParentJob: invokeOnCompletion - Error. throwable=$throwable ")
-                    toastMessenger.showMyToast("Purchase Error: $throwable",isShort = false)
+                    Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(X)] - Error. throwable=$throwable ")
+                    toastMessenger.showMyToast("Purchase Error: $throwable", isShort = false)
                 }
-            } else {
-                Log.d(TAG, "onTrackClicked: no error occurred..")
+            } else {// 아무 문제없이 구매가 끝이남.
+                Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(O)] - !!No problemo!!!")
+                //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
+                val rtListPlusIAPInfo = iapV3.e_getFinalList()
+                _rtInTheCloudList.value =rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+                Log.d(TAG, "onTrackClicked: (3) <<<<<<<<<getRtList: update LiveData!")
+
+                //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
+                // a), b), c) 는 모두 동시 실행(Parallel)
+
+                viewModelScope.launch(Dispatchers.IO) {
+//[Background Thread]   //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
+                    launch {
+                        Log.d(TAG,"onTrackClicked: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
+                        mySharedPrefManager.saveRtInTheCloudList(rtListPlusIAPInfo)
+                    }
+//[Background Thread]   //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
+                    launch {
+                        Log.d(TAG,"onTrackClicked: (4-b) xxxxx deleting where purchaseBool=false. Thread=${Thread.currentThread().name}")
+                        val neverPurchasedList = iapV3.f_getPurchaseFalseRtList()
+                        neverPurchasedList.forEach { rtInTheCloud ->
+                            myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
+                        }
+                    }// end of dispatcher.IO
+                }
                 //todo: run download
             }
-        }
+        }// end of invokeOnCompletion.
+
         Log.d(TAG, "onTrackClicked: here..Thread=${Thread.currentThread().name}")
         //handlePurchaseResult() 에서 LiveData 업뎃(MyPurchaseStateENUM) -> SecondFrag 에서 여기 viewModel 로 지시 다운로드 or
     }

@@ -237,21 +237,16 @@ class RcViewAdapter(
         }
 
         // 1차로 여기서 id 로 판별. (기존 리스트 item 과 새로 받은 리스트 item)
-        override fun areItemsTheSame(
-            oldItemPosition: Int,
-            newItemPosition: Int
-        ): Boolean { // check if two items represent the same item. 흠.. 다 똑같은지말고 id 만 같아도 true 라는듯..
+        override fun areItemsTheSame(oldItemPosition: Int,newItemPosition: Int): Boolean { // check if two items represent the same item. 흠.. 다 똑같은지말고 id 만 같아도 true 라는듯..
             //Log.d(TAG, "areItemsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition, bool result: ${oldRingToneList[oldItemPosition].id == newRingToneList[newItemPosition].id}")
             return (oldRingToneList[oldItemPosition].id == newRingToneList[newItemPosition].id)
         }
 
         // 1차 선발된 놈들을 2차로 여기서 아예 동일한 놈인지(data 로 파악) 판명.
-        override fun areContentsTheSame(
-            oldItemPosition: Int,
-            newItemPosition: Int
-        ): Boolean { // 모든 field 가 아예 똑같은건지 확인! (id/url/image 등등)
+        override fun areContentsTheSame(oldItemPosition: Int,newItemPosition: Int
+        ): Boolean { // 모든 field 가 아예 똑같은건지 확인! (id/url/image 등등) //todo: 신규 구매후 purchaseBool 변경이 감지되서 rcV 업뎃된느지 확인 필요.
             //Log.d(TAG, "areContentsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition,  ${oldRingToneList[oldItemPosition] == newRingToneList[newItemPosition]}")
-            return oldRingToneList[oldItemPosition] == newRingToneList[newItemPosition]
+            return (oldRingToneList[oldItemPosition] == newRingToneList[newItemPosition])
         }
 
     }

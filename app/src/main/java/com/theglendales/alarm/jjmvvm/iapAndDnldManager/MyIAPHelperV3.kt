@@ -321,20 +321,27 @@ class MyIAPHelperV3(val context: Context ) {
     }
 
     suspend fun k_acknowledgePurchase(purchaseResult: Purchase, rtInTheCloud: RtInTheCloud): Boolean {
-        return suspendCoroutine { continuation ->
-            val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseResult.purchaseToken).build()
-            billingClient!!.acknowledgePurchase(acknowledgePurchaseParams)
-            { billingResult ->
-                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
-                {
-                    // ############################## 신규 구매 정상적으로 완료 #######################
-                    //[구입인정] + purchaseBool 값 변경 반영(true)
-                    reflectPurchaseToOurLists(true, rtInTheCloud)
-                    continuation.resume(true) // isPurchaseCompleted =true 로 모든 구입 절차가 끝났음을 알림.
-                } else {
-                    //문제 발생으로 -> [구입인정X] + purchaseBool 값 변경 반영(false)
-                    reflectPurchaseToOurLists(false, rtInTheCloud)
-                    continuation.resumeWithException(Exception("isAcknowledged 부여중 Error 흐음. billingResult.responseCode= ${billingResult.responseCode} "))
+
+        if(purchaseResult.isAcknowledged) { // 어떤 연유로 이미 구매인정이 되있는 상태라면 그냥 true 반환하고 return
+            Log.d(TAG, "k_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 이미 구매인정 되있는 상태 return!")
+            return true
+        } else {//신규구매시 100% 이쪽으로 들어와야함 -> 기본적으로 신규 물품은 우리가 직접 구매확인(isAcknowledged) 을 해줘야함!
+            return suspendCoroutine { continuation ->
+                val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseResult.purchaseToken).build()
+                billingClient!!.acknowledgePurchase(acknowledgePurchaseParams)
+                { billingResult ->
+                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
+                    {
+                        // ############################## 신규 구매 정상적으로 완료 #######################
+                        //[구입인정] + purchaseBool 값 변경 반영(true)
+                        Log.d(TAG, "k_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 구매인정 부가 결과 ->> purchaseResult.isAcknowledged=${purchaseResult.isAcknowledged}")
+                        reflectPurchaseToOurLists(true, rtInTheCloud)
+                        continuation.resume(true) // isPurchaseCompleted =true 로 모든 구입 절차가 끝났음을 알림.
+                    } else {
+                        //문제 발생으로 -> [구입인정X] + purchaseBool 값 변경 반영(false)
+                        reflectPurchaseToOurLists(false, rtInTheCloud)
+                        continuation.resumeWithException(Exception("isAcknowledged 부여중 Error 흐음. billingResult.responseCode= ${billingResult.responseCode} "))
+                    }
                 }
             }
         }

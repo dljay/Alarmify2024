@@ -56,12 +56,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 //v3.07.16A [Iap_V2 삭제 등 파일 정리후]
-// ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
+// ListFrag<->SecondFrag
+// a) SlidingPanel 상태 회복 및 UI Text 보여주기(O)
+// b) Play/Pause 클릭 눌렀을때 문제..
 
 // issues:
+//1) ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
 //2) 구매시 .acknowledged 챙겨주기(커네션 끊기거나 등의 문제 발생시) + refund 된 물품 처리.*/
-
-
 //3. Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인듯.. ?
 //https://medium.com/@gunayadem.dev/add-a-click-listener-to-your-adapter-using-mvvm-in-kotlin-part-2-9dce852e96d5
 //https://stackoverflow.com/questions/49513993/where-to-put-click-listeners-in-mvvm-android

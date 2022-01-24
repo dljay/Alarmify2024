@@ -139,7 +139,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
     // listfrag 가거나 나갔다왔을 때 관련.
-    var isFireBaseFetchDone = false // a) 최초 rcV 열어서 모든게 준비되면 =true, b) 다른 frag 로 나갔다왔을 때 reconstructXX() 다 끝나면 true.
+    //var isFireBaseFetchDone = false // a) 최초 rcV 열어서 모든게 준비되면 =true, b) 다른 frag 로 나갔다왔을 때 reconstructXX() 다 끝나면 true.
     var currentClickedTrId = -1
 
     //Firebase 관련
@@ -148,15 +148,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        isFireBaseFetchDone=false // ListFrag 갔을 때 이 값이 계속 true 로 있길래. 여기서 false 로 해줌. -> fb 로딩 끝나면 true 로 변함.
-        Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isFireBaseFetchDone, currentClickedTrId=$currentClickedTrId")
+        //isFireBaseFetchDone=false // ListFrag 갔을 때 이 값이 계속 true 로 있길래. 여기서 false 로 해줌. -> fb 로딩 끝나면 true 로 변함.
+        //Log.d(TAG, "onCreate: jj-called..isEverythingReady=$isFireBaseFetchDone, currentClickedTrId=$currentClickedTrId")
         super.onCreate(savedInstanceState)
     }
-
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        super.onActivityCreated(savedInstanceState)
-//        Log.d(TAG, "onActivityCreated: jj-2ndFrag Activity!!Created!!")
-//    }
 
     override fun onCreateView(inflater: LayoutInflater,container: ViewGroup?,savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
@@ -177,7 +172,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         rcView.layoutManager = layoutManager
     //BtmSht_SingleDnld init (싱글톤으로)
         btmSht_SingleDNLDV = BtmShtSingleDNLDV2.newInstance()
-
 
     //  LIVEDATA ->
 
@@ -229,7 +223,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 lifecycle.repeatOnLifecycle(State.RESUMED) {
                     launch {
                         jjMainVModel.selectedRow.collect { rtInTheCloudObj -> currentClickedTrId = rtInTheCloudObj.id
-                            Log.d(TAG,"onViewCreated: !!! [MainVModel] 옵저버!! 트랙ID= ${rtInTheCloudObj.id}, \n currentClickedTrId=$currentClickedTrId")
+                            Log.d(TAG,"[MainVModel-SelectedRow] !!!  옵저버!! 트랙ID= ${rtInTheCloudObj.id}, \n currentClickedTrId=$currentClickedTrId")
                                 updateMiniPlayerUiOnClick(rtInTheCloudObj) // 동시에 ListFrag 갔다왔을때도 이걸 통해서 [복원]
                          }
                     }
@@ -355,7 +349,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             Log.d(TAG, "onViewCreated: network call back- registered ")
             myNetworkCheckerInstance.setNetworkListener() //annotated element should only be called on the given API level or higher
         }
-
         setUpLateInitUis(view) // -> 이 안에서 setUpSlindingPanel() 도 해줌. todo: Coroutine 으로 착착. chain 하지 말고..
         //Chip
         initChip(view)
@@ -377,8 +370,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     override fun onResume() {
         super.onResume()
-        //Log.d(TAG, "onResume: 2nd Frag // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState} ")
+
         Log.d(TAG, "onResume: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
+
+    // 돌아왔을 때 SlidingUpPanel 상태 복원 - 여기 onResume 에서 해주는게 맞음.
+        when(slidingUpPanelLayout.panelState) {
+            SlidingUpPanelLayout.PanelState.COLLAPSED -> collapseSlidingPanel()
+            SlidingUpPanelLayout.PanelState.EXPANDED -> expandSlidingPanel()
+        }
+
     // DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서?  신중한 접근 필요. (Update: permission 상관없는듯..)
     // 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.
 //        //B) 현재 Sync = Multi 다운로드가 진행중 && 인터넷이 되는 상태면 btmSheet_Multi 다시 보여주기!
@@ -409,9 +409,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         super.onDestroy()
 
         Log.d(TAG, "onDestroy: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}") //DESTROYED 로 뜬다.
-         mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
-
-         //requireActivity().viewModelStore.clear()// ListFrag 로 갈때는 그냥 ViewModel Clear 해줌 -> 다시 복귀했을 때 생쑈 없애기 위해..
+        collapseSlidingPanel()
+        mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
     }
 // ===================================== My Functions ==== >
 
@@ -487,20 +486,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 }
 
             }).into(iv_upperUi_thumbNail)
-        //iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
-        //iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable) //RcV 현재 row 에 있는 사진으로 설정
-
 
         // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
         if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
             slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
         }
-
-            //다운로드 Test 용도 - IAP  검증 걸치지 않고 해당 번호에 넣은 RT 다운로드 URL 로 이동. [원복]
-//                val testRtHelixObj = RtInTheCloud(title = "SoundHelix8.mp3","moreshit","desc","imgUrl",
-//                mp3URL = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",id=1, iapName = "shitbagHelix")
-//                myDownloaderV2.singleFileDNLD(testRtHelixObj)
-
     }
 
     private fun initChip(v: View) {
@@ -660,13 +650,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 mpClassInstance.removeHandler() // 새로 추가함.
                 var progressLong = progress.toLong()
                 if(fromUser) mpClassInstance.onSeekBarTouchedYo(progressLong)
-
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
     }
     private fun setUpLateInitUis(v: View) {
+        Log.d(TAG, "setUpLateInitUis: called")
     //Lottie
         lottieAnimationView = v.findViewById(R.id.id_lottie_secondFrag)
         //일단 lottieAnim - Loading 애니메이션 틀어주기
@@ -677,6 +667,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     // SlidingUpPanel
         slidingUpPanelLayout = v.findViewById(R.id.id_slidingUpPanel)
+
         //a) Sliding Panel: Upper Ui
 
         upperUiHolder = v.findViewById(R.id.id_upperUi_ll)   // 추후 이 부분이 fade out
@@ -727,18 +718,25 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     // Sliding Panel
     private fun collapseSlidingPanel() {
+        Log.d(TAG, "collapseSlidingPanel: called")
         slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
         iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
         slidingUpPanelLayout.isOverlayed = false //
-
+    }
+    private fun expandSlidingPanel() {
+        Log.d(TAG, "expandSlidingPanel: called..")
+        slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+        //모퉁이 흰색 없애주고 & 불투명으로
+          slidingUpPanelLayout.isOverlayed =true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
+          upperUiHolder.alpha = 0.5f // +0.3 은 살짝~ 보이게끔
+          //↓ arrow 전환 visibility
+          iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)
     }
 
 // 1)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 UI 를 재구성하는 반면,
     private fun reConstructTrUisOnReturn(prevTrId: Int) {
-
         mpClassInstance.prepMusicPlayOnlineSrc(prevTrId, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
-        isFireBaseFetchDone = true
-
+        //isFireBaseFetchDone = true
     }
 // 2)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 SlidingPanel UI 를 재구성.
     private fun reConstructSLPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?, trackId: Int) { // observeAndLoadFireBase() 여기서 불림
@@ -766,50 +764,38 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
 
             setUpSlidingPanel()
-
-
         }
 
     }
     private fun setUpSlidingPanel() {
-
-        Log.d(TAG,"setUpSlidingPanel: slidingUpPanelLayout.isActivated=${slidingUpPanelLayout.isActivated}")
+        Log.d(TAG,"setUpSlidingPanel: slidingUpPanelLayout: 1)PanelState=${slidingUpPanelLayout.panelState}, 2)isActivated=${slidingUpPanelLayout.isActivated}")
         slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow) //setDragView = 펼치는 Drag 가능 영역 지정
 
         // A. 기존에 클릭 후 다른 Frag 갔다 돌아온 경우. (Panel 은 Collapsed 아니면 Expanded 상태 유지중임.)
         if (shouldPanelBeVisible) {
-            Log.d(TAG, "setUpSlidingPanel: isInitialPanelSetup=$shouldPanelBeVisible")
+            Log.d(TAG, "setUpSlidingPanel: HEY isInitialPanelSetup=$shouldPanelBeVisible")
+            //collapseSlidingPanel()
 
             // 만약 확장된 상태였다면 초기화가 안되어있어서 모퉁이 허옇고 & arrow(↑)가 위로 가있음. 아래에서 해결.
-            if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) {
-                /*//모퉁이 흰색 없애주고 & 불투명으로
-                    slidingUpPanelLayout.isOverlayed =true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
-                    upperUiHolder.alpha = 0.5f // +0.3 은 살짝~ 보이게끔
-
-                //↓ arrow 전환 visibility
-                    iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)*/
-                // 다 필요없고 그냥 Collapse 시켜버리려할때는 위에 지우고 이걸로 사용.
-                collapseSlidingPanel() // onPause() 에서도 해주는데 안 먹히네?
-
-            }
+            /*if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.EXPANDED) { // EXPANDED=0
+                Log.d(TAG, "setUpSlidingPanel: called.")
+                //collapseSlidingPanel() // onPause() 에서도 해주는데 안 먹히네?
+            }*/
         }
         // B. 최초 로딩- 기존 클릭이 없어서 Panel 이 접혀있지도(COLLAPSED) 확장되지도(EXPANDED) 않은 경우에는 감춰놓기.
         else if (!shouldPanelBeVisible) {
-            slidingUpPanelLayout.panelState =
-                SlidingUpPanelLayout.PanelState.HIDDEN // 일단 클릭전에는 감춰놓기!
+            Log.d(TAG, "setUpSlidingPanel: shouldPanelBeVisible (x)")
+            slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.HIDDEN // 3. 일단 클릭전에는 감춰놓기!
         }
-
-
         //slidingUpPanelLayout.anchorPoint = 0.6f //화면의 60% 만 올라오게.  그러나 2nd child 의 height 을 match_parent -> 300dp 로 설정해서 이걸 쓸 필요가 없어짐!
         //slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.ANCHORED // 위치를 60%로 초기 시작
-        slidingUpPanelLayout.addPanelSlideListener(object :
-            SlidingUpPanelLayout.PanelSlideListener {
+        slidingUpPanelLayout.addPanelSlideListener(object :SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View?, slideOffset: Float) {
                 // Panel 이 열리고 닫힐때의 callback
+                //Log.d(TAG, "onPanelSlide: Panel State=${slidingUpPanelLayout.panelState}")
                 shouldPanelBeVisible = true // 이제 Panel 이 열렸으니깐. todo: 이거 bool 값에 의존하는게 괜찮을지..
 
-                upperUiHolder.alpha =
-                    1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
+                upperUiHolder.alpha = 1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
 
                 // 트랙 클릭-> 미니플레이어가 등장! (그 이전에는 offset = -xxx 값임.)
                 //Log.d(TAG, "onPanelSlide: slideOffset= $slideOffset, rcvAdapterInstance.itemCount=${rcvAdapterInstance.itemCount}")
@@ -827,22 +813,16 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 // 완전히 펼쳐질 때
                 if (!slidingUpPanelLayout.isOverlayed && slideOffset > 0.2f) { //안겹치게 설정된 상태에서 panel 이 열리는 중 (20%만 열리면 바로 모퉁이 감추기!)
                     //Log.d(TAG, "onPanelSlide: Hiding 모퉁이! yo! ")
-                    slidingUpPanelLayout.isOverlayed =
-                        true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
+                    slidingUpPanelLayout.isOverlayed = true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
                 }
 
             }
 
             @SuppressLint("ClickableViewAccessibility") // 아래 constLayout_entire.setxx... 이거 장애인 warning 없애기
-            override fun onPanelStateChanged(
-                panel: View?,
-                previousState: SlidingUpPanelLayout.PanelState?,
-                newState: SlidingUpPanelLayout.PanelState?
-            ) {
-
+            override fun onPanelStateChanged(panel: View?,previousState: SlidingUpPanelLayout.PanelState?,newState: SlidingUpPanelLayout.PanelState?) {
                 when (newState) {
                     SlidingUpPanelLayout.PanelState.EXPANDED -> {
-                        //Log.d(TAG, "onPanelStateChanged: Sliding Panel Expanded")
+                        Log.d(TAG, "onPanelStateChanged: Sliding Panel Expanded")
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)// ↓ arrow 전환 visibility }
 
                         // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
@@ -850,10 +830,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                     }
                     SlidingUpPanelLayout.PanelState.COLLAPSED -> {
-                        //Log.d(TAG, "onPanelStateChanged: Sliding Panel Collapsed")
+                        Log.d(TAG, "onPanelStateChanged: Sliding Panel Collapsed")
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
-                        slidingUpPanelLayout.isOverlayed =
-                            false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
+                        slidingUpPanelLayout.isOverlayed = false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
                     }
                 }
             }

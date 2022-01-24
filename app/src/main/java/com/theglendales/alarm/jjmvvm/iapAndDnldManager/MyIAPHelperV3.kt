@@ -319,16 +319,7 @@ class MyIAPHelperV3(val context: Context ) {
                 Log.d(TAG, "j_checkVerification: 1-A) Signature 문제 발생")
                 throw Exception("Verify Valid Signature Error")
             }
-/*            //1-B) 1-A) 문제 없으면 구입 인정(acknowledge) -- 이거 구입 후 72시간 내로 안되면 refund 처리됨. // todo: Connection 문제 등의 이슈 생겼을 때 대응 (앱 재시작시?)
-            if(!purchaseResult.isAcknowledged)
-            {
 
-            }
-            // 여기서 else 는. 인도놈 코딩때처럼 '기존 구입된 물품에 대해 체크 했을때. 이미 purchaseResult.isAcknowledged =true 일때 들어 오는것으로. 위의 purchaseBool 값 변경 반영 정도만 해주면 된다.
-            // 현재는 여기서 따로 확인을 해주지 않아서 일단 없애놓은 상태. 추후 refund 등 확인 위해 여기로 들어와야할듯..
-//            else {
-//                Log.d(TAG, "j_verifyPurchaseResult: else called. ")
-//            }*/
         } else {
             throw Exception("if문 통과못했음. Verify Valid Signature Error")
         }

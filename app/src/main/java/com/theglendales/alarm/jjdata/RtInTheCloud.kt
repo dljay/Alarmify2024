@@ -13,7 +13,7 @@ data class RtInTheCloud(val title: String="", val tags: String="", val descripti
         return "ringtoneClass: id =$id, title='$title', itemPrice=$itemPrice, purchaseBool=$purchaseBool, iapName= $iapName, bdgStrArray=$bdgStrArray, tags ='$tags', description='$description', \nimage='$imageURL', mp3URL = $mp3URL)"
     }
 //DATA CLASS 이기 때문에 아래 fun equals.. fun hashCode() 는 필요 없다고 하는데. 일단은 넣어놓음.
-
+//equals & hashCode() 등 관련: https://thdev.tech/kotlin/2020/09/15/kotlin_effective_02/
     override fun equals(other: Any?): Boolean { //Here we determine "what it means to have their contents(fields) the 'same' "
         //We'll return false if any of the below conditions don't match
         Log.d(TAG, "equals: called.")

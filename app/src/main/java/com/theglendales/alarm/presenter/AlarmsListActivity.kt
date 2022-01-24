@@ -55,7 +55,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15T [구매 하자마자 purchasedIcon (큐빅박스) 안 바뀌는 문제 - 해결했음. .map{it.copy()} 로 새로운 리스트 생성.]
+//v3.07.15U [Iap_V2 삭제 등 파일 정리전]
 // ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
 
 // issues:

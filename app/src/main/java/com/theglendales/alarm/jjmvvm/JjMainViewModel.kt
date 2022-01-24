@@ -233,8 +233,8 @@ class JjMainViewModel : ViewModel() {
                         neverPurchasedList.forEach { rtInTheCloud ->
                             myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
                         }
-                    }// end of dispatcher.IO
-                }
+                    }
+                }// end of Dispatcher.IO
                 //todo: run download
             }
         }// end of invokeOnCompletion.

@@ -55,7 +55,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.16A [Iap_V2 삭제 등 파일 정리후]
+//v3.07.16A [Iap_V2 삭제 등 파일 정리후-MyMediaPlayerV2 만들기 전.]
 // ListFrag<->SecondFrag
 // a) SlidingPanel 상태 회복 및 UI Text 보여주기(O)
 // b) Play/Pause 클릭 눌렀을때 문제..

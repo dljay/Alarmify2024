@@ -31,8 +31,6 @@ class MyMediaPlayer(val receivedContext: Context, val mpViewModel: JjMpViewModel
     //Current Status 모니터링
         var currentPlayStatus: StatusMp = StatusMp.IDLE
     // 다른 fragment 갔다 왔을 떄 대비해서 currentSongPosition(INT), clickedTrackID(INT) 등이 필요함.
-
-
     }
 //A) ExoPlayer
     //1-a) Exo Player Related

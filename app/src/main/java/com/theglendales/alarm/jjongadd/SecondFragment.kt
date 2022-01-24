@@ -186,7 +186,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //Media Player ViewMODEL Observe
             //2-B-가) MP: MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
             jjMpViewModel.mpStatus.observe(viewLifecycleOwner, { StatusEnum ->
-                Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
+                Log.d(TAG, "MpViewModel-mpStatus) 옵저버! Current Music Play Status: $StatusEnum")
                 // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
                 when(StatusEnum) {
                     StatusMp.PLAY -> {showMiniPlayerPauseBtn()} // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
@@ -202,7 +202,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             //2-B-나) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
             jjMpViewModel.songDuration.observe(viewLifecycleOwner, { dur ->
-                Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
+                Log.d(TAG, "MpViewModel-songDuration duration received = ${dur.toInt()}")
                 seekBar.max = dur.toInt()
                 // c) **GlbVar 저장용 **
                 //GlbVars.seekBarMax = dur.toInt()
@@ -338,8 +338,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
         })*/
 
-
-
     //  < -- LIVEDATA
         rcView.adapter = rcvAdapterInstance
         rcView.setHasFixedSize(true)
@@ -400,8 +398,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "onPause: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
         //collapseSlidingPanel()
         //1) 현재 음악이 재생중이든 아니든 (재생중이 아니었으면 어차피 pauseMusic() 은 의미가 없음)
-            mpClassInstance.pauseMusic() // a)일단 PAUSE 때리고
-            mpClassInstance.removeHandler() // b)handler 없애기
+        mpClassInstance.pauseMusic() // a)일단 PAUSE 때리고
+        mpClassInstance.removeHandler() // b)handler 없애기
         Log.d(TAG, "onPause: GlbVars 정보: CurrentTrId=${GlbVars.clickedTrId}")
 
     }
@@ -409,8 +407,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         super.onDestroy()
 
         Log.d(TAG, "onDestroy: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}") //DESTROYED 로 뜬다.
-        collapseSlidingPanel()
-        mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
+
+        //mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
     }
 // ===================================== My Functions ==== >
 

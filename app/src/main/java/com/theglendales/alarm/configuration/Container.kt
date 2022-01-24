@@ -19,6 +19,7 @@ import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MultiDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.SingleDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayerV2
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
@@ -147,6 +148,7 @@ fun startKoin(context: Context): Koin {
         single<ToastMessenger> {ToastMessenger(context = context)}
         single<SingleDownloaderV3> { SingleDownloaderV3(context = context) }
         single<MultiDownloaderV3> {MultiDownloaderV3(context = context)}
+        single<MyMediaPlayerV2> {MyMediaPlayerV2(context = context)}
         // 내가 추가 <--
 
         factory(named("volumePreferenceDemo")) {

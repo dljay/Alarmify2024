@@ -12,6 +12,8 @@ import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayerV2
+import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.*
@@ -29,12 +31,13 @@ class JjMainViewModel : ViewModel() {
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
     private val mySharedPrefManager: MySharedPrefManager by globalInject() //SharedPref
     private val myDiskSearcher: DiskSearcher by globalInject() // DiskSearcher (PurchaseBool=false 인데 디스크에 있으면 삭제용도)
+// MediaPlayer
+    private val mpV2: MyMediaPlayerV2 by globalInject()
 //IAP & DNLD variables
     private val iapV3: MyIAPHelperV3 by globalInject()
     private val singleDownloaderV3: SingleDownloaderV3 by globalInject()
     private val multiDownloaderV3: MultiDownloaderV3 by globalInject()
 //FireBase variables
-
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
     private val _rtInTheCloudList = MutableLiveData<List<RtInTheCloud>>() // Private& Mutable LiveData
     val rtInTheCloudList: LiveData<List<RtInTheCloud>> = _rtInTheCloudList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
@@ -285,12 +288,16 @@ class JjMainViewModel : ViewModel() {
         val dnldInfoObj: LiveData<DNLDInfoContainer> = singleDownloaderV3.getMyDnldLiveData()
         return dnldInfoObj
     }
-
 //    fun testDiffutil() { // 클릭한 놈의 purchaseBool=true 로 바꿔서 이게 바로 화면에 반영되는지 확인 (구매시 바로 icon 바뀌는 기능 확인 위해)
 //        val modifiedList = iapV3.modifiyListAndGetList()
 //        _rtInTheCloudList.value = modifiedList // SecondFrag 에서 RcV 화면 갱신!
 //    }
 
+
+//*******************Media Player LiveData Observe 관련
+    fun getMpStatusLiveData(): LiveData<StatusMp> = mpV2.mpStatus
+    fun getSongDurationLiveData(): LiveData<Long> = mpV2.songDuration
+    fun getCurrentPosLiveData(): LiveData<Long> = mpV2.currentPosition
 
 
 //***********************

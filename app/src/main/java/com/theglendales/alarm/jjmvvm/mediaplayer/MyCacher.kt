@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import java.io.File
 
 private const val TAG="MyCacher"
-class MyCacher(private val receivedContext: Context, private val cacheDir: File, private val mpInstanceReceived: MyMediaPlayer ) {
+class MyCacher(private val receivedContext: Context, private val cacheDir: File, private val mpInstanceReceived: MyMediaPlayerV2 ) {
 
     companion object {
         var simpleCache: SimpleCache? = null
@@ -19,6 +19,7 @@ class MyCacher(private val receivedContext: Context, private val cacheDir: File,
 
     fun initCacheVariables() { //MainActivity 에서 onCreate 에서 바로 부름.
         Log.d(TAG, "initCacheVariables: starts.. ")
+
 
         if (leastRecentlyUsedCacheEvictor == null) {
             leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)

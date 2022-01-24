@@ -25,6 +25,7 @@ import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayerV2
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.model.mySharedPrefManager
 //import com.theglendales.alarm.jjiap.MyIAPHelper_v1
@@ -43,7 +44,7 @@ class RcViewAdapter(
     private var rtPlusIapInfoList: List<RtInTheCloud>,
     private val receivedActivity: FragmentActivity,
     private val jjMainVModel: JjMainViewModel,
-    private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
+    private val mediaPlayer: MyMediaPlayerV2) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
 
 
     companion object {var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()}

@@ -181,7 +181,7 @@ class RtPickerActivity : AppCompatActivity() {
                 showOrHideBadges(badgeStrList)
 
             })
-        //(나) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & MyMediaPlayer 그대로 사용 예정.
+        //(나) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & MyMediaPlayer 그대로 사용 예정. [** 현재 SecondFrag 에서는 MpVModel X MainVModel 로 통합되었음**]
         // (음악 재생 상태에 따른 플레이어 UI 업데이트) (RT 선택시 음악 재생은 RtPickerAdapter 에서 바로함.)
             //A) 생성
             val jjMpViewModel = ViewModelProvider(this).get(JjMpViewModel::class.java)

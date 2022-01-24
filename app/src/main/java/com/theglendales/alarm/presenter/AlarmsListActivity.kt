@@ -21,6 +21,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.NotificationSettings
 import com.theglendales.alarm.R
@@ -40,6 +41,8 @@ import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
+import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayerV2
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
 
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
@@ -51,14 +54,17 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.16A [Iap_V2 삭제 등 파일 정리후-MyMediaPlayerV2 만들기 전.]
+//v3.07.16b [1)exoUrl- ListFrag<->SecondFrag. 2)exoLocal- RtPicker 용. 만들기 전.]
+// MyMediaPlayer_V2- Dependency Injection 으로 Migrate 중. (RtPicker 까지 확인 필요)
 // ListFrag<->SecondFrag
 // a) SlidingPanel 상태 회복 및 UI Text 보여주기(O)
-// b) Play/Pause 클릭 눌렀을때 문제..
+// b)  Play/Pause 클릭 눌렀을때 문제..
 
 // issues:
 //1) ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
@@ -99,6 +105,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private val myDiskSearcher: DiskSearcher by globalInject()
     private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
     private val myPermHandler = MyPermissionHandler(this)
+    private val mediaPlayer_v2: MyMediaPlayerV2 by globalInject()
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -122,6 +129,7 @@ class AlarmsListActivity : AppCompatActivity() {
         private fun createStore(edited: EditedAlarm, alarms: IAlarmsManager): UiStore
         {
             Log.d(TAG, "createStore: jj- called")
+
 
             class UiStoreIR : UiStore {
                 var onBackPressed = PublishSubject.create<String>()
@@ -219,7 +227,6 @@ class AlarmsListActivity : AppCompatActivity() {
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
 
-
         when {
             savedInstanceState != null && savedInstanceState.getInt("version", BuildConfig.VERSION_CODE) == BuildConfig.VERSION_CODE -> {
                 val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
@@ -312,6 +319,13 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
     override fun onResume() {
         Log.d(TAG, "onResume: jj-called")
         super.onResume()
+    // MyCacher Init() -> MediaPlayer(V2) Init [BackgroundThread] --- 원래 SecondFrag 에 있던것을 이쪽으로 옮겨옴 (ListFrag <-> SecondFrag 왔다리갔다리 무리없게 사용 위해.)
+        lifecycleScope.launch {
+            Log.d(TAG, "onResume: lifecycle.currentState= ${lifecycle.currentState}, Thread=${Thread.currentThread().name}")
+            val myCacherInstance = MyCacher(applicationContext, applicationContext.cacheDir, mediaPlayer_v2)
+            myCacherInstance.initCacheVariables() // -> MediaPlayer(V2) Init
+        }
+
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         NotificationSettings().checkSettings(this)
 
@@ -327,7 +341,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
 
     }
 
-    override fun onStop() {
+    override fun onStop() { //RtPickerActivity 갈 때 onStop() 불린다.
         Log.d(TAG, "onStop: jj-called")
     //SharedPref 에 저장되어 있는 현재 second Frag 의 재생정보를 삭제!
         //mySharedPrefManager.calledFromActivity()
@@ -343,6 +357,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
         logger.debug { "$this" }
         super.onDestroy()
         this.mActionBarHandler.onDestroy()
+        //todo: relaseExoPlayer() ... -> mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

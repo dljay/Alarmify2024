@@ -55,7 +55,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.15U [Iap_V2 삭제 등 파일 정리전]
+//v3.07.16A [Iap_V2 삭제 등 파일 정리후]
 // ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
 
 // issues:

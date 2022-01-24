@@ -71,10 +71,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
     //IAP
-    lateinit var iapInstanceV2: MyIAPHelperV2
-    private val iapInstanceV3: MyIAPHelperV3 by globalInject()
+
     //Download 관련
-    lateinit var myDownloaderV2: MyDownloaderV2
     lateinit var btmSht_SingleDNLDV: BtmShtSingleDNLDV2
     //Network Checker
     lateinit var myNetworkCheckerInstance: MyNetWorkChecker
@@ -145,8 +143,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     var currentClickedTrId = -1
 
     //Firebase 관련
-    private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
-    lateinit var jjFbVModel: JjFirebaseViewModel
     var fullRtClassList: List<RtInTheCloud> = ArrayList()
 
     // Basic overridden functions -- >
@@ -190,10 +186,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjMainVModel = ViewModelProvider(requireActivity()).get(JjMainViewModel::class.java)
             //1-B) jjMpViewModel 생성
             val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
-            //1-C) jjMyDownloaderViewModel 생성
-            val jjDNLDViewModel = ViewModelProvider(requireActivity()).get(JjDNLDViewModel::class.java)
-            //1-D) jjFirebaseVModel Init
-            jjFbVModel = ViewModelProvider(requireActivity()).get(JjFirebaseViewModel::class.java)
 
         //2) LiveData Observe
             //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달. [!! 기존 클릭해놓은 트랙이 있으면 ListFrag 갔다왔을때 자동으로 그전 track 값을 (fb 로딩전에) 호출하는 문제있음!!] -> isEverythingReady 로 해결함.
@@ -246,8 +238,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjMainVModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬 //todo: okay to pass VModel to Adapter?
-            myDownloaderV2 = activity?.let {MyDownloaderV2(it,jjDNLDViewModel)}!!
-            iapInstanceV2 = MyIAPHelperV2(requireActivity(), rcvAdapterInstance, myDownloaderV2)
             myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!
 
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
@@ -638,76 +628,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
 
         }
-    }
-//MediaPlayerViewModel 을 Observe
-
-    //Firebase ViewModel 을 Observe
-    private fun observeAndLoadFireBase() {
-        // 현재도 lottie 는 나오는 상황 (setUpLateIniUis() 에서 벌써 loading 실행해놨음)
-        //1. 인터넷 가능한지 체크
-        //인터넷되는지 체크
-      /*  val isInternetAvailable: Boolean = myNetworkCheckerInstance.isNetWorkAvailable()
-        if (!isInternetAvailable) { // 인터넷 사용 불가!
-            Log.d(TAG, "loadFromFireBase: isInternetAvailable= $isInternetAvailable")
-            lottieAnimController("error")
-            return // 더이상 firebase 로딩이고 나발이고 진행 안함!!
-        }*/
-
-        //2. If we have internet connectivity, then call FireStore!
-
-        //Log.d(TAG, "onViewCreated: jj LIVEDATA- (Before Loading) jjFirebaseVModel.liveRtList: ${jjFirebaseVModel.fullRtClassList}")
-        jjFbVModel.getRtLiveDataObserver().observe(requireActivity(), Observer {
-            //Log.d(TAG, "onViewCreated: jj LIVEDATA- (After Loading) jjFirebaseVModel.liveRtList: ${jjFirebaseVModel.fullRtClassList}")
-            it.addOnCompleteListener {
-                if (it.isSuccessful) { // Task<QuerySnapshot> is successful 일 때
-            /*        Log.d(TAG, "onViewCreated: <<<<<<<<<loadPostData: successful")
-
-                    // SwipeRefresh 돌고 있었으면.. 멈춰 (aka 빙글빙글 animation 멈춰..)
-                    if (swipeRefreshLayout.isRefreshing) {
-                        Log.d(TAG, "loadPostData: swipeRefresh.isRefreshing = true")
-                        swipeRefreshLayout.isRefreshing = false
-                    }
-                    // 우선 lottie Loading animation-stop!!
-                    lottieAnimController("stop") //모든게 로딩 완료되었으니 애니메이션 stop!
-
-                    fullRtClassList = it.result!!.toObjects(RtInTheCloud::class.java)
-                    //Log.d(TAG, "observeAndLoadFireBase: fullRtClassList.hashCode() = ${fullRtClassList.hashCode()}")
-                // IAP
-                    iapInstanceV2.refreshItemIdIapNameTitle(fullRtClassList) // 여기서 Price 정보 MAP 완성후 -> ** rcV 업데이트!(fullRtClassList 전달) **
-                // Update MediaPlayer.kt 의 URL
-                    mpClassInstance.createMp3UrlMap(fullRtClassList)
-                // Update RcV's RT MAP
-                    rcvAdapterInstance.updateRingToneMap(fullRtClassList) //updateRcV 와는 별개로 추후 ListFrag 갔다왔을 때 UI 업뎃을 위해 사용.
-                    //rcvAdapterInstance.refreshRecyclerView(fullRtClassList)*/
-
-                // *******
-                // 아무 트랙도 클릭 안한 상태
-                    if(GlbVars.clickedTrId == -1 || currentClickedTrId == -1) {
-                        isFireBaseFetchDone = true // 이제는 rcV 를 클릭하면 그에 대해 대응할 준비가 되어있음.
-                    }
-                // 다른 frag 갔다가 돌아왔을 때 (or 새로고침) 했을 때- 다음의 reConstructXX() 가 다 완료되면 isEverythingReady = true 가 된다.
-                    else if (GlbVars.clickedTrId > 0|| currentClickedTrId >0) { // 이중장치로 currentClickedTrId 추가함. 꼭 필요는 없긴 해..사실..
-                        Log.d(TAG, "observeAndLoadFireBase: GlbVars.clickedTrId= ${GlbVars.clickedTrId}, currentClickedTrId=$currentClickedTrId")
-                        // 1)만약 기존에 선택해놓은 row 가 있으면 그쪽으로 이동.
-                        mySmoothScroll()
-                        // 2) Highlight the Track -> 이건 rcView> onBindView 에서 해줌.
-                        val prevSelectedVHolder = RcViewAdapter.viewHolderMap[GlbVars.clickedTrId]
-                        // 3) Fill in the previous selected track info to MINIPlayer!!!
-                        reConstructSLPanelTextOnReturn(prevSelectedVHolder, GlbVars.clickedTrId)
-                         //4) Update RcV UI! (VuMeter 등)
-                        reConstructTrUisOnReturn(GlbVars.clickedTrId)
-                    }
-                }/* else { // 에러났을 때
-                    lottieAnimController("error")
-                    Toast.makeText(
-                        this.context,
-                        "Error Loading Data from Firebase. Error: ${it.exception.toString()}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }*/
-            }
-
-        })
     }
 
     private fun mySmoothScroll() {

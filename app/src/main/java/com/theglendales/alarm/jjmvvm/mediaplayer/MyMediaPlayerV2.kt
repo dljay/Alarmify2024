@@ -9,18 +9,26 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.*
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
+import java.io.File
 import java.io.IOException
 import java.lang.Exception
 import java.util.HashMap
+
+
+/**
+ * Koin by globalInject() 로 되어있으나 최초 등장하는 SecondFrag 에서 init{} block 이 실행된다. -> 이후 AlarmApplication 으로 생명주기 (사실상 앱 종료시까지 유지된다.)
+ */
 
 private const val TAG="MyMediaPlayerV2"
 enum class StatusMp { IDLE, BUFFERING, READY, PLAY, PAUSED, ERROR} // BUFFERING: activateLC(),
@@ -63,8 +71,40 @@ class MyMediaPlayerV2(val context: Context) : Player.Listener {
 
     //D) Util
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
-////E) SharedPreference 저장 관련 (Koin  으로 대체!) -> 알람 fragment 갔다 왔을 때-> prepareMusicPlay() 에서 mySharedPref 를 통해 Pause 상태였던것을 확인함.
-//    val mySharedPrefManager: MySharedPrefManager by globalInject()
+
+
+    //<0> 기존 MyCacher 에 있던 놈들 -> Exo 와 통합! ----------->
+    private var simpleCache: SimpleCache? = null
+    private var leastRecentlyUsedCacheEvictor: LeastRecentlyUsedCacheEvictor? = null
+    private var exoDatabaseProvider: ExoDatabaseProvider? = null
+    private var exoPlayerCacheSize: Long = 90 * 1024 * 1024 // 94.3MB 갤S20 에서 사용했을때 램이 100~104 정도로 뜸.
+
+    init {
+        initCacheVariables() // -> initExoPlayer() 로 연결
+    }
+
+    fun initCacheVariables() { //MainActivity 에서 onCreate 에서 바로 부름.
+        Log.d(TAG, "initCacheVariables: starts.. ")
+
+
+        if (leastRecentlyUsedCacheEvictor == null) {
+            leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
+            Log.d(TAG, "initCacheVariables: inside leastRecentlyUsed....")
+        }
+
+        if (exoDatabaseProvider == null) {
+            exoDatabaseProvider = ExoDatabaseProvider(context)
+            Log.d(TAG, "initCacheVariables: inside exoDatabaseProvider ... ")
+        }
+
+        if (simpleCache == null) {
+            simpleCache = SimpleCache(File(context.cacheDir,"exoCache"), leastRecentlyUsedCacheEvictor!!, exoDatabaseProvider!!)
+            Log.d(TAG, "initCacheVariables: inside simpleCache..")
+        }
+        // 이게 다 끝나면 더 이상 null 이 없을테니 MyMediaPlayer Instance 로 넘김!
+        initExoPlayer(true)
+        Log.d(TAG, "initCacheVariables: Ends.. ")
+    }
 
     // <1>기존 코드들 ExoPlayer Related ---------->
     private fun loadControlSetUp(): LoadControl {
@@ -101,7 +141,7 @@ class MyMediaPlayerV2(val context: Context) : Player.Listener {
             Log.d(TAG, "initExoPlayer: [Caching]starts......")
             val lcControl = loadControlSetUp()
 
-            simpleCacheReceived = MyCacher.simpleCache!! // todo: this is dangerous..근데 simpleCacheReceived 를 non-nullable 로 할수는 없구먼 현재는.
+            simpleCacheReceived = simpleCache!! // todo: this is dangerous..근데 simpleCacheReceived 를 non-nullable 로 할수는 없구먼 현재는.
             httpDataSourceFactory = DefaultHttpDataSource.Factory()
                 .setAllowCrossProtocolRedirects(true)
 

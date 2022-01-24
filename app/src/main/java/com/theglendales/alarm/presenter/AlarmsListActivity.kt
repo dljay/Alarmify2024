@@ -319,12 +319,12 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
     override fun onResume() {
         Log.d(TAG, "onResume: jj-called")
         super.onResume()
-    // MyCacher Init() -> MediaPlayer(V2) Init [BackgroundThread] --- 원래 SecondFrag 에 있던것을 이쪽으로 옮겨옴 (ListFrag <-> SecondFrag 왔다리갔다리 무리없게 사용 위해.)
+/*    // MyCacher Init() -> MediaPlayer(V2) Init [BackgroundThread] --- 원래 SecondFrag 에 있던것을 이쪽으로 옮겨옴 (ListFrag <-> SecondFrag 왔다리갔다리 무리없게 사용 위해.)
         lifecycleScope.launch {
             Log.d(TAG, "onResume: lifecycle.currentState= ${lifecycle.currentState}, Thread=${Thread.currentThread().name}")
             val myCacherInstance = MyCacher(applicationContext, applicationContext.cacheDir, mediaPlayer_v2)
             myCacherInstance.initCacheVariables() // -> MediaPlayer(V2) Init
-        }
+        }*/
 
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         NotificationSettings().checkSettings(this)
@@ -357,7 +357,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
         logger.debug { "$this" }
         super.onDestroy()
         this.mActionBarHandler.onDestroy()
-        //todo: relaseExoPlayer() ... -> mpClassInstance.releaseExoPlayer() //? 여기 아니면 AlarmsListActivity 에다가?
+        //todo: relaseExoPlayer() ... ->
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

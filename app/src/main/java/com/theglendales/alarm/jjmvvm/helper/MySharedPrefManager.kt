@@ -21,27 +21,12 @@ private const val KEY_1 = "RTOP_KEY"
 private const val RT_IN_THE_CLOUD_LIST ="RtInTheCloudList" //현재 .rta 는 Uri 로 ..  .art 는 String path 로 저장
 private const val KEY_2 = "RTIC_KEY"
 
-/*//<3> ListFrag ROW 에 사용될 ART PATH 관련
-private const val ART_PATH_FOR_LIST_FRAG = "ArtPathForListFrag"
-private const val KEY_2 = "Art_Key"*/
-
-//<3> InAppPurchase 관련
-private const val IAP_PREF_BOOL = "MyIAP" //MyIAP.xml
-private const val IAP_PREF_URL = "MyIAPUrl" //MyIAPUrl.xml
-private const val IAP_PREF_PRICE = "MyIAPPrice" //MyIAPUrl.xml
-
 
 class MySharedPrefManager(val context: Context) {
 
     private val prefRtInTheCloud: SharedPreferences = context.getSharedPreferences(RT_IN_THE_CLOUD_LIST,Context.MODE_PRIVATE) // RtInTheCloudList.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
     private val prefRtOnThePhone: SharedPreferences = context.getSharedPreferences(RT_ON_THE_PHONE_LIST,Context.MODE_PRIVATE) // RtOneThePhoneList.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
-    
-    //private val prefForListFrag: SharedPreferences = context.getSharedPreferences(ART_PATH_FOR_LIST_FRAG,Context.MODE_PRIVATE) // ArtPathForListFrag.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
-    //    val prefs: SharedPreferences = context.getSharedPreferences(TR_PLAY_INF_SHARED_PREF, Context.MODE_PRIVATE) //TrackPlayInfo = xml 파일 이름!!
 
-    private val prefIapPurchaseBool: SharedPreferences = context.getSharedPreferences(IAP_PREF_BOOL, Context.MODE_PRIVATE) // MyIAP.xml
-    private val prefIapUrl: SharedPreferences = context.getSharedPreferences(IAP_PREF_URL, Context.MODE_PRIVATE) // MyIAPUrl.xml
-    private val prefIapPrice: SharedPreferences = context.getSharedPreferences(IAP_PREF_PRICE, Context.MODE_PRIVATE) // MyIAPPrice.xml
 
     //
     private val gson: Gson = Gson()
@@ -97,26 +82,26 @@ class MySharedPrefManager(val context: Context) {
 
 
 
-// IAP 관련(IAPV2 용도. 다 삭제해버려.)
-    // 1) 구매 여부 Bool - IapName / ex) (p1, true), (p2,false) ...
-    fun getPurchaseBoolPerIapName(iapName: String) = prefIapPurchaseBool.getBoolean(iapName, false)
 
-    fun savePurchaseBoolPerIapName(iapName: String, value: Boolean) {
-        Log.d(TAG, "savePurchaseBoolPerIapName: called iapName=$iapName, bool=$value")
-        prefIapPurchaseBool.edit().putBoolean(iapName, value).apply()
-    }
-    // 2) 구매하는 RT 의 URL 저장&Loading (추후 ListFrag 에서 파일 복귀시 사용)
-    fun saveUrlPerIap(iapName: String, url: String) {
-        prefIapUrl.edit().putString(iapName, url).apply() // todo: Firebase 에서 추후 Security 강화에서 아무나 접근 못하게..
-    }
-    fun getUrlByIap(iapName: String) = prefIapUrl.getString(iapName, "No Url Found")
-    // 3) 물품의 가격 저장
-    fun saveItemPricePerIap(iapName: String, price: String) {
-        prefIapPrice.edit().putString(iapName, price).apply()
-    }
-    fun getItemPricePerIap(iapName: String) = prefIapPrice.getString(iapName,"No Price Found")
 
 //Unused
+
+    ///*//<3> ListFrag ROW 에 사용될 ART PATH 관련
+//private const val ART_PATH_FOR_LIST_FRAG = "ArtPathForListFrag"
+//private const val KEY_2 = "Art_Key"*/
+//
+////<3> InAppPurchase 관련
+//private const val IAP_PREF_BOOL = "MyIAP" //MyIAP.xml
+//private const val IAP_PREF_URL = "MyIAPUrl" //MyIAPUrl.xml
+//private const val IAP_PREF_PRICE = "MyIAPPrice" //MyIAPUrl.xml
+
+//    //private val prefForListFrag: SharedPreferences = context.getSharedPreferences(ART_PATH_FOR_LIST_FRAG,Context.MODE_PRIVATE) // ArtPathForListFrag.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
+//    //    val prefs: SharedPreferences = context.getSharedPreferences(TR_PLAY_INF_SHARED_PREF, Context.MODE_PRIVATE) //TrackPlayInfo = xml 파일 이름!!
+//
+//    private val prefIapPurchaseBool: SharedPreferences = context.getSharedPreferences(IAP_PREF_BOOL, Context.MODE_PRIVATE) // MyIAP.xml
+//    private val prefIapUrl: SharedPreferences = context.getSharedPreferences(IAP_PREF_URL, Context.MODE_PRIVATE) // MyIAPUrl.xml
+//    private val prefIapPrice: SharedPreferences = context.getSharedPreferences(IAP_PREF_PRICE, Context.MODE_PRIVATE) // MyIAPPrice.xml
+
 //<2> List Fragment ROW 에서 보여질 ART PATH 용도: [Key,Value] = [AlarmId-Int, ArtPath-String].. AlarmDetailsFrag.kt 에서 알람 설정 후 [알람 id, artPath] 형태로 저장.
 /*    fun saveArtPathForAlarm(alarmId: Int, artPath: String?) {
         Log.d(TAG, "saveArtPathForAlarm: alarmId=$alarmId, artPath=$artPath")
@@ -169,4 +154,22 @@ class MySharedPrefManager(val context: Context) {
 //    fun calledFromActivity() {
 //        Log.d(TAG, "calledFromActivity: called from AlarmsListActivity.")
 //    }
+    // IAP 관련(IAPV2 용도. 다 삭제해버려.)
+//    // 1) 구매 여부 Bool - IapName / ex) (p1, true), (p2,false) ...
+//    fun getPurchaseBoolPerIapName(iapName: String) = prefIapPurchaseBool.getBoolean(iapName, false)
+//
+//    fun savePurchaseBoolPerIapName(iapName: String, value: Boolean) {
+//        Log.d(TAG, "savePurchaseBoolPerIapName: called iapName=$iapName, bool=$value")
+//        prefIapPurchaseBool.edit().putBoolean(iapName, value).apply()
+//    }
+//    // 2) 구매하는 RT 의 URL 저장&Loading (추후 ListFrag 에서 파일 복귀시 사용)
+//    fun saveUrlPerIap(iapName: String, url: String) {
+//        prefIapUrl.edit().putString(iapName, url).apply() //
+//    }
+//    fun getUrlByIap(iapName: String) = prefIapUrl.getString(iapName, "No Url Found")
+//    // 3) 물품의 가격 저장
+//    fun saveItemPricePerIap(iapName: String, price: String) {
+//        prefIapPrice.edit().putString(iapName, price).apply()
+//    }
+//    fun getItemPricePerIap(iapName: String) = prefIapPrice.getString(iapName,"No Price Found")
 }

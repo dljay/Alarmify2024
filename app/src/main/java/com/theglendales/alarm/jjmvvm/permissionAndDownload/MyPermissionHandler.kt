@@ -7,7 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.DownloadableItem
+
 
 
 /**
@@ -22,7 +22,7 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
     private val MY_READ_PERMISSION_CODE = 812 // Download(Write) 후 파일 읽을때. WRITE PERMISSION 하면 자동으로 Permission Granted!
     private val MY_WRITE_PERMISSION_CODE = 2480 // Download 용
     private val myBtmShtObjInst = BtmSheetPermission // OBJECT 로 만들었음! BottomSheet 하나만 뜨게하기 위해!
-    private var needToDownloadList = mutableListOf<DownloadableItem>()
+    //private var needToDownloadList = mutableListOf<DownloadableItem>()
 
     //1-a> Permission to Write (앱 최초 설치시 등장)
     fun permissionToWriteOnInitialLaunch() {

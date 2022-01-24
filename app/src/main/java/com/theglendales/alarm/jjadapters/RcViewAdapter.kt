@@ -80,7 +80,7 @@ class RcViewAdapter(
 
 
         Log.d(TAG, "onBindViewHolder: holder TrId= ${holder.holderTrId}, currentTrIapName= $currentIapName")
-        Log.d(TAG, "onBindViewHolder: Purchased Stats=${mySharedPrefManager.getPurchaseBoolPerIapName(currentIapName)} ")
+        Log.d(TAG, "onBindViewHolder: Purchased Stats=${currentRt.purchaseBool}")
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " +
 //                "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +

@@ -30,10 +30,10 @@ import java.util.HashMap
  * Koin by globalInject() 로 되어있으나 최초 등장하는 SecondFrag 에서 init{} block 이 실행된다. -> 이후 AlarmApplication 으로 생명주기 (사실상 앱 종료시까지 유지된다.)
  */
 
-private const val TAG="MyMediaPlayerV2"
+private const val TAG="ExoForUrl"
 enum class StatusMp { IDLE, BUFFERING, READY, PLAY, PAUSED, ERROR} // BUFFERING: activateLC(),
 
-class MyMediaPlayerV2(val context: Context) : Player.Listener {
+class ExoForUrl(val context: Context) : Player.Listener {
     companion object {
         val mp3UrlMap: HashMap<Int, String> = HashMap()
         //Current Status 모니터링
@@ -101,7 +101,7 @@ class MyMediaPlayerV2(val context: Context) : Player.Listener {
             simpleCache = SimpleCache(File(context.cacheDir,"exoCache"), leastRecentlyUsedCacheEvictor!!, exoDatabaseProvider!!)
             Log.d(TAG, "initCacheVariables: inside simpleCache..")
         }
-        // 이게 다 끝나면 더 이상 null 이 없을테니 MyMediaPlayer Instance 로 넘김!
+        // 이게 다 끝나면 더 이상 null 이 없을테니 ExoForLocal Instance 로 넘김!
         initExoPlayer(true)
         Log.d(TAG, "initCacheVariables: Ends.. ")
     }
@@ -388,7 +388,7 @@ class MyMediaPlayerV2(val context: Context) : Player.Listener {
         currentPlayStatus = StatusMp.ERROR
         updateStatusMpLiveData(StatusMp.ERROR)}
 
-    // 가) StatusMP ENUM=> 아래는 MyMediaPlayer 에서 전달받음. 그 후 전달받은 Status 는 _mpStatus 로 옮겨지고 SecondFrag 의 jjMpViewModel 이 이것을 Observe 하고 있음
+    // 가) StatusMP ENUM=> 아래는 ExoForLocal 에서 전달받음. 그 후 전달받은 Status 는 _mpStatus 로 옮겨지고 SecondFrag 의 jjMpViewModel 이 이것을 Observe 하고 있음
     private fun updateStatusMpLiveData(statusReceived: StatusMp) {
         Log.d(TAG, "updateStatusMpLiveData: called")
         _mpStatus.value = statusReceived

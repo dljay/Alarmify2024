@@ -18,11 +18,11 @@ import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjadapters.RtPickerAdapter
-import com.theglendales.alarm.jjmvvm.JjMpViewModel
+
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
 import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
+import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForLocal
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
@@ -55,7 +55,8 @@ class RtPickerActivity : AppCompatActivity() {
     lateinit var layoutManager: LinearLayoutManager
 
     //Media Player
-    lateinit var mediaPlayer: MyMediaPlayer
+    //lateinit var exoForLocal: ExoForLocal
+    private val exoForLocal: ExoForLocal by globalInject()
     //SlidingUp Panel (AKA mini Player) UIs
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout // SlideUpPanel 전체
     lateinit var allBtmSlideLayout: RelativeLayout // SlideUpPanel 중 상단(돌출부) 전체
@@ -181,13 +182,14 @@ class RtPickerActivity : AppCompatActivity() {
                 showOrHideBadges(badgeStrList)
 
             })
-        //(나) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & MyMediaPlayer 그대로 사용 예정. [** 현재 SecondFrag 에서는 MpVModel X MainVModel 로 통합되었음**]
+        //(나) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & ExoForLocal 그대로 사용 예정. [** 현재 SecondFrag 에서는 MpVModel X MainVModel 로 통합되었음**]
         // (음악 재생 상태에 따른 플레이어 UI 업데이트) (RT 선택시 음악 재생은 RtPickerAdapter 에서 바로함.)
             //A) 생성
-            val jjMpViewModel = ViewModelProvider(this).get(JjMpViewModel::class.java)
+
+
             //B) Observe
                 //B-1) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
-                jjMpViewModel.mpStatus.observe(this, { StatusEnum ->
+        rtPickerVModel.getMpStatusLiveData().observe(this, { StatusEnum ->
                     Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
                     // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
                     when(StatusEnum) {
@@ -202,26 +204,24 @@ class RtPickerActivity : AppCompatActivity() {
                     //VHolderUiHandler.LcVmIvController(StatusEnum)
 
                 //B-2) Seekbar 관련
-                    //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
-                    jjMpViewModel.songDuration.observe(this, { dur ->
+                    //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
+        rtPickerVModel.getSongDurationLiveData().observe(this, { dur ->
                         Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
                         seekBar.max = dur.toInt()
 
                     })
-                    //2-D) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
-                    jjMpViewModel.currentPosition.observe(this, { playbackPos ->
+                    //2-D) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
+        rtPickerVModel.getCurrentPosLiveData().observe(this, { playbackPos ->
                         seekBar.progress = playbackPos.toInt() +200
                         Log.d(TAG, "onCreate: playbackPos=$playbackPos")
                     })
 
 
 
-    // 5) Media Player Init
-        mediaPlayer = MyMediaPlayer(this, jjMpViewModel)
-        mediaPlayer.initExoPlayer(false) // 우리는 Local RTAs 의 URI 를 받아서 재생할것이므로 Caching 사용 안함(=>False 전달)
-
+    // 5) Exo for Local Init
+        exoForLocal.initExoForLocalPlay()
     //6) RcVAdapter Init
-        rtPickerRcvAdapter = RtPickerAdapter(ArrayList(), this, rtPickerVModel, mediaPlayer)
+        rtPickerRcvAdapter = RtPickerAdapter(ArrayList(), this, rtPickerVModel, exoForLocal)
         rcView.adapter = rtPickerRcvAdapter
         rcView.setHasFixedSize(true)
 
@@ -356,15 +356,15 @@ private fun setUpSlidingPanel() {
     }
     // Pause 상태에서 ▶  클릭했을 때
     private fun onMiniPlayerPlayClicked()  {
-        if(MyMediaPlayer.currentPlayStatus == StatusMp.PAUSED) {
-            mediaPlayer.continueMusic()
+        if(ExoForLocal.currentPlayStatus == StatusMp.PAUSED) {
+            exoForLocal.continueMusic()
             showMiniPlayerPauseBtn()
         }
     }
     //  Play 상태에서 ⏸ 클릭 했을 때 -> 음악 Pause 해야함.
     private fun onMiniPlayerPauseClicked() {
-        if(MyMediaPlayer.currentPlayStatus == StatusMp.PLAY) {
-            mediaPlayer.pauseMusic()
+        if(ExoForLocal.currentPlayStatus == StatusMp.PLAY) {
+            exoForLocal.pauseMusic()
             showMiniPlayerPlayBtn()
         }
     }
@@ -374,9 +374,9 @@ private fun setUpSlidingPanel() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
             {
-                mediaPlayer.removeHandler() // 새로 추가함.
+                exoForLocal.removeHandler() // 새로 추가함.
                 var progressLong = progress.toLong()
-                if(fromUser) mediaPlayer.onSeekBarTouchedYo(progressLong)
+                if(fromUser) exoForLocal.onSeekBarTouchedYo(progressLong)
 
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -415,14 +415,14 @@ private fun setUpSlidingPanel() {
     override fun onPause() {
         super.onPause()
     //1) 현재 음악이 재생중이든 아니든 (재생중이 아니었으면 어차피 pauseMusic() 은 의미가 없음)
-        mediaPlayer.pauseMusic() // a)일단 PAUSE 때리고
-        mediaPlayer.removeHandler() // b)handler 없애기
+        exoForLocal.pauseMusic() // a)일단 PAUSE 때리고
+        exoForLocal.removeHandler() // b)handler 없애기
     // 최소한 여기서 재생중이던 음악 재생 pause, 아이콘 변경만?
     }
     override fun onDestroy() {
         super.onDestroy()
-        //todo: ExoPlayer 아예 없애주기! (release 말고 destroy? 그래야 MyCacher.kt 에서-> mediaPlayer.initExoPlayer(캐슁버전) -> Caching 준비하여 SecondFrag.kt 에서 사용)
-        mediaPlayer.removeHandler()
-        mediaPlayer.releaseExoPlayer()
+        //todo: ExoPlayer 아예 없애주기! (release 말고 destroy?  [일단 secondFrag 에서는 별도의 ExoPlayerForUrl 을 사용하기는 함..)
+        exoForLocal.removeHandler()
+        exoForLocal.releaseExoPlayer()
     }
 }

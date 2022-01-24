@@ -21,7 +21,6 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.NotificationSettings
 import com.theglendales.alarm.R
@@ -41,8 +40,7 @@ import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayerV2
+import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
 
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
@@ -54,17 +52,17 @@ import io.reactivex.functions.Consumer
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.16b [1)exoUrl- ListFrag<->SecondFrag. 2)exoLocal- RtPicker 용. 만들기 전.]
-// MyMediaPlayer_V2- Dependency Injection 으로 Migrate 중. (RtPicker 까지 확인 필요)
+//v3.07.16C [1)exoUrl- ListFrag<->SecondFrag. 2)exoLocal- RtPicker 용. 만들었음]
+// Exo-Url & Exo-Local 두가지로 만들어서 각각 SecondFrag 와 RtPicker 에서 사용중. // 둘다 koin injection
+// 재생 및 init 이슈 없는지, RtPicker 에서는 release 잘되는지 (메모리 등) 확인.
+
 // ListFrag<->SecondFrag
-// a) SlidingPanel 상태 회복 및 UI Text 보여주기(O)
-// b)  Play/Pause 클릭 눌렀을때 문제..
+// b)  Play/Pause 클릭 눌렀을때 문제(O) - 테스트 더 해볼것.
+// Scroll to Original Position.
 
 // issues:
 //1) ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
@@ -105,7 +103,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private val myDiskSearcher: DiskSearcher by globalInject()
     private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
     private val myPermHandler = MyPermissionHandler(this)
-    private val mediaPlayer_v2: MyMediaPlayerV2 by globalInject()
+    private val mediaPlayer_v2: ExoForUrl by globalInject()
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()

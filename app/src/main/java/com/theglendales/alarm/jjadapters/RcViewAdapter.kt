@@ -21,13 +21,11 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.JjMainViewModel
-import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayerV2
+import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForLocal
+import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
-import com.theglendales.alarm.model.mySharedPrefManager
 //import com.theglendales.alarm.jjiap.MyIAPHelper_v1
 import io.gresse.hugo.vumeterlibrary.VuMeterView
 
@@ -44,7 +42,7 @@ class RcViewAdapter(
     private var rtPlusIapInfoList: List<RtInTheCloud>,
     private val receivedActivity: FragmentActivity,
     private val jjMainVModel: JjMainViewModel,
-    private val mediaPlayer: MyMediaPlayerV2) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
+    private val mediaPlayer: ExoForUrl) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
 
 
     companion object {var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()}
@@ -161,10 +159,10 @@ class RcViewAdapter(
             }
 
         }
-    // 2) VuMeter and Loading Circle => todo:  MyMediaPlayer? vs VHolderUiHandler? 뭘 쓸지? VHodlerUiHanlder 가 현재 Koin 덕분에 SingleTon 이니까. 그쪽으로 전달???
+    // 2) VuMeter and Loading Circle => todo:  ExoForLocal? vs VHolderUiHandler? 뭘 쓸지? VHodlerUiHanlder 가 현재 Koin 덕분에 SingleTon 이니까. 그쪽으로 전달???
         private fun enableVM(holder: MyViewHolder) {
         // 여기에다 if(VHolderUiHandler.currentStatusMp == StatusMp.PLAYING) ..... {}
-            if(MyMediaPlayer.currentPlayStatus == StatusMp.PLAY) {
+            if(ExoForLocal.currentPlayStatus == StatusMp.PLAY) {
                 holder.iv_Thumbnail.alpha = 0.3f // 어둡게
                 holder.vuMeterView.visibility = VuMeterView.VISIBLE
             }

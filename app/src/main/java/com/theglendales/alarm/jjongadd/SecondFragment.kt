@@ -46,9 +46,7 @@ import com.theglendales.alarm.jjmvvm.*
 import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyCacher
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayerV2
+import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.launch
@@ -106,8 +104,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var lottieAnimationView: LottieAnimationView
 
     //Media Player & MiniPlayer Related
-    //lateinit var mpClassInstance_V1: MyMediaPlayer
-    private val mediaPlayer_v2: MyMediaPlayerV2 by globalInject()
+    //lateinit var mpClassInstance_V1: ExoForLocal
+    private val exoForUrlPlay: ExoForUrl by globalInject()
 
 
     //Sliding Panel Related
@@ -179,7 +177,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //1-A) jjMainViewModel 생성
             jjMainVModel = ViewModelProvider(requireActivity()).get(JjMainViewModel::class.java)
             //1-B) jjMpViewModel 생성
-            val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
+            //val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
 
         //2) LiveData Observe
             //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달. [!! 기존 클릭해놓은 트랙이 있으면 ListFrag 갔다왔을때 자동으로 그전 track 값을 (fb 로딩전에) 호출하는 문제있음!!] -> isEverythingReady 로 해결함.
@@ -198,14 +196,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 VHolderUiHandler.LcVmIvController(StatusEnum)
                 })
 
-            //2-B-나) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+            //2-B-나) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
         jjMainVModel.getSongDurationLiveData().observe(viewLifecycleOwner, { dur ->
                 Log.d(TAG, "MpViewModel-songDuration duration received = ${dur.toInt()}")
                 seekBar.max = dur.toInt()
                 // c) **GlbVar 저장용 **
                 //GlbVars.seekBarMax = dur.toInt()
             })
-            //2-B-다) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (MyMediaPlayer -> JjMpViewModel-> 여기로)
+            //2-B-다) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
         jjMainVModel.getCurrentPosLiveData().observe(viewLifecycleOwner, { playbackPos ->
                 //Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
                     seekBar.progress = playbackPos.toInt() +200
@@ -228,8 +226,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 }
             }
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
-            //mpClassInstance_V1 = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
-            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjMainVModel,mediaPlayer_v2)}!! // it = activity. 공갈리스트 넣어서 instance 만듬 //todo: okay to pass VModel to Adapter?
+            //mpClassInstance_V1 = activity?.let {ExoForLocal(it, jjMpViewModel)}!!
+            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjMainVModel,exoForUrlPlay)}!! // it = activity. 공갈리스트 넣어서 instance 만듬 //todo: okay to pass VModel to Adapter?
             myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!
 
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
@@ -237,7 +235,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
                 //Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
                 fullRtClassList = rtListPlusIAPInfo // 추후 Chip Sorting 때 사용
-                mediaPlayer_v2.createMp3UrlMap(rtListPlusIAPInfo)
+                exoForUrlPlay.createMp3UrlMap(rtListPlusIAPInfo)
 
                 rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
                 lottieAnimController("stop")
@@ -396,8 +394,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "onPause: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
         //collapseSlidingPanel()
         //1) 현재 음악이 재생중이든 아니든 (재생중이 아니었으면 어차피 pauseMusic() 은 의미가 없음)
-        mediaPlayer_v2.pauseMusic() // a)일단 PAUSE 때리고
-        mediaPlayer_v2.removeHandler() // b)handler 없애기
+        exoForUrlPlay.pauseMusic() // a)일단 PAUSE 때리고
+        exoForUrlPlay.removeHandler() // b)handler 없애기
         Log.d(TAG, "onPause: GlbVars 정보: CurrentTrId=${GlbVars.clickedTrId}")
 
     }
@@ -423,15 +421,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
         // Pause 상태에서 ▶  클릭했을 때
         private fun onMiniPlayerPlayClicked()  {
-            if(MyMediaPlayerV2.currentPlayStatus == StatusMp.PAUSED) { // replace as if(jjMainVModel.getMpStatusLiveData == ... )
-                mediaPlayer_v2.continueMusic()
+            if(ExoForUrl.currentPlayStatus == StatusMp.PAUSED) { // replace as if(jjMainVModel.getMpStatusLiveData == ... )
+                exoForUrlPlay.continueMusic()
                 showMiniPlayerPauseBtn()
                 }
             }
         //  Play 상태에서 ⏸ 클릭 했을 때 -> 음악 Pause 해야함.
         private fun onMiniPlayerPauseClicked() {
-            if(MyMediaPlayerV2.currentPlayStatus == StatusMp.PLAY) {
-                mediaPlayer_v2.pauseMusic()
+            if(ExoForUrl.currentPlayStatus == StatusMp.PLAY) {
+                exoForUrlPlay.pauseMusic()
                 showMiniPlayerPlayBtn()
                 }
             }
@@ -643,9 +641,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean)
             {
-                mediaPlayer_v2.removeHandler() // 새로 추가함.
+                exoForUrlPlay.removeHandler() // 새로 추가함.
                 var progressLong = progress.toLong()
-                if(fromUser) mediaPlayer_v2.onSeekBarTouchedYo(progressLong)
+                if(fromUser) exoForUrlPlay.onSeekBarTouchedYo(progressLong)
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -731,7 +729,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 // 1)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 UI 를 재구성하는 반면,
     private fun reConstructTrUisOnReturn(prevTrId: Int) {
-    mediaPlayer_v2.prepMusicPlayOnlineSrc(prevTrId, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
+    exoForUrlPlay.prepMusicPlayOnlineSrc(prevTrId, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
         //isFireBaseFetchDone = true
     }
 // 2)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 SlidingPanel UI 를 재구성.

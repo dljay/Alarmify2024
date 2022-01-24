@@ -18,7 +18,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjmvvm.JjRtPickerVModel
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
+import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForLocal
 import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 import com.theglendales.alarm.presenter.AlarmDetailsFragment
 
@@ -28,7 +28,7 @@ private const val TAG="RtPickerAdapter"
 class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
                       private val receivedActivity: Activity,
                       private val rtPickerVModel: JjRtPickerVModel,
-                      private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RtPickerAdapter.RtPickerVHolder>()
+                      private val exoForLocal: ExoForLocal) : RecyclerView.Adapter<RtPickerAdapter.RtPickerVHolder>()
 {
 
     var lastUserCheckedPos = -1 // RadioBtn 으로 선택한 RT 의 Pos 기록.
@@ -85,7 +85,7 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
 
             // <3> 음악 바로 재생 (여기서 재생 후 STATUS.ENUM 상태에 따라 LiveData 로 전달
                 val rtaFilePath = rtWithAlbumArtObj.audioFilePath
-                mediaPlayer.prepMusicPlayLocalSrc(rtaFilePath, true)
+                exoForLocal.prepMusicPlayLocalSrc(rtaFilePath, true)
 
 
         }

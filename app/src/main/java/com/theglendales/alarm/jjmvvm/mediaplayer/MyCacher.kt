@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import java.io.File
 
 private const val TAG="MyCacher"
-class MyCacher(private val receivedContext: Context, private val cacheDir: File, private val mpInstanceReceived: MyMediaPlayerV2 ) {
+class MyCacher(private val receivedContext: Context, private val cacheDir: File, private val mpInstanceReceived: ExoForUrl ) {
 
     companion object {
         var simpleCache: SimpleCache? = null
@@ -35,7 +35,7 @@ class MyCacher(private val receivedContext: Context, private val cacheDir: File,
             simpleCache = SimpleCache(File(cacheDir,"exoCache"), leastRecentlyUsedCacheEvictor!!, exoDatabaseProvider!!)
             Log.d(TAG, "initCacheVariables: inside simpleCache..")
         }
-        // 이게 다 끝나면 더 이상 null 이 없을테니 MyMediaPlayer Instance 로 넘김!
+        // 이게 다 끝나면 더 이상 null 이 없을테니 ExoForLocal Instance 로 넘김!
         mpInstanceReceived.initExoPlayer(true)
         Log.d(TAG, "initCacheVariables: Ends.. ")
 

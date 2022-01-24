@@ -12,7 +12,7 @@ import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
-import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayerV2
+import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
@@ -32,7 +32,7 @@ class JjMainViewModel : ViewModel() {
     private val mySharedPrefManager: MySharedPrefManager by globalInject() //SharedPref
     private val myDiskSearcher: DiskSearcher by globalInject() // DiskSearcher (PurchaseBool=false 인데 디스크에 있으면 삭제용도)
 // MediaPlayer
-    private val mpV2: MyMediaPlayerV2 by globalInject()
+    private val exoForUrl: ExoForUrl by globalInject()
 //IAP & DNLD variables
     private val iapV3: MyIAPHelperV3 by globalInject()
     private val singleDownloaderV3: SingleDownloaderV3 by globalInject()
@@ -295,9 +295,9 @@ class JjMainViewModel : ViewModel() {
 
 
 //*******************Media Player LiveData Observe 관련
-    fun getMpStatusLiveData(): LiveData<StatusMp> = mpV2.mpStatus
-    fun getSongDurationLiveData(): LiveData<Long> = mpV2.songDuration
-    fun getCurrentPosLiveData(): LiveData<Long> = mpV2.currentPosition
+    fun getMpStatusLiveData(): LiveData<StatusMp> = exoForUrl.mpStatus
+    fun getSongDurationLiveData(): LiveData<Long> = exoForUrl.songDuration
+    fun getCurrentPosLiveData(): LiveData<Long> = exoForUrl.currentPosition
 
 
 //***********************

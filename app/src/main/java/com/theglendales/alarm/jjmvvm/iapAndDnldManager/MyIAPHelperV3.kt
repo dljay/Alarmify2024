@@ -9,7 +9,6 @@ import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.CompletableDeferred
-import org.koin.core.definition.indexKey
 import java.io.File
 import java.io.IOException
 import kotlin.Exception
@@ -123,6 +122,7 @@ class MyIAPHelperV3(val context: Context ) {
                     continuation.resume(billingResult) // -> continuation 에서 이어서 진행 (원래 코루틴- JjMainVModel> iapParentJob 으로 복귀)
                 }
                 override fun onBillingServiceDisconnected() {
+                    Log.d(TAG, "onBillingServiceDisconnected: xxxxxxxxxxxxxxxxxxxx called!")
                     //continuation.resumeWithException(Exception("Error <C> Billing Service Disconnectoed")) :
                 // todo: 가만 두면 그냥 끊어져서 exception 하면 -> crash!! -> 차라리 throw? Coroutine Handler 가 잡아주게? viewModelScope 는 계속 이어질테니..
                     //todo:  Try to restart the connection on the next request to
@@ -250,12 +250,24 @@ class MyIAPHelperV3(val context: Context ) {
 
     }
     //<E> 완성 리스트를 전달 -> 라이브데이터 -> SecondFrag -> rcVUpdate
-    fun e_getFinalList(): MutableList<RtInTheCloud> {
+    fun e_getFinalList(): List<RtInTheCloud> {
         Log.d(TAG, "e_getFinalList: <E> called")
-        return rtListPlusIAPInfo
+    //Create a complete new list (그렇지 않으면 object 의 memory 값만 복사한 list 가 생성 -> rcvAdapter 안의 List(rtPlusIapInfoList) 도 같이 변함!! -> DiffUtil 아예 안 먹히는 문제!!
+        val finalList = rtListPlusIAPInfo.map { it.copy() } //여기서 .map 으로 개별 객체를 .copy() 해줄 때 deep copy 가 된다 (단순 메모리 address reference 가 아님)
+        return finalList //mutable -> immutable 로! //참고로 .map{} 무지 빠름. 시간 소요 전혀 없음.
     }
     fun f_getPurchaseFalseRtList() = purchaseFalseRtList
     fun g_getMultiDnldNeededList() = multiDNLDNeededList
+
+    // DiffUtil 테스트 용도. 지워줘도 된다..
+    /*fun modifiyListAndGetList(): List<RtInTheCloud> {
+        rtListPlusIAPInfo[3].purchaseBool = true
+        val modifiedList = rtListPlusIAPInfo.map {it.copy()}
+        return modifiedList
+    }*/
+
+
+
 
 
 
@@ -375,7 +387,7 @@ class MyIAPHelperV3(val context: Context ) {
 
         val index1 = rtListPlusIAPInfo.indexOf(rtReceived)
         if(index1 != -1) {
-            rtListPlusIAPInfo[index1].purchaseBool = isOkayToOwn
+            rtListPlusIAPInfo[index1].purchaseBool = isOkayToOwn // 문제는 여기서 purchaseBool 을 변경 -> rcVAdapter rtPlustIapInfoList 도 자동으로 변경되어있음 -> DiffUtil() 안 먹힘.
 
         }
         when(isOkayToOwn) {

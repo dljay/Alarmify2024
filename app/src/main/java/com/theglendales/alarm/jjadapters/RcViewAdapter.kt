@@ -21,9 +21,11 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.JjMainViewModel
+import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 
 import com.theglendales.alarm.jjmvvm.mediaplayer.MyMediaPlayer
+import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.model.mySharedPrefManager
 //import com.theglendales.alarm.jjiap.MyIAPHelper_v1
 import io.gresse.hugo.vumeterlibrary.VuMeterView
@@ -38,7 +40,7 @@ interface RcCommIntf {
 }
 
 class RcViewAdapter(
-    var rtPlusIapInfoList: MutableList<RtInTheCloud>,
+    private var rtPlusIapInfoList: List<RtInTheCloud>,
     private val receivedActivity: FragmentActivity,
     private val jjMainVModel: JjMainViewModel,
     private val mediaPlayer: MyMediaPlayer) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
@@ -158,11 +160,13 @@ class RcViewAdapter(
             }
 
         }
-    // 2) VuMeter and Loading Circle => todo: VHolderUiHandler 가 현재 Koin 덕분에 SingleTon 이니까. 그쪽으로 전달하자!!!!
+    // 2) VuMeter and Loading Circle => todo:  MyMediaPlayer? vs VHolderUiHandler? 뭘 쓸지? VHodlerUiHanlder 가 현재 Koin 덕분에 SingleTon 이니까. 그쪽으로 전달???
         private fun enableVM(holder: MyViewHolder) {
         // 여기에다 if(VHolderUiHandler.currentStatusMp == StatusMp.PLAYING) ..... {}
-        holder.iv_Thumbnail.alpha = 0.3f // 어둡게
-        holder.vuMeterView.visibility = VuMeterView.VISIBLE
+            if(MyMediaPlayer.currentPlayStatus == StatusMp.PLAY) {
+                holder.iv_Thumbnail.alpha = 0.3f // 어둡게
+                holder.vuMeterView.visibility = VuMeterView.VISIBLE
+            }
         }
         private fun disableVMnLC(holder: MyViewHolder) {
             holder.loadingCircle.visibility = View.INVISIBLE // 일단 loadingCircle 없애기.
@@ -214,21 +218,24 @@ class RcViewAdapter(
         return rtPlusIapInfoList.size
     }
 
-    fun refreshRecyclerView(newList: MutableList<RtInTheCloud>) {
+
+    fun refreshRecyclerView(newList: List<RtInTheCloud>) {
         //Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (BEFORE): ${currentRtList.size}")
 
-        val oldList = rtPlusIapInfoList // 현재 메모리에 떠있던 rtList
-        Log.d(TAG, "refreshRecyclerView: oldList=$oldList, newList=$newList")
+        val oldList = rtPlusIapInfoList //.map { it.copy() }.toList() // 현재 메모리에 떠있던 rtList 내용물을 받아서 새로운 리스트로 만들어줌.
+
+        Log.d(TAG, "refreshRecyclerView: oldList.hashcode= ${oldList.hashCode()}, newlist.hashcode=${newList.hashCode()}")
+        Log.d(TAG, "refreshRecyclerView: oldList=$oldList, \n\n newList=$newList") //어찌하여 둘이 같은가?!?!
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(MyDiffCallbackClass(oldList, newList))
         rtPlusIapInfoList = newList
         Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${rtPlusIapInfoList.size}")
 
         diffResult.dispatchUpdatesTo(this)
-        //enableHighlightOnTrId(GlbVars.clickedTrId)
+
     }
 
     // DiffUtil Class
-    class MyDiffCallbackClass(var oldRingToneList: MutableList<RtInTheCloud>, var newRingToneList: MutableList<RtInTheCloud>) : DiffUtil.Callback() { // Extend by DiffUtil
+    class MyDiffCallbackClass(var oldRingToneList: List<RtInTheCloud>, var newRingToneList: List<RtInTheCloud>) : DiffUtil.Callback() { // Extend by DiffUtil
         override fun getOldListSize(): Int {
             return oldRingToneList.size
         }
@@ -239,13 +246,13 @@ class RcViewAdapter(
 
         // 1차로 여기서 id 로 판별. (기존 리스트 item 과 새로 받은 리스트 item)
         override fun areItemsTheSame(oldItemPosition: Int,newItemPosition: Int): Boolean { // check if two items represent the same item. 흠.. 다 똑같은지말고 id 만 같아도 true 라는듯..
-            Log.d(TAG, "areItemsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition, bool result: ${oldRingToneList[oldItemPosition].id == newRingToneList[newItemPosition].id}")
+            //Log.d(TAG, "areItemsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition, bool result: ${oldRingToneList[oldItemPosition].id == newRingToneList[newItemPosition].id}")
             return (oldRingToneList[oldItemPosition].id == newRingToneList[newItemPosition].id) // id 의존 왜냐면 id is unique and unchangeable.
         }
 
         // 1차 결과가 true 일때만 불림-> 1차 선발된 놈들을 2차로 여기서 아예 동일한 놈인지(data 로 파악) 판명.
         override fun areContentsTheSame(oldItemPosition: Int,newItemPosition: Int): Boolean { // 모든 field 가 아예 똑같은건지 확인! (id/url/image 등등) //todo: 신규 구매후 purchaseBool 변경이 감지되서 rcV 업뎃된느지 확인 필요.
-            Log.d(TAG, "areContentsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition,  ${oldRingToneList[oldItemPosition] == newRingToneList[newItemPosition]}")
+            //Log.d(TAG, "areContentsTheSame: oldItemPos: $oldItemPosition, newItemPos: $newItemPosition,  ${oldRingToneList[oldItemPosition] == newRingToneList[newItemPosition]}")
             return (oldRingToneList[oldItemPosition] == newRingToneList[newItemPosition])
         }
 
@@ -313,10 +320,10 @@ class RcViewAdapter(
                         enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
                         //1-c) 음악 플레이 //todo: 재생중일때 또 클릭하면 그냥 무시하기?
-                        //mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+                        mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
 
 //[음악 재생 대신 Diffutil Test 용 코드] - 구매 후 즉각 RcV 아이콘 변경되는지 확인하기 위한 간접 테스트=> 클릭한 아이템 purchaseBool 값을 인위적으로 true 로 바꿔줌 => 바로 RcV 에 반영되야함!
-jjMainVModel.testDiffutil(oldRtList = rtPlusIapInfoList, clickedPos = adapterPosition)
+//jjMainVModel.testDiffutil()
 
 
                         // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
@@ -334,6 +341,8 @@ jjMainVModel.testDiffutil(oldRtList = rtPlusIapInfoList, clickedPos = adapterPos
 
         }
     }
+
+
 
 
 }

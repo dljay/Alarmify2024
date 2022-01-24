@@ -25,7 +25,7 @@ data class RtInTheCloud(val title: String="", val tags: String="", val descripti
         // 위에서 통과하면 (즉 같은 javaClass의 object 면)
         other as RtInTheCloud
 
-        // 2) Check Individual Fields
+        // 2) Check Individual Fields // 즉 두 obj 를 비교했을 때 아래 field 가 하나라도 틀리면 -> false! -> Rcv에서는 DiffUtil 로 RcV 업뎃을 하겠지 (notifyDataSetChanged() 같은 효과)
         if(title != other.title) return false
         if(tags != other.tags) return false
         if(description != other.description) return false
@@ -38,7 +38,7 @@ data class RtInTheCloud(val title: String="", val tags: String="", val descripti
         if(purchaseBool != other.purchaseBool) return false
 
         // 4) 모두 통과하면 return true!
-        Log.d(TAG, "equals: !!! COMPARED [iapName=$iapName] 기존.purchaseBool=$purchaseBool other.purchaseBool=${other.purchaseBool} --and TWO ARE IDENTICAL!!!!")
+        //Log.d(TAG, "equals: !!! COMPARED [iapName=$iapName] 기존.purchaseBool=$purchaseBool other.purchaseBool=${other.purchaseBool} --and TWO ARE IDENTICAL!!!!")
         return true
     }
 

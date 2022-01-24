@@ -147,7 +147,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Firebase 관련
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
     lateinit var jjFbVModel: JjFirebaseViewModel
-    var fullRtClassList: MutableList<RtInTheCloud> = ArrayList()
+    var fullRtClassList: List<RtInTheCloud> = ArrayList()
 
     // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -243,8 +243,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
                 }
             }
-
-
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             mpClassInstance = activity?.let {MyMediaPlayer(it, jjMpViewModel)}!!
             rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjMainVModel,mpClassInstance)}!! // it = activity. 공갈리스트 넣어서 instance 만듬 //todo: okay to pass VModel to Adapter?
@@ -255,9 +253,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
         //[MainVModel-1] 1) [네트워크 사용O] Fb 에서 새로운 리스트를 받음/새로고침 2) [네트워크 사용X] a)신규 구매 후 리스트 변화. b) 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
-                Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
+                //Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
                 fullRtClassList = rtListPlusIAPInfo // 추후 Chip Sorting 때 사용
                 mpClassInstance.createMp3UrlMap(rtListPlusIAPInfo)
+
                 rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
                 lottieAnimController("stop")
             }

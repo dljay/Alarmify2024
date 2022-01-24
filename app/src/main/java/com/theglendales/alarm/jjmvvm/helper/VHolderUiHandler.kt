@@ -1,5 +1,6 @@
 package com.theglendales.alarm.jjmvvm.helper
 
+import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -12,7 +13,7 @@ import io.gresse.hugo.vumeterlibrary.VuMeterView
 private const val TAG="VHolderUiHandler"
 // 이 클래스는 SecondFragment 에서 해결해야 될 Vumeter/Loading Circle/IV Thumbnail UI 관련 일들을 대신 해 줌. SecondFragment.kt 에 적기에는 너무 방대하여 이 클래스를 만듬.
 // 이건 Koin 으로 Singleton 으로 만들었으니 마음껏 활용합세!!
-class VHolderUiHandler {
+class VHolderUiHandler(context: Context) {
 
     companion object {
         //var currentStatusMp: StatusMp = StatusMp.IDLE

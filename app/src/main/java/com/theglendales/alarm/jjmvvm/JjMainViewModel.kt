@@ -36,8 +36,8 @@ class JjMainViewModel : ViewModel() {
 //FireBase variables
 
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
-    private val _rtInTheCloudList = MutableLiveData<MutableList<RtInTheCloud>>() // Private& Mutable LiveData
-    val rtInTheCloudList: LiveData<MutableList<RtInTheCloud>> = _rtInTheCloudList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
+    private val _rtInTheCloudList = MutableLiveData<List<RtInTheCloud>>() // Private& Mutable LiveData
+    val rtInTheCloudList: LiveData<List<RtInTheCloud>> = _rtInTheCloudList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
 
     init {
         Log.d(TAG, "init: called.. ^^ ")
@@ -99,7 +99,7 @@ class JjMainViewModel : ViewModel() {
                 //3-b) *** 에러 없으면 '최종 리스트' iapV3-E) iap 정보(price/purchaseBool) 입힌 리스트를 받아서 -> LiveData 전달 + sharedPref 에 저장.
                     else //에러 없으면
                     {
-                        val rtListPlusIAPInfo = iapV3.e_getFinalList()
+                        val rtListPlusIAPInfo = iapV3.e_getFinalList() // gets immutable List!
                         _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         Log.d(TAG, "refreshAndUpdateLiveData: (3-b) <<<<<<<<<getRtList: updated LiveData!")
 
@@ -242,6 +242,7 @@ class JjMainViewModel : ViewModel() {
         Log.d(TAG, "onTrackClicked: [outside-purchaseParentJob] here..Thread=${Thread.currentThread().name}")
         //handlePurchaseResult() 에서 LiveData 업뎃(MyPurchaseStateENUM) -> SecondFrag 에서 여기 viewModel 로 지시 다운로드 or
     }
+
     //fun getPurchaseState(): LiveData<MyPurchResultENUM> = iapV3.getPurchStateLiveData()
 
     //3) 다운로드 Process
@@ -284,12 +285,11 @@ class JjMainViewModel : ViewModel() {
         val dnldInfoObj: LiveData<DNLDInfoContainer> = singleDownloaderV3.getMyDnldLiveData()
         return dnldInfoObj
     }
-    fun testDiffutil(oldRtList: MutableList<RtInTheCloud>, clickedPos: Int) { // 클릭한 놈의 purchaseBool=true 로 바꿔서 이게 바로 화면에 반영되는지 확인 (구매시 바로 icon 바뀌는 기능 확인 위해)
-        Log.d(TAG, "testDiffutil: <1> called. oldRtList= $oldRtList, clickedPos= $clickedPos")
-         oldRtList[clickedPos].purchaseBool = true// 리스트 조작!
-        Log.d(TAG, "testDiffutil: <2> 조작된 oldRtList[clickedPos].purchaseBool=${oldRtList[clickedPos].purchaseBool}")
-        _rtInTheCloudList.value = oldRtList // SecondFrag 에서 RcV 화면 갱신!
-    }
+
+//    fun testDiffutil() { // 클릭한 놈의 purchaseBool=true 로 바꿔서 이게 바로 화면에 반영되는지 확인 (구매시 바로 icon 바뀌는 기능 확인 위해)
+//        val modifiedList = iapV3.modifiyListAndGetList()
+//        _rtInTheCloudList.value = modifiedList // SecondFrag 에서 RcV 화면 갱신!
+//    }
 
 
 

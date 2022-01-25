@@ -173,14 +173,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     //  LIVEDATA ->
 
-        //1) ViewModel 5종 생성(RcvVModel/MediaPlayerVModel)
-            //1-A) jjMainViewModel 생성
+        //1) ViewModel 생성(RcvVModel/MediaPlayerVModel)
             jjMainVModel = ViewModelProvider(requireActivity()).get(JjMainViewModel::class.java)
-            //1-B) jjMpViewModel 생성
-            //val jjMpViewModel = ViewModelProvider(requireActivity()).get(JjMpViewModel::class.java)
 
         //2) LiveData Observe
-            //2-A) rcV 에서 클릭-> rcvViewModel -> 여기로 전달. [!! 기존 클릭해놓은 트랙이 있으면 ListFrag 갔다왔을때 자동으로 그전 track 값을 (fb 로딩전에) 호출하는 문제있음!!] -> isEverythingReady 로 해결함.
         //Media Player ViewMODEL Observe
             //2-B-가) MP: MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
         jjMainVModel.getMpStatusLiveData().observe(viewLifecycleOwner, { StatusEnum ->
@@ -233,12 +229,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
         //[MainVModel-1] 1) [네트워크 사용O] Fb 에서 새로운 리스트를 받음/새로고침 2) [네트워크 사용X] a)신규 구매 후 리스트 변화. b) 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
+                Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb received.")
                 //Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
                 fullRtClassList = rtListPlusIAPInfo // 추후 Chip Sorting 때 사용
                 exoForUrlPlay.createMp3UrlMap(rtListPlusIAPInfo)
 
+                if(myIsChipChecked) {
+                    createStrListFromSelectedChips() // -> 여기서 filteredlist 생성
+                }
                 rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
-                lottieAnimController("stop")
+
+                lottieAnimController("stop") // Loading Animation 이 돌고있었다면 Stop
+                swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
             }
         //[MainVModel-2] Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
             jjMainVModel.isNetworkWorking.observe(viewLifecycleOwner) { isNetworkWorking ->
@@ -345,15 +347,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
         setUpLateInitUis(view) // -> 이 안에서 setUpSlindingPanel() 도 해줌. todo: Coroutine 으로 착착. chain 하지 말고..
         //Chip
-        initChip(view)
+        setChipListener(view)
         //setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
         registerSwipeRefreshListener()
-
-    /*// MyCacher Init() -> MediaPlayer(V2) Init
-        val myCacherInstance = context?.let { MyCacher(it, it.cacheDir, mediaPlayer_v2) }
-        if (myCacherInstance != null) {
-            myCacherInstance.initCacheVariables() // -> MediaPlayer(V2) Init
-        }*/
 
     }
 
@@ -487,29 +483,28 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
     }
 
-    private fun initChip(v: View) {
+    private fun setChipListener(v: View) { //setChip Listener.
         //Chip Related#1 (Init)
         chipGroup = v.findViewById(R.id.id_chipGroup)
         for (i in 0 until chipGroup.childCount) {
             val chip: Chip = chipGroup.getChildAt(i) as Chip
-            chip.setOnCheckedChangeListener { _, isChecked ->
-                createStringListFromChips()
-                when (isChecked) {
-                    true -> {
-                        chip.isChipIconVisible = false
 
-                    }
-                    false -> {
-                        chip.isChipIconVisible = true
-                        //backToFullRtList()
-                    }
+            // Chip 이 체크/해제될때마다
+            chip.setOnCheckedChangeListener { _, isChecked ->
+                //a) 아이콘 hide/show
+                when (isChecked) {
+                    true -> {chip.isChipIconVisible = false}
+                    false -> {chip.isChipIconVisible = true}
                 }
+                //b) createStringListFromChip() 실행
+                createStrListFromSelectedChips()
             }
         }
     }
     // Chip Related #2 (Listener Setup & Sending a Request to FbRepoClass.)
-    private fun createStringListFromChips() {
+    private fun createStrListFromSelectedChips() {
         val tagsList = mutableListOf<String>()
+
         val intenseTag ="INT"
         val gentleTag="GEN"
         val natureTag ="NAT"
@@ -528,30 +523,25 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 R.id.id_chip6_misc -> tagsList.add(miscTag)
             }
         }
-        Log.d(TAG, "createStringListFromChips: tagsList= $tagsList")
+        Log.d(TAG, "createStrListFromSelectedChips: tagsList= $tagsList")
 
         if(tagsList.isNotEmpty()) {
             myIsChipChecked= true // pull to refresh  했을 때 이 값을 근거로..
-            filterListByTags(tagsList)
+            feedViewModelByTags(tagsList)
         }else if(tagsList.isEmpty()) { // 체크 된 chip 이 하나도 없음!
             myIsChipChecked= false
-            filterListByTags(tagsList)
+            feedViewModelByTags(tagsList)
         }
     }
      //위에 Chip 이 선택된 항목(string list)을 여기로 전달.
-    private fun filterListByTags(tagsList: MutableList<String>) {
-
+    private fun feedViewModelByTags(tagsList: MutableList<String>) { // Thread=Main 현재
     // ** String List 두개 비교하기 ** rtObject.bdgStrArray & tagsList. ex) [INT, NATURE] .. //
-         // tag 2개 설정 -> 2개 해제  -> 아무것도 없다 ! => 그냥 원복: fullRtList 전체 보여주기.
-         if(tagsList.isEmpty()) {
-             Log.d(TAG, "filterListByTags: tagsList is Empty..Showing fullRtClassList")
-             rcvAdapterInstance.refreshRecyclerView(fullRtClassList)
+         if(tagsList.isEmpty()) { // 칩 해제
+             Log.d(TAG, "feedViewModelByTags: tagsList is Empty..Showing unfilteredRtList. Thread=${Thread.currentThread().name}")
+             jjMainVModel.updateRtListByTags(tagsList)
              return
-         } else { // 그렇지 않을때는 tagsList 로 들어온 STR 에 의거- filtering 된 리스트를 rcV 에 전달. 
-             val sortedList = fullRtClassList.filter { rtObject -> rtObject.bdgStrArray.containsAll(tagsList) }
-             Log.d(TAG, "filterListByTags: sortedList.size=${sortedList.size}, sortedList=$sortedList")
-
-             rcvAdapterInstance.refreshRecyclerView(sortedList.toMutableList())
+         } else { // 그렇지 않을때는 tagsList 로 들어온 STR 에 의거- filtering 된 리스트를 Live Data 에 전달.
+            jjMainVModel.updateRtListByTags(tagsList)
          }
      //test <--
     }
@@ -631,7 +621,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     swipeRefreshLayout.isRefreshing = false
                 }
             } else if (!myIsChipChecked) {
-                //Handler(Looper.getMainLooper()).post { observeAndLoadFireBase() } //todo: jjMainVModel.getRtLisFromFb() 로 바꾸기!
                 jjMainVModel.refreshAndUpdateLiveData()
             }
         }
@@ -727,40 +716,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
           iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)
     }
 
-// 1)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 UI 를 재구성하는 반면,
-    private fun reConstructTrUisOnReturn(prevTrId: Int) {
-    exoForUrlPlay.prepMusicPlayOnlineSrc(prevTrId, false) // 다른  frag 가는 순간 음악은 pause -> 따라서 다시 돌아와도 자동재생하면 안됨!
-        //isFireBaseFetchDone = true
-    }
-// 2)SharedPref 에 저장된 재생중 Tr 정보를 바탕으로 SlidingPanel UI 를 재구성.
-    private fun reConstructSLPanelTextOnReturn(vHolder: RcViewAdapter.MyViewHolder?, trackId: Int) { // observeAndLoadFireBase() 여기서 불림
-        if (vHolder != null) {
-            Log.d(TAG, "setSlidingPanelOnReturn: called. vHolder !=null. TrackId= $trackId")
-
-
-            val rtObjFromList = fullRtClassList.single { rtObj -> rtObj.id == trackId }
-            val ivInside_Rc = vHolder.iv_Thumbnail
-            Log.d(TAG,"setSlidingPanelOnReturn: title= ${rtObjFromList?.title}, description = ${rtObjFromList?.description}")
-        //Sliding Panel - Upper UI
-            var spaceFifteen="               " // 15칸
-            var spaceTwenty="                    " // 20칸
-            var spaceFifty="                                                 " //50칸 (기존 사용)
-            var spaceSixty="                                                           " //60칸
-            tv_upperUi_title.text = spaceFifteen+ rtObjFromList?.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
-            if(rtObjFromList?.title!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?
-            else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
-            }
-
-        //Sliding Panel -  Lower UI
-            tv_lowerUi_about.text = rtObjFromList?.description
-            iv_lowerUi_bigThumbnail.setImageDrawable(ivInside_Rc.drawable)
-        //Sliding Panel - Upper UI
-            iv_upperUi_thumbNail.setImageDrawable(ivInside_Rc.drawable)
-
-            setUpSlidingPanel()
-        }
-
-    }
     private fun setUpSlidingPanel() {
         Log.d(TAG,"setUpSlidingPanel: slidingUpPanelLayout: 1)PanelState=${slidingUpPanelLayout.panelState}, 2)isActivated=${slidingUpPanelLayout.isActivated}")
         slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow) //setDragView = 펼치는 Drag 가능 영역 지정

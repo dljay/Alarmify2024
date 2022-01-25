@@ -56,7 +56,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.16C [1)exoUrl- ListFrag<->SecondFrag. 2)exoLocal- RtPicker 용. 만들었음]
+//v3.07.16d [Chip 고민중-중간save]
 // Exo-Url & Exo-Local 두가지로 만들어서 각각 SecondFrag 와 RtPicker 에서 사용중. // 둘다 koin injection
 // 재생 및 init 이슈 없는지, RtPicker 에서는 release 잘되는지 (메모리 등) 확인.
 

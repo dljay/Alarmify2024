@@ -24,8 +24,7 @@ import java.util.*
 
 private const val TAG="ExoForLocal"
 
-// [ONLINE URL 재생과 RtPicker 두군데서 모두 쓰임- init() 만 다르게 해줌.]
-//enum class StatusMp { IDLE, BUFFERING, READY, PLAY, PAUSED, ERROR} // BUFFERING: activateLC(),
+// [RtPicker 에서 Local 재생용도로 쓰임]
 
 class ExoForLocal(val context: Context) : Player.Listener {
 

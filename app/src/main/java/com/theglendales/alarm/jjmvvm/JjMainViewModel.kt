@@ -39,6 +39,8 @@ class JjMainViewModel : ViewModel() {
     private val multiDownloaderV3: MultiDownloaderV3 by globalInject()
 //FireBase variables
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
+
+    private var unfilteredRtList: List<RtInTheCloud> = ArrayList()
     private val _rtInTheCloudList = MutableLiveData<List<RtInTheCloud>>() // Private& Mutable LiveData
     val rtInTheCloudList: LiveData<List<RtInTheCloud>> = _rtInTheCloudList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
 
@@ -95,7 +97,7 @@ class JjMainViewModel : ViewModel() {
                     if(throwable!=null) {
                         Log.d(TAG, "refreshAndUpdateLiveData: ERROR (3-a) (个_个) iapParentJob Failed: $throwable")
                         val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref (없을땐 그냥 깡통 arrayListOf<RtInTheCloud>() 를 받음.
-
+                        unfilteredRtList = listSavedOnPhone
                         _rtInTheCloudList.value = listSavedOnPhone // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         return@invokeOnCompletion
                     }
@@ -103,7 +105,8 @@ class JjMainViewModel : ViewModel() {
                     else //에러 없으면
                     {
                         val rtListPlusIAPInfo = iapV3.e_getFinalList() // gets immutable List!
-                        _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+                        unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보가 SEcondFrag 에서 넘어왔을 떄 활용)
+                        _rtInTheCloudList.value = rtListPlusIAPInfo // !!! update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         Log.d(TAG, "refreshAndUpdateLiveData: (3-b) <<<<<<<<<getRtList: updated LiveData!")
 
             //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
@@ -151,8 +154,29 @@ class JjMainViewModel : ViewModel() {
         }
 
     }
+    fun updateRtListByTags(tagsList: MutableList<String>) {
 
-    //*********************Multi Downloader
+        //A) Chip 선택된게 없다(X) (있다가 다 해제된 경우)
+        if(tagsList.isEmpty()) {
+            Log.d(TAG, "updateRtListByTags: tagsList is Empty. ")
+            _rtInTheCloudList.value = unfilteredRtList
+        }
+        else { //B) Chip 선택된게 있다 (O)
+            val filteredRtList = unfilteredRtList.filter { rtObject -> rtObject.bdgStrArray.containsAll(tagsList) }
+                if(_rtInTheCloudList.value == filteredRtList){ // Chip 이 선택된 상태에서 ListFrag 갔다 왔을 때-> 현재 LiveData 가 품고 있는 리스트가 이미 Chip 선택 반영된 리스트
+                    Log.d(TAG, "updateRtListByTags: 현재 LiveData 가 품고 있는 리스트가 이미 Chip 선택 반영된 리스트다. 더 해야될게 없음.")
+                    return
+                }
+                else {
+                        _rtInTheCloudList.value = filteredRtList
+                    }
+            Log.d(TAG, "updateRtListByTags: filteredRtList=$filteredRtList")
+        }
+
+
+    }
+
+//*********************Multi Downloader
     fun getLiveDataMultiDownloader(): LiveData<MultiDnldState> { // SecondFrag 에서 Observe 중
         return multiDownloaderV3.getMultiDnldState()
     }
@@ -217,6 +241,7 @@ class JjMainViewModel : ViewModel() {
                 Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(O)] - !!No problemo!!!")
                 //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
                 val rtListPlusIAPInfo = iapV3.e_getFinalList()
+                unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보가 SEcondFrag 에서 넘어왔을 떄 활용)
                 _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                 Log.d(TAG, "onTrackClicked: (3) <<<<<<<<<getRtList: update LiveData!")
 

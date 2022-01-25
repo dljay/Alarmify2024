@@ -174,8 +174,6 @@ class RcViewAdapter(
         }
 // <---------- // Highlight & VuMeter 작동 관련    --------->
 
-
-
     // 스크롤 화면 떨어져나갔다 들어오는거 관련 (EQ Animation 때문에 넣었음!)---------------->
     // a) 스크롤해서 해당 view 가 화면에서 안 보일때
     override fun onViewDetachedFromWindow(holder: MyViewHolder) {
@@ -223,7 +221,7 @@ class RcViewAdapter(
 
         val oldList = rtPlusIapInfoList //.map { it.copy() }.toList() // 현재 메모리에 떠있던 rtList 내용물을 받아서 새로운 리스트로 만들어줌.
 
-        Log.d(TAG, "refreshRecyclerView: oldList.hashcode= ${oldList.hashCode()}, newlist.hashcode=${newList.hashCode()}")
+        //Log.d(TAG, "refreshRecyclerView: oldList.hashcode= ${oldList.hashCode()}, newlist.hashcode=${newList.hashCode()}")
         Log.d(TAG, "refreshRecyclerView: oldList=$oldList, \n\n newList=$newList") //어찌하여 둘이 같은가?!?!
         val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(MyDiffCallbackClass(oldList, newList))
         rtPlusIapInfoList = newList

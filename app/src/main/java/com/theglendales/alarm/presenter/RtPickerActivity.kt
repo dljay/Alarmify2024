@@ -55,7 +55,6 @@ class RtPickerActivity : AppCompatActivity() {
     lateinit var layoutManager: LinearLayoutManager
 
     //Media Player
-    //lateinit var exoForLocal: ExoForLocal
     private val exoForLocal: ExoForLocal by globalInject()
     //SlidingUp Panel (AKA mini Player) UIs
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout // SlideUpPanel 전체
@@ -413,6 +412,7 @@ private fun setUpSlidingPanel() {
 
 // BackButton 눌러서 원래 DetailsFrag 로 돌아가면 아래 onPause() & onDestroy() 둘다 불림.
     override fun onPause() {
+        Log.d(TAG, "onPause: called")
         super.onPause()
     //1) 현재 음악이 재생중이든 아니든 (재생중이 아니었으면 어차피 pauseMusic() 은 의미가 없음)
         exoForLocal.pauseMusic() // a)일단 PAUSE 때리고
@@ -420,9 +420,13 @@ private fun setUpSlidingPanel() {
     // 최소한 여기서 재생중이던 음악 재생 pause, 아이콘 변경만?
     }
     override fun onDestroy() {
+        Log.d(TAG, "onDestroy: called")
         super.onDestroy()
-        //todo: ExoPlayer 아예 없애주기! (release 말고 destroy?  [일단 secondFrag 에서는 별도의 ExoPlayerForUrl 을 사용하기는 함..)
         exoForLocal.removeHandler()
         exoForLocal.releaseExoPlayer()
+        //System.gc() todo: 이거 별 역할 못 하는듯..
+
+
+
     }
 }

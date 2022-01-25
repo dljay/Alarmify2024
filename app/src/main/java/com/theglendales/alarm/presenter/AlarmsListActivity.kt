@@ -56,13 +56,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.16d [Chip 고민중-중간save]
-// Exo-Url & Exo-Local 두가지로 만들어서 각각 SecondFrag 와 RtPicker 에서 사용중. // 둘다 koin injection
-// 재생 및 init 이슈 없는지, RtPicker 에서는 release 잘되는지 (메모리 등) 확인.
+//v3.07.16F [Chip 해결e]
 
-// ListFrag<->SecondFrag
-// b)  Play/Pause 클릭 눌렀을때 문제(O) - 테스트 더 해볼것.
-// Scroll to Original Position.
+// Scroll to Original Position(잘되네.. 미스터리야..)
 
 // issues:
 //1) ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
@@ -103,7 +99,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private val myDiskSearcher: DiskSearcher by globalInject()
     private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
     private val myPermHandler = MyPermissionHandler(this)
-    private val mediaPlayer_v2: ExoForUrl by globalInject()
+    private val exoForUrl: ExoForUrl by globalInject() // 여기 적혀있지만 init 은 실제 사용되는 SecondFrag 가 열릴 때  자동으로 이뤄짐.
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -355,7 +351,10 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
         logger.debug { "$this" }
         super.onDestroy()
         this.mActionBarHandler.onDestroy()
-        //todo: relaseExoPlayer() ... ->
+
+        exoForUrl.removeHandler()
+        exoForUrl.releaseExoPlayer()
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

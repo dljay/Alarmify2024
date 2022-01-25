@@ -141,7 +141,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     var currentClickedTrId = -1
 
     //Firebase 관련
-    var fullRtClassList: List<RtInTheCloud> = ArrayList()
+    //var fullRtClassList: List<RtInTheCloud> = ArrayList()
 
     // Basic overridden functions -- >
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -230,15 +230,16 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //[MainVModel-1] 1) [네트워크 사용O] Fb 에서 새로운 리스트를 받음/새로고침 2) [네트워크 사용X] a)신규 구매 후 리스트 변화. b) 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
                 Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb received.")
-                //Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb via ViewModel= $rtListPlusIAPInfo")
-                fullRtClassList = rtListPlusIAPInfo // 추후 Chip Sorting 때 사용
+
                 exoForUrlPlay.createMp3UrlMap(rtListPlusIAPInfo)
 
-                if(myIsChipChecked) {
-                    createStrListFromSelectedChips() // -> 여기서 filteredlist 생성
+                if(myIsChipChecked) { //Chip 이 하나 이상 선택된 경우
+                    val tagsList = getTagsList()
+                    val filteredList = getFilteredList(rtListPlusIAPInfo, tagsList) // Filtered 된 List 를 받고
+                        rcvAdapterInstance.refreshRecyclerView(filteredList)
+                } else { // Chip 이 선택 안된 경우.
+                    rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
                 }
-                rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
-
                 lottieAnimController("stop") // Loading Animation 이 돌고있었다면 Stop
                 swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
             }
@@ -483,8 +484,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
     }
 
+    //Chip Related#1 (Listener 등록)
     private fun setChipListener(v: View) { //setChip Listener.
-        //Chip Related#1 (Init)
+        
         chipGroup = v.findViewById(R.id.id_chipGroup)
         for (i in 0 until chipGroup.childCount) {
             val chip: Chip = chipGroup.getChildAt(i) as Chip
@@ -496,13 +498,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     true -> {chip.isChipIconVisible = false}
                     false -> {chip.isChipIconVisible = true}
                 }
-                //b) createStringListFromChip() 실행
-                createStrListFromSelectedChips()
+                //b) 선택된 칩 배경으로 tagsList 를 받아서 -> rcv 를 Refresh!
+                filterListThenRefreshRcv(getTagsList())
             }
         }
     }
-    // Chip Related #2 (Listener Setup & Sending a Request to FbRepoClass.)
-    private fun createStrListFromSelectedChips() {
+    // Chip Related #2 (Create TagsList) - 체크된 Chip 을 바탕으로 tagsList 를 만듬
+    private fun getTagsList(): List<String> {
+
         val tagsList = mutableListOf<String>()
 
         val intenseTag ="INT"
@@ -523,28 +526,35 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 R.id.id_chip6_misc -> tagsList.add(miscTag)
             }
         }
-        Log.d(TAG, "createStrListFromSelectedChips: tagsList= $tagsList")
-
+        Log.d(TAG, "getTagsList: tagsList= $tagsList")
+        return tagsList.toList()
+    }
+    // Chip Related #3 (Chip 선택 및 해제시 이쪽으로 옴 -> RefreshRcv)
+    private fun filterListThenRefreshRcv(tagsList: List<String>) {
+        //A-1) Chip 이 하나 이상 체크되었다.
         if(tagsList.isNotEmpty()) {
-            myIsChipChecked= true // pull to refresh  했을 때 이 값을 근거로..
-            feedViewModelByTags(tagsList)
-        }else if(tagsList.isEmpty()) { // 체크 된 chip 이 하나도 없음!
+            myIsChipChecked= true // VModel 에서 이 값을 근거로 움직임.
+            val filteredRtList = jjMainVModel.getUnfilteredList().filter { rtObject -> rtObject.bdgStrArray.containsAll(tagsList) }
+
+            if(filteredRtList == jjMainVModel.rtInTheCloudList.value){ // 이미 FilteredList 로 refreshRcV 된 경우 (Ex. ListFrag 갔다와서 VModel 이 먼저 자동 복원)
+                Log.d(TAG, "filterListThenRefreshRcv: 이미 FilteredList 로 refreshRcV 된 경우")
+                return
+            } else {
+                rcvAdapterInstance.refreshRecyclerView(filteredRtList)
+            }
+        //A-2) Chip 이 선택되었다가 다 해제되었을 때
+        }else if(tagsList.isEmpty()) {
             myIsChipChecked= false
-            feedViewModelByTags(tagsList)
+            jjMainVModel.showUnfilteredList() // -> JjVModel [라이브데이터 원래 list 로 갱신] -> SecondFrag -> rcvRefresh!
         }
     }
-     //위에 Chip 이 선택된 항목(string list)을 여기로 전달.
-    private fun feedViewModelByTags(tagsList: MutableList<String>) { // Thread=Main 현재
-    // ** String List 두개 비교하기 ** rtObject.bdgStrArray & tagsList. ex) [INT, NATURE] .. //
-         if(tagsList.isEmpty()) { // 칩 해제
-             Log.d(TAG, "feedViewModelByTags: tagsList is Empty..Showing unfilteredRtList. Thread=${Thread.currentThread().name}")
-             jjMainVModel.updateRtListByTags(tagsList)
-             return
-         } else { // 그렇지 않을때는 tagsList 로 들어온 STR 에 의거- filtering 된 리스트를 Live Data 에 전달.
-            jjMainVModel.updateRtListByTags(tagsList)
-         }
-     //test <--
+    // Chip Related #4
+    private fun getFilteredList(unfilteredRtList: List<RtInTheCloud>, tagsList: List<String>): List<RtInTheCloud> {
+        if(tagsList.isEmpty()) return ArrayList() // tagsList 가 깡통 (즉 Chip 선택된게 X) -> 깡통 List 반환
+        val filteredRtList = unfilteredRtList.filter { rtObject -> rtObject.bdgStrArray.containsAll(tagsList) }
+        return filteredRtList
     }
+
     // MiniPlayer Lower Part - Chip(badge) 을 sort 하여 보여줄건 보여주고 가릴건 가리기.
     private fun showOrHideBadgesOnMiniPlayer(badgeStrList: List<String>?) {
         // 일단 다 gone 으로 꺼주고 시작 (안 그러면 RtPicker 갔다왔을 떄 기존에 켜진놈이 안 꺼지니께..)
@@ -612,17 +622,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         swipeRefreshLayout.setOnRefreshListener { //setOnRefreshListener 는  function! (SwipeRefreshLayout.OnRefreshListener 인터페이스를 받는) .. 결국 아래는 이름없는 function..?
             Log.d(TAG, "+++++++++++++ inside setOnRefreshListener+++++++++")
             swipeRefreshLayout.isRefreshing = true
+            jjMainVModel.refreshAndUpdateLiveData()
 
-            // Chip check 여부에 따라
-            if (myIsChipChecked) { //하나라도 체크되어있으면
-                // Do nothing. Just stop the spinner
-                if (swipeRefreshLayout.isRefreshing) {
-                    Log.d(TAG, "Chip checked. Doing nothing but stopping the spinner.")
-                    swipeRefreshLayout.isRefreshing = false
-                }
-            } else if (!myIsChipChecked) {
-                jjMainVModel.refreshAndUpdateLiveData()
-            }
+//            // Chip check 여부에 따라
+//            if (myIsChipChecked) { //하나라도 체크되어있으면
+//                // Do nothing. Just stop the spinner
+//                if (swipeRefreshLayout.isRefreshing) {
+//                    Log.d(TAG, "Chip checked. Doing nothing but stopping the spinner.")
+//                    swipeRefreshLayout.isRefreshing = false
+//                }
+//            } else if (!myIsChipChecked) {
+//                jjMainVModel.refreshAndUpdateLiveData()
+//            }
         }
     }
     //SeekBarListener (유저가 seekbar 를 만졌을 때 반응하는것.)

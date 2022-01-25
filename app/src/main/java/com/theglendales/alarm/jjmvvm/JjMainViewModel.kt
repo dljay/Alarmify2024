@@ -105,7 +105,7 @@ class JjMainViewModel : ViewModel() {
                     else //에러 없으면
                     {
                         val rtListPlusIAPInfo = iapV3.e_getFinalList() // gets immutable List!
-                        unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보가 SEcondFrag 에서 넘어왔을 떄 활용)
+                        unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 SecondFrag 활용)
                         _rtInTheCloudList.value = rtListPlusIAPInfo // !!! update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         Log.d(TAG, "refreshAndUpdateLiveData: (3-b) <<<<<<<<<getRtList: updated LiveData!")
 
@@ -241,7 +241,7 @@ class JjMainViewModel : ViewModel() {
                 Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(O)] - !!No problemo!!!")
                 //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
                 val rtListPlusIAPInfo = iapV3.e_getFinalList()
-                unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보가 SEcondFrag 에서 넘어왔을 떄 활용)
+                unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
                 _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                 Log.d(TAG, "onTrackClicked: (3) <<<<<<<<<getRtList: update LiveData!")
 
@@ -325,6 +325,10 @@ class JjMainViewModel : ViewModel() {
     fun getCurrentPosLiveData(): LiveData<Long> = exoForUrl.currentPosition
 
 
+//*********************Utility Methods
+    //Chip 관련
+    fun getUnfilteredList() = unfilteredRtList
+    fun showUnfilteredList() {_rtInTheCloudList.value = unfilteredRtList}
 //***********************
     override fun onCleared() {
         super.onCleared()

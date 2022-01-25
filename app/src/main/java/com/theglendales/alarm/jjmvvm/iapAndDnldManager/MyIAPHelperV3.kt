@@ -63,10 +63,10 @@ class MyIAPHelperV3(val context: Context ) {
     }
 // ****************** <0> billingClient Init + Purchase Result Listener (유저 구매창 반응에 따른 Listener) i_launchBillingFlow() 와 연계되서 사용.
 
-    fun a_initBillingClient() { //여기서 billingClient (lateinit) 을 init + setup Listener!
+    fun a_initBillingClient() { //여기서 billingClient (lateinit) 을 init + Purchase Updated Listener setup!
         Log.d(TAG, "a_initBillingClient: <A> Called")
         billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener { bResult, purchasesListReceived ->
-
+            // Purchase Updated Listener! => Network Error, Offline Payment 등 Issue 있을 수 있음. => Finalized(=isAcknowledged) 필요!
             if (bResult.responseCode == BillingClient.BillingResponseCode.OK && purchasesListReceived != null)
             {
                 Log.d(TAG, "i-1) PurchaseResult Listener: A- 정상 신규 구매! (파일 확인 후 없으면)다운로드 진행!. Thread=${Thread.currentThread().name}")
@@ -133,7 +133,7 @@ class MyIAPHelperV3(val context: Context ) {
     }
 
     //<D1> 현재 리스트에 상품별 구매 여부 (true,false) 적어주기.
-    suspend fun d1_A_addPurchaseBoolToList(): List<Purchase> {
+    suspend fun d1_A_getAllPurchasedList(): List<Purchase> {
 
         Log.d(TAG, "d1_A_addPurchaseBoolToList: <D1-A> called. ThreadName=${Thread.currentThread().name}")
         multiDNLDNeededList.clear()
@@ -146,12 +146,50 @@ class MyIAPHelperV3(val context: Context ) {
             }
         }
     }
-    fun d1_B_addPurchaseBoolToList(listOfPurchases: List<Purchase>) {
+    suspend fun d1_B_checkUnacknowledged(listOfPurchases: List<Purchase>): Unit {
+        // 구입 절차 진행중 Connection 문제등으로 acknowledge 가 안된 물품들 여기서  Purchase.PurchaseState.PURCHASED 면 acknowledge 해주기!
+        Log.d(TAG, "d1_B_checkUnacknowledged: called")
+        if (listOfPurchases.isNotEmpty()) // [살아있는 모든 구매건. Refund 된 경우 현 리스트에서 사라짐!]
+        {
+            for (purchase in listOfPurchases)
+            {
+                val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
-        if (listOfPurchases.isNotEmpty()) // 구매건이 한 개 이상. // [모든 구매건을 포함하는듯 refund 포함?]
+                if(indexOfRtObj!=-1 && purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged)
+                {
+                    Log.d(TAG, "d1_B_checkUnacknowledged: $#%#$%@$#@@%@#%%#% iapName= ${purchase.skus[0]}, 이럴수가!!!! acknowledge 를 부여할 대상이 있따니!!@$# @4# @#%@#%@#%#@")
+                    return suspendCoroutine { continuation ->
+                        val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
+                        billingClient!!.acknowledgePurchase(acknowledgePurchaseParams)
+                        { billingResult ->
+                            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
+                            {
+                                // ############################## 신규 구매 정상적으로 완료 #######################
+                                //[구입인정] + purchaseBool 값 변경 반영(true)
+                                Log.d(TAG, "d1_B_checkUnacknowledged: 구매인정 부가 했음!!")
+                                rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
+                                continuation.resume(Unit) // isPurchaseCompleted =true 로 모든 구입 절차가 끝났음을 알림.
+                            } else {
+                                //문제 발생으로 -> [구입인정X] + purchaseBool 값 변경 반영(false)
+                                rtListPlusIAPInfo[indexOfRtObj].purchaseBool =false// [!!Bool 값 변경!!] default 값은 어차피 false ..혹시 몰라서 넣어줌.
+                                continuation.resume(Unit) // 그럼에도 그냥 나머지 IAP 확인 절차 진행 (최악의 경우에 예전 구입인정 못 받은 한 놈 안 걸리는것이니..)
+                                Log.d(TAG, "d1_B_checkUnacknowledged: 구매 인정 부가 실패!!! XXf")
+                                //continuation.resumeWithException(Exception("d1_B_checkUnacknowledged 부여중 Error 흐음. billingResult.responseCode= ${billingResult.responseCode} "))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    fun d1_C_addPurchaseBoolToList(listOfPurchases: List<Purchase>) {
+
+        if (listOfPurchases.isNotEmpty()) // 구매건이 한 개 이상. // [살아있는 모든 구매건. Refund 된 경우 현 리스트에서 사라짐!]
         {
             //인도놈은 일단 여기서 handlePurchases(list<Purchase>) 넣었지만 우리는 그냥 refund Play Console 에서 하자마자 -> 바로 purchaesList 에서 빠지고 RCV 에 반영..대박..
-            Log.d(TAG, "d1_B_addPurchaseBoolToList: <D1-B> 총 구매 갯수=listPurchs.size=${listOfPurchases.size} \n listOfPurchases=$listOfPurchases")
+            Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C> 총 구매 갯수=listPurchs.size=${listOfPurchases.size} \n listOfPurchases=$listOfPurchases")
             //myQryPurchListSize = listOfPurchases.size // 추후 MyDownloader_v1.kt > multiDownloadOrNot() 에서 활용.
         //**** [D1-B-1]: 구매 기록이 있는 모든건에 대해 [(구매유효=PurchaseState.PURCHASED) + (구매했으나 Refund 등으로 PurchaseState.PURCHASED 가 아닌것도 포함))
             for (purchase in listOfPurchases)
@@ -160,7 +198,7 @@ class MyIAPHelperV3(val context: Context ) {
                  * IAP Library 4.0 업뎃 => .sku 가 없어지고 .skus => List<String> 을 반환함. (여러개 살 수 있는 기능이 생겨서)
                  * 우리는 해당 기능 사용 계획이 없으므로 무조건 우리의 .skus list 는 1개여야만 한다! 만약 1개가 아니면 for loop 에서 다음 iteration 으로 이동
                  */
-                Log.d(TAG, "d1_B_addPurchaseBoolToList: [PURCHASED ITEM] purchaseState=${purchase.purchaseState}, purchase=$purchase") // todo: 여기서 acknowledged 확인 가능!
+                Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-1> [PURCHASED ITEM] purchaseState=${purchase.purchaseState}, purchase=$purchase") // todo: 여기서 acknowledged 확인 가능!
                 // 첫 purchaseState=1 로 뜨고, purchase= 여기서는 0으로 뜨는 희한..
                 ///** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
                 val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
@@ -168,11 +206,11 @@ class MyIAPHelperV3(val context: Context ) {
                 // 우리가 구매한 물품이 현재 rtListPlusIAPInfo 에 없는 물품이면 (ex. p1,p7 등 아예 PlayConsole 카탈로그에서 Deactivate 시킨 물품인 경우) -> 다음 for loop 으로 넘어가기
                 if (purchase.quantity != 1 || indexOfRtObj < 0) { // 갯수가 1개 초과 or rtListPlusIAPInfo 리스트에 우리가 찾는 rtObj 이 없는 경우
                     if (purchase.quantity != 1) {
-                        Log.d(TAG,"d1_B_addPurchaseBoolToList: <D1-B-1> [IAP] 심각한 문제. Quantity 가 1개가 아님! Quantity=${purchase.quantity}")
+                        Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-1> [IAP] 심각한 문제. Quantity 가 1개가 아님! Quantity=${purchase.quantity}")
                         toastMessenger.showMyToast("More than one IAP sku IDs.", isShort = true)
                     }
                     if (indexOfRtObj < 0) {
-                        Log.d(TAG,"d1_B_addPurchaseBoolToList: <D1-B-1> List 에서 현재 purchase.sku(=${purchase.skus[0]}) 에 매칭하는 rtObject 를 찾을 수 없음.")
+                        Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-1> List 에서 현재 purchase.sku(=${purchase.skus[0]}) 에 매칭하는 rtObject 를 찾을 수 없음.")
                     }
                     continue // 다음 for loop 의 iteration (purchase) 로 이동(?)
                 }
@@ -181,25 +219,25 @@ class MyIAPHelperV3(val context: Context ) {
                 val trackID = rtObject.id
                 val iapName = rtObject.iapName//purchase.skus[0]
                 val fileSupposedToBeAt =context.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
-                Log.d(TAG,"d1_B_addPurchaseBoolToList: trackId=$trackID, purchase.skus[0]=${purchase.skus[0]}, p.skus(list)=${purchase.skus}")
+                Log.d(TAG,"d1_C_addPurchaseBoolToList: trackId=$trackID, purchase.skus[0]=${purchase.skus[0]}, p.skus(list)=${purchase.skus}")
 
                 //purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
         // **** [D1-B-2] :********************************>>> 구매 확인된 건 //todo: Refund 건 처리 + Acknowledge 가 false 로 처리된 경우도 가능성 있음 (구매중 폰 끊김 등..)
                 // 인도놈 튜토리얼 참고: https://programtown.com/how-to-make-multiple-in-app-purchase-in-android-kotlin-using-google-play-billing-library/
                 if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED)
                 {
-                    Log.d(TAG,"d1_B_addPurchaseBoolToList: <D1-B-2> ☺ PurchaseState is PURCHASED for trackID=$trackID, itemName=$iapName")
+                    Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-2> ☺ PurchaseState is PURCHASED for trackID=$trackID, itemName=$iapName")
                     rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
 
                     //*******구매는 확인되었으나 item(ex p1001.rta 등) 이 phone 에 없다 (삭제 혹은 재설치?)
                     if (!myDiskSearcher.isSameFileOnThePhone(fileSupposedToBeAt)) {
                         multiDNLDNeededList.add(rtObject)
-                        Log.d(TAG, "d1_B_addPurchaseBoolToList: <D1-B-2> [멀티] 복원 다운로드 필요한 리스트에 다음을 추가: $iapName ")
+                        Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-2> [멀티] 복원 다운로드 필요한 리스트에 다음을 추가: $iapName ")
                     }
                 }
             // **** D1-B-3: 구매한적이 있으나 뭔가 문제가 생겨서 PurchaseState.Purchased 가 아닐때 여기로 들어옴. 애당초 구입한적이 없는 물품은 여기 뜨지도 않음!
                 else {
-                    Log.d(TAG,"d1_B_addPurchaseBoolToList: <D1-B-3> iapName=$iapName, trkID=$trackID, 구매 기록은 있으나 (for some reason) PurchaseState.Purchased(X)- Phone 에서 삭제 요청 ")
+                    Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-3> iapName=$iapName, trkID=$trackID, 구매 기록은 있으나 (for some reason) PurchaseState.Purchased(X)- Phone 에서 삭제 요청 ")
 
                 }
             }//end of for loop
@@ -328,10 +366,11 @@ class MyIAPHelperV3(val context: Context ) {
 
     suspend fun k_acknowledgePurchase(purchaseResult: Purchase, rtInTheCloud: RtInTheCloud): Boolean {
 
-        if(purchaseResult.isAcknowledged) { // 어떤 연유로 이미 구매인정이 되있는 상태라면 그냥 true 반환하고 return
-            Log.d(TAG, "k_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 이미 구매인정 되있는 상태 return!")
+        if(purchaseResult.isAcknowledged) { // 현재 진행중인 구매건이기때문에 이쪽으로 들어올 확률은 없음. 이전 인도놈 코드 따라 쓴것으로 과거 물품에 대해서도 isAcknowledged 체크를 해줘서 안전빵으로 써줌.
+            Log.d(TAG, "k_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 이미 구매인정 되있는 상태 return!") // 어떤 연유로 이미 구매인정이 되있는 상태라면 그냥 true 반환하고 return
             return true
-        } else {//신규구매시 100% 이쪽으로 들어와야함 -> 기본적으로 신규 물품은 우리가 직접 구매확인(isAcknowledged) 을 해줘야함!
+        } else {//[구매 마무리 절차] 신규구매시 100% 이쪽으로 들어와야함 -> 기본적으로 신규 물품은 우리가 직접 구매확인(isAcknowledged) 을 해줘야함!
+            //Network 문제등으로 끊겨서 Acknowledge 가 안된 경우를 대비해 onResume() 에서 retryPurchase() 할수도 있지만. 우리는 끊겼다 자동 연결되면 IAP 가 reload 되서 D1_B_checkUnacknowledged() 에 써주기로 함.
             return suspendCoroutine { continuation ->
                 val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseResult.purchaseToken).build()
                 billingClient!!.acknowledgePurchase(acknowledgePurchaseParams)

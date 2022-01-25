@@ -78,9 +78,10 @@ class JjMainViewModel : ViewModel() {
                 //iapV3-D) Each .launch{} running on separate thread (동시 실행) //todo: D1&D2 는 같이 시작하지만.. suspendCoroutine() 사용하니깐.. 진정한 의미에서 parallel 이 아님.
                         //D) Parallel Job  - D1
                         launch {
-                            val listOfPurchases = iapV3.d1_A_addPurchaseBoolToList() // D1-A ** AsyncCallback 이 있어서 suspendCoroutine->continuation(result)-> d1_b(result)
-                            iapV3.d1_B_addPurchaseBoolToList(listOfPurchases)// D1-B
-                            //todo: [D1-B-2] 혹은 다른 곳에서라도 구입했으나 acknowledge 가 안된 물품들+ refund 된 i 들  -> 원래는 handlePurchaseResult.. isAcknowledged=true 로 변경필요!
+                            val listOfPurchases = iapV3.d1_A_getAllPurchasedList() // D1-A ** AsyncCallback 이 있어서 suspendCoroutine->continuation(result)-> d1_b(result)
+                            iapV3.d1_B_checkUnacknowledged(listOfPurchases) //[D1-B] 기존 구매중 Network 이상 등으로 acknowledge 가 안된 물품들 처리
+                            iapV3.d1_C_addPurchaseBoolToList(listOfPurchases)// D1-B => D1-C 되야함.
+
                         }
                         //D) Parallel Job - D2
                         launch {

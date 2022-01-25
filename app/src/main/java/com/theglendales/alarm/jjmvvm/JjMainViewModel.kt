@@ -69,7 +69,7 @@ class JjMainViewModel : ViewModel() {
                 val iapParentJob = viewModelScope.launch(handler) {
                     Log.d(TAG, "refreshAndUpdateLiveData: (2) RtList ->IAP")
 
-                //iapV3-B) Fb 에서 받을 리스트를 -> IAP 에 전달 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨.
+                //iapV3-B) Fb 에서 받은 리스트를 -> IAP 에 전달 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨.
                     iapV3.b_feedRtList(rtList)
                 //iapV3-C) BillingClient 를 Ready 시킴 (이미 되어있으면 바로 BillingClient.startConnection)
                     val billingResult: BillingResult = iapV3.c_prepBillingClient()
@@ -154,27 +154,7 @@ class JjMainViewModel : ViewModel() {
         }
 
     }
-    fun updateRtListByTags(tagsList: MutableList<String>) {
 
-        //A) Chip 선택된게 없다(X) (있다가 다 해제된 경우)
-        if(tagsList.isEmpty()) {
-            Log.d(TAG, "updateRtListByTags: tagsList is Empty. ")
-            _rtInTheCloudList.value = unfilteredRtList
-        }
-        else { //B) Chip 선택된게 있다 (O)
-            val filteredRtList = unfilteredRtList.filter { rtObject -> rtObject.bdgStrArray.containsAll(tagsList) }
-                if(_rtInTheCloudList.value == filteredRtList){ // Chip 이 선택된 상태에서 ListFrag 갔다 왔을 때-> 현재 LiveData 가 품고 있는 리스트가 이미 Chip 선택 반영된 리스트
-                    Log.d(TAG, "updateRtListByTags: 현재 LiveData 가 품고 있는 리스트가 이미 Chip 선택 반영된 리스트다. 더 해야될게 없음.")
-                    return
-                }
-                else {
-                        _rtInTheCloudList.value = filteredRtList
-                    }
-            Log.d(TAG, "updateRtListByTags: filteredRtList=$filteredRtList")
-        }
-
-
-    }
 
 //*********************Multi Downloader
     fun getLiveDataMultiDownloader(): LiveData<MultiDnldState> { // SecondFrag 에서 Observe 중
@@ -242,6 +222,7 @@ class JjMainViewModel : ViewModel() {
                 //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
                 val rtListPlusIAPInfo = iapV3.e_getFinalList()
                 unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
+
                 _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                 Log.d(TAG, "onTrackClicked: (3) <<<<<<<<<getRtList: update LiveData!")
 

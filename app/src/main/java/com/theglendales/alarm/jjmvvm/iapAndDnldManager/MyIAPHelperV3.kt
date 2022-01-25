@@ -148,8 +148,9 @@ class MyIAPHelperV3(val context: Context ) {
     }
     fun d1_B_addPurchaseBoolToList(listOfPurchases: List<Purchase>) {
 
-        if (listOfPurchases.size > 0) // 구매건이 한 개 이상. // [모든 구매건을 포함하는듯 refund 포함?]
+        if (listOfPurchases.isNotEmpty()) // 구매건이 한 개 이상. // [모든 구매건을 포함하는듯 refund 포함?]
         {
+            //인도놈은 일단 여기서 handlePurchases(list<Purchase>) 넣었지만 우리는 그냥 refund Play Console 에서 하자마자 -> 바로 purchaesList 에서 빠지고 RCV 에 반영..대박..
             Log.d(TAG, "d1_B_addPurchaseBoolToList: <D1-B> 총 구매 갯수=listPurchs.size=${listOfPurchases.size} \n listOfPurchases=$listOfPurchases")
             //myQryPurchListSize = listOfPurchases.size // 추후 MyDownloader_v1.kt > multiDownloadOrNot() 에서 활용.
         //**** [D1-B-1]: 구매 기록이 있는 모든건에 대해 [(구매유효=PurchaseState.PURCHASED) + (구매했으나 Refund 등으로 PurchaseState.PURCHASED 가 아닌것도 포함))
@@ -159,8 +160,8 @@ class MyIAPHelperV3(val context: Context ) {
                  * IAP Library 4.0 업뎃 => .sku 가 없어지고 .skus => List<String> 을 반환함. (여러개 살 수 있는 기능이 생겨서)
                  * 우리는 해당 기능 사용 계획이 없으므로 무조건 우리의 .skus list 는 1개여야만 한다! 만약 1개가 아니면 for loop 에서 다음 iteration 으로 이동
                  */
-                Log.d(TAG, "d1_B_addPurchaseBoolToList: purchase=$purchase") // todo: 여기서 acknowledged 확인 가능!
-
+                Log.d(TAG, "d1_B_addPurchaseBoolToList: [PURCHASED ITEM] purchaseState=${purchase.purchaseState}, purchase=$purchase") // todo: 여기서 acknowledged 확인 가능!
+                // 첫 purchaseState=1 로 뜨고, purchase= 여기서는 0으로 뜨는 희한..
                 ///** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
                 val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
@@ -183,7 +184,7 @@ class MyIAPHelperV3(val context: Context ) {
                 Log.d(TAG,"d1_B_addPurchaseBoolToList: trackId=$trackID, purchase.skus[0]=${purchase.skus[0]}, p.skus(list)=${purchase.skus}")
 
                 //purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
-        // **** [D1-B-2] :********************************>>> 구매 확인된 건 //todo: Refund 건 처리 + Acknowledge 가 false 로 처리된 경우도 가능성 있음 (구매중 폰 끊김 등..) -> handle purchase?
+        // **** [D1-B-2] :********************************>>> 구매 확인된 건 //todo: Refund 건 처리 + Acknowledge 가 false 로 처리된 경우도 가능성 있음 (구매중 폰 끊김 등..)
                 // 인도놈 튜토리얼 참고: https://programtown.com/how-to-make-multiple-in-app-purchase-in-android-kotlin-using-google-play-billing-library/
                 if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED)
                 {

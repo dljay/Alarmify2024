@@ -149,31 +149,29 @@ class MyIAPHelperV3(val context: Context ) {
     suspend fun d1_B_checkUnacknowledged(listOfPurchases: List<Purchase>): Unit {
         // 구입 절차 진행중 Connection 문제등으로 acknowledge 가 안된 물품들 여기서  Purchase.PurchaseState.PURCHASED 면 acknowledge 해주기!
         Log.d(TAG, "d1_B_checkUnacknowledged: called")
-        if (listOfPurchases.isNotEmpty()) // [살아있는 모든 구매건. Refund 된 경우 현 리스트에서 사라짐!]
+
+        if (listOfPurchases.isNotEmpty()) // [유효한 모든 구매건. Refund 된 경우 현 리스트에서 사라짐!]
         {
-            for (purchase in listOfPurchases)
-            {
+            for (purchase in listOfPurchases){
                 val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
-                if(indexOfRtObj!=-1 && purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged)
-                {
+                if(indexOfRtObj!=-1 && purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged){
                     Log.d(TAG, "d1_B_checkUnacknowledged: $#%#$%@$#@@%@#%%#% iapName= ${purchase.skus[0]}, 이럴수가!!!! acknowledge 를 부여할 대상이 있따니!!@$# @4# @#%@#%@#%#@")
                     return suspendCoroutine { continuation ->
                         val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
-                        billingClient!!.acknowledgePurchase(acknowledgePurchaseParams)
+                        billingClient!!.acknowledgePurchase(acknowledgePurchaseParams) // [후속] 구매인정 요청!!
                         { billingResult ->
-                            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK)
-                            {
+                            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK){
                                 // ############################## 신규 구매 정상적으로 완료 #######################
                                 //[구입인정] + purchaseBool 값 변경 반영(true)
-                                Log.d(TAG, "d1_B_checkUnacknowledged: 구매인정 부가 했음!!")
+                                Log.d(TAG, "d1_B_checkUnacknowledged: [후속] 구매인정 부가 했음!!")
                                 rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
                                 continuation.resume(Unit) // isPurchaseCompleted =true 로 모든 구입 절차가 끝났음을 알림.
                             } else {
-                                //문제 발생으로 -> [구입인정X] + purchaseBool 값 변경 반영(false)
+                                //BillingResult 문제로 -> [후속 구입인정 부가 실패 X] + purchaseBool 값 변경 반영(false)
                                 rtListPlusIAPInfo[indexOfRtObj].purchaseBool =false// [!!Bool 값 변경!!] default 값은 어차피 false ..혹시 몰라서 넣어줌.
                                 continuation.resume(Unit) // 그럼에도 그냥 나머지 IAP 확인 절차 진행 (최악의 경우에 예전 구입인정 못 받은 한 놈 안 걸리는것이니..)
-                                Log.d(TAG, "d1_B_checkUnacknowledged: 구매 인정 부가 실패!!! XXf")
+                                Log.d(TAG, "d1_B_checkUnacknowledged: [후속] 구매 인정 부가 실패!!! XXf")
                                 //continuation.resumeWithException(Exception("d1_B_checkUnacknowledged 부여중 Error 흐음. billingResult.responseCode= ${billingResult.responseCode} "))
                             }
                         }
@@ -198,8 +196,8 @@ class MyIAPHelperV3(val context: Context ) {
                  * IAP Library 4.0 업뎃 => .sku 가 없어지고 .skus => List<String> 을 반환함. (여러개 살 수 있는 기능이 생겨서)
                  * 우리는 해당 기능 사용 계획이 없으므로 무조건 우리의 .skus list 는 1개여야만 한다! 만약 1개가 아니면 for loop 에서 다음 iteration 으로 이동
                  */
-                Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-1> [PURCHASED ITEM] purchaseState=${purchase.purchaseState}, purchase=$purchase") // todo: 여기서 acknowledged 확인 가능!
-                // 첫 purchaseState=1 로 뜨고, purchase= 여기서는 0으로 뜨는 희한..
+
+
                 ///** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
                 val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
@@ -219,7 +217,8 @@ class MyIAPHelperV3(val context: Context ) {
                 val trackID = rtObject.id
                 val iapName = rtObject.iapName//purchase.skus[0]
                 val fileSupposedToBeAt =context.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
-                Log.d(TAG,"d1_C_addPurchaseBoolToList: trackId=$trackID, purchase.skus[0]=${purchase.skus[0]}, p.skus(list)=${purchase.skus}")
+                Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-1> [PURCHASED ITEM=${purchase.skus[0]}] purchaseState=${purchase.purchaseState}, purchase=$purchase") // todo: 여기서 acknowledged 확인 가능!
+                // 첫 purchaseState=1 로 뜨고, 바로 옆 purchase= 에서는 purchaseState 가 0으로 뜨는 희한..
 
                 //purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
         // **** [D1-B-2] :********************************>>> 구매 확인된 건 //todo: Refund 건 처리 + Acknowledge 가 false 로 처리된 경우도 가능성 있음 (구매중 폰 끊김 등..)
@@ -370,6 +369,7 @@ class MyIAPHelperV3(val context: Context ) {
             Log.d(TAG, "k_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 이미 구매인정 되있는 상태 return!") // 어떤 연유로 이미 구매인정이 되있는 상태라면 그냥 true 반환하고 return
             return true
         } else {//[구매 마무리 절차] 신규구매시 100% 이쪽으로 들어와야함 -> 기본적으로 신규 물품은 우리가 직접 구매확인(isAcknowledged) 을 해줘야함!
+
             //Network 문제등으로 끊겨서 Acknowledge 가 안된 경우를 대비해 onResume() 에서 retryPurchase() 할수도 있지만. 우리는 끊겼다 자동 연결되면 IAP 가 reload 되서 D1_B_checkUnacknowledged() 에 써주기로 함.
             return suspendCoroutine { continuation ->
                 val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseResult.purchaseToken).build()
@@ -388,7 +388,7 @@ class MyIAPHelperV3(val context: Context ) {
                         continuation.resumeWithException(Exception("isAcknowledged 부여중 Error 흐음. billingResult.responseCode= ${billingResult.responseCode} "))
                     }
                 }
-            }
+            }//suspendCoroutine
         }
     }
 

@@ -171,11 +171,14 @@ class JjMainViewModel : ViewModel() {
     }
 
 //*********************** [CLICK] a) 단순 UI 업데이트 (클릭-> SecondFrag 에 RtInTheCloud Obj 전달 -> UI 업뎃 + 복원(ListFrag 다녀왔을 때)
-//******************************* b) IAP & Download (Single)
+//************************[CLICK] b) IAP & Download (Single)
 
     val emptyRtObj = RtInTheCloud(id = -10) // 그냥 빈 깡통 -10 -> SecondFrag.kt > updateMiniPlayerUiOnClick() 에서 .id <0 -> 암것도 안함.
     private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
     val selectedRow = _selectedRow.asStateFlow()
+
+    private val _purchaseCircle = MutableLiveData<Int>() // Purchase 클릭 -> 구매창 뜨기전 나올 LoadingCircle
+    val purchaseCircle: LiveData<Int> = _purchaseCircle
 
     fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean, receivedActivity: Activity) { // todo: Click <-> RCV ViewModel 더 정석으로 찾아서 바꿔보기 + Activity 에 대한 고민..
 //[A] 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
@@ -194,11 +197,15 @@ class JjMainViewModel : ViewModel() {
         val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler - 원래 logd 넣어줬으나 그냥 뺴줌.
 
         val purchaseParentJob = viewModelScope.launch(handler) {
-            //todo: 로딩 Circle [1] 보여주기 - > 보통 구매창 뜨기까지 2초정도 걸림~
+
+            _purchaseCircle.value = 0 //todo: 로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
+            Log.d(TAG, "onTrackClicked: 로딩 Circle=0 [OOO]")
         //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
             val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
-        //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기 //todo: 로딩 Circle [2] 없애주기?
+        //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
+            _purchaseCircle.value = 1 //todo: 로딩 Circle 없애기
+            Log.d(TAG, "onTrackClicked: 로딩 Circle=1 [XXX]")
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
         //2-j) Verify ->
             iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
@@ -244,7 +251,7 @@ class JjMainViewModel : ViewModel() {
                     }
                 }// end of Dispatcher.IO
                 Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] run download..Thread= ${Thread.currentThread().name}")
-                //todo: run download
+                //todo: run download -진짜
             }
         }// end of invokeOnCompletion.
 
@@ -265,7 +272,8 @@ class JjMainViewModel : ViewModel() {
         val dnldParentJob = viewModelScope.launch(handler) {
         //3-a) Background Thread 에서 dnldId 받기: MyDNLDV3.kt> launchDownload -> and get "downloadId:Long" -> 오류 없으면 제대로 된 dnldId 값을 반환하며 이미 다운로드는 시작 중
             launch(Dispatchers.IO) {
-                val dnldId: Long = singleDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 여기서 문제가 발생하면 다음 줄로 진행이 안되고 바로 위에 handler 가 잡아서 exception 을 던짐.
+                // Log.d(TAG, "onTrackClicked: // 로딩 Circle [4] X") <- 로딩 Circle 보여줄 필요 없음 (실제 0.05초 사이에 DNLD 창이 뜬다.)
+                val dnldId: Long = singleDownloaderV3.launchDNLD(rtInTheCloudObj) //Long 값. 실행과 동시에 Download 창 보여줌
         //3-b)  다운중인 dnldId 정보를 전달하여 -> 현재 다운로드 Status 를 계속 LiveModel 로 전달 -> main Thread 에서 UI 업데이트.
                 Log.d(TAG, "downloadPurchased: dnldID=$dnldId")
                 // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getLiveDataSingleDownloader() 값을 observe 하기에 -> 자동으로 UI 업뎃.

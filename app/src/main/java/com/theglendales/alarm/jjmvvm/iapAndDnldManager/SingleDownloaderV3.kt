@@ -10,7 +10,6 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
-import junit.framework.Test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -38,7 +37,7 @@ class SingleDownloaderV3(val context: Context) {
         dnldInfoObj.prgrs = 0
         dnldInfoObj.status = 0 // status -> 0 -> SecondFrag -> BtmShtDNLDV2 show!
         dnldInfoObj.isBufferingToDNLD = true // -> 이게 true 인 동안은 Lottie 빙글빙글 애니메이션 + PrgrsBar(의 View= Gone 상태)
-        updateLiveDataOnMainThread(dnldInfoObj)
+        updateDNLDLiveDataOnMainThread(dnldInfoObj)
 
 
         //B) 필요한 정보 추출.
@@ -105,7 +104,7 @@ class SingleDownloaderV3(val context: Context) {
 
                     dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL // 8
                     dnldInfoObj.prgrs = currentPrgrs
-                    updateLiveDataOnMainThread(dnldInfoObj)
+                    updateDNLDLiveDataOnMainThread(dnldInfoObj)
                     break // Finish! escape from While Loop!
                 }
                 //B) Progress 가 변했을때만 ViewModel 에 전달
@@ -115,7 +114,7 @@ class SingleDownloaderV3(val context: Context) {
                     Log.d(TAG, "watchDnldProgress: (B) (After) prevPrgrs=$prevPrgrs, currentPrgrs=$currentPrgrs")
 
                     dnldInfoObj.prgrs = currentPrgrs
-                    updateLiveDataOnMainThread(dnldInfoObj)
+                    updateDNLDLiveDataOnMainThread(dnldInfoObj)
                 }
                 //C) Status 가 처음 변했을 때만 ViewModel 에 전달 (While loop 에 의해 계속 currentStatus 를 체크하겠지만 값이 변했을 때만 VModel 에 반영 (ex. PENDING-> RUNNING ->SUCCESSFUL )
                 if(prevStatus != currentStatus) {
@@ -126,12 +125,12 @@ class SingleDownloaderV3(val context: Context) {
                         DownloadManager.STATUS_PENDING -> {//1, 참고로 이거 제끼고 바로 running 으로 가는 경우도 많음. //todo: Timeout? https://stackoverflow.com/questions/28782311/timeout-for-android-downloadmanager
                             Log.d(TAG, "watchDnldProgress: (C-1) CurrentStatus=PENDING")
                             dnldInfoObj.status = currentStatus
-                            updateLiveDataOnMainThread(dnldInfoObj) }
+                            updateDNLDLiveDataOnMainThread(dnldInfoObj) }
 
                         DownloadManager.STATUS_RUNNING -> {Log.d(TAG, "watchDnldProgress: (C-2) CurrentStatus=RUNNING")
 
                             dnldInfoObj.status = currentStatus
-                            updateLiveDataOnMainThread(dnldInfoObj) } //2
+                            updateDNLDLiveDataOnMainThread(dnldInfoObj) } //2
 
                         DownloadManager.STATUS_PAUSED -> { //4
                             //B-1)** 다운이 다 됐음에도 STATUS_PAUSED 에서 10초 이상씩 머무는 경우->
@@ -140,7 +139,7 @@ class SingleDownloaderV3(val context: Context) {
                                 Log.d(TAG, "watchDnldProgress: (C-4) CurrentStatus=PAUSED 지만 다운이 다 된것으로 보임. Status->SUCCESSFUL 로 변경. \n prgrsBasedOnActualDNLDSize=$prgrsBasedOnActualDNLDSize")
 
                                 dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL
-                                updateLiveDataOnMainThread(dnldInfoObj)
+                                updateDNLDLiveDataOnMainThread(dnldInfoObj)
                                 break // while loop 종료
                             }
                         }
@@ -150,14 +149,14 @@ class SingleDownloaderV3(val context: Context) {
                             Log.d(TAG, "watchDnldProgress: (C-8) CurrentStatus=SUCCESSFUL, Progress= $currentPrgrs, TRK ID=trkId=${rtOnThePhone.trIdStr}")
 
                             dnldInfoObj.status = DownloadManager.STATUS_SUCCESSFUL
-                            updateLiveDataOnMainThread(dnldInfoObj)
+                            updateDNLDLiveDataOnMainThread(dnldInfoObj)
                             break // while loop 종료
                         }
                         DownloadManager.STATUS_FAILED -> { //16
                             Log.d(TAG, "watchDnldProgress: (C-16) CurrentStatus=FAILED!XX ")
 
                             dnldInfoObj.status = DownloadManager.STATUS_FAILED
-                            updateLiveDataOnMainThread(dnldInfoObj)
+                            updateDNLDLiveDataOnMainThread(dnldInfoObj)
                             break // while loop 종료
                         }
                     }
@@ -167,7 +166,7 @@ class SingleDownloaderV3(val context: Context) {
         }
     }
 //<3> <1> & <2> 실행 중 필요할때마다 라이브데이터 업데이트 -> SecondFrag 에서 반영 (진즉에 Observe 중)
-    suspend fun updateLiveDataOnMainThread(dnldInfoObj: DNLDInfoContainer) {
+    suspend fun updateDNLDLiveDataOnMainThread(dnldInfoObj: DNLDInfoContainer) {
         withContext(Dispatchers.Main) { // 잠시 Thread 를 IO -> Main 으로 변경 (UI 업뎃되기 때문에)
             _dnldInfoLiveData.value = dnldInfoObj
         }

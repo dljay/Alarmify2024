@@ -48,6 +48,7 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
+import com.theglendales.alarm.jjmvvm.util.LottieAnimHandler
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.launch
 
@@ -102,6 +103,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     //Lottie Animation(Loading & Internet Error)
     lateinit var lottieAnimationView: LottieAnimationView
+    lateinit var lottieAnimHandler: LottieAnimHandler
 
     //Media Player & MiniPlayer Related
     //lateinit var mpClassInstance_V1: ExoForLocal
@@ -229,7 +231,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
         //[MainVModel-1] 1) [네트워크 사용O] Fb 에서 새로운 리스트를 받음/새로고침 2) [네트워크 사용X] a)신규 구매 후 리스트 변화. b) 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
-                Log.d(TAG, "---------------------- [MainVModel-RTLIST] rtListFromFb received.")
+                Log.d(TAG, "---------------------- [MainVModel <1> - RTLIST] rtListFromFb received.")
 
                 exoForUrlPlay.createMp3UrlMap(rtListPlusIAPInfo)
 
@@ -240,32 +242,41 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 } else { // Chip 이 선택 안된 경우.
                     rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
                 }
-                lottieAnimController("stop") // Loading Animation 이 돌고있었다면 Stop
+                lottieAnimHandler.animController("stop") // Loading Animation 이 돌고있었다면 Stop
                 swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
             }
         //[MainVModel-2] Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
             jjMainVModel.isNetworkWorking.observe(viewLifecycleOwner) { isNetworkWorking ->
-                Log.d(TAG, "[MainVModel-NT] Network Availability detected, isNetworkWorking=[$isNetworkWorking] ")
+                Log.d(TAG, "[MainVModel <2> - NT] Network Availability detected, isNetworkWorking=[$isNetworkWorking] ")
 
                 //A-1) true && false (기존에 O 지금은 X) or A-2) false && false (기존도 X 지금도 X) - 혹시 몰라서 넣음.
                 if(jjMainVModel.prevNT && !isNetworkWorking || !jjMainVModel.prevNT && !isNetworkWorking  ) {
-                    Log.d(TAG, "[MainVModel-NT] Network Error! Launch Lottie!")
-                    lottieAnimController("error")
-                    //Toast.makeText(this.context,"Error: Unable to connect",Toast.LENGTH_SHORT).show()
-                    toastMessenger.showMyToast("Error: Unable to connect",isShort = true)
+                    Log.d(TAG, "[MainVModel <2> - NT] Network Error! Launch Lottie!")
+                    lottieAnimHandler.animController("error")
+
+                    snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"Please kindly check your network connection status",false)
+                    //toastMessenger.showMyToast("Error: Unable to connect",isShort = true)
                 }
                 //B) false && true (기존에 X 지금은 O)
                 else if(!jjMainVModel.prevNT && isNetworkWorking) {
-                    Log.d(TAG, "[MainVModel-NT] Network Working Again! Remove Error Lottie and Relaunch FB!!")
-                    lottieAnimController("stop")
+                    Log.d(TAG, "[MainVModel <2> - NT] Network Working Again! Remove Error Lottie and Relaunch FB!!")
+                    lottieAnimHandler.animController("stop")
                     jjMainVModel.refreshAndUpdateLiveData() // Relaunch FB! -> 사실 lottie 가 사라지면서 기존 RcView 가 보여서 상관없긴 하지만.애초 Network 불가상태로 접속해 있을 수 있음.
                 }
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
 
             }
-        //[MainVModel-3] (구매 후) Single DNLD -> UI 반영 (DnldPanel 보여주기 등)
+        //[MainVModel-3] (구매 전) 클릭 -> Purchase 창 뜨기전까지 Loading Circle 보여주고 없애기
+            jjMainVModel.purchaseCircle.observe(viewLifecycleOwner) { onOffNumber ->
+                Log.d(TAG, "[MainVModle <3> - PurchaseCircle] Valued Received=$onOffNumber ") // 0: 보여주기, 1: 끄기.
+                when(onOffNumber){
+                    0 -> {lottieAnimHandler.animController("purchaseCircle")}
+                    1 -> {lottieAnimHandler.animController("stop")}
+                }
+            }
+        //[MainVModel-4] (구매 후) Single DNLD -> UI 반영 (DnldPanel 보여주기 등)
             jjMainVModel.getLiveDataSingleDownloader().observe(viewLifecycleOwner) { dnldInfo->
-                Log.d(TAG, "[MainVModel-DNLD-A] Title=${dnldInfo.dnldTrTitle}, Status=${dnldInfo.status}, Prgrs=${dnldInfo.prgrs} ")
+                Log.d(TAG, "[MainVModel <4> -DNLD-A] Title=${dnldInfo.dnldTrTitle}, Status=${dnldInfo.status}, Prgrs=${dnldInfo.prgrs} ")
 
                 //A) Prgrs 를 받는순간 isPreparingToDNLD -> false -> Lottie Loading Circle (X), ProgressBar(O)
                 when(dnldInfo.isBufferingToDNLD) { // isBufferingToDNLD(X)
@@ -277,18 +288,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         //btmSht_SingleDNLDV.removeBtmSheetImmediately() // 없어도 됨. 그리고 이거 있으면 -> Successful 해서 1초간 만땅 Prgrs Bar 보여주던게 바로 꺼짐. very unsatisfying..
                     }
                     0 -> { // 내가 지정- 다운로드 attempt 시작하자마자. (0 은 그냥 내가 지정한 숫자) -> BtmSheet 을 열어줘! +
-                        Log.d(TAG, "[MainVModel-DNLD-B] STATUS=0 ")
+                        Log.d(TAG, "[MainVModel <4> -DNLD-B] STATUS=0 ")
                             btmSht_SingleDNLDV.show(requireActivity().supportFragmentManager, btmSht_SingleDNLDV.tag)}
 
                     DownloadManager.STATUS_FAILED -> { //16
-                        Log.d(TAG, "[MainVModel-DNLD-B] STATUS=FAILED(16) Observer: !!!! DNLD FAILED (XX) !!!!! ")
+                        Log.d(TAG, "[MainVModel <4> -DNLD-B] STATUS=FAILED(16) Observer: !!!! DNLD FAILED (XX) !!!!! ")
                         //remove BTMSHEET & Show Warning Snackbar
                         btmSht_SingleDNLDV.removeBtmSheetAfterOneSec()
                         snackBarDeliverer(requireActivity().findViewById(android.R.id.content), "Download Failed. Please check your network connectivity", false)
                         return@observe
                     }
                     DownloadManager.STATUS_SUCCESSFUL-> { //8 <- 다시 secondFrag 들어왔을 때 뜰 수 있음.
-                        Log.d(TAG, "[MainVModel-DNLD-B] STATUS=SUCCESSFUL(8) Observer: DNLD SUCCESS (O)  ")
+                        Log.d(TAG, "[MainVModel <4> -DNLD-B] STATUS=SUCCESSFUL(8) Observer: DNLD SUCCESS (O)  ")
                         // Prgrs Bar 만빵으로 채워주고 -> BtmSheet 없애주기 (만빵 안 차면 약간 허탈..)
                         btmSht_SingleDNLDV.animateLPI(100,1) //  그래프 만땅= 100 으로 설정해줬음.
                         btmSht_SingleDNLDV.removeBtmSheetAfterOneSec() //1 초 Delay 후 btmSheet 없애주기.
@@ -296,7 +307,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         return@observe
                     }
                     -444 -> { // VModel> Coroutine > .invokeOnCompletion 에서 handler 가 에러 감지 (내가 임의로 넣은 숫자 -444)
-                        Log.d(TAG, "[MainVModel-DNLD-B] STATUS=-444")
+                        Log.d(TAG, "[MainVModel <4> -DNLD-B] STATUS=-444")
                         btmSht_SingleDNLDV.removeBtmSheetImmediately() // 에러메시지는 ViewModel 에서 Toast 로 전파. //
                         toastMessenger.showMyToast("Download Failed..", isShort = false)
                         return@observe
@@ -309,16 +320,16 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 }
                 //C) Progress Animation
                 if(dnldInfo.prgrs > 0 ) {
-                    Log.d(TAG, "[MainVModel-DNLD-C] Prgrs Animation! (prgrs=${dnldInfo.prgrs})")
+                    Log.d(TAG, "[MainVModel <4> -DNLD-C] Prgrs Animation! (prgrs=${dnldInfo.prgrs})")
                     btmSht_SingleDNLDV.prepAndAnimateLPI(dnldInfo.prgrs) // 그래프 만땅= 100 .
                     btmSht_SingleDNLDV.updateTitleTextView(dnldInfo.dnldTrTitle) // Tr Title 보여주기 (첫 Prgrs 받는 순간 반영. 이후 prgrs 받을 때마다 setText 되지만. 상관 없을듯..)
                 }
 
 
             }
-        //[MainVModel-4] [멀티 다운로드]
+        //[MainVModel-5] [멀티 다운로드]
             jjMainVModel.getLiveDataMultiDownloader().observe(viewLifecycleOwner, {stateEnum ->
-                Log.d(TAG, "onViewCreated:[MainVModel-멀티다운로드] StateEnum=$stateEnum , Thread=${Thread.currentThread().name}")
+                Log.d(TAG, "onViewCreated:[MainVModel <5> - 멀티다운로드] StateEnum=$stateEnum , Thread=${Thread.currentThread().name}")
                 when(stateEnum) {
                     MultiDnldState.IDLE -> {Log.d(TAG, "onViewCreated: received idle, do nothing..")}
                     MultiDnldState.ERROR -> {snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"UNABLE TO RECOVER PURCHASED ITEMS.", false)}
@@ -583,36 +594,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
 
-    //lottieAnimation Controller = 로딩:0 번, 인터넷에러:1번, 정상:2번(lottie 를 감춰!)
-    private fun lottieAnimController(status: String) {
-        when (status) {
-            "loading" -> {
-                lottieAnimationView.setAnimation(R.raw.lottie_loading1)
-            } //최초 app launch->read.. auto play 기 때문에
-            "error" -> {
-                activity?.runOnUiThread(Runnable
-                {
-                    Log.d(TAG, "lottieAnimController: NO INTERNET ERROR!!")
-                    lottieAnimationView.visibility = LottieAnimationView.VISIBLE
-                    lottieAnimationView.setAnimation(R.raw.lottie_error1)
-
-                    snackBarDeliverer(lottieAnimationView,"Please kindly check your network connection status",false)
-
-                    //todo: 여기 SnackBar 에서 View 가 불안정할수 있음=>try this? -> Snackbar.make(requireActivity().findViewById(android.R.id.content), "..", Snackbar.LENGTH_LONG).show()
-
-                })
-            }
-            "stop" -> {
-                activity?.runOnUiThread(Runnable
-                {
-                    Log.d(TAG, "lottieAnimController: STOP (any) Animation!!")
-                    lottieAnimationView.cancelAnimation()
-                    lottieAnimationView.visibility = LottieAnimationView.GONE
-                })
-            }
-
-        }
-    }
 
     private fun mySmoothScroll() {
         layoutManager.scrollToPositionWithOffset(GlbVars.clickedTrId - 1, 60)
@@ -653,8 +634,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "setUpLateInitUis: called")
     //Lottie
         lottieAnimationView = v.findViewById(R.id.id_lottie_secondFrag)
+        lottieAnimHandler = LottieAnimHandler(requireActivity(), lottieAnimationView)
         //일단 lottieAnim - Loading 애니메이션 틀어주기
-        lottieAnimController("loading")
+        lottieAnimHandler.animController("initialLoading")
 
     //Swipe Refresh Layout Related
         swipeRefreshLayout = v.findViewById(R.id.id_swipeRefreshLayout)

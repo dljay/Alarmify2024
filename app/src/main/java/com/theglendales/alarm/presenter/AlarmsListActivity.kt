@@ -56,7 +56,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.16H [Purchase Click -> 구매창 뜨기전까지 ProgressCircle - 자꾸 잘리네..]
+//v3.07.16I [Purchase Click -> 구매창 뜨기전까지 ProgressCircle - 성공]
 
 // Scroll to Original Position(잘되네.. 미스터리야..)
 

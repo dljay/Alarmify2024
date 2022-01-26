@@ -184,7 +184,6 @@ class JjMainViewModel : ViewModel() {
 //[A] 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
         if(!isPurchaseClicked) {
             _selectedRow.value = rtObj
-//            _purchaseCircle.value = 0 테스트중. Delete..
             return
         }
 //[B] Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
@@ -199,14 +198,14 @@ class JjMainViewModel : ViewModel() {
 
         val purchaseParentJob = viewModelScope.launch(handler) {
 
-            //todo: _purchaseCircle.value = 0 //로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
-            Log.d(TAG, "onTrackClicked: 로딩 Circle=0 (O)")
+            _purchaseCircle.value = 0 //로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
+
         //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
             val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
         //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
-            //todo: _purchaseCircle.value = 1 //로딩 Circle 없애기
-            Log.d(TAG, "onTrackClicked: 로딩 Circle=1 (X)")
+
+
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
         //2-j) Verify ->
             iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
@@ -214,9 +213,11 @@ class JjMainViewModel : ViewModel() {
             val isPurchaseAllCompleted = iapV3.k_acknowledgePurchase(purchaseResult, rtObj) // acknowledge 를 여기서 해주고 이제 모든 구입 절차가 끝이 남.
             Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 O] isPurchaseAllCompleted=$isPurchaseAllCompleted")
         // => 여기서 구매절차는 COMPLETE! => invokeOnCompletion 으로 이동
+            _purchaseCircle.value = 1 //로딩 Circle 없애기
 
         }
         purchaseParentJob.invokeOnCompletion { throwable ->
+            if(_purchaseCircle.value == 0) {_purchaseCircle.value = 1} // 만약 Purchase Loading Circle 이 켜져있었다면 꺼주기 (Handler 에러 잡히든 말든 무조건 꺼!!)
             Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..Thread= ${Thread.currentThread().name}")
             if (throwable != null && !throwable.message.isNullOrEmpty()) {
                 if (throwable.message!!.contains("USER_CANCELED")) {
@@ -252,7 +253,7 @@ class JjMainViewModel : ViewModel() {
                     }
                 }// end of Dispatcher.IO
                 Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] run download..Thread= ${Thread.currentThread().name}")
-                //todo: run download -진짜
+                downloadPurchased(rtObj)//todo: run download -진짜
             }
         }// end of invokeOnCompletion.
 

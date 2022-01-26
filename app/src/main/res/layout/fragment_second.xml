@@ -2,22 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/id_ParentFrameLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".jjongadd.SecondFragment">
-
-    <!--<ProgressBar
-        android:id="@+id/id_PurchaseLoadingCircle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:layout_gravity="center"
-        android:clickable="true"
-        android:focusable="true"
-        android:visibility="visible">
-    </ProgressBar>-->
-
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
         android:id="@+id/id_slidingUpPanel"
@@ -48,6 +35,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/id_chipGroup"
@@ -180,22 +168,37 @@
 
                 app:lottie_scale="0.5">
 
+
             </com.airbnb.lottie.LottieAnimationView>
 
-            <!--1st child-b) Swipe+RcView!  -->
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/id_swipeRefreshLayout"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_constraintTop_toBottomOf="@id/id_ll_ChipGroupWrapper">
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="visible">
 
-                <!--RecyclerView  -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/id_rcV_2ndFrag"
+
+                <!--1st child-b) Swipe+RcView!  -->
+                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                    android:id="@+id/id_swipeRefreshLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    app:layout_constraintTop_toBottomOf="@id/id_ll_ChipGroupWrapper">
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                    <!--RecyclerView  -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/id_rcV_2ndFrag"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+                <!--Loading Circle: 마지막 View will simply overlay everything else. -->
+                <include layout="@layout/loadingcircle_overlay_1"/>
+
+            </FrameLayout>
 
         </LinearLayout>
 

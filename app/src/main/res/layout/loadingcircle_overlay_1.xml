@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl_loadingCircle"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha="0.4"
+    android:animateLayoutChanges="true"
+    android:background="@android:color/black"
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="visible">
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/loadingCircle_itself"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="visible"
+        android:clickable="true"
+        android:focusable="true"
+        android:indeterminate="true">
+    </com.google.android.material.progressindicator.CircularProgressIndicator>
+
+</FrameLayout>

@@ -32,6 +32,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.theglendales.alarm.R
@@ -95,8 +96,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Lottie Animation(Loading & Internet Error) + LoadingCircle(로티 X) 관련
     lateinit var lottieAnimationView: LottieAnimationView
     lateinit var lottieAnimHandler: LottieAnimHandler
-    //lateinit var purchaseLoadingCircle: ProgressBar
-    //lateinit var parentFrameLayout: FrameLayout
+    lateinit var purchaseLoadingCircle: CircularProgressIndicator
+    lateinit var fm_LoadingCircle: FrameLayout
 
     //Media Player & MiniPlayer Related
     private val exoForUrlPlay: ExoForUrl by globalInject()
@@ -262,13 +263,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjMainVModel.purchaseCircle.observe(viewLifecycleOwner) { onOffNumber ->
                 Log.d(TAG, "[MainVModle <3> - PurchaseCircle] Valued Received=$onOffNumber ") // 0: 보여주기, 1: 끄기.
                 when(onOffNumber){
-                    0 -> {// 보여주기(O)
-                        // todo: purchaseLoadingCircle.visibility = ProgressBar.VISIBLE
-                    } // 끄기(X)
-                    1 -> {
-                        // todo: purchaseLoadingCircle.visibility= ProgressBar.GONE
-                    //lottieAnimHandler.animController("stop")
-                    }
+                    0 -> {fm_LoadingCircle.visibility = View.VISIBLE} // 보여주기(O)
+                    1 -> {fm_LoadingCircle.visibility = View.GONE} // 끄기(X)
                 }
             }
         //[MainVModel-4] (구매 후) Single DNLD -> UI 반영 (DnldPanel 보여주기 등)
@@ -629,9 +625,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     private fun setUpLateInitUis(v: View) {
         Log.d(TAG, "setUpLateInitUis: called")
-    //Lottie & Progress Bar
-        //parentFrameLayout = v.findViewById(R.id.id_ParentFrameLayout)
-        //purchaseLoadingCircle = v.findViewById(R.id.id_PurchaseLoadingCircle)
+    //Lottie & LoadingCircle
+        fm_LoadingCircle = v.findViewById(R.id.fl_loadingCircle)
+        purchaseLoadingCircle = v.findViewById(R.id.loadingCircle_itself)
+        fm_LoadingCircle.visibility = View.GONE// 일단 LoadingCircle 안보이게 하기.
+
         lottieAnimationView = v.findViewById(R.id.id_lottie_secondFrag)
         lottieAnimHandler = LottieAnimHandler(requireActivity(), lottieAnimationView)
         //일단 lottieAnim - Loading 애니메이션 틀어주기

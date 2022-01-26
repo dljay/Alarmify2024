@@ -184,6 +184,7 @@ class JjMainViewModel : ViewModel() {
 //[A] 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
         if(!isPurchaseClicked) {
             _selectedRow.value = rtObj
+//            _purchaseCircle.value = 0 테스트중. Delete..
             return
         }
 //[B] Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
@@ -198,14 +199,14 @@ class JjMainViewModel : ViewModel() {
 
         val purchaseParentJob = viewModelScope.launch(handler) {
 
-            _purchaseCircle.value = 0 //todo: 로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
-            Log.d(TAG, "onTrackClicked: 로딩 Circle=0 [OOO]")
+            //todo: _purchaseCircle.value = 0 //로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
+            Log.d(TAG, "onTrackClicked: 로딩 Circle=0 (O)")
         //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
             val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
         //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
-            _purchaseCircle.value = 1 //todo: 로딩 Circle 없애기
-            Log.d(TAG, "onTrackClicked: 로딩 Circle=1 [XXX]")
+            //todo: _purchaseCircle.value = 1 //로딩 Circle 없애기
+            Log.d(TAG, "onTrackClicked: 로딩 Circle=1 (X)")
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
         //2-j) Verify ->
             iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.

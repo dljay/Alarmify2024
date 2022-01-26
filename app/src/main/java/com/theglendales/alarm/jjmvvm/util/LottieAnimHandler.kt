@@ -11,13 +11,13 @@ class LottieAnimHandler(private val receivedActivity: Activity, private val lott
     //lottieAnimation Controller
     fun animController(status: String) {
         when (status) {
-            "purchaseCircle" -> {
+          /*  "purchaseCircle" -> {
                 receivedActivity.runOnUiThread {
                     Log.d(TAG, "animController: called")
                     lottieAnimationView.visibility = LottieAnimationView.VISIBLE
                     // 불투명 + 투과금지 + 사이즈
                     lottieAnimationView.setAnimation(R.raw.lottie_circular_loading)}
-            }
+            }*/
 
             "initialLoading" -> {
                 Log.d(TAG, "animController: initialLoading")

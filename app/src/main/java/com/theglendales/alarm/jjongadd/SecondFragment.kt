@@ -65,11 +65,6 @@ private const val TAG = "SecondFragment"
 
 class SecondFragment : androidx.fragment.app.Fragment() {
 
-
-
-
-    //IAP
-
     //Download 관련
     lateinit var btmSht_SingleDNLDV: BtmShtSingleDNLDV2
     //Network Checker
@@ -80,10 +75,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Toast Messenger
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
 
-
-    //SharedPreference 저장 관련 (Koin  으로 대체!) ==> 일단 사용 안함.
-    //val mySharedPrefManager: MySharedPrefManager by globalInject()
-    //private val playInfo: PlayInfoContainer = PlayInfoContainer(-10,-10,-10, StatusMp.IDLE)
 
     //RcView Related
     lateinit var rcvAdapterInstance: RcViewAdapter
@@ -101,12 +92,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     // VumeterHandler
     private val VHolderUiHandler: VHolderUiHandler by globalInject() // Koin Inject
 
-    //Lottie Animation(Loading & Internet Error)
+    //Lottie Animation(Loading & Internet Error) + LoadingCircle(로티 X) 관련
     lateinit var lottieAnimationView: LottieAnimationView
     lateinit var lottieAnimHandler: LottieAnimHandler
+    //lateinit var purchaseLoadingCircle: ProgressBar
+    //lateinit var parentFrameLayout: FrameLayout
 
     //Media Player & MiniPlayer Related
-    //lateinit var mpClassInstance_V1: ExoForLocal
     private val exoForUrlPlay: ExoForUrl by globalInject()
 
 
@@ -270,8 +262,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjMainVModel.purchaseCircle.observe(viewLifecycleOwner) { onOffNumber ->
                 Log.d(TAG, "[MainVModle <3> - PurchaseCircle] Valued Received=$onOffNumber ") // 0: 보여주기, 1: 끄기.
                 when(onOffNumber){
-                    0 -> {lottieAnimHandler.animController("purchaseCircle")}
-                    1 -> {lottieAnimHandler.animController("stop")}
+                    0 -> {// 보여주기(O)
+                        // todo: purchaseLoadingCircle.visibility = ProgressBar.VISIBLE
+                    } // 끄기(X)
+                    1 -> {
+                        // todo: purchaseLoadingCircle.visibility= ProgressBar.GONE
+                    //lottieAnimHandler.animController("stop")
+                    }
                 }
             }
         //[MainVModel-4] (구매 후) Single DNLD -> UI 반영 (DnldPanel 보여주기 등)
@@ -632,7 +629,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     private fun setUpLateInitUis(v: View) {
         Log.d(TAG, "setUpLateInitUis: called")
-    //Lottie
+    //Lottie & Progress Bar
+        //parentFrameLayout = v.findViewById(R.id.id_ParentFrameLayout)
+        //purchaseLoadingCircle = v.findViewById(R.id.id_PurchaseLoadingCircle)
         lottieAnimationView = v.findViewById(R.id.id_lottie_secondFrag)
         lottieAnimHandler = LottieAnimHandler(requireActivity(), lottieAnimationView)
         //일단 lottieAnim - Loading 애니메이션 틀어주기

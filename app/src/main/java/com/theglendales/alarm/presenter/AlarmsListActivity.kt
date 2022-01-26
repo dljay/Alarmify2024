@@ -61,8 +61,8 @@ import java.util.Calendar
 // Scroll to Original Position(잘되네.. 미스터리야..)
 
 // issues:
-//1) ** 구입 클릭 코드 작성 중. activity 뽑는 문제..
-//2) 구매시 .acknowledged 챙겨주기(커네션 끊기거나 등의 문제 발생시) + refund 된 물품 처리.*/
+// 1) 구매창 -> Android Studio STop -> 구매창만 남는 현상
+// 2) Billing Disconnect 시 해결해주기.
 //3. Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인듯.. ?
 //https://medium.com/@gunayadem.dev/add-a-click-listener-to-your-adapter-using-mvvm-in-kotlin-part-2-9dce852e96d5
 //https://stackoverflow.com/questions/49513993/where-to-put-click-listeners-in-mvvm-android

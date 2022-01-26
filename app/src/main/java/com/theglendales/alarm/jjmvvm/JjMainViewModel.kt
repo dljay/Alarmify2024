@@ -256,9 +256,7 @@ class JjMainViewModel : ViewModel() {
                 downloadPurchased(rtObj)//todo: run download -진짜
             }
         }// end of invokeOnCompletion.
-
         Log.d(TAG, "onTrackClicked: [outside-purchaseParentJob] 위 코루틴과 상관없이 빨리 불림..Thread=${Thread.currentThread().name}")
-        //handlePurchaseResult() 에서 LiveData 업뎃(MyPurchaseStateENUM) -> SecondFrag 에서 여기 viewModel 로 지시 다운로드 or
     }
 
     //fun getPurchaseState(): LiveData<MyPurchResultENUM> = iapV3.getPurchStateLiveData()

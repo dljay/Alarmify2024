@@ -220,14 +220,13 @@ class JjMainViewModel : ViewModel() {
                 }
             } else {// 아무 문제없이 구매가 끝이남.
                 Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(O)] - !!No problemo!!!")
-                //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
+        //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
                 val rtListPlusIAPInfo = iapV3.e_getFinalList()
                 unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
 
                 _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
-                Log.d(TAG, "onTrackClicked: (3) <<<<<<<<<getRtList: update LiveData!")
 
-                //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
+        //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
                 // a), b), c) 는 모두 동시 실행(Parallel)
 
                 viewModelScope.launch(Dispatchers.IO) {

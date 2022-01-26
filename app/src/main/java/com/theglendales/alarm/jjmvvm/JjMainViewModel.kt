@@ -45,7 +45,7 @@ class JjMainViewModel : ViewModel() {
     val rtInTheCloudList: LiveData<List<RtInTheCloud>> = _rtInTheCloudList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
 
     init {
-        Log.d(TAG, "init: called.. ^^ ")
+        Log.d(TAG, "init: called.. ^^ Thread=${Thread.currentThread().name} ")
         refreshAndUpdateLiveData()
     }
 //********** FB ->rtList -> IAP -> rtListPlusIAPInfo -> LiveData(rtInTheCloudList) -> SecondFrag-> UI 업데이트 : ViewModel 최초 로딩시 & Spinner 로 휘리릭~ 새로고침 할 때 아래 function 이 불림.
@@ -67,7 +67,7 @@ class JjMainViewModel : ViewModel() {
             //** viewModelscope.launch!!!  <<<<<<runs on the Main thread>>>>> !!!!
 
                 val iapParentJob = viewModelScope.launch(handler) {
-                    Log.d(TAG, "refreshAndUpdateLiveData: (2) RtList ->IAP")
+                    Log.d(TAG, "refreshAndUpdateLiveData: (2) RtList ->IAP // Thread=${Thread.currentThread().name}")
 
                 //iapV3-B) Fb 에서 받은 리스트를 -> IAP 에 전달 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨.
                     iapV3.b_feedRtList(rtList)
@@ -193,12 +193,12 @@ class JjMainViewModel : ViewModel() {
         // [**SEQUENTIAL**] // 기존 구입 과정을 Coroutine 으로 blocking+순차적 라인으로 보기 쉽게 했음.
         val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler - 원래 logd 넣어줬으나 그냥 뺴줌.
 
-        val purchaseParentJob = viewModelScope.launch(handler) {//todo: handler?
-
+        val purchaseParentJob = viewModelScope.launch(handler) {
+            //todo: 로딩 Circle [1] 보여주기 - > 보통 구매창 뜨기까지 2초정도 걸림~
         //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
             val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
-        //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
+        //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기 //todo: 로딩 Circle [2] 없애주기?
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
         //2-j) Verify ->
             iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
@@ -209,11 +209,11 @@ class JjMainViewModel : ViewModel() {
 
         }
         purchaseParentJob.invokeOnCompletion { throwable ->
-            Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..")
+            Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..Thread= ${Thread.currentThread().name}")
             if (throwable != null && !throwable.message.isNullOrEmpty()) {
                 if (throwable.message!!.contains("USER_CANCELED")) {
                     return@invokeOnCompletion
-                } // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지 아무것도 안 보여주기.
+                } // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지나 기타 아무것도 안 보여주기.
                 else {
                     Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(X)] - Error. throwable=$throwable ")
                     toastMessenger.showMyToast("Purchase Error: $throwable", isShort = false)
@@ -228,7 +228,6 @@ class JjMainViewModel : ViewModel() {
 
         //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
                 // a), b), c) 는 모두 동시 실행(Parallel)
-
                 viewModelScope.launch(Dispatchers.IO) {
 //[Background Thread]   //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
                     launch {
@@ -244,11 +243,12 @@ class JjMainViewModel : ViewModel() {
                         }
                     }
                 }// end of Dispatcher.IO
+                Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] run download..Thread= ${Thread.currentThread().name}")
                 //todo: run download
             }
         }// end of invokeOnCompletion.
 
-        Log.d(TAG, "onTrackClicked: [outside-purchaseParentJob] here..Thread=${Thread.currentThread().name}")
+        Log.d(TAG, "onTrackClicked: [outside-purchaseParentJob] 위 코루틴과 상관없이 빨리 불림..Thread=${Thread.currentThread().name}")
         //handlePurchaseResult() 에서 LiveData 업뎃(MyPurchaseStateENUM) -> SecondFrag 에서 여기 viewModel 로 지시 다운로드 or
     }
 

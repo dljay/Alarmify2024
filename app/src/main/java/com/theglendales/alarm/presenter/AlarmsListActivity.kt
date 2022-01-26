@@ -56,7 +56,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.16G [IAPV3- acknowledge 놓친건 부여하기- 완성. 테스트 전.]
+//v3.07.16G [IAPV3- acknowledge 놓친건 부여하기- 완성. 테스트 전 / Delete .art 파일 적용]
 
 // Scroll to Original Position(잘되네.. 미스터리야..)
 

@@ -409,17 +409,26 @@ class DiskSearcher(val context: Context)
         }
     }
     fun deleteFileByIAPName(iapName: String) {
-        val fileSupposedToBeAt =topFolder + RTA_FOLDER+ File.separator + iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
+        val rtaSupposedToBeAt =topFolder + RTA_FOLDER+ File.separator + iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
+        val artSupposedToBeAt =topFolder + ART_FOLDER+ File.separator + iapName + ".art" // 구매해서 다운로드 했다면 저장되있을 위치
+
         try {
-            val fileToDelete = File(fileSupposedToBeAt)
-            if(fileToDelete.exists()) {
-                fileToDelete.delete()
-                Log.d(TAG, "deleteFileByIAPName: *****Deleting file Name=${fileToDelete.name}")
-            } else if(!fileToDelete.exists()) {
-                Log.d(TAG, "deleteFileByIAPName: Such File doesn't exist on the drive. FileName= $fileToDelete")
+            val rtaToDelete = File(rtaSupposedToBeAt)
+            val artToDelete = File(artSupposedToBeAt)
+            if(rtaToDelete.exists()) {
+                rtaToDelete.delete()
+                Log.d(TAG, "deleteFileByIAPName: *****Deleting .rat file Name=${rtaToDelete.name}")
+            } else if(!rtaToDelete.exists()) {
+                Log.d(TAG, "deleteFileByIAPName: Such File doesn't exist on the drive. 1)rta FileName= $rtaToDelete")
+            }
+            if(artToDelete.exists()) {
+                artToDelete.delete()
+                Log.d(TAG, "deleteFileByIAPName: *****Deleting .art file Name=${artToDelete.name}")
+            } else if(!artToDelete.exists()) {
+                Log.d(TAG, "deleteFileByIAPName: Such File doesn't exist on the drive. 2)art FileName= $artToDelete")
             }
         }catch (e: Exception) {
-            Log.d(TAG, "deleteFileByIAPName: Maybe fileNameFull variable is null? fileNameFull=$fileSupposedToBeAt ")
+            Log.d(TAG, "deleteFileByIAPName: Maybe fileNameFull variable is null? rtaSupposedToBeAt=$rtaSupposedToBeAt, artSupposedToBeAt= $artSupposedToBeAt ")
         }
     }
     fun deleteFileByPath(fileNameAndFullPath: String) { // IAP_V2 에서 사용되서 남겨놓은것.

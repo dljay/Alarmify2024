@@ -126,18 +126,15 @@ class MyIAPHelperV3(val context: Context ) {
                     }
                 }
                 override fun onBillingServiceDisconnected() {
-
                     Log.d(TAG, "onBillingServiceDisconnected: xxxxxxxxxxxxxxxxxxxx 연결되었으나 이제 끊어짐.. called!")
+                    toastMessenger.showMyToast("Billing Service Disconnected. Please try again",isShort = false)
                     /**
-                     * This will be called when there 'was' a connection -> but it gets lost.
-                     * 결론적으론 여기서 .startConnection 을 다시 해줘야하는데. a) 현재 disconnected 받을 테스트 방법이 없음 b)우리는 인터넷이 끊길때 자체 대응책이 있으므로 -> 일단은 보류 & 추후 살펴볼 예정.
+                     * This will be called when there 'was' a connection -> but it gets lost. 간혹 구매 코드가 서로 콜백 racing 하다 잘못되도 이쪽으로 온다고 함..
+                     * 결론적으론 여기서 .startConnection 을 다시 해줘야하는데.
+                     * a) 현재 disconnected 받을 테스트 방법이 없음 b) 이 에러가 아직 뜬적이 없음 c)우리는 인터넷이 끊길때 자체 대응책이 있으므로 -> 일단은 보류 & 추후 살펴볼 예정.
                      * 추후 여기 코드를 넣게된다면:  Disconnect -> flow 로 전달 + SecondFrag 에서 jvmodel 에서 모니터 (+timeOut) -> .startConnection 으로
                      * 매우 좋은 참고!!: https://stackoverflow.com/questions/61388646/billingclient-billingclientstatelistener-onbillingsetupfinished-is-called-multip
                      */
-                    // This will be called when there 'was' a connection -> but it gets lost.
-                    //
-                    //
-                //
                 }
             })
         }
@@ -159,7 +156,7 @@ class MyIAPHelperV3(val context: Context ) {
     }
     suspend fun d1_B_checkUnacknowledged(listOfPurchases: List<Purchase>): Unit {
         // 구입 절차 진행중 Connection 문제등으로 acknowledge 가 안된 물품들 여기서  Purchase.PurchaseState.PURCHASED 면 acknowledge 해주기!
-        Log.d(TAG, "d1_B_checkUnacknowledged: called")
+        Log.d(TAG, "d1_B_checkUnacknowledged: called. Thread=${Thread.currentThread().name}")
 
         if (listOfPurchases.isNotEmpty()) // [유효한 모든 구매건. Refund 된 경우 현 리스트에서 사라짐!]
         {
@@ -198,7 +195,7 @@ class MyIAPHelperV3(val context: Context ) {
         if (listOfPurchases.isNotEmpty()) // 구매건이 한 개 이상. // [살아있는 모든 구매건. Refund 된 경우 현 리스트에서 사라짐!]
         {
             //인도놈은 일단 여기서 handlePurchases(list<Purchase>) 넣었지만 우리는 그냥 refund Play Console 에서 하자마자 -> 바로 purchaesList 에서 빠지고 RCV 에 반영..대박..
-            Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C> 총 구매 갯수=listPurchs.size=${listOfPurchases.size} \n listOfPurchases=$listOfPurchases")
+            Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C> Thread=${Thread.currentThread().name}, 총 구매 갯수=listPurchs.size=${listOfPurchases.size} \n listOfPurchases=$listOfPurchases")
             //myQryPurchListSize = listOfPurchases.size // 추후 MyDownloader_v1.kt > multiDownloadOrNot() 에서 활용.
         //**** [D1-B-1]: 구매 기록이 있는 모든건에 대해 [(구매유효=PurchaseState.PURCHASED) + (구매했으나 Refund 등으로 PurchaseState.PURCHASED 가 아닌것도 포함))
             for (purchase in listOfPurchases)
@@ -252,15 +249,15 @@ class MyIAPHelperV3(val context: Context ) {
                 }
             }//end of for loop
         // **** D1-B-4: purchaseBool=false 인 item 들 -> 삭제할 리스트에 추가해줌.
-            Log.d(TAG, "d1_B_addPurchaseBoolToList: <D1-B-4> [END of FOR LOOP]")
+            Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-4> [END of FOR LOOP]")
         }//end of if(listPurchs.size > 0)
         // **** D1-B-5: 애당초 구매건이 하나도 없는 경우
         else {
-            Log.d(TAG, "d1_B_addPurchaseBoolToList: <D1-B-5>: 구매건이 하나도 없음! ")
+            Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-5>: 구매건이 하나도 없음! ")
         }
         // **** D1-B-6 모든건에 대해 정리가 끝났으니 purchaseBool 이 false 인 놈들취합
         purchaseFalseRtList = rtListPlusIAPInfo.filter { rtObj -> !rtObj.purchaseBool }.toMutableList()
-        Log.d(TAG, "d1_B_addPurchaseBoolToList: <D1-B-6> ************ iap_D1_B_addPurchaseBoolToList() 끝나는지점 *****")
+        Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-6> ************ iap_D1_B_addPurchaseBoolToList() 끝나는지점 *****")
     }
 
     //<D2> 현재 리스트에 상품별 가격 적어주기 (ex. $1,000)

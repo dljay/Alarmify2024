@@ -56,7 +56,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.16I [Purchase Click -> 구매창 뜨기전까지 ProgressCircle - 성공]
+//v3.07.17a [파일 삭제-> It seems.. 뜨는 문제. 시작 전]
 
 // Scroll to Original Position(잘되네.. 미스터리야..)
 

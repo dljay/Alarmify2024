@@ -75,7 +75,7 @@ class JjMainViewModel : ViewModel() {
                 //iapV3-C) BillingClient - startConnection!
                     iapV3.c_prepBillingClient()
 
-                //iapV3-D) Each .launch{} running on separate thread (동시 실행) //todo: D1&D2 는 같이 시작하지만.. suspendCoroutine() 사용하니깐.. 진정한 의미에서 parallel 이 아님.
+                //iapV3-D) Each .launch{} running on separate thread (동시 실행) //D1&D2 는 같이 시작하지만.. suspendCoroutine() 사용하니깐.. 진정한 의미에서 parallel 이 아님 -> 성능상 거의 차이 없음 그냥 둬!!!
                         //D) Parallel Job  - D1
                         launch {
                             val listOfPurchases = iapV3.d1_A_getAllPurchasedList() // D1-A ** AsyncCallback 이 있어서 suspendCoroutine->continuation(result)-> d1_b(result)

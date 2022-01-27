@@ -34,7 +34,7 @@ fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
                         ringtone.getTitle(activity) ?: "null"
                     }.getOrDefault("null")
                 }
-        //재생 불가한 링톤이 있으면.. Request Permission
+        //재생 불가한 링톤이 있으면.. (파일이 없을때). Request Permission
         if (unplayable.isNotEmpty()) {
             try {
                 Log.d(TAG, "checkPermissions: unplayble[List/Str] is not empty = $unplayable")

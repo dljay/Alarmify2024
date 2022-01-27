@@ -43,7 +43,7 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
     override fun onBindViewHolder(holder: RtPickerVHolder, position: Int) {
         val currentRtItem = rtOnThePhoneList[position]
         val currentRtTitle = rtOnThePhoneList[position].rtTitle
-        val currentRtFileName = rtOnThePhoneList[position].fileNameWithoutExt
+        val currentRtFileName = rtOnThePhoneList[position].fileNameWithExt
         val holderRadioBtn = holder.radioBtn
         Log.d(TAG, "onBindViewHolder: pos=$position, rtFileName=$currentRtFileName, rtTitle=$currentRtTitle,")
 

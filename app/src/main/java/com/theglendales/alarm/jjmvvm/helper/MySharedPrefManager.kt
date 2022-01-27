@@ -50,7 +50,7 @@ class MySharedPrefManager(val context: Context) {
     }
 
     fun saveRtOnThePhoneList(rtOnThePhoneList: List<RtOnThePhone>) {
-        Log.d(TAG, "saveRtOnThePhoneList: begins..")
+        Log.d(TAG, "saveRtOnThePhoneList: begins.. rtOnThePhoneList.size=${rtOnThePhoneList.size}")
         val jsonStrSave = gson.toJson(rtOnThePhoneList)
         prefRtOnThePhone.edit().putString(KEY_1, jsonStrSave).apply()
         Log.d(TAG, "saveRtOnThePhoneList: done")

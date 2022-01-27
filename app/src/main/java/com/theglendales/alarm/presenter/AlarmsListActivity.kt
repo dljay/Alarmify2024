@@ -41,7 +41,8 @@ import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
 
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.checkUnPlayableRt
+import com.theglendales.alarm.jjmvvm.util.checkIfRtIsUnplayable
+import com.theglendales.alarm.jjmvvm.util.showAlertIfRtIsMissing
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -53,28 +54,25 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.17b [파일 삭제-> It seems.. 뜨는 문제. 해결.]
+//v3.07.17d []
 
-// 현재 설정된 알람 중 없는 파일 있음-> 자동으로 D1 으로 설정하기.
+// rta 파일 없을 때 (unplayable) -> a) AlertDialog 로 'We have deteted.. visit secondfrag for auto recovery.. b) ListFrag 에서는 [!] 그래픽 뜨게. c) DetailsFrag 들어가면 그냥 N/A 로 나옴.
+// SecondFrag 방문하면 자동 복원되고 어차피 rta 파일이 삭제되서 안 뜨는 케이스는 매우 rare 하기는 하다. 아쉽지만 합리적. 더 시간 쓰지 말것.
 
 // issues:
 
-// 3) Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인듯.. ?
+// 1) Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인지 확인.
 //https://medium.com/@gunayadem.dev/add-a-click-listener-to-your-adapter-using-mvvm-in-kotlin-part-2-9dce852e96d5
 //https://stackoverflow.com/questions/49513993/where-to-put-click-listeners-in-mvvm-android
 //
-//If you were to place a click handler inside a viewmodel and the activity got killed, your viewmodel would be holding on to a dead listener and this would be a memory leak.
+//2) RCV Click -> viewModel + 등?
+// https://www.py4u.net/discuss/702329
+
+// 슬슬 이제 UI ..? 나름 괜춘한것도 같고..
 
 
-//최우선 Error)
-//
-//Todos)
-//IAP + MultiDNLD 기능 => IapV2 PDF 만들기 + 삭제-> SharedPref 싹 정리 / SecondFrag - loadFromFirebase() 정리 및 카피.
-//dnldViewModel 및 기타 코드 삭제  (MyDownloaderV2 .. ) 등// isFireBaseFetchDone
-//RCV Click -> viewModel + 등?
-//원래 계획였던 listFrag 갔다왔을 때의 UI 복원!!
-//1. 현재 JjMainViewModel 에서 iapV3 로 호출하는 d1,d2 가 진정한 의미의 Parallel 이 아님. 이거 참 Parallel 로 해보기. (suspendCoroutine 안 쓰고 .launch(Dispatchers.IO) 혹은 withContext(..) 써보기?
-// 다음 방식 따라할것: https://stackoverflow.com/questions/48239657/how-to-handle-android-livedataviewmodel-with-progressbar-on-screen-rotate
+
+
 
 
 //4. BillingClient Ready(x) issue..
@@ -242,12 +240,9 @@ class AlarmsListActivity : AppCompatActivity() {
 
         setContentView(R.layout.list_activity)
 
-        store
-            .alarms()
-            .take(1)
-            .subscribe { alarms ->
-                Log.d(TAG, "onCreate: here before checkPermissions!")
-                checkUnPlayableRt(this, alarms.map { it.alarmtone })
+        store.alarms().take(1).subscribe { alarms ->
+                Log.d(TAG, "onCreate: here before checkRtMissing from phone!!")
+                showAlertIfRtIsMissing(this, alarms.map { it.alarmtone })
                 //checkPermissions(this, alarms.map { it.alarmtone })
             }.apply { }
 

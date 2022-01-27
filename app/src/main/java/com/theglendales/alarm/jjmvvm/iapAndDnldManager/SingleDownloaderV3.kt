@@ -74,7 +74,7 @@ class SingleDownloaderV3(val context: Context) {
         val description = rtInTheCloud.description
         val fileNameAndFullPath = context.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + fileNameWithoutExt +".rta" // rta= Ring Tone Audio 내가 만든 확장자..
         val rtOnThePhone = RtOnThePhone(trIdStr = trackID.toString(), rtTitle = trTitle, audioFilePath = fileNameAndFullPath,
-        fileNameWithoutExt = fileNameWithoutExt, rtDescription =description, badgeStr = "", isRadioBtnChecked = false)
+        fileNameWithExt = fileNameWithoutExt, rtDescription =description, badgeStr = "", isRadioBtnChecked = false)
 
     //B) 실제 다운로드 Prgrs/Status Watch & Report to LiveData
         val dnlManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager

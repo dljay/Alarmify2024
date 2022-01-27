@@ -45,7 +45,6 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.theglendales.alarm.R
-import com.theglendales.alarm.checkPermissions
 import com.theglendales.alarm.configuration.*
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjadapters.GlideApp
@@ -53,7 +52,7 @@ import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
-import com.theglendales.alarm.jjmvvm.util.checkUnPlayableRt
+import com.theglendales.alarm.jjmvvm.util.showAlertIfRtIsMissing
 import com.theglendales.alarm.jjongadd.TimePickerJjong
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
@@ -253,7 +252,7 @@ class AlarmDetailsFragment : Fragment() {
 
                         Log.d(TAG, "onCreateView: jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
 
-                        val randomRtaPath = DiskSearcher.finalRtArtPathList[rndRtPos].audioFilePath
+                        val randomRtaPath = DiskSearcher.finalRtArtPathList[rndRtPos].audioFilePath //todo: null error check or sharedPref 에서 꺼내오는게 낫지 않겠나? (sharedPref 는 항상..)
                         val randomArtPath = DiskSearcher.finalRtArtPathList[rndRtPos].artFilePathStr
 
                         changeAlarmTone(randomRtaPath,randomArtPath)
@@ -357,7 +356,7 @@ class AlarmDetailsFragment : Fragment() {
         }
         Log.d(TAG, "updateUisForRt: called #$#@% selectedRtFileName=$selectedRtFileName, updatedRtFileName=$updatedRtFileName")
     //2) 그 외 user 가 일반적으로 지정한 알람음의 경우>
-        val indexOfSelectedRt = DiskSearcher.finalRtArtPathList.indexOfFirst { rtOnDisk -> rtOnDisk.fileNameWithoutExt == updatedRtFileName }
+        val indexOfSelectedRt = DiskSearcher.finalRtArtPathList.indexOfFirst { rtOnDisk -> rtOnDisk.fileNameWithExt == updatedRtFileName }
         /** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
         if(indexOfSelectedRt!=-1) // 현재 disk 에 있는 rt list 에서 현재 '설정한(or 되어있던)' rt 를 찾았으면 CircleAlbumArt 보여주기.
         {
@@ -441,7 +440,7 @@ class AlarmDetailsFragment : Fragment() {
         logger.debug { "RtPicker- onItemSelected! $alertSoundPath -> $alarmtone" }
 
         //checkPermissions(requireActivity(), listOf(alarmtone))
-        checkUnPlayableRt(requireActivity(), listOf(alarmtone))
+        showAlertIfRtIsMissing(requireActivity(), listOf(alarmtone))
 
         modify("Ringtone picker") { prev ->prev.copy(alarmtone = alarmtone, artFilePath = artPath, isEnabled = true)}
     }
@@ -490,8 +489,9 @@ class AlarmDetailsFragment : Fragment() {
                     // 여기 logd 넣으면 안됨.
                 }.observeOn(AndroidSchedulers.mainThread()).subscribe { selectedRtFileName ->
 
+
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
-                    Log.d(TAG, "onResume: [RT 변경] 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId")
+                    Log.d(TAG, "onResume: [RT 변경] 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId") // ex) p1009.rta, alarmId=1
                     detailFragDisplayedRtFileName = selectedRtFileName.toString()
                     updateUisForRt(selectedRtFileName.toString())
 

@@ -39,8 +39,10 @@ import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.checkIfRtIsUnplayable
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
 import com.theglendales.alarm.jjongadd.TimePickerJjong
+import com.theglendales.alarm.model.Alarmtone
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -197,34 +199,41 @@ class AlarmsListFragment : Fragment() {
                 rowHolder.detailsButton.transitionName = "detailsButton" + alarm.id
             }
         // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
-            var artPathFromAlarmValue = alarm.artFilePath // +++
+            var artPathFromAlarmValue: String? = alarm.artFilePath // +++
+            val alarmtoneList: List<Alarmtone> = listOf<Alarmtone>(alarm.alarmtone) // 사실 alarmtone 한개인데 checkIfRtIsMissing 이 List<Alarmtone> 을 받게끔 디자인되어있어서.
 
+            val isRtUnplayable = checkIfRtIsUnplayable(requireActivity(),alarmtoneList)
+            if(isRtUnplayable) {
+                artPathFromAlarmValue = null // 위에서 지정한 .art 경로를 null 로 없애줌. 왜냐면 RTA 파일이 없는데  커버사진(ART) 보여준들 무슨 의미 있나. 헷가리기만할뿐.
+            }
+            Log.d(TAG, "getView: alarm.id = ${alarm.id}, isRtUnplayable=$isRtUnplayable")
 
-        // ** Row 의 앨범아트 path가 비어있을 때. )
+        // ** Row 의 앨범아트 path 가 비어있을 때. )
             // Update: '21.12.14=> 앱 Install 후 생성되는 두개의 알람은 모두 SQL 에서 자동으로 각각 defrt1-2 rta/art 경로를 저장한다! (label: InstallAlarm)
             /**
-             * 정상적인 Install 후 SQL 이 잘 진행되었다면 여기를 거쳐가서는 안된다!**
+             * A) 현재 설정되어있는 알람의 '음원'이 문제 있는지 확인 (mainly .rta 나 .art 파일이 폰에 없을때) - art 는 없으면 rta 에서 자동으로 추출되어서 art.isNull.. 은 일어날 확률이 없겠찌?
+             * B) 정상적인 Install 후 SQL 이 잘 진행되었다면 여기를 거쳐가서는 안된다!**
              */
 
-            if(artPathFromAlarmValue.isNullOrEmpty()) {
-                Log.d(TAG, "getView: (1-No Art File Found) artPathFromAlarmValue=$artPathFromAlarmValue, \nalarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
+           /* // .art (RT커버) 파일이 없거나  or .rta 파일 재생 불가일때(즉 파일이 디스크에 없을때) =>
+            if(artPathFromAlarmValue.isNullOrEmpty()||isRtUnplayable) {
+                Log.d(TAG, "getView: (1-No Art or Rta File Found) artPathFromAlarmValue=$artPathFromAlarmValue, \nalarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
                 val currentRtaArtPathList = mySharedPrefManager.getRtOnThePhoneList()
                 if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
                         try{
-                            val defRta1 = currentRtaArtPathList.filter { rtWithAlbumArt -> rtWithAlbumArt.fileNameWithoutExt=="defrt01" }.single() // **todo: Safety Check 실제로 뻑남.
-                            val artPath: String? = defRta1.artFilePathStr
+                            //Log.d(TAG, "getView: .size >0 불렸구나. currentRtaArtPathList=$currentRtaArtPathList")
+                            val defRta1 = currentRtaArtPathList.single { rtOnThePhone -> rtOnThePhone.fileNameWithExt == "defrt01.rta" } // **todo: Safety Check 실제로 뻑남.
 
-                            //mySharedPrefManager.saveArtPathForAlarm(alarm.id, artPath) // 새로 지정된 artPath 주소를 SharedPref 에 저장 => 다시는 (!) 떠서는 안됨!!
+                            val rtaPath: String? = defRta1.audioFilePath // 음원 경로
+                            val artPath: String? = defRta1.artFilePathStr // art 경로
                             artPathFromAlarmValue = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
-                            //alarm.artFilePath = artPath <- 이것도 해줘야되지만. val 여서 안됨, 추후에 Alarmtone.kt 와 Permissions.kt 잘 조져야함..
-
+                            Log.d(TAG, "getView: .size >0 불렸구나. rtaPath=$rtaPath, artPath=$artPath, defRta1= $defRta1")
                         }catch (e: Exception) {
                             Toast.makeText(requireContext(), "Unable to load default ringtones.",Toast.LENGTH_SHORT).show()
                             Log.d(TAG, "getView: Unable to load default ringtones. Error=$e")
                         }
                  }
-            }
-
+            }*/
             Log.d(TAG, "getView: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
 
             context?.let {

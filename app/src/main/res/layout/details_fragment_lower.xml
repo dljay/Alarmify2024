@@ -223,7 +223,7 @@
                         android:id="@+id/tv_RtPicker_DetailsFrag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="RT Picker Test"
+                        android:text="N/A"
                         android:textSize="15sp"
                         android:textColor="@color/mat_red">
                     </TextView>
@@ -260,7 +260,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
 
-                        android:src="@drawable/purchased_false_1">
+                        android:src="@drawable/errordisplay">
 
                     </ImageView>
 
@@ -298,7 +298,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="description placeholder yo.... . .. "/>
+                    android:text="N/A"/>
 
             </LinearLayout>
 

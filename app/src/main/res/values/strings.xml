@@ -157,7 +157,7 @@
     <string name="details_no_ringtone_picker">No Ringtone provider found...</string>
     <string name="permissions_external_storage_text">It seems that we cannot play %s, probably because a permission is required. If you want, you can grant the permission. Alternatively, select a different sound. This decision can be changed in System Settings.</string>
     <!-- 내가 심은. jj- 현재 설정된 알람의 Ringtone 파일이 삭제되었을 때-->
-    <string name="missing_ringtone_alert">\nWe have detected a missing ringtone.\n\nPlease hit Ringtone tab for auto recovery.</string>
+    <string name="missing_ringtone_alert">\nWe have detected a missing ringtone.\n\nPlease visit Ringtone tab(🔔) for auto recovery.</string>
     <string name="menu_about_title">About</string>
     <string name="dialog_about_content">Simple Alarm Clock is an open source project which brings pure alarm experience to you by combining essential features and clean interface.
 

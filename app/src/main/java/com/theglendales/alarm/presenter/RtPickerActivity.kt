@@ -269,7 +269,7 @@ class RtPickerActivity : AppCompatActivity() {
     private suspend fun getPositionOfCurrentRt(rtOnDiskList: MutableList<RtOnThePhone>): Int {
         // 현재 DetailsFrag 에서 설정되어있는 RT 의 '파일 이름'
         val rtFileName = AlarmDetailsFragment.detailFragDisplayedRtFileName
-        val index  =  rtOnDiskList.indexOfFirst { rt -> rt.fileNameWithoutExt == rtFileName } // 동일한 'FileName'을 갖는 놈의 인덱스를 리스트 에서 찾기
+        val index  =  rtOnDiskList.indexOfFirst { rt -> rt.fileNameWithExt == rtFileName } // 동일한 'FileName'을 갖는 놈의 인덱스를 리스트 에서 찾기
         Log.d(TAG, "getPositionOfCurrentRt: returning index=$index")
         return index
     }

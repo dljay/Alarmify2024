@@ -2,6 +2,7 @@ package com.theglendales.alarm.jjmvvm
 
 import android.app.Activity
 import android.util.Log
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -71,10 +72,9 @@ class JjMainViewModel : ViewModel() {
 
                 //iapV3-B) Fb 에서 받은 리스트를 -> IAP 에 전달 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨.
                     iapV3.b_feedRtList(rtList)
-                //iapV3-C) BillingClient 를 Ready 시킴 (이미 되어있으면 바로 BillingClient.startConnection)
-                    val billingResult: BillingResult = iapV3.c_prepBillingClient()
-                    if(billingResult.responseCode == BillingClient.BillingResponseCode.OK)
-                    {
+                //iapV3-C) BillingClient - startConnection!
+                    iapV3.c_prepBillingClient()
+
                 //iapV3-D) Each .launch{} running on separate thread (동시 실행) //todo: D1&D2 는 같이 시작하지만.. suspendCoroutine() 사용하니깐.. 진정한 의미에서 parallel 이 아님.
                         //D) Parallel Job  - D1
                         launch {
@@ -88,8 +88,6 @@ class JjMainViewModel : ViewModel() {
                             val skuDetailsList = iapV3.d2_A_addPriceToList() // D2-A ** AsyncCallback 이 있어서 suspendCoroutine->continuation(result)-> d2_b(result)
                             iapV3.d2_B_addPriceToList(skuDetailsList)//D2-B
                         }
-                    }
-                    //todo: billingResult.response 가 문제 있을 때 아래 throwable 에서 잘 잡히는지 확인 필요.
                 }
             //3) 위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) => **** 드디어 LiveData 업데이트
                 iapParentJob.invokeOnCompletion { throwable ->
@@ -205,7 +203,7 @@ class JjMainViewModel : ViewModel() {
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
         //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
 
-
+            _purchaseCircle.value = 2 // 어두운 화면 그대로 두고 Circle 만 안보이게 없애기 (LaunchBilling Flow 에도 Circle 같이 떠서 신경쓰임)
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
         //2-j) Verify ->
             iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
@@ -217,7 +215,7 @@ class JjMainViewModel : ViewModel() {
 
         }
         purchaseParentJob.invokeOnCompletion { throwable ->
-            if(_purchaseCircle.value == 0) {_purchaseCircle.value = 1} // 만약 Purchase Loading Circle 이 켜져있었다면 꺼주기 (Handler 에러 잡히든 말든 무조건 꺼!!)
+            _purchaseCircle.value = 1 // 만약 Purchase Loading Circle 이 켜져있었다면 꺼주기 (Handler 에러 잡히든 말든 무조건 꺼!!)
             Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..Thread= ${Thread.currentThread().name}")
             if (throwable != null && !throwable.message.isNullOrEmpty()) {
                 if (throwable.message!!.contains("USER_CANCELED")) {
@@ -278,6 +276,7 @@ class JjMainViewModel : ViewModel() {
                 Log.d(TAG, "downloadPurchased: dnldID=$dnldId")
                 // -> 여기서 myDNLDV3.kt> liveData 들을 자체적으로 업뎃중. SecondFrag 에서는 아래 getLiveDataSingleDownloader() 값을 observe 하기에 -> 자동으로 UI 업뎃.
                 singleDownloaderV3.watchDnldProgress(dnldId, rtInTheCloudObj)
+
             }
         }
         //3-c) (3-a)~(3-c) 과정에서 에러가 발생했다면

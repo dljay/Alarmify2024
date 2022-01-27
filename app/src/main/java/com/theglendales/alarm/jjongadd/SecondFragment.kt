@@ -97,7 +97,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var lottieAnimationView: LottieAnimationView
     lateinit var lottieAnimHandler: LottieAnimHandler
     lateinit var purchaseLoadingCircle: CircularProgressIndicator
-    lateinit var fm_LoadingCircle: FrameLayout
+    lateinit var frameLayoutForCircle: FrameLayout
 
     //Media Player & MiniPlayer Related
     private val exoForUrlPlay: ExoForUrl by globalInject()
@@ -263,8 +263,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             jjMainVModel.purchaseCircle.observe(viewLifecycleOwner) { onOffNumber ->
                 Log.d(TAG, "[MainVModle <3> - PurchaseCircle] Valued Received=$onOffNumber ") // 0: 보여주기, 1: 끄기.
                 when(onOffNumber){
-                    0 -> {fm_LoadingCircle.visibility = View.VISIBLE} // 보여주기(O)
-                    1 -> {fm_LoadingCircle.visibility = View.GONE} // 끄기(X)
+                    0 -> {frameLayoutForCircle.visibility = View.VISIBLE
+                        purchaseLoadingCircle.visibility = View.VISIBLE} // 보여주기(O)
+                    1 -> {frameLayoutForCircle.visibility = View.GONE} // 끄기(X)
+                    2 -> {purchaseLoadingCircle.visibility = View.GONE}// 2 -> circle 만 없애주기 ()
                 }
             }
         //[MainVModel-4] (구매 후) Single DNLD -> UI 반영 (DnldPanel 보여주기 등)
@@ -626,9 +628,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     private fun setUpLateInitUis(v: View) {
         Log.d(TAG, "setUpLateInitUis: called")
     //Lottie & LoadingCircle
-        fm_LoadingCircle = v.findViewById(R.id.fl_loadingCircle)
+        frameLayoutForCircle = v.findViewById(R.id.fl_loadingCircle)
         purchaseLoadingCircle = v.findViewById(R.id.loadingCircle_itself)
-        fm_LoadingCircle.visibility = View.GONE// 일단 LoadingCircle 안보이게 하기.
+        frameLayoutForCircle.visibility = View.GONE// 일단 LoadingCircle 안보이게 하기.
 
         lottieAnimationView = v.findViewById(R.id.id_lottie_secondFrag)
         lottieAnimHandler = LottieAnimHandler(requireActivity(), lottieAnimationView)

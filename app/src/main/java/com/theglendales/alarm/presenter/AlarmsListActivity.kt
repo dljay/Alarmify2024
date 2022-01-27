@@ -63,7 +63,7 @@ import java.util.Calendar
 // issues:
 // 1) 구매창 -> Android Studio STop -> 구매창만 남는 현상
 // 2) Billing Disconnect 시 해결해주기.
-//3. Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인듯.. ?
+// 3) Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인듯.. ?
 //https://medium.com/@gunayadem.dev/add-a-click-listener-to-your-adapter-using-mvvm-in-kotlin-part-2-9dce852e96d5
 //https://stackoverflow.com/questions/49513993/where-to-put-click-listeners-in-mvvm-android
 //

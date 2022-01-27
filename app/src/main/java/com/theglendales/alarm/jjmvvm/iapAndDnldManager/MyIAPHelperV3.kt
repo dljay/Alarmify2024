@@ -59,6 +59,7 @@ class MyIAPHelperV3(val context: Context ) {
 
     init {
         Log.d(TAG, "init MyIapHelperV3 called. Thread=${Thread.currentThread().name}")
+
         a_initBillingClient()
     }
 // ****************** <0> billingClient Init + Purchase Result Listener (유저 구매창 반응에 따른 Listener) i_launchBillingFlow() 와 연계되서 사용.
@@ -108,25 +109,35 @@ class MyIAPHelperV3(val context: Context ) {
         Log.d(TAG, "b_feedRtList: <B> Called")
         rtListPlusIAPInfo = rtListFromFb}
 
-    suspend fun c_prepBillingClient(): BillingResult {
+    suspend fun c_prepBillingClient() {
         Log.d(TAG, "c_prepBillingClient: <C> Called")
-        /*if(!billingClient!!.isReady) {
-            Log.d(TAG, "c_prepBillingClient: <C> BillingClient Not Ready(X)! Re init!")
-            billingClient = BillingClient.newBuilder(context).enablePendingPurchases().setListener(this).build()
-        }*/
+        /*if(!billingClient!!.isReady) */
+
         return suspendCoroutine { continuation -> // suspendCoroutine -> async Callback 등 잠시 대기가 필요할 때 사용 -> 여기서 잠시 기존 코루틴 정지(JjMainVModel)
 
             billingClient!!.startConnection(object : BillingClientStateListener{
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
-                    Log.d(TAG, "c_prepBillingClient: <C> BillingSetupFinished (O)")
-                    continuation.resume(billingResult) // -> continuation 에서 이어서 진행 (원래 코루틴- JjMainVModel> iapParentJob 으로 복귀)
+
+                    if(billingResult.responseCode == BillingClient.BillingResponseCode.OK) { // 0 disconnected= -1
+                        Log.d(TAG, "c_prepBillingClient: <C> BillingSetupFinished (O)")
+                        continuation.resume(Unit) // -> continuation 에서 이어서 진행 (원래 코루틴- JjMainVModel> iapParentJob 으로 복귀)
+                    } else {
+                        continuation.resumeWithException(Exception("Error on c_prepBillingClient"))
+                    }
                 }
                 override fun onBillingServiceDisconnected() {
-                    Log.d(TAG, "onBillingServiceDisconnected: xxxxxxxxxxxxxxxxxxxx called!")
-                    //continuation.resumeWithException(Exception("Error <C> Billing Service Disconnectoed")) :
-                // todo: 가만 두면 그냥 끊어져서 exception 하면 -> crash!! -> 차라리 throw? Coroutine Handler 가 잡아주게? viewModelScope 는 계속 이어질테니..
-                    //todo:  Try to restart the connection on the next request to
-                    // Google Play by calling the startConnection() method.
+
+                    Log.d(TAG, "onBillingServiceDisconnected: xxxxxxxxxxxxxxxxxxxx 연결되었으나 이제 끊어짐.. called!")
+                    /**
+                     * This will be called when there 'was' a connection -> but it gets lost.
+                     * 결론적으론 여기서 .startConnection 을 다시 해줘야하는데. a) 현재 disconnected 받을 테스트 방법이 없음 b)우리는 인터넷이 끊길때 자체 대응책이 있으므로 -> 일단은 보류 & 추후 살펴볼 예정.
+                     * 추후 여기 코드를 넣게된다면:  Disconnect -> flow 로 전달 + SecondFrag 에서 jvmodel 에서 모니터 (+timeOut) -> .startConnection 으로
+                     * 매우 좋은 참고!!: https://stackoverflow.com/questions/61388646/billingclient-billingclientstatelistener-onbillingsetupfinished-is-called-multip
+                     */
+                    // This will be called when there 'was' a connection -> but it gets lost.
+                    //
+                    //
+                //
                 }
             })
         }

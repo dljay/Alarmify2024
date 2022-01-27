@@ -21,10 +21,6 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.theglendales.alarm.BuildConfig
-import com.theglendales.alarm.NotificationSettings
-import com.theglendales.alarm.R
-import com.theglendales.alarm.checkPermissions
 import com.theglendales.alarm.configuration.EditedAlarm
 import com.theglendales.alarm.configuration.Store
 import com.theglendales.alarm.configuration.globalGet
@@ -33,18 +29,19 @@ import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjongadd.SecondFragment
 import com.theglendales.alarm.logger.Logger
-import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.theglendales.alarm.*
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
 
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.checkUnPlayableRt
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -56,13 +53,12 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.17a [파일 삭제-> It seems.. 뜨는 문제. 시작 전]
+//v3.07.17b [파일 삭제-> It seems.. 뜨는 문제. 해결.]
 
-// Scroll to Original Position(잘되네.. 미스터리야..)
+// 현재 설정된 알람 중 없는 파일 있음-> 자동으로 D1 으로 설정하기.
 
 // issues:
-// 1) 구매창 -> Android Studio STop -> 구매창만 남는 현상
-// 2) Billing Disconnect 시 해결해주기.
+
 // 3) Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인듯.. ?
 //https://medium.com/@gunayadem.dev/add-a-click-listener-to-your-adapter-using-mvvm-in-kotlin-part-2-9dce852e96d5
 //https://stackoverflow.com/questions/49513993/where-to-put-click-listeners-in-mvvm-android
@@ -250,7 +246,9 @@ class AlarmsListActivity : AppCompatActivity() {
             .alarms()
             .take(1)
             .subscribe { alarms ->
-                checkPermissions(this, alarms.map { it.alarmtone })
+                Log.d(TAG, "onCreate: here before checkPermissions!")
+                checkUnPlayableRt(this, alarms.map { it.alarmtone })
+                //checkPermissions(this, alarms.map { it.alarmtone })
             }.apply { }
 
 // 추가1-A) Second Fragment 관련 -->

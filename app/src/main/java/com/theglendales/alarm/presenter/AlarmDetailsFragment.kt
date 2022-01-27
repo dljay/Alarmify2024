@@ -53,6 +53,7 @@ import com.theglendales.alarm.jjmvvm.helper.BadgeSortHelper
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.RtOnThePhone
+import com.theglendales.alarm.jjmvvm.util.checkUnPlayableRt
 import com.theglendales.alarm.jjongadd.TimePickerJjong
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.lollipop
@@ -439,7 +440,8 @@ class AlarmDetailsFragment : Fragment() {
         }
         logger.debug { "RtPicker- onItemSelected! $alertSoundPath -> $alarmtone" }
 
-        checkPermissions(requireActivity(), listOf(alarmtone))
+        //checkPermissions(requireActivity(), listOf(alarmtone))
+        checkUnPlayableRt(requireActivity(), listOf(alarmtone))
 
         modify("Ringtone picker") { prev ->prev.copy(alarmtone = alarmtone, artFilePath = artPath, isEnabled = true)}
     }

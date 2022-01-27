@@ -17,6 +17,7 @@ import com.theglendales.alarm.R
 import com.theglendales.alarm.checkPermissions
 import com.theglendales.alarm.configuration.Prefs
 import com.theglendales.alarm.configuration.globalInject
+import com.theglendales.alarm.jjmvvm.util.checkUnPlayableRt
 import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.view.VolumePreference
@@ -99,7 +100,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference<VolumePreference>("volume_preference")!!.onResume()
 
-        checkPermissions(requireActivity(), listOf(Alarmtone.Default()))
+        //checkPermissions(requireActivity(), listOf(Alarmtone.Default()))
+        checkUnPlayableRt(requireActivity(), listOf(Alarmtone.Default()))
 
         findListPreference(Prefs.KEY_ALARM_SNOOZE)
                 .let { snoozePref ->

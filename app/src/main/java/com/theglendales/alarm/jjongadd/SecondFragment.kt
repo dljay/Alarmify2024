@@ -39,7 +39,7 @@ import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjadapters.MyNetWorkChecker
-import com.theglendales.alarm.jjadapters.RcCommIntf
+import com.theglendales.alarm.jjadapters.RcCommInterface
 import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
@@ -218,7 +218,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             //mpClassInstance_V1 = activity?.let {ExoForLocal(it, jjMpViewModel)}!!
-            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,jjMainVModel,exoForUrlPlay)}!! // it = activity. 공갈리스트 넣어서 instance 만듬 //todo: okay to pass VModel to Adapter?
+            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,secondFragListener,exoForUrlPlay)}!! // it = activity. 공갈리스트 넣어서 instance 만듬 //todo: okay to pass VModel to Adapter?
             myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!
 
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
@@ -792,14 +792,17 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         } else {
             Log.d(TAG, "snackBarDeliverer: Unable to Deliver Snackbar message!!")
         }
+
     }
-    
-    fun testRcComm(){ object : RcCommIntf {
-        override fun someFuncion() {
-            Log.d(TAG, "somexxFunction: called")
-            }
+//RecyclerView Click Communication
+    val secondFragListener = object : RcCommInterface {
+        override fun onRcvClick(rtObj: RtInTheCloud, isPurchaseClicked: Boolean) {
+            jjMainVModel.onTrackClicked(rtObj, isPurchaseClicked, requireActivity())
+
         }
     }
+
+
 
 
 }

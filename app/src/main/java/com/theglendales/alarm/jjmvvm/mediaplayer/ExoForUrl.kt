@@ -36,14 +36,15 @@ enum class StatusMp { IDLE, BUFFERING, READY, PLAY, PAUSED, ERROR} // BUFFERING:
 class ExoForUrl(val context: Context) : Player.Listener {
     companion object {
         val mp3UrlMap: HashMap<Int, String> = HashMap()
-        //Current Status 모니터링
-        var currentPlayStatus: StatusMp = StatusMp.IDLE
+
         // 다른 fragment 갔다 왔을 떄 대비해서 currentSongPosition(INT), clickedTrackID(INT) 등이 필요함.
     }
     //A) LiveData 관련 (JjMainVModel 에서 getXX() 로 등록 <- SecondFrag 에서 Observe 중)
     //1) StatusMp ENUM 클래스 정보 갖고 있음.
     private val _mpStatus = MutableLiveData<StatusMp>() // Private & Mutable
     val mpStatus: LiveData<StatusMp> = _mpStatus
+    //Current Status 모니터링
+    var currentPlayStatus: StatusMp = StatusMp.IDLE
 
 
     //2-A) 재생할 곡 길이 (exoPlayer.duration)

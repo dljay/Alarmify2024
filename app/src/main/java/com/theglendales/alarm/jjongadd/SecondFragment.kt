@@ -91,7 +91,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
 
     // VumeterHandler
-    private val VHolderUiHandler: VHolderUiHandler by globalInject() // Koin Inject
+    private val vHolderUiHandler: VHolderUiHandler by globalInject() // Koin Inject
 
     //Lottie Animation(Loading & Internet Error) + LoadingCircle(로티 X) 관련
     lateinit var lottieAnimationView: LottieAnimationView
@@ -184,7 +184,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     StatusMp.PAUSED -> {showMiniPlayerPlayBtn()}
                     }
                 // b) VuMeter/Loading Circle 등 UI 컨트롤
-                VHolderUiHandler.LcVmIvController(StatusEnum)
+                vHolderUiHandler.lcVmIvController(StatusEnum)
                 })
 
             //2-B-나) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
@@ -218,7 +218,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
             //mpClassInstance_V1 = activity?.let {ExoForLocal(it, jjMpViewModel)}!!
-            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,secondFragListener,exoForUrlPlay)}!! // it = activity. 공갈리스트 넣어서 instance 만듬 //todo: okay to pass VModel to Adapter?
+            rcvAdapterInstance = activity?.let {RcViewAdapter(ArrayList(),it,secondFragListener)}!! // it = activity. 공갈리스트 넣어서 instance 만듬 //todo: okay to pass VModel to Adapter?
             myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!
 
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
@@ -424,18 +424,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
         // Pause 상태에서 ▶  클릭했을 때
         private fun onMiniPlayerPlayClicked()  {
-            if(ExoForUrl.currentPlayStatus == StatusMp.PAUSED) { // replace as if(jjMainVModel.getMpStatusLiveData == ... )
+            if(exoForUrlPlay.currentPlayStatus == StatusMp.PAUSED) { // replace as if(jjMainVModel.getMpStatusLiveData == ... )
                 exoForUrlPlay.continueMusic()
                 showMiniPlayerPauseBtn()
                 }
             }
         //  Play 상태에서 ⏸ 클릭 했을 때 -> 음악 Pause 해야함.
         private fun onMiniPlayerPauseClicked() {
-            if(ExoForUrl.currentPlayStatus == StatusMp.PLAY) {
+            if(exoForUrlPlay.currentPlayStatus == StatusMp.PLAY) { // replace as if(jjMainVModel.getMpStatusLiveData == ... )
                 exoForUrlPlay.pauseMusic()
                 showMiniPlayerPlayBtn()
-                }
             }
+        }
 
     //위에 onCreatedView 에서 observe 하고 있는 LiveData 가 갱신되었을때 다음을 실행
     // 여기서 우리가 받는 view 는 다음 둘중 하나:  rl_Including_tv1_2.setOnClickListener(this) OR! cl_entire_purchase.setOnClickListener(this)

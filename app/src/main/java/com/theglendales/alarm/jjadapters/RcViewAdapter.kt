@@ -41,15 +41,15 @@ interface RcCommInterface {
 class RcViewAdapter(
     private var rtPlusIapInfoList: List<RtInTheCloud>,
     private val receivedActivity: FragmentActivity,
-    private val secondFragListener: RcCommInterface,
-    private val mediaPlayer: ExoForUrl) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
+    private val secondFragListener: RcCommInterface) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
 
 
     companion object {var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()}
 
 // IAP
     private val iapV3: MyIAPHelperV3 by globalInject()
-
+// MediaPlayer
+    private val exoForUrlPlay: ExoForUrl by globalInject()
 
     var isRVClicked: Boolean = false // 혹시나 미리 클릭되었을 경우를 대비하여 만든 boolean value. 이거 안 쓰이나?
 // 하이라이트시 background 에 적용될 색
@@ -78,7 +78,7 @@ class RcViewAdapter(
         holder.holderTrId = currentTrId
 
 
-        Log.d(TAG, "onBindViewHolder: holder TrId= ${holder.holderTrId}, currentTrIapName= $currentIapName")
+        Log.d(TAG, "onBindViewHolder: holder.hashCode= ${holder.hashCode()}, holder TrId= ${holder.holderTrId}, currentTrIapName= $currentIapName")
         Log.d(TAG, "onBindViewHolder: Purchased Stats=${currentRt.purchaseBool}")
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " +
@@ -161,10 +161,19 @@ class RcViewAdapter(
         }
     // 2) VuMeter and Loading Circle => todo:  ExoForLocal? vs VHolderUiHandler? 뭘 쓸지? VHodlerUiHanlder 가 현재 Koin 덕분에 SingleTon 이니까. 그쪽으로 전달???
         private fun enableVM(holder: MyViewHolder) {
-        // 여기에다 if(VHolderUiHandler.currentStatusMp == StatusMp.PLAYING) ..... {}
-            if(ExoForLocal.currentPlayStatus == StatusMp.PLAY) {
-                holder.iv_Thumbnail.alpha = 0.3f // 어둡게
-                holder.vuMeterView.visibility = VuMeterView.VISIBLE
+
+            when(exoForUrlPlay.currentPlayStatus) {
+                StatusMp.PLAY -> {
+                    holder.iv_Thumbnail.alpha = 0.3f // 어둡게
+                    holder.vuMeterView.visibility = VuMeterView.VISIBLE
+                }
+                StatusMp.PAUSED -> {
+                    Log.d(TAG, "enableVM: .PAUSED called")
+                    holder.iv_Thumbnail.alpha = 0.3f // 어둡게
+                    holder.vuMeterView.visibility = VuMeterView.VISIBLE
+                    holder.vuMeterView.pause()
+                }
+                else -> {} // 이 외 IDLE, ERROR 등일때는 암것도 안함~
             }
         }
         private fun disableVMnLC(holder: MyViewHolder) {
@@ -282,14 +291,9 @@ class RcViewAdapter(
         //var tv4_GetThis: TextView = myXmlToViewObject.findViewById(R.id.id_tvGetThis)
         var holderTrId: Int = -10 // 처음엔 의미없는 -10 값을 갖지만, onBindView 에서 제대로 holder.id 로 설정됨.
 
-
-
-
-
         init {
             rl_Including_tv1_2.setOnClickListener(this)
             cl_entire_purchase.setOnClickListener(this)
-
             //Log.d(TAG, "MyViewHolder Init: ${myXmlToViewObject.toString()}")
         }
 
@@ -317,7 +321,7 @@ class RcViewAdapter(
                         enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
                         //1-c) 음악 플레이 //todo: 재생중일때 또 클릭하면 그냥 무시하기?
-                        mediaPlayer.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
+                        exoForUrlPlay.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
 
 //[음악 재생 대신 Diffutil Test 용 코드] - 구매 후 즉각 RcV 아이콘 변경되는지 확인하기 위한 간접 테스트=> 클릭한 아이템 purchaseBool 값을 인위적으로 true 로 바꿔줌 => 바로 RcV 에 반영되야함!
 //jjMainVModel.testDiffutil()

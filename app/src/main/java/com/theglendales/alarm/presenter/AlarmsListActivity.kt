@@ -54,7 +54,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.17f [RcV Click- Interface 사용으로 변경후!!JjMainVModel Rcv 에서 빼줌!]
+//v3.07.17g [VHolderUiHandler 관련 - 처리 전 1/28 18:19]
 
 // rta 파일 없을 때 (unplayable) -> a) AlertDialog 로 'We have detected.. visit Secondfrag for auto recovery.. b) ListFrag 에서는 [!] 그래픽 뜨게. c) DetailsFrag 들어가면 그냥 N/A 로 나옴.
 // SecondFrag 방문하면 자동 복원되고 어차피 rta 파일이 삭제되서 안 뜨는 케이스는 매우 rare 하기는 하다. 아쉽지만 합리적. 더 시간 쓰지 말것.

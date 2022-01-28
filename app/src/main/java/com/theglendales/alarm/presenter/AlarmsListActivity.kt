@@ -59,14 +59,27 @@ import java.util.Calendar
 // rta 파일 없을 때 (unplayable) -> a) AlertDialog 로 'We have detected.. visit Secondfrag for auto recovery.. b) ListFrag 에서는 [!] 그래픽 뜨게. c) DetailsFrag 들어가면 그냥 N/A 로 나옴.
 // SecondFrag 방문하면 자동 복원되고 어차피 rta 파일이 삭제되서 안 뜨는 케이스는 매우 rare 하기는 하다. 아쉽지만 합리적. 더 시간 쓰지 말것.
 
-// issues:
-
-// 1) Click -> 으로 viewModel 에 activity 전달.. 이거 비정상인지 확인.
-//https://medium.com/@gunayadem.dev/add-a-click-listener-to-your-adapter-using-mvvm-in-kotlin-part-2-9dce852e96d5
-//https://stackoverflow.com/questions/49513993/where-to-put-click-listeners-in-mvvm-android
+//SecondFrag -> Play -> ListFrag -> SecondFrag 했을때
 //
-//2) RCV Click -> viewModel + 등?
-// https://www.py4u.net/discuss/702329
+//issue1)
+//기존 Play 하던놈 : 회색 처리(O) Vumeter Pause (X)
+//
+//issue2)
+//->다른 트랙 Play -> 기존 Play -> 회색 처리 그대로 유지된 상태임..
+//
+//
+//원인)
+//RcV> ViewHolder 가 업뎃되기전에 (ViewModel 복원
+//-> VHolderUiHandler 는 globalScope() 로 계속 살아있으니
+//-> lcVmIvCntrl() 가 불려도 -> 기존 holder 값 유지된 상태로 1-b 에 안들어옴.
+//
+//개선 가능 내용)
+//** 일단 SecondFrag 재방문시 RcV>viewHolder 가 새로만들어져서 holder.hashCode 가 다 바뀐다는 사실 **
+//
+//SecondFrag 에서 나갈때 onDestroy 나 onPause 에서 VHolderUiHanlder.clear vHolder & assign new ui?
+//RcV 에서 VHolder UI 업뎃 관련 모두 통제? 가능 vs 불가능?
+//VHolderUiHandler Class 없애고 그냥 function 만 둘 수 있음.
+
 
 // 슬슬 이제 UI ..? 나름 괜춘한것도 같고..
 

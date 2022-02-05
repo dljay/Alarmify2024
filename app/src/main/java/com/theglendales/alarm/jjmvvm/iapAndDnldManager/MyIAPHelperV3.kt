@@ -8,6 +8,7 @@ import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
+import com.theglendales.alarm.model.mySharedPrefManager
 import kotlinx.coroutines.CompletableDeferred
 import java.io.File
 import java.io.IOException
@@ -129,9 +130,9 @@ class MyIAPHelperV3(val context: Context ) {
                     Log.d(TAG, "onBillingServiceDisconnected: xxxxxxxxxxxxxxxxxxxx 연결되었으나 이제 끊어짐.. called!")
                     toastMessenger.showMyToast("Billing Service Disconnected. Please try again",isShort = false)
                     /**
-                     * This will be called when there 'was' a connection -> but it gets lost. 간혹 구매 코드가 서로 콜백 racing 하다 잘못되도 이쪽으로 온다고 함..
-                     * 결론적으론 여기서 .startConnection 을 다시 해줘야하는데.
-                     * a) 현재 disconnected 받을 테스트 방법이 없음 b) 이 에러가 아직 뜬적이 없음 c)우리는 인터넷이 끊길때 자체 대응책이 있으므로 -> 일단은 보류 & 추후 살펴볼 예정.
+                     * This will be called when there 'was' a connection -> but it gets lost. a) Google Play 데이터 삭제 b) 간혹 구매 코드가 서로 콜백 racing 하다 잘못되도 이쪽으로 온다고 함..
+                     * 결론적으론 여기서 .startConnection 을 다시 해줘야함. 테스트방법: SecondFrag 열린 상태에서 Settings>Google Play 데이터 삭제!! onBillingServiceDisconnected 뜨네!
+
                      * 추후 여기 코드를 넣게된다면:  Disconnect -> flow 로 전달 + SecondFrag 에서 jvmodel 에서 모니터 (+timeOut) -> .startConnection 으로
                      * 매우 좋은 참고!!: https://stackoverflow.com/questions/61388646/billingclient-billingclientstatelistener-onbillingsetupfinished-is-called-multip
                      */
@@ -148,6 +149,7 @@ class MyIAPHelperV3(val context: Context ) {
         purchaseFalseRtList.clear()
 
         return suspendCoroutine { continuation ->
+
             billingClient!!.queryPurchasesAsync(BillingClient.SkuType.INAPP) { _, listOfPurchases ->
                 Log.d(TAG, "d1_A_addPurchaseBoolToList: <D1-A> called. ")
                 continuation.resume(listOfPurchases)
@@ -197,7 +199,7 @@ class MyIAPHelperV3(val context: Context ) {
             //인도놈은 일단 여기서 handlePurchases(list<Purchase>) 넣었지만 우리는 그냥 refund Play Console 에서 하자마자 -> 바로 purchaesList 에서 빠지고 RCV 에 반영..대박..
             Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C> Thread=${Thread.currentThread().name}, 총 구매 갯수=listPurchs.size=${listOfPurchases.size} \n listOfPurchases=$listOfPurchases")
             //myQryPurchListSize = listOfPurchases.size // 추후 MyDownloader_v1.kt > multiDownloadOrNot() 에서 활용.
-        //**** [D1-B-1]: 구매 기록이 있는 모든건에 대해 [(구매유효=PurchaseState.PURCHASED) + (구매했으나 Refund 등으로 PurchaseState.PURCHASED 가 아닌것도 포함))
+    //**** [D1-C-1]: 구매 기록이 있는 모든건에 대해 [(구매유효=PurchaseState.PURCHASED) + (구매했으나 Refund 등으로 PurchaseState.PURCHASED 가 아닌것도 포함))
             for (purchase in listOfPurchases)
             {
                 /**
@@ -229,7 +231,7 @@ class MyIAPHelperV3(val context: Context ) {
                 // 첫 purchaseState=1 로 뜨고, 바로 옆 purchase= 에서는 purchaseState 가 0으로 뜨는 희한..
 
                 //purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
-        // **** [D1-B-2] :********************************>>> 구매 확인된 건 //todo: Refund 건 처리 + Acknowledge 가 false 로 처리된 경우도 가능성 있음 (구매중 폰 끊김 등..)
+    // **** [D1-C-2] :********************************>>> 구매 확인된 건 //todo: Refund 건 처리 + Acknowledge 가 false 로 처리된 경우도 가능성 있음 (구매중 폰 끊김 등..)
                 // 인도놈 튜토리얼 참고: https://programtown.com/how-to-make-multiple-in-app-purchase-in-android-kotlin-using-google-play-billing-library/
                 if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED)
                 {
@@ -242,20 +244,45 @@ class MyIAPHelperV3(val context: Context ) {
                         Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-2> [멀티] 복원 다운로드 필요한 리스트에 다음을 추가: $iapName ")
                     }
                 }
-            // **** D1-B-3: 구매한적이 있으나 뭔가 문제가 생겨서 PurchaseState.Purchased 가 아닐때 여기로 들어옴. 애당초 구입한적이 없는 물품은 여기 뜨지도 않음!
+    // **** D1-C-3: 구매한적이 있으나 뭔가 문제가 생겨서 PurchaseState.Purchased 가 아닐때 여기로 들어옴. 애당초 구입한적이 없는 물품은 여기 뜨지도 않음!
                 else {
                     Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-3> iapName=$iapName, trkID=$trackID, 구매 기록은 있으나 (for some reason) PurchaseState.Purchased(X)- Phone 에서 삭제 요청 ")
 
                 }
             }//end of for loop
-        // **** D1-B-4: purchaseBool=false 인 item 들 -> 삭제할 리스트에 추가해줌.
+    // **** D1-C-4: purchaseBool=false 인 item 들 -> 삭제할 리스트에 추가해줌.
             Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-4> [END of FOR LOOP]")
         }//end of if(listPurchs.size > 0)
-        // **** D1-B-5: 애당초 구매건이 하나도 없는 경우
+
+    // **** D1-C-5: 애당초 구매건이 하나도 없는 경우 ==> ** 진짜 하나도 없는지 에러인지 확인 (ex. 앱이 켜진 상태에서 GooglePlay Cache/Data 삭제된 경우 구매건 없다고 뜰 수 있음.)
         else {
             Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-5>: 구매건이 하나도 없음! ")
+        // 진짜 하나도 없는지 아니면 에러인지 확인 (ex. GooglePlay Cache/Data 삭제하면 일로 들어옴)
+        // A) 과거 정상적인 로딩 후 RtList + IAP 정보 를 저장해두었던 리스트를 SharedPref 에서 로딩
+            val listFromSharedPref = mySharedPrefManager.getRtInTheCloudList()
+        // B) SharedPref 로딩한 리스트에서 purchaseBool==true 인 놈들만 받음.
+            val purchasedRts = listFromSharedPref.filter { rtObj -> rtObj.purchaseBool }
+        // C) <D1-C-1> 과 동일한 작업
+            for (purchasedRt in purchasedRts) {
+                val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchasedRt.iapName } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
+                val iapName = purchasedRt.iapName//purchase.skus[0]
+                val fileSupposedToBeAt =context.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
+                val rtObject = rtListPlusIAPInfo[indexOfRtObj]
+
+                if(indexOfRtObj != -1) {
+        //D) SharedPref 로 받은 리스트에서 구입=true 로 되있던 놈들은 rtlistPlusIAPInfo 에도 .purchaseBool = true 로 변경 => 추후 RcV 에 Display 됨+ Google Play 에러로 안 샀다고 판단하여 파일들 삭제 되는것 방지
+                    rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
+                    Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-5> [SharedPref 리스트에 근거함] iapName=$iapName 의 purchaseBool=true 로 한다. ")
+                    //*******구매는 확인되었으나 item(ex p1001.rta 등) 이 phone 에 없다 (삭제 혹은 재설치?)
+                    if (!myDiskSearcher.isSameFileOnThePhone(fileSupposedToBeAt)) {
+                        multiDNLDNeededList.add(rtObject)
+                        Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-5> [SharedPref 리스트에 근거함] [멀티] 복원 다운로드 필요한 리스트에 다음을 추가: $iapName ")
+                    }
+                }
+            }
+
         }
-        // **** D1-B-6 모든건에 대해 정리가 끝났으니 purchaseBool 이 false 인 놈들취합
+    // **** D1-C-6 모든건에 대해 정리가 끝났으니 purchaseBool 이 false 인 놈들취합
         purchaseFalseRtList = rtListPlusIAPInfo.filter { rtObj -> !rtObj.purchaseBool }.toMutableList()
         Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-6> ************ iap_D1_B_addPurchaseBoolToList() 끝나는지점 *****")
     }

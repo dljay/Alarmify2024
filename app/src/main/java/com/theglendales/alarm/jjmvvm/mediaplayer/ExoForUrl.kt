@@ -212,6 +212,7 @@ class ExoForUrl(val context: Context) : Player.Listener {
 
     override fun onPlayerError(error: ExoPlaybackException) {
         // handle error
+        Log.d(TAG, "onPlayerError: called.")
         when(error.type) {
             ExoPlaybackException.TYPE_SOURCE -> Log.d(TAG,"!!!TYPE_SOURCE: " + error.sourceException)
             ExoPlaybackException.TYPE_RENDERER -> Log.d(TAG,"!!TYPE_RENDERER: " + error.rendererException)
@@ -289,7 +290,6 @@ class ExoForUrl(val context: Context) : Player.Listener {
         removeHandler()
         setSeekbarToZero()
 
-
         // 불량 URL 확인, ErrorOccurred!
         val isUrlValid: Boolean = URLUtil.isValidUrl(mp3UrlMap[receivedTrId])
 
@@ -312,6 +312,7 @@ class ExoForUrl(val context: Context) : Player.Listener {
         try{
             // Play 전에 (가능하면) Caching 하기.
             prepPlayer(true, mp3UrlMap[receivedTrId], playWhenReady) // ->  신규클릭의 경우 playWhenReady = true, 재생 중 frag 왔다 다시왔을때는 false
+
         }catch(e: IOException) {
             toastMessenger.showMyToast("Unknown error occurred: $e", isShort = false)
 

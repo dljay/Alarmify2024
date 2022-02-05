@@ -54,12 +54,11 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.17i [클릭 했을 때 VuMeter , Highlight 등 모두 RcV 로 핸들링 함. ]
+//v3.07.17i2 [클릭 했을 때 VuMeter , Highlight 등 모두 RcV 로 핸들링 함. ]
 // Achievements(O)
-// VHolderUiHandler(X) 아예 안씀.
-// RcV [ViewHolderMap] 없애버림!
-// [미해결] Rcv>lcVmIvController() / enableVm() : ERROR 일때 Logic 짜주기.
-// [미해결]  GlvVars.clickedTrId 대신 exoForUrl 에 clickedTrId 저장? vs 그대로 두기..
+// IAP 가 끊겼을 때 (혹은 앱 연 상태에서 Google Play Data 삭제했을 때 -> refresh -> 구입 물품이 하나도 안 뜨는 문제가 있음. -> SharedPref 에서 (기존에 저장된) 리스트 받아서 "산 물건 삭제 되는것 방지!"
+
+
 
 
 // issue :

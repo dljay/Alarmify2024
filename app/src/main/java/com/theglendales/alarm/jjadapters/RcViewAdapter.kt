@@ -341,8 +341,6 @@ class RcViewAdapter(
                         //1-b) 하이라이트 작동  <<그 외 IvThumbNail 어둡게 하기, Loading Circle, Vumeter 등은 Music Play Status 에 따라서 LcVmController() 로 조절>>
                           disableHL(prevClickedHolder)
                           enableHL(clickedHolder)
-//                        disableHLAll() // 모든 하이라이트를 끄고 //todo: 이것대신 disableHL(selectedHolder)
-//                        enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
                         //1-c) 음악 플레이 //todo: 재생중일때 또 클릭하면 그냥 무시하기?
                         exoForUrlPlay.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)

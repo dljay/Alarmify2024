@@ -15,7 +15,7 @@ import com.theglendales.alarm.bugreports.BugReporter
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.jjfirebaserepo.FirebaseRepoClass
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
+
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MultiDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.SingleDownloaderV3
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
@@ -139,7 +139,7 @@ fun startKoin(context: Context): Koin {
 
         // 내가 추가 -->
 
-        single<VHolderUiHandler> { VHolderUiHandler(context = context)}
+        //single<VHolderUiHandler> { VHolderUiHandler(context = context)}
         single<FirebaseRepoClass> { FirebaseRepoClass()}
         single<MySharedPrefManager> {MySharedPrefManager(context = context)}
         single<DiskSearcher> { DiskSearcher(context = context)}

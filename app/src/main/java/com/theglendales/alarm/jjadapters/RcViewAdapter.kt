@@ -2,6 +2,8 @@ package com.theglendales.alarm.jjadapters
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -41,7 +43,10 @@ class RcViewAdapter(
     private val secondFragListener: RcCommInterface) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
 
 
-    companion object {var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()}
+
+// 현재 click 된 ViewHolder 를 여기에 저장.
+    var prevClickedHolder: MyViewHolder? = null
+    var clickedHolder: MyViewHolder? = null
 
 // MediaPlayer
     private val exoForUrlPlay: ExoForUrl by globalInject()
@@ -53,8 +58,7 @@ class RcViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         Log.d(TAG, "(Line44)onCreateViewHolder: jj- RcV! viewType=$viewType.")
-        val myXmlToViewObject =
-            LayoutInflater.from(parent.context).inflate(R.layout.jj_rc_single_slot, parent, false)
+        val myXmlToViewObject = LayoutInflater.from(parent.context).inflate(R.layout.jj_rc_single_slot, parent, false)
         return MyViewHolder(myXmlToViewObject)
 
     }
@@ -64,9 +68,6 @@ class RcViewAdapter(
         val currentRt = rtPlusIapInfoList[position]
         val currentTrId = rtPlusIapInfoList[position].id
         val currentIapName = rtPlusIapInfoList[position].iapName
-
-        viewHolderMap[currentTrId] = holder // Map 에 현재 로딩하는 holder 를 등록.
-
 
         holder.tv1_Title.text = currentRt.title
         holder.tv2_ShortDescription.text = currentRt.tags
@@ -79,11 +80,13 @@ class RcViewAdapter(
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " +
 //                "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
 //                "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
+
     //트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
         // A) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트(O) & VuMeter (O)
         if (currentTrId == GlbVars.clickedTrId) {
+            clickedHolder = holder // a) ListFrag 복귀 후 clickedHolder 는 Null 상태이므로 '기존에 선택했던 TrId 가 배정된 '현재의 Holder' 로 설정' b) 단순 위아래 Scroll 은 어차피 동일한 clickedHolder 값이 배정됨.
             enableHL(holder)
-            enableVM(holder)
+            enableVM(exoForUrlPlay.currentPlayStatus, holder)
         }
         // B) Bind 하면서 'Select' 된 트랙이 아닐경우 하이라이트(X) & VuMeter (X)
         if (currentTrId != GlbVars.clickedTrId) {
@@ -107,7 +110,6 @@ class RcViewAdapter(
                 holder.iv_PurchasedFalse.visibility = View.VISIBLE
             }
         }
-
 
         GlideApp.with(receivedActivity).load(currentRt.imageURL).centerCrop()
             .error(R.drawable.errordisplay)
@@ -137,41 +139,73 @@ class RcViewAdapter(
     }
 
 // Highlight & LoadingCircle & VuMeter 작동 관련    --------->
-    //0) LcVmIvController : LoadingCircle, VuMeter, ImageView
-        fun lcVmIvController(playStatus: StatusMp, trkId: Int) {
+    //0) LcVmIvController : LoadingCircle, VuMeter, ImageView: 썸네일 밝기 원복
+        fun lcVmIvController(playStatus: StatusMp) {
+            if(clickedHolder!=null) {
+                when(playStatus) {
+                    StatusMp.BUFFERING -> {
+                        // 1)기존에 UI 가 작동된 Holder 를 다 '원복' 해주기
+                        if(prevClickedHolder!=null) {
+                            prevClickedHolder!!.loadingCircle.visibility = View.INVISIBLE // loading Circle 안보이게. (a)
+                            prevClickedHolder!!.vuMeterView.visibility = VuMeterView.GONE // VuMeter 도 안보이게 (b)
+                            prevClickedHolder!!.iv_Thumbnail.alpha = 1.0f // (c) 썸네일 밝기 원복
+                        }
+                        // 2) 새로 Click 된 Holder 의 UI 업데이트
+                        clickedHolder!!.loadingCircle.visibility = View.VISIBLE
+                        clickedHolder!!.iv_Thumbnail.alpha = 0.3f
+                        clickedHolder!!.vuMeterView.visibility = VuMeterView.GONE
+                    }
+                    StatusMp.READY -> {
+                        clickedHolder!!.loadingCircle.visibility = View.INVISIBLE
+                        clickedHolder!!.vuMeterView.visibility = VuMeterView.VISIBLE
+                        clickedHolder!!.vuMeterView.pause()
+                    }
+                    StatusMp.PAUSED -> {
+                        clickedHolder!!.vuMeterView.pause()
+                    }
+                    StatusMp.PLAY -> {
+                        clickedHolder!!.iv_Thumbnail.alpha = 0.3f
+                        clickedHolder!!.vuMeterView.visibility = VuMeterView.VISIBLE
+                        clickedHolder!!.vuMeterView.resume(true)
+                    }
+                }
+            }
+        }
+    //1)Highlight - 클릭 순간 작동
+        private fun enableHL(selectedHolder: MyViewHolder?) {
+            Log.d(TAG, "enableHL: called for selectedHolder = $selectedHolder")
+            if (selectedHolder != null) {
+                selectedHolder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
+            }
+        }
 
-        }
-    //1)Highlight
-        private fun enableHL(selectedHolder: MyViewHolder) {
-            Log.d(TAG, "enableHighlightOnTrId: YES")
-            //holder.tv1_Title?.setTextColor(Color.MAGENTA)
-            selectedHolder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
-        }
-
-        private fun disableHL(unselectedHolder: MyViewHolder) {
-            unselectedHolder.tv1_Title.setTextColor(Color.BLACK)
-            unselectedHolder.ll_entire_singleSlot.setBackgroundColor(Color.WHITE)
-        }
-        // 모든 row 의 Highlight 를 없앰. (어떤 row 를 클릭했을 때 우선적으로 실행되어 모든 하이라이트를 없앰.)
-        private fun disableHLAll() {
-            if(!viewHolderMap.isNullOrEmpty()) {
-                viewHolderMap.forEach { (_, vHolder) -> disableHL(vHolder) }
+        private fun disableHL(unselectedHolder: MyViewHolder?) {
+            Log.d(TAG, "disableHL: called for unselectedHolder=$unselectedHolder")
+            if (unselectedHolder != null) {
+                unselectedHolder.tv1_Title.setTextColor(Color.BLACK)
+                unselectedHolder.ll_entire_singleSlot.setBackgroundColor(Color.WHITE)
             }
 
         }
-    // 2) VuMeter and Loading Circle => todo:  ExoForLocal? vs VHolderUiHandler? 뭘 쓸지? VHodlerUiHanlder 가 현재 Koin 덕분에 SingleTon 이니까. 그쪽으로 전달???
-        private fun enableVM(selectedHolder: MyViewHolder) {
 
-            when(exoForUrlPlay.currentPlayStatus) {
+    // 2) BindView 할때만 작동 (a) (b) 위로 쓱싹 스크롤) VuMeter and Loading Circle =>
+        private fun enableVM(currentPlayStatus: StatusMp, selectedHolder: MyViewHolder) {
+
+            when(currentPlayStatus) {
                 StatusMp.PLAY -> {
                     selectedHolder.iv_Thumbnail.alpha = 0.3f // 어둡게
                     selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
                 }
                 StatusMp.PAUSED -> {
                     Log.d(TAG, "enableVM: .PAUSED called for holder.hashCode= ${selectedHolder.hashCode()}")
-                    selectedHolder.iv_Thumbnail.alpha = 0.3f // 어둡게
                     selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
-                    selectedHolder.vuMeterView.pause()
+                    selectedHolder.iv_Thumbnail.alpha = 0.3f // 어둡게
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        selectedHolder.vuMeterView.pause() // EQ 막대기를 보여줘야하는데 바로 vuMeterView.pause() 때리면 아무것도 안 보임. 따라서 0.1 초 Delay 후 Pause 때림.
+                    }, 100)
+
+                    //selectedHolder.vuMeterView.stop(true) // 이것도 얼추 먹히긴 하는데 scroll 하면서 EQ Bar 가 없어짐.
+
                 }
                 else -> {} // 이 외 IDLE, ERROR 등일때는 암것도 안함~
             }
@@ -194,20 +228,6 @@ class RcViewAdapter(
     override fun onViewAttachedToWindow(holder: MyViewHolder) {
         super.onViewAttachedToWindow(holder)
         //Log.d(TAG,"onViewAttachedToWindow: trId: ${holder.holderTrId},  holder name: $holder, vuMeter Name: ${holder.vuMeterView},")
-
-        //현재 추가시키는 holder 가 기존 click, 재생(혹은 재생 중 pause) 중인 트랙였다. -> !!! 이거 그냥 BindView 에서 대체?
-        /*    if(holder.holderTrId == GlbVars.currentPlayingTrId && holder.holderTrId != GlbVars.errorTrackId) {
-                enblVuMeterOnTrId(holder.holderTrId, holder)
-                enableHighlightOnTrId(holder.holderTrId)
-
-                Log.d(TAG, "++onViewATTACHEDtoWindow: (O) enblHighlight/enblVuMeter  at trId: ${holder.holderTrId}, vuMeter(${holder.vuMeterView}")
-            }
-            if(holder.ll_entire_singleSlot.isSelected && holder.holderTrId!=GlbVars.currentPlayingTrId )
-            // a) (가령 11번 클릭-> 1번 역시 하이라이트 됨(11번과 동일한 viewHolder 가 recycle 되었으므로), b) trId 가 클릭한 놈이 아니면 무조건 disable highlight
-            {
-                disableHighlightOnTrId(holder)
-                disableVuMeterOnTrId(holder)
-            }*/
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -312,21 +332,23 @@ class RcViewAdapter(
                     R.id.id_rL_including_title_description -> {
                         //1-a)
                         //todo: exoForUrl 에 clickedTrId 기억해놓기.
-                        // 여기에는: selectedHolder = holder
+                        prevClickedHolder = clickedHolder // 이전에 선택되어있던 holder 값을 prevClickedHolder 로 복사. (첫 Click 이라면 prevClick 이 null 이 되겠지 당연히..)
+                        clickedHolder = this // clickedHolder = holder
 
                         GlbVars.clickedTrId = holderTrId // onBindViewHolder 에서 적합한 trID 를 이미 부여받은 상태.
                         Log.d(TAG,"*****************************onClick-To Play MUSIC: Global.clTrId: ${GlbVars.clickedTrId}, holderTrId: $holderTrId ****************")
 
-                        //1-b) 하이라이트 작동
-                        disableHLAll() // 모든 하이라이트를 끄고 //todo: 이것대신 disableHL(selectedHolder)
-                        enableHL(this) // 선택된 viewHolder 만 하이라이트!
+                        //1-b) 하이라이트 작동  <<그 외 IvThumbNail 어둡게 하기, Loading Circle, Vumeter 등은 Music Play Status 에 따라서 LcVmController() 로 조절>>
+                          disableHL(prevClickedHolder)
+                          enableHL(clickedHolder)
+//                        disableHLAll() // 모든 하이라이트를 끄고 //todo: 이것대신 disableHL(selectedHolder)
+//                        enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
                         //1-c) 음악 플레이 //todo: 재생중일때 또 클릭하면 그냥 무시하기?
                         exoForUrlPlay.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
 
 //[음악 재생 대신 Diffutil Test 용 코드] - 구매 후 즉각 RcV 아이콘 변경되는지 확인하기 위한 간접 테스트=> 클릭한 아이템 purchaseBool 값을 인위적으로 true 로 바꿔줌 => 바로 RcV 에 반영되야함!
 //jjMainVModel.testDiffutil()
-
 
                         // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
                         secondFragListener.onRcvClick(selectedRt,isPurchaseClicked = false) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!

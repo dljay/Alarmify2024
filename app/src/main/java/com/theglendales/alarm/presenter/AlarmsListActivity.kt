@@ -54,38 +54,18 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.17h2 [VHolderUiHandler 관련 - RcV 로 옮기기 전 2/5 19:03]
+//v3.07.17i [클릭 했을 때 VuMeter , Highlight 등 모두 RcV 로 핸들링 함. ]
+// Achievements(O)
+// VHolderUiHandler(X) 아예 안씀.
+// RcV [ViewHolderMap] 없애버림!
+// [미해결] Rcv>lcVmIvController() / enableVm() : ERROR 일때 Logic 짜주기.
+// [미해결]  GlvVars.clickedTrId 대신 exoForUrl 에 clickedTrId 저장? vs 그대로 두기..
 
-// rta 파일 없을 때 (unplayable) -> a) AlertDialog 로 'We have detected.. visit Secondfrag for auto recovery.. b) ListFrag 에서는 [!] 그래픽 뜨게. c) DetailsFrag 들어가면 그냥 N/A 로 나옴.
-// SecondFrag 방문하면 자동 복원되고 어차피 rta 파일이 삭제되서 안 뜨는 케이스는 매우 rare 하기는 하다. 아쉽지만 합리적. 더 시간 쓰지 말것.
 
-//SecondFrag -> Play -> ListFrag -> SecondFrag 했을때
-//
-//issue1)
-//기존 Play 하던놈 : 회색 처리(O) Vumeter Pause (X)
-//
-//issue2)
-//->다른 트랙 Play -> 기존 Play -> 회색 처리 그대로 유지된 상태임..
-//
-//
-//원인)
-//RcV> ViewHolder 가 업뎃되기전에 (ViewModel 복원
-//-> VHolderUiHandler 는 globalScope() 로 계속 살아있으니
-//-> lcVmIvCntrl() 가 불려도 -> 기존 holder 값 유지된 상태로 1-b 에 안들어옴.
-//
-//개선 가능 내용)
-//** 일단 SecondFrag 재방문시 RcV>viewHolder 가 새로만들어져서 holder.hashCode 가 다 바뀐다는 사실 **
-//
-//SecondFrag 에서 나갈때 onDestroy 나 onPause 에서 VHolderUiHanlder.clear vHolder & assign new ui?
-//RcV 에서 VHolder UI 업뎃 관련 모두 통제? 가능 vs 불가능?
-//VHolderUiHandler Class 없애고 그냥 function 만 둘 수 있음.
-
+// issue :
+// //4. BillingClient Disconnected Issue .,. 갑자기 오랜만에 켜니까 뜨네..
 
 // 슬슬 이제 UI ..? 나름 괜춘한것도 같고..
-
-
-
-
 
 
 //4. BillingClient Ready(x) issue..

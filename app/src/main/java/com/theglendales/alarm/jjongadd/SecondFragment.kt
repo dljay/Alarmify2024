@@ -44,7 +44,6 @@ import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.*
-import com.theglendales.alarm.jjmvvm.helper.VHolderUiHandler
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
@@ -88,10 +87,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Chip related
     lateinit var chipGroup: ChipGroup
     var myIsChipChecked = false
-
-
-    // VumeterHandler
-    private val vHolderUiHandler: VHolderUiHandler by globalInject() // Koin Inject
 
     //Lottie Animation(Loading & Internet Error) + LoadingCircle(로티 X) 관련
     lateinit var lottieAnimationView: LottieAnimationView
@@ -184,7 +179,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     StatusMp.PAUSED -> {showMiniPlayerPlayBtn()}
                     }
                 // b) VuMeter/Loading Circle 등 UI 컨트롤
-                vHolderUiHandler.lcVmIvController(StatusEnum)
+                rcvAdapterInstance.lcVmIvController(StatusEnum) // 원복후 불러도 Prev/CurrentHolder 는 어차피 null 이기에 상관없음.
 
                 })
 

@@ -65,7 +65,7 @@ class RcViewAdapter(
         val currentTrId = rtPlusIapInfoList[position].id
         val currentIapName = rtPlusIapInfoList[position].iapName
 
-        viewHolderMap[currentTrId] = holder
+        viewHolderMap[currentTrId] = holder // Map 에 현재 로딩하는 holder 를 등록.
 
 
         holder.tv1_Title.text = currentRt.title
@@ -80,22 +80,23 @@ class RcViewAdapter(
 //                "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
 //                "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
     //트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
-        // 1) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트&VuMeter 생성
+        // A) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트(O) & VuMeter (O)
         if (currentTrId == GlbVars.clickedTrId) {
             enableHL(holder)
             enableVM(holder)
         }
+        // B) Bind 하면서 'Select' 된 트랙이 아닐경우 하이라이트(X) & VuMeter (X)
         if (currentTrId != GlbVars.clickedTrId) {
             disableHL(holder)
             disableVMnLC(holder)
         }
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
         //todo: 당분간 이상하게 뜰것임. JjMainViewModel 에서 GSON 으로 저장해주기? 어떤 의미가 있을지 흐음..
-        //IAP 관련 1) 가격 표시
+        //IAP 관련 A) 가격 표시
         if(currentRt.itemPrice.isNotEmpty()) {
             holder.tv3_Price.text = currentRt.itemPrice
         }
-        //IAP 관련 2) Purchase Stat True or False
+        //IAP 관련 B) Purchase Stat True or False
         when(currentRt.purchaseBool) {
             true -> {// Show "Purchased" icon
                 holder.iv_PurchasedTrue.visibility = View.VISIBLE
@@ -135,17 +136,21 @@ class RcViewAdapter(
             }).into(holder.iv_Thumbnail)
     }
 
-// Highlight & VuMeter 작동 관련    --------->
+// Highlight & LoadingCircle & VuMeter 작동 관련    --------->
+    //0) LcVmIvController : LoadingCircle, VuMeter, ImageView
+        fun lcVmIvController(playStatus: StatusMp, trkId: Int) {
+
+        }
     //1)Highlight
-        fun enableHL(selectedHolder: MyViewHolder) {
+        private fun enableHL(selectedHolder: MyViewHolder) {
             Log.d(TAG, "enableHighlightOnTrId: YES")
             //holder.tv1_Title?.setTextColor(Color.MAGENTA)
             selectedHolder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
         }
 
-        private fun disableHL(holder: MyViewHolder) {
-            holder.tv1_Title.setTextColor(Color.BLACK)
-            holder.ll_entire_singleSlot.setBackgroundColor(Color.WHITE)
+        private fun disableHL(unselectedHolder: MyViewHolder) {
+            unselectedHolder.tv1_Title.setTextColor(Color.BLACK)
+            unselectedHolder.ll_entire_singleSlot.setBackgroundColor(Color.WHITE)
         }
         // 모든 row 의 Highlight 를 없앰. (어떤 row 를 클릭했을 때 우선적으로 실행되어 모든 하이라이트를 없앰.)
         private fun disableHLAll() {
@@ -171,10 +176,10 @@ class RcViewAdapter(
                 else -> {} // 이 외 IDLE, ERROR 등일때는 암것도 안함~
             }
         }
-        private fun disableVMnLC(holder: MyViewHolder) {
-            holder.loadingCircle.visibility = View.INVISIBLE // 일단 loadingCircle 없애기.
-            holder.iv_Thumbnail.alpha = 1.0f // 밝기 원복
-            holder.vuMeterView.visibility = VuMeterView.GONE // VuMeter 감추기
+        private fun disableVMnLC(unselectedHolder: MyViewHolder) {
+            unselectedHolder.loadingCircle.visibility = View.INVISIBLE // 일단 loadingCircle 없애기.
+            unselectedHolder.iv_Thumbnail.alpha = 1.0f // 밝기 원복
+            unselectedHolder.vuMeterView.visibility = VuMeterView.GONE // VuMeter 감추기
         }
 // <---------- // Highlight & VuMeter 작동 관련    --------->
 
@@ -306,11 +311,14 @@ class RcViewAdapter(
                     //1) [하이라이트, 음악 재생] - 구매 제외 부분 클릭  (Rl_including_tv1_2 영역)
                     R.id.id_rL_including_title_description -> {
                         //1-a)
+                        //todo: exoForUrl 에 clickedTrId 기억해놓기.
+                        // 여기에는: selectedHolder = holder
+
                         GlbVars.clickedTrId = holderTrId // onBindViewHolder 에서 적합한 trID 를 이미 부여받은 상태.
                         Log.d(TAG,"*****************************onClick-To Play MUSIC: Global.clTrId: ${GlbVars.clickedTrId}, holderTrId: $holderTrId ****************")
 
                         //1-b) 하이라이트 작동
-                        disableHLAll() // 모든 하이라이트를 끄고
+                        disableHLAll() // 모든 하이라이트를 끄고 //todo: 이것대신 disableHL(selectedHolder)
                         enableHL(this) // 선택된 viewHolder 만 하이라이트!
 
                         //1-c) 음악 플레이 //todo: 재생중일때 또 클릭하면 그냥 무시하기?

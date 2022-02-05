@@ -185,6 +185,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
                 // b) VuMeter/Loading Circle 등 UI 컨트롤
                 vHolderUiHandler.lcVmIvController(StatusEnum)
+
                 })
 
             //2-B-나) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)

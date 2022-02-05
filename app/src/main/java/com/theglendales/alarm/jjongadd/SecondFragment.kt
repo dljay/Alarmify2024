@@ -261,7 +261,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
         //[MainVModel-3] (구매 전) 클릭 -> Purchase 창 뜨기전까지 Loading Circle 보여주고 없애기
             jjMainVModel.purchaseCircle.observe(viewLifecycleOwner) { onOffNumber ->
-                Log.d(TAG, "[MainVModle <3> - PurchaseCircle] Valued Received=$onOffNumber ") // 0: 보여주기, 1: 끄기.
+                Log.d(TAG, "[MainVModel <3> - PurchaseCircle] Valued Received=$onOffNumber ") // 0: 보여주기, 1: 끄기.
                 when(onOffNumber){
                     0 -> {frameLayoutForCircle.visibility = View.VISIBLE
                         purchaseLoadingCircle.visibility = View.VISIBLE} // 보여주기(O)

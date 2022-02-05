@@ -20,10 +20,7 @@ import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.GlbVars
 import com.theglendales.alarm.jjdata.RtInTheCloud
-import com.theglendales.alarm.jjmvvm.JjMainViewModel
-import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 
-import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForLocal
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 //import com.theglendales.alarm.jjiap.MyIAPHelper_v1
@@ -46,8 +43,6 @@ class RcViewAdapter(
 
     companion object {var viewHolderMap: HashMap<Int, MyViewHolder> = HashMap()}
 
-// IAP
-    private val iapV3: MyIAPHelperV3 by globalInject()
 // MediaPlayer
     private val exoForUrlPlay: ExoForUrl by globalInject()
 
@@ -123,7 +118,7 @@ class RcViewAdapter(
                 // (여러 ViewHolder 를 로딩중인데) 현재 로딩한 View 에 Glide 가 이미지를 성공적으로 넣었다면.
                 override fun onResourceReady(resource: Drawable?,model: Any?,target: Target<Drawable>?
                     ,dataSource: DataSource?,isFirstResource: Boolean): Boolean {
-                    Log.d(TAG,"onResourceReady: Glide loading success! trId: $currentTrId, Position= ${holder.adapterPosition}") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                    //Log.d(TAG,"onResourceReady: Glide loading success! trId: $currentTrId, Position= ${holder.adapterPosition}") // debug 결과 절대 순.차.적으로 진행되지는 않음!
 
                     // //Glide 가 로딩되기전 클릭하는 상황에 대응하기 위해 -> 열려있는 miniPlayer의 thumbnail에 필요한 사진과 현재 glide로 로딩된 사진의 동일한지 trId로 확인 후
                     /*if (currentTrId == GlbVars.clickedTrId)
@@ -142,10 +137,10 @@ class RcViewAdapter(
 
 // Highlight & VuMeter 작동 관련    --------->
     //1)Highlight
-        fun enableHL(holder: MyViewHolder) {
+        fun enableHL(selectedHolder: MyViewHolder) {
             Log.d(TAG, "enableHighlightOnTrId: YES")
             //holder.tv1_Title?.setTextColor(Color.MAGENTA)
-            holder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
+            selectedHolder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
         }
 
         private fun disableHL(holder: MyViewHolder) {
@@ -160,18 +155,18 @@ class RcViewAdapter(
 
         }
     // 2) VuMeter and Loading Circle => todo:  ExoForLocal? vs VHolderUiHandler? 뭘 쓸지? VHodlerUiHanlder 가 현재 Koin 덕분에 SingleTon 이니까. 그쪽으로 전달???
-        private fun enableVM(holder: MyViewHolder) {
+        private fun enableVM(selectedHolder: MyViewHolder) {
 
             when(exoForUrlPlay.currentPlayStatus) {
                 StatusMp.PLAY -> {
-                    holder.iv_Thumbnail.alpha = 0.3f // 어둡게
-                    holder.vuMeterView.visibility = VuMeterView.VISIBLE
+                    selectedHolder.iv_Thumbnail.alpha = 0.3f // 어둡게
+                    selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
                 }
                 StatusMp.PAUSED -> {
-                    Log.d(TAG, "enableVM: .PAUSED called")
-                    holder.iv_Thumbnail.alpha = 0.3f // 어둡게
-                    holder.vuMeterView.visibility = VuMeterView.VISIBLE
-                    holder.vuMeterView.pause()
+                    Log.d(TAG, "enableVM: .PAUSED called for holder.hashCode= ${selectedHolder.hashCode()}")
+                    selectedHolder.iv_Thumbnail.alpha = 0.3f // 어둡게
+                    selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
+                    selectedHolder.vuMeterView.pause()
                 }
                 else -> {} // 이 외 IDLE, ERROR 등일때는 암것도 안함~
             }
@@ -187,15 +182,13 @@ class RcViewAdapter(
     // a) 스크롤해서 해당 view 가 화면에서 안 보일때
     override fun onViewDetachedFromWindow(holder: MyViewHolder) {
         super.onViewDetachedFromWindow(holder)
-        Log.d(TAG, "!!onViewDETACHEDFromWindow: trId: ${holder.holderTrId}, holder: $holder")
+        //Log.d(TAG, "!!onViewDETACHEDFromWindow: trId: ${holder.holderTrId}, holder: $holder")
     }
 
     // b) 다시 스크롤해서 해당 view 가 화면에서 보일때..//스크롤하고 화면 사라졌다 다시 오면 view 번호가 계속 바뀌는 문제.
     override fun onViewAttachedToWindow(holder: MyViewHolder) {
         super.onViewAttachedToWindow(holder)
-
-
-        Log.d(TAG,"onViewAttachedToWindow: trId: ${holder.holderTrId},  holder name: $holder, vuMeter Name: ${holder.vuMeterView},")
+        //Log.d(TAG,"onViewAttachedToWindow: trId: ${holder.holderTrId},  holder name: $holder, vuMeter Name: ${holder.vuMeterView},")
 
         //현재 추가시키는 holder 가 기존 click, 재생(혹은 재생 중 pause) 중인 트랙였다. -> !!! 이거 그냥 BindView 에서 대체?
         /*    if(holder.holderTrId == GlbVars.currentPlayingTrId && holder.holderTrId != GlbVars.errorTrackId) {

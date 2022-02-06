@@ -391,7 +391,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     override fun onResume() {
         super.onResume()
-        //todo: PlayStore Sign-in 하고 돌아왔을때 Refresh 로직..
+        //todo: 어떤 사유로든 Fb+IAP 로딩이 실패해서 돌아왔을때 자동으로 Refresh 하는 로직  (ex.PlayStore Sign-in 하고 돌아왔을때..)
         Log.d(TAG, "onResume: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
 
     // 돌아왔을 때 SlidingUpPanel 상태 복원 - 여기 onResume 에서 해주는게 맞음.

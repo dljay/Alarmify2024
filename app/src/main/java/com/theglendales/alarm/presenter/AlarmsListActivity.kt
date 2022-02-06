@@ -59,6 +59,7 @@ import java.util.Calendar
 
 // Issues)
 // 로그인 시키고 복귀했을 때 -- 다시 refresh 하는 로직 필요함. 현재는 listFrag 갔다와도 VModel init{} 이 안되니깐 아무것도 로딩하지 않고 에러창+Alert 그대로 보여줌/.
+// 가급적 DialogFrag (BtmSheet) 으로 뜨게 해볼것?
 
 
 // Achievements(O)

@@ -54,23 +54,14 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.17i2 [클릭 했을 때 VuMeter , Highlight 등 모두 RcV 로 핸들링 함. ]
+//v3.07.17K [Google Play Store 계정 연결 안됐을 때 가격 안 뜨는문제 처리전]
+
+
 // Achievements(O)
-// IAP 가 끊겼을 때 (혹은 앱 연 상태에서 Google Play Data 삭제했을 때 -> refresh -> 구입 물품이 하나도 안 뜨는 문제가 있음. -> SharedPref 에서 (기존에 저장된) 리스트 받아서 "산 물건 삭제 되는것 방지!"
-
-
-
-
-// issue :
-// //4. BillingClient Disconnected Issue .,. 갑자기 오랜만에 켜니까 뜨네..
-
-// 슬슬 이제 UI ..? 나름 괜춘한것도 같고..
-
-
 //4. BillingClient Ready(x) issue..
-//*** IAPV3.kt>62: OnBillingServiceDisconnected() => java.lang.IllegalStateException: Already resumed : 왜 exception 못잡지?
-//5. 결과적으로 (가급적) JJMainVModel 과 JjMpViewModel 만 남겨두도록 해보기?
-// Passing ViewModel -> RecyclerViewAdapter -> 단순 클릭용도로.. // https://www.py4u.net/discuss/702329
+//*** IAPV3.kt>62: OnBillingServiceDisconnected() => java.lang.IllegalStateException: Already resumed : 왜 exception 못잡지? <- continuation 문제인거지..
+
+
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

@@ -17,7 +17,7 @@ private const val TAG = "MySharedPrefManager"
 private const val RT_ON_THE_PHONE_LIST ="RtOneThePhoneList" //현재 .rta 는 Uri 로 ..  .art 는 String path 로 저장
 private const val KEY_1 = "RTOP_KEY"
 
-//<2>
+//<2> RtInTheCloudList.xml
 private const val RT_IN_THE_CLOUD_LIST ="RtInTheCloudList" //현재 .rta 는 Uri 로 ..  .art 는 String path 로 저장
 private const val KEY_2 = "RTIC_KEY"
 

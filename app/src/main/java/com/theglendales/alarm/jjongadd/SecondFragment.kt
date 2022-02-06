@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.airbnb.lottie.LottieAnimationView
+import com.android.billingclient.api.BillingClient
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -206,10 +207,22 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 lifecycle.repeatOnLifecycle(State.RESUMED) {
                     launch {
                         jjMainVModel.selectedRow.collect { rtInTheCloudObj -> currentClickedTrId = rtInTheCloudObj.id
-                            Log.d(TAG,"[MainVModel-SelectedRow] !!!  옵저버!! 트랙ID= ${rtInTheCloudObj.id}, \n currentClickedTrId=$currentClickedTrId")
+                            Log.d(TAG,"[MainVModel <0> - Selected Row] !!!  옵저버!! 트랙ID= ${rtInTheCloudObj.id}, \n currentClickedTrId=$currentClickedTrId")
                                 updateMiniPlayerUiOnClick(rtInTheCloudObj) // 동시에 ListFrag 갔다왔을때도 이걸 통해서 [복원]
                          }
                     }
+                    // BillingService Disconnect 됐을 때 refreshFbIAP() 해주는 로직인데 의미 없어서 뺐음.
+                    /*launch {
+                        jjMainVModel.getBillingDisconnectedAlert().collect {
+                            Log.d(TAG, "[MainVModel <0.5> - Billing Disconnected] called it=$it") // 뜨긴 떴다!!
+                            when(it) {
+                                BillingClient.BillingResponseCode.SERVICE_DISCONNECTED -> { //-1 값
+                                    Log.d(TAG, "[MainVModel <0.5> - Billing Disconnected] Billing Service got Disconnected 된 듯!!")
+                                    //jjMainVModel.refreshFbAndIAPInfo()
+                                }
+                            }
+                        }
+                    }*/
                 }
             }
         //5)이제 ViewModel 들을 넘김: RcvAdapter & MediaPlayer & MiniPlayer Instance 생성.
@@ -250,7 +263,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 else if(!jjMainVModel.prevNT && isNetworkWorking) {
                     Log.d(TAG, "[MainVModel <2> - NT] Network Working Again! Remove Error Lottie and Relaunch FB!!")
                     lottieAnimHandler.animController("stop")
-                    jjMainVModel.refreshAndUpdateLiveData() // Relaunch FB! -> 사실 lottie 가 사라지면서 기존 RcView 가 보여서 상관없긴 하지만.애초 Network 불가상태로 접속해 있을 수 있음.
+                    jjMainVModel.refreshFbAndIAPInfo() // Relaunch FB! -> 사실 lottie 가 사라지면서 기존 RcView 가 보여서 상관없긴 하지만.애초 Network 불가상태로 접속해 있을 수 있음.
                 }
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
 
@@ -594,7 +607,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         swipeRefreshLayout.setOnRefreshListener { //setOnRefreshListener 는  function! (SwipeRefreshLayout.OnRefreshListener 인터페이스를 받는) .. 결국 아래는 이름없는 function..?
             Log.d(TAG, "+++++++++++++ inside setOnRefreshListener+++++++++")
             swipeRefreshLayout.isRefreshing = true
-            jjMainVModel.refreshAndUpdateLiveData()
+            jjMainVModel.refreshFbAndIAPInfo()
 
 //            // Chip check 여부에 따라
 //            if (myIsChipChecked) { //하나라도 체크되어있으면

@@ -2,7 +2,6 @@ package com.theglendales.alarm.jjmvvm
 
 import android.app.Activity
 import android.util.Log
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,7 +17,9 @@ import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
@@ -47,17 +48,17 @@ class JjMainViewModel : ViewModel() {
 
     init {
         Log.d(TAG, "init: called.. ^^ Thread=${Thread.currentThread().name} ")
-        refreshAndUpdateLiveData()
+        refreshFbAndIAPInfo()
     }
 //********** FB ->rtList -> IAP -> rtListPlusIAPInfo -> LiveData(rtInTheCloudList) -> SecondFrag-> UI 업데이트 : ViewModel 최초 로딩시 & Spinner 로 휘리릭~ 새로고침 할 때 아래 function 이 불림.
-    fun refreshAndUpdateLiveData() {
-        Log.d(TAG, "refreshAndUpdateLiveData: (0) called")
+    fun refreshFbAndIAPInfo() {
+        Log.d(TAG, "refreshFbAndIAPInfo: (0) called")
         firebaseRepoInstance.getPostList().addOnCompleteListener {
             if(it.isSuccessful)
             {
             //1)Fb 에서 RtList를 받아옴
                 val rtList = it.result!!.toObjects(RtInTheCloud::class.java)
-                Log.d(TAG, "refreshAndUpdateLiveData: (1) Got the list from FB!!")
+                Log.d(TAG, "refreshFbAndIAPInfo: (1) Got the list from FB!!")
             //2)RtList 를 -> IAP 에 전달
                 //Exception handler -> iapParentJob 에서 문제가 생겼을 때 Exception 을 받고 -> 아래 iapParentJob.invokeOnCompletion 에서 sharedPref 에 있는 데이터를 읽기.
 
@@ -68,7 +69,7 @@ class JjMainViewModel : ViewModel() {
             //** viewModelscope.launch!!!  <<<<<<runs on the Main thread>>>>> !!!!
 
                 val iapParentJob = viewModelScope.launch(handler) {
-                    Log.d(TAG, "refreshAndUpdateLiveData: (2) RtList ->IAP // Thread=${Thread.currentThread().name}")
+                    Log.d(TAG, "refreshFbAndIAPInfo: (2) RtList ->IAP // Thread=${Thread.currentThread().name}")
 
                 //iapV3-B) Fb 에서 받은 리스트를 -> IAP 에 전달 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨.
                     iapV3.b_feedRtList(rtList)
@@ -91,10 +92,10 @@ class JjMainViewModel : ViewModel() {
                 }
             //3) 위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) => **** 드디어 LiveData 업데이트
                 iapParentJob.invokeOnCompletion { throwable ->
-                    Log.d(TAG, "refreshAndUpdateLiveData: (3) invoke on Completion called")
+                    Log.d(TAG, "refreshFbAndIAPInfo: (3) invoke on Completion called")
                 // 3-a) 에러 있으면  -> (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
                     if(throwable!=null) {
-                        Log.d(TAG, "refreshAndUpdateLiveData: ERROR (3-a) (个_个) iapParentJob Failed: $throwable")
+                        Log.d(TAG, "refreshFbAndIAPInfo: ERROR (3-a) (个_个) iapParentJob Failed: $throwable")
                         val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref (없을땐 그냥 깡통 arrayListOf<RtInTheCloud>() 를 받음.
                         unfilteredRtList = listSavedOnPhone
                         _rtInTheCloudList.value = listSavedOnPhone // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
@@ -106,7 +107,7 @@ class JjMainViewModel : ViewModel() {
                         val rtListPlusIAPInfo = iapV3.e_getFinalList() // gets immutable List!
                         unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 SecondFrag 활용)
                         _rtInTheCloudList.value = rtListPlusIAPInfo // !!! update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
-                        Log.d(TAG, "refreshAndUpdateLiveData: (3-b) <<<<<<<<<getRtList: updated LiveData!")
+                        Log.d(TAG, "refreshFbAndIAPInfo: (3-b) <<<<<<<<<getRtList: updated LiveData!")
 
             //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
                         // a), b), c) 는 모두 동시 실행(Parallel)
@@ -114,12 +115,12 @@ class JjMainViewModel : ViewModel() {
                         viewModelScope.launch(Dispatchers.IO) {
 //[Background Thread]   //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
                             launch {
-                                Log.d(TAG, "refreshAndUpdateLiveData: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
+                                Log.d(TAG, "refreshFbAndIAPInfo: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
                                 mySharedPrefManager.saveRtInTheCloudList(rtListPlusIAPInfo)
                             }
 //[Background Thread]   //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
                             launch {
-                                Log.d(TAG, "refreshAndUpdateLiveData: (4-b) xxxxx deleting where purchaseBool=false. Thread=${Thread.currentThread().name}")
+                                Log.d(TAG, "refreshFbAndIAPInfo: (4-b) xxxxx deleting where purchaseBool=false. Thread=${Thread.currentThread().name}")
                                 val neverPurchasedList = iapV3.f_getPurchaseFalseRtList()
                                 neverPurchasedList.forEach {
                                         rtInTheCloud -> myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
@@ -129,14 +130,14 @@ class JjMainViewModel : ViewModel() {
                             launch {
                                 val multiDnldNeededList= iapV3.g_getMultiDnldNeededList()
                                 if(multiDnldNeededList.size >0) {
-                                    Log.d(TAG, "refreshAndUpdateLiveData: (4-c-1) [멀티] ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
+                                    Log.d(TAG, "refreshFbAndIAPInfo: (4-c-1) [멀티] ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
                                     val resultEnum: MultiDnldState = multiDownloaderV3.launchMultipleFileDNLD(multiDnldNeededList)
                                     // 여기서 Coroutine 이 기다려줌.
 /*[Main Thread 로 전환]*/                withContext(Dispatchers.Main) {
-                                        Log.d(TAG, "refreshAndUpdateLiveData: (4-c-2)")
+                                        Log.d(TAG, "refreshFbAndIAPInfo: (4-c-2)")
                                         multiDownloaderV3.updateLiveDataEnum(resultEnum) // 이제 .ERROR 든 .SUCCESSFUL 이든 SecondFrag 에 보고 -> SnackBar 출력 목표는 달성했으니
                                         multiDownloaderV3.resetCurrentStateToIdle() // .IDLE 로 상태 변경->LiveData 에 전달 -> 추후 ListFrag 등 갔다와도 복원 지랄 안나게.
-                                        Log.d(TAG, "refreshAndUpdateLiveData: (4-c-3)")
+                                        Log.d(TAG, "refreshFbAndIAPInfo: (4-c-3)")
                                     }
                                 }
                             }
@@ -146,13 +147,16 @@ class JjMainViewModel : ViewModel() {
                 }
 
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.
-                Log.d(TAG, "<<<<<<<refreshAndUpdateLiveData: ERROR!! (个_个) Exception message: ${it.exception!!.message}")
+                Log.d(TAG, "<<<<<<<refreshFbAndIAPInfo: ERROR!! (个_个) Exception message: ${it.exception!!.message}")
                 //lottieAnimController(1) // this is useless at the moment..
                 toastMessenger.showMyToast("Unable to fetch data from host. Please check your connection.", isShort = false)
             }
         }
 
     }
+    /*fun getBillingDisconnectedAlert(): MutableSharedFlow<Int> { // SecondFrag 에서 Observe 중
+        return iapV3._billingDisconnectAlert
+    }*/
 
 
 //*********************Multi Downloader

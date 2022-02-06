@@ -10,6 +10,9 @@ import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.model.mySharedPrefManager
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import java.io.File
 import java.io.IOException
 import kotlin.Exception
@@ -46,7 +49,7 @@ class MyIAPHelperV3(val context: Context ) {
 
     private val toastMessenger: ToastMessenger by globalInject() // ToastMessenger
 //IAP
-    var rtListPlusIAPInfo= mutableListOf<RtInTheCloud>()
+    var rtListPlusIAPInfo= mutableListOf<RtInTheCloud>() // Fb 에서 받은 RtList 에 여기서 구매정보 확인후 IAP info 를 더해줄 리스트.
     private var billingClient: BillingClient? = null
 
 //복원(Multi DNLD) 및 삭제 관련
@@ -56,6 +59,9 @@ class MyIAPHelperV3(val context: Context ) {
 
 //purchaseMap
     private val purchaseMap = HashMap<String, CompletableDeferred<Purchase>>() // <K,V> = ex) <p1001, PurchaseObject>
+
+//onBillingService Disconnected() 가 울렸을 때 SecondFrag 에서 Collect 하고 있다 JjMainVModel > refreshRt() 해줌! 알려다 줄 Flow (라이브데이터 대신 사용. 중복 값 거르는 기능 있어서)
+    //val _billingDisconnectAlert = MutableSharedFlow<Int>(replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
 
 
     init {
@@ -128,12 +134,14 @@ class MyIAPHelperV3(val context: Context ) {
                 }
                 override fun onBillingServiceDisconnected() {
                     Log.d(TAG, "onBillingServiceDisconnected: xxxxxxxxxxxxxxxxxxxx 연결되었으나 이제 끊어짐.. called!")
-                    toastMessenger.showMyToast("Billing Service Disconnected. Please try again",isShort = false)
-                    /**
-                     * This will be called when there 'was' a connection -> but it gets lost. a) Google Play 데이터 삭제 b) 간혹 구매 코드가 서로 콜백 racing 하다 잘못되도 이쪽으로 온다고 함..
-                     * 결론적으론 여기서 .startConnection 을 다시 해줘야함. 테스트방법: SecondFrag 열린 상태에서 Settings>Google Play 데이터 삭제!! onBillingServiceDisconnected 뜨네!
+                    toastMessenger.showMyToast("Billing Service Disconnected. Reconnecting ..",isShort = false)
+                    //_billingDisconnectAlert.tryEmit(BillingClient.BillingResponseCode.SERVICE_DISCONNECTED)
 
-                     * 추후 여기 코드를 넣게된다면:  Disconnect -> flow 로 전달 + SecondFrag 에서 jvmodel 에서 모니터 (+timeOut) -> .startConnection 으로
+                    /**
+                     * This will be called when there 'was' a connection -> but it gets lost. a) 앱 열린 상태에서 Google Play 데이터 삭제 b) 구매 코드가 서로 콜백 racing 하다 잘못되도 이쪽으로 온다고 함..
+                     * 결론적으론 여기서 .startConnection 을 다시 해줘야하는데 우리는 애초에 JjMainView> Coroutine 으로 시작했으니. 아예 refreshFbIAP() 를 다시 부름.
+
+                     * (XX) SecondFrag 에서 Observe 하다가 -> 여기서 flow 로 tryEmit -> refreshAndUpdateLiveData() 다시 실행. -> 결국 iapParentJob 을 다시 실행하게 됨
                      * 매우 좋은 참고!!: https://stackoverflow.com/questions/61388646/billingclient-billingclientstatelistener-onbillingsetupfinished-is-called-multip
                      */
                 }
@@ -303,7 +311,7 @@ class MyIAPHelperV3(val context: Context ) {
                     continuation.resume(skuDetailsList)
                 } else {
                     Log.d(TAG, "d2_A_addPriceToList: <D2-A> Finished(X) - Error! XXX loading price for items")
-                    continuation.resumeWithException(Exception("<D2-A> Error "))
+                    continuation.resumeWithException(Exception("<D2-A> Error. responseCode= ${queryResult.responseCode} "))
                 }
 
             }

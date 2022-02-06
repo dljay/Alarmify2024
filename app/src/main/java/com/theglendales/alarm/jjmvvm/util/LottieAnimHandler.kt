@@ -23,19 +23,17 @@ class LottieAnimHandler(private val receivedActivity: Activity, private val lott
                 Log.d(TAG, "animController: initialLoading")
                 lottieAnimationView.setAnimation(R.raw.lottie_loading1)
             } //최초 app launch->read.. auto play 기 때문에
-            "error" -> {
+            "error" -> { // 인터넷 안되는 에러
                 receivedActivity.runOnUiThread(Runnable
                 {
                     Log.d(TAG, "animController: NO INTERNET ERROR!!")
                     lottieAnimationView.visibility = LottieAnimationView.VISIBLE
                     lottieAnimationView.setAnimation(R.raw.lottie_error1)
-
                     //snackBarDeliverer(lottieAnimationView,"Please kindly check your network connection status",false)
-
-                    //todo: 여기 SnackBar 에서 View 가 불안정할수 있음=>try this? -> Snackbar.make(requireActivity().findViewById(android.R.id.content), "..", Snackbar.LENGTH_LONG).show()
-
+                    //여기 SnackBar 에서 View 가 불안정할수 있음=>try this? -> Snackbar.make(requireActivity().findViewById(android.R.id.content), "..", Snackbar.LENGTH_LONG).show()
                 })
             }
+
             "stop" -> {
                 receivedActivity.runOnUiThread(Runnable
                 {

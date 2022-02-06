@@ -104,9 +104,9 @@ class JjMainViewModel : ViewModel() {
                         when(throwable) {
                             // Billing Unavailable (Typically Play Store 로그인 안됐을 때 발생.) -> Alert 창으로 PlayStore 이동하게 만들고. 그냥 빈 깡통 리스트 보여주기.
                             is PlayStoreUnAvailableException -> {
-                                Log.d(TAG, "refreshFbAndIAPInfo: (typically) Play Store 로그인 안되어있는 경우")
-                                _rtInTheCloudList.value = ArrayList() // 빈깡통 Return -> 그래야 Lottie 가 일단 없어지지.
-                                //todo: a) Lottie 로 빈칸에 뭔가 보여주기 b)Alert 창 -> PlayStore 로 이동
+                                //Log.d(TAG, "refreshFbAndIAPInfo: PlayStore 안될때: (typically) Play Store 로그인 안되어있는 경우 발생")
+                                _rtInTheCloudList.value = ArrayList() // 빈깡통 Return -> SecondFrag 에서 a) Lottie Error 애니메이션 띄우고 B) Alert 창 -> PlayStore 이동
+                                return@invokeOnCompletion
                             }
                             // 그 외 에러인 경우 (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
                             else -> {

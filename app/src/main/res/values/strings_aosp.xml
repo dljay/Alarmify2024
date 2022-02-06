@@ -74,6 +74,9 @@
     <!-- 내가 심은. jj- 현재 설정된 알람의 Ringtone 파일이 삭제되었을 때-->
     <string name="alert_missing_file">Missing Ringtone</string>
 
+    <!-- 내가 심은. jj- PlayStore Unavailable 일때 - typically PlayStore 에 로그인이 안되있는 경우-->
+    <string name="alert_ps_unavailable">Play Store Unavailable</string>
+
     <!-- 내가 심은. jj- About the Ringtone  -->
     <string name="alert_about">About the Ringtone</string>
 

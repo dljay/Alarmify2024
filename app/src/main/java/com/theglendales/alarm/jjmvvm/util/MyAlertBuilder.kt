@@ -3,8 +3,13 @@ package com.theglendales.alarm.jjmvvm.util
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.media.RingtoneManager
+import android.net.Uri
 import android.util.Log
+import androidx.core.content.ContextCompat.startActivity
 import com.theglendales.alarm.R
 import com.theglendales.alarm.background.PlayerWrapper
 import com.theglendales.alarm.configuration.globalInject
@@ -49,7 +54,25 @@ fun showAlertIfRtIsMissing(activity: Activity, tones: List<Alarmtone>) {
             }.show()
     }
 }
+fun showAlertPlayStoreUnavailable(context: Context, activity: Activity) {
+    Log.d(TAG, "showAlertPlayStoreUnavailable: called")
+        AlertDialog.Builder(activity).setTitle(activity.getString(R.string.alert_ps_unavailable))
+            .setMessage(activity.getString(R.string.ps_error_alert)) // 혹시나 파일명을 string 안에 넣어서 쓰고 싶다면 다음을 추가: unplayable.joinToString(", ") (Permissions.kt 참고)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                try {
+                    val playStoreUri = "https://play.google.com"
+                    startActivity(context,Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUri)), null)
 
+                } catch (e: ActivityNotFoundException) {
+                    //startActivity(context,Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                    Log.d(TAG, "showAlertPlayStoreUnavailable: Failed to Launch Google Play")
+                }
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+}
+
+// ******** UTILITY METHODS ******
 fun checkIfRtIsUnplayable(activity: Activity, tones: List<Alarmtone>): Boolean {
 
     //.READ_EXTERNAL_STORAGE 는 결국 Media 폴더 Shareable media files(image,audio - 내 음악,files..) 등등 인듯. 우리는 해당사항 없을듯.

@@ -1,7 +1,9 @@
 package com.theglendales.alarm.jjongadd
 
 //import android.app.Fragment
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.app.DownloadManager
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -51,6 +53,8 @@ import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.LottieAnimHandler
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
+import com.theglendales.alarm.jjmvvm.util.showAlertIfRtIsMissing
+import com.theglendales.alarm.jjmvvm.util.showAlertPlayStoreUnavailable
 import kotlinx.coroutines.launch
 
 
@@ -234,18 +238,29 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //[MainVModel-1] 1) [네트워크 사용O] Fb 에서 새로운 리스트를 받음/새로고침 2) [네트워크 사용X] a)신규 구매 후 리스트 변화. b) 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
                 Log.d(TAG, "---------------------- [MainVModel <1> - RTLIST] rtListFromFb received.")
+                // A) 빈깡통 리스트 받았을 때 (SharedPref 에서도 리스트를 못 찾은 케이스. PlayStore 로그인 안되어있는 에러일 확률 매우 높음)
+                if(rtListPlusIAPInfo.isNullOrEmpty()) {
+                    lottieAnimHandler.animController("stop") // 일단 최초 Loading Animation 이 돌고있었다면 Stop
+                    swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
+                    lottieAnimHandler.animController("error") // 1) Error Lottie 띄워주기
+                    showAlertPlayStoreUnavailable(requireContext(), requireActivity()) //2) Alert 창 -> PlayStore 로 이동
 
-                exoForUrlPlay.createMp3UrlMap(rtListPlusIAPInfo)
+                    //3) 돌아왔을 때 후속처리 (onResume 에서 해주기??)
 
-                if(myIsChipChecked) { //Chip 이 하나 이상 선택된 경우
-                    val tagsList = getTagsList()
-                    val filteredList = getFilteredList(rtListPlusIAPInfo, tagsList) // Filtered 된 List 를 받고
-                        rcvAdapterInstance.refreshRecyclerView(filteredList)
-                } else { // Chip 이 선택 안된 경우.
-                    rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
                 }
-                lottieAnimHandler.animController("stop") // Loading Animation 이 돌고있었다면 Stop
-                swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
+                // B) 제대로 된 리스트 받았을 때 (인터넷 안되면 SharedPref 에서라도 예전에 저장해놓은 리스트를 받음)
+                else {
+                    exoForUrlPlay.createMp3UrlMap(rtListPlusIAPInfo)
+                    if(myIsChipChecked) { //Chip 이 하나 이상 선택된 경우
+                        val tagsList = getTagsList()
+                        val filteredList = getFilteredList(rtListPlusIAPInfo, tagsList) // Filtered 된 List 를 받고
+                        rcvAdapterInstance.refreshRecyclerView(filteredList)
+                    } else { // Chip 이 선택 안된 경우.
+                        rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
+                    }
+                    lottieAnimHandler.animController("stop") // Loading Animation 이 돌고있었다면 Stop
+                    swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
+                }
             }
         //[MainVModel-2] Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
             jjMainVModel.isNetworkWorking.observe(viewLifecycleOwner) { isNetworkWorking ->

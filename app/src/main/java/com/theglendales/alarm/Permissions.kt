@@ -20,7 +20,7 @@ private const val TAG="checkPermissions"
 
 
 // [기존 코드] 재생 불가한 파일이 있는것을 permission 관련 이슈라 (기존 개발자가) 판단하여-> Permission 관련 Alert 창을 보여줬음.
-// [수정 코드] CheckUnPlayble.kt()> checkUnPlayableRt() 로 수정&사용
+// [수정 코드] MyAlertBuilder.kt()> checkUnPlayableRt() 로 수정&사용
 fun checkPermissions(activity: Activity, tones: List<Alarmtone>) {
     //.READ_EXTERNAL_STORAGE 는 결국 Media 폴더 Shareable media files(image,audio - 내 음악,files..) 등등 인듯. 우리는 해당사항 없을듯.
     val logger: Logger by globalLogger("checkPermissions")

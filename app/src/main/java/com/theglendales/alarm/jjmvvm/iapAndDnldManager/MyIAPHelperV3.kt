@@ -7,6 +7,7 @@ import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.PlayStoreUnAvailableException
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.model.mySharedPrefManager
 import kotlinx.coroutines.CompletableDeferred
@@ -103,7 +104,8 @@ class MyIAPHelperV3(val context: Context ) {
                 //toastMessenger.showMyToast("Purchase Canceled", isShort = true)
             } else
             {
-                Log.d(TAG, "i-1) PurchaseResult Listener: D -기타 에러.. ")
+                Log.d(TAG, "i-1) PurchaseResult Listener: D -기타 에러.. BillingResult.responseCode= ${bResult.responseCode} ")
+
                 emptyMapAndThrowExceptionToDeferred(bResult.debugMessage)
 
             }
@@ -128,8 +130,12 @@ class MyIAPHelperV3(val context: Context ) {
                     if(billingResult.responseCode == BillingClient.BillingResponseCode.OK) { // 0 disconnected= -1
                         Log.d(TAG, "c_prepBillingClient: <C> BillingSetupFinished (O)")
                         continuation.resume(Unit) // -> continuation 에서 이어서 진행 (원래 코루틴- JjMainVModel> iapParentJob 으로 복귀)
-                    } else {
-                        continuation.resumeWithException(Exception("Error on c_prepBillingClient"))
+                    }
+                    else if(billingResult.responseCode == BillingClient.BillingResponseCode.BILLING_UNAVAILABLE) {
+                        continuation.resumeWithException(PlayStoreUnAvailableException("Play Store unavailable. ResponseCode=3"))
+                    }
+                    else {
+                        continuation.resumeWithException(Exception("Error on c_prepBillingClient. responseCode=${billingResult.responseCode}"))
                     }
                 }
                 override fun onBillingServiceDisconnected() {

@@ -54,7 +54,7 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.17K [Google Play Store 계정 연결 안됐을 때 가격 안 뜨는문제 처리전]
+//v3.07.18A [Google Play Store 계정 연결 안됐을 때 - 처리중]
 
 
 // Achievements(O)

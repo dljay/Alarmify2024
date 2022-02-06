@@ -15,6 +15,7 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.PlayStoreUnAvailableException
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -64,7 +65,10 @@ class JjMainViewModel : ViewModel() {
 
                 val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
                     Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
-                    toastMessenger.showMyToast("Failed to fetch IAP information. Error=$throwable",isShort = false)
+
+                    if(throwable !is PlayStoreUnAvailableException) { // BillingUnAvailable(ResponseCode=3) - (typically) PlayStore 로그인 안되서 생기는 에러가 아니라면 Toast 메시지 보여주기.
+                        toastMessenger.showMyToast("Failed to fetch IAP information. Error=$throwable",isShort = false)
+                    }
                 }
             //** viewModelscope.launch!!!  <<<<<<runs on the Main thread>>>>> !!!!
 
@@ -93,13 +97,26 @@ class JjMainViewModel : ViewModel() {
             //3) 위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) => **** 드디어 LiveData 업데이트
                 iapParentJob.invokeOnCompletion { throwable ->
                     Log.d(TAG, "refreshFbAndIAPInfo: (3) invoke on Completion called")
-                // 3-a) 에러 있으면  -> (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
+                // 3-a) 에러 발생!
                     if(throwable!=null) {
                         Log.d(TAG, "refreshFbAndIAPInfo: ERROR (3-a) (个_个) iapParentJob Failed: $throwable")
-                        val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref (없을땐 그냥 깡통 arrayListOf<RtInTheCloud>() 를 받음.
-                        unfilteredRtList = listSavedOnPhone
-                        _rtInTheCloudList.value = listSavedOnPhone // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
-                        return@invokeOnCompletion
+
+                        when(throwable) {
+                            // Billing Unavailable (Typically Play Store 로그인 안됐을 때 발생.) -> Alert 창으로 PlayStore 이동하게 만들고. 그냥 빈 깡통 리스트 보여주기.
+                            is PlayStoreUnAvailableException -> {
+                                Log.d(TAG, "refreshFbAndIAPInfo: (typically) Play Store 로그인 안되어있는 경우")
+                                _rtInTheCloudList.value = ArrayList() // 빈깡통 Return -> 그래야 Lottie 가 일단 없어지지.
+                                //todo: a) Lottie 로 빈칸에 뭔가 보여주기 b)Alert 창 -> PlayStore 로 이동
+                            }
+                            // 그 외 에러인 경우 (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
+                            else -> {
+                                val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref (없을땐 그냥 깡통 arrayListOf<RtInTheCloud>() 를 받음.
+                                unfilteredRtList = listSavedOnPhone
+                                _rtInTheCloudList.value = listSavedOnPhone // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+                                return@invokeOnCompletion
+                            }
+                        }
+
                     }
                 //3-b) *** 에러 없으면 '최종 리스트' iapV3-E) iap 정보(price/purchaseBool) 입힌 리스트를 받아서 -> LiveData 전달 + sharedPref 에 저장.
                     else //에러 없으면

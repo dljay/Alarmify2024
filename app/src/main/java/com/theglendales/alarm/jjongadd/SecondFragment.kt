@@ -391,7 +391,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     override fun onResume() {
         super.onResume()
-
+        //todo: PlayStore Sign-in 하고 돌아왔을때 Refresh 로직..
         Log.d(TAG, "onResume: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
 
     // 돌아왔을 때 SlidingUpPanel 상태 복원 - 여기 onResume 에서 해주는게 맞음.

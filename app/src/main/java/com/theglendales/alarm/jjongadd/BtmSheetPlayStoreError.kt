@@ -6,13 +6,12 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -29,13 +28,13 @@ object BtmSheetPlayStoreError : BottomSheetDialogFragment() {
         Log.d(TAG, "onCreateView: BottomSheet_PERMISSION ")
         val v: View = inflater.inflate(R.layout.bottom_sheet_playstore_error, container, false) // 우리가 만든 Bottom Sheet xml 파일.
         val tvCancel: TextView = v.findViewById(R.id.tv_PlayStore_Cancel)
-        val tvGoToPlayStore: TextView = v.findViewById(R.id.tv_PlayStore_OK)
+        val ivGoToPlayStore: ImageView = v.findViewById(R.id.iv_PlayStore)
 
         tvCancel.setOnClickListener {
             Log.d(TAG, "onCreate: Clicked Cancel.Dismiss Bottom sheet! - GooglePlay")
             removePlayErrorBtmSheetAndResume()
         }
-        tvGoToPlayStore.setOnClickListener {
+        ivGoToPlayStore.setOnClickListener {
             Log.d(TAG, "onCreate: Yes! Now go to GooglePlay!!")
             goToPlayStore()
 

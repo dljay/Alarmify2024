@@ -54,8 +54,9 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.18B [Google Play Store 계정 연결 안됐을 때 - 처리중]
+//v3.07.18C [Google Play Store 계정 연결 안됐을 때 - 처리중]
 // Google Play 로긴 안됐을 때 -> Error Lottie 보여주고 + Alert 창 띄워주기 -> OK 누르면 바로 Google Play 로 이동 성공 (O) !!
+// BtmSheet DialogFragment() 로 바꿨음(O)
 
 // Issues)
 // 로그인 시키고 복귀했을 때 -- 다시 refresh 하는 로직 필요함. 현재는 listFrag 갔다와도 VModel init{} 이 안되니깐 아무것도 로딩하지 않고 에러창+Alert 그대로 보여줌/.

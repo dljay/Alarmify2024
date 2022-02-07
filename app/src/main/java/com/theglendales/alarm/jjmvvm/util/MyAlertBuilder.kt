@@ -54,6 +54,7 @@ fun showAlertIfRtIsMissing(activity: Activity, tones: List<Alarmtone>) {
             }.show()
     }
 }
+/*// BtmSheetPlayStoreError 로 대체>>
 fun showAlertPlayStoreUnavailable(context: Context, activity: Activity) {
     Log.d(TAG, "showAlertPlayStoreUnavailable: called")
         AlertDialog.Builder(activity).setTitle(activity.getString(R.string.alert_ps_unavailable))
@@ -70,7 +71,7 @@ fun showAlertPlayStoreUnavailable(context: Context, activity: Activity) {
             }
             .setNegativeButton(android.R.string.cancel, null)
             .show()
-}
+}*/
 
 // ******** UTILITY METHODS ******
 fun checkIfRtIsUnplayable(activity: Activity, tones: List<Alarmtone>): Boolean {

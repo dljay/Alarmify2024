@@ -1,7 +1,8 @@
-package com.theglendales.alarm.jjmvvm.permissionAndDownload
+package com.theglendales.alarm.jjongadd
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -18,25 +20,24 @@ import com.theglendales.alarm.R
 
 private const val TAG="BtmSht_Perm"
 
-object BtmSheetPermission : BottomSheetDialogFragment() {
+object BtmSheetPlayStoreError : BottomSheetDialogFragment() {
     private var fragActivity = FragmentActivity()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
     {
 
-
         Log.d(TAG, "onCreateView: BottomSheet_PERMISSION ")
-        val v: View = inflater.inflate(R.layout.bottom_sheet_permission, container, false) // 우리가 만든 Bottom Sheet xml 파일.
-        val tvCancel: TextView = v.findViewById(R.id.tv_Cancel)
-        val tvOpenSettings: TextView = v.findViewById(R.id.tv_OpenSettings)
+        val v: View = inflater.inflate(R.layout.bottom_sheet_playstore_error, container, false) // 우리가 만든 Bottom Sheet xml 파일.
+        val tvCancel: TextView = v.findViewById(R.id.tv_PlayStore_Cancel)
+        val tvGoToPlayStore: TextView = v.findViewById(R.id.tv_PlayStore_OK)
 
         tvCancel.setOnClickListener {
-            Log.d(TAG, "onCreate: Clicked Cancel. Puchase failed. Dismiss Bottom sheet & Resume RcView!")
-            removePermBtmSheetAndResume()
+            Log.d(TAG, "onCreate: Clicked Cancel.Dismiss Bottom sheet! - GooglePlay")
+            removePlayErrorBtmSheetAndResume()
         }
-        tvOpenSettings.setOnClickListener {
-            Log.d(TAG, "onCreate: Yes! Now go to settings to give permissions!")
-            goToAppsSettings()
+        tvGoToPlayStore.setOnClickListener {
+            Log.d(TAG, "onCreate: Yes! Now go to GooglePlay!!")
+            goToPlayStore()
 
         }
         return v
@@ -51,7 +52,7 @@ object BtmSheetPermission : BottomSheetDialogFragment() {
         btmSheetDialog.behavior.isDraggable = false
         return btmSheetDialog
     }
-    fun showBtmPermDialog(calledActivity: Activity) {
+    fun showBtmSheetPlayStoreError(calledActivity: Activity) {
         fragActivity = calledActivity as FragmentActivity
         Log.d(TAG, "showBottomDialog: Starts!")
         val STYLE_NORMAL = 0 // Bottom Sheet 스타일 설정에 들어가는것.. 흐음..
@@ -59,28 +60,33 @@ object BtmSheetPermission : BottomSheetDialogFragment() {
         this.apply {
             setStyle(STYLE_NORMAL, R.style.BottomSheetDialogStyle)
             isCancelable = false // 배경 클릭 금지.
-            show(fragActivity.supportFragmentManager,"myShitzYo") // "myShitzYo" 이 값은 identifier.. ?
+            show(fragActivity.supportFragmentManager,"playStoreTag") // "myShitzYo" 이 값은 identifier.. ?
         }
     }
 
-    fun removePermBtmSheetAndResume() {
+    fun removePlayErrorBtmSheetAndResume() {
 
         this.apply {
             if(isAdded) { //1) BottomSheet 이 화면에 보이거나 존재하는 상태?. (isAdded=true) if the fragment is currently added to its activity.
-                Log.d(TAG, "removePermBtmSheet: We'll dismiss our PERMISSION BOTTOM SHEEEEEETz Yo!")
+                Log.d(TAG, "removePlayErrorBtmSheetAndResume: We'll dismiss our GooglePlay BOTTOM SHEEEEEETz Yo!")
                 isCancelable = true
                 dismiss() // close.. settings 에서 permission 을 주고 app 을 다시 열었을 때 bottom Sheet (Fragment) 자체가 없으므로 여기서 에러남!! 그래서 if(isAdded) 추가했음!
             }else { // 2) Bottom Fragment 가 없음= Permission Granted 된 상황일듯.
-                Log.d(TAG, "removePermBottomSheet: 없앨 Permission Bottom Fragment 가 없음")
+                Log.d(TAG, "removePlayErrorBtmSheetAndResume: 없앨 GOOGLE PLAY Bottom Fragment 가 없음")
             }
 
         }
     }
-    fun goToAppsSettings() {
-        Log.d(TAG, "goToAppsSetting: Now we will go to SETTINGS PAGE!")
+    fun goToPlayStore() {
+        Log.d(TAG, "goToPlayStore: Now we will go to Play Store")
 
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", fragActivity.packageName, null))
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent) // onResume() 에서 다시 check 필요
+        try {
+            val playStoreUri = "https://play.google.com"
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUri))
+            startActivity(intent)
+
+        } catch (e: ActivityNotFoundException) {
+            Log.d(TAG, "goToPlayStore: Failed to Launch Google Play. Error=$e")
+        }
     }
 }

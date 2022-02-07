@@ -51,10 +51,10 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
 import com.theglendales.alarm.jjmvvm.util.LottieAnimHandler
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.jjmvvm.util.showAlertIfRtIsMissing
-import com.theglendales.alarm.jjmvvm.util.showAlertPlayStoreUnavailable
 import kotlinx.coroutines.launch
 
 
@@ -79,6 +79,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //private val jjMainVModel: JjMainViewModel by viewModels()  // <- 이렇게 등록했을 때 listFrag 갔다와서 구입 클릭하면 -> coroutines.JobCancellationException: Job was cancelled 에러뜸..
     //Toast Messenger
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
+    //BtmSheet - GooglePlay Store 못 갈 때 에러 보여주기.
+    private val btmSheetPlayStoreError = BtmSheetPlayStoreError // OBJECT 로 만들었음! BottomSheet 하나만 뜨게하기 위해!
 
 
     //RcView Related
@@ -243,7 +245,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     lottieAnimHandler.animController("stop") // 일단 최초 Loading Animation 이 돌고있었다면 Stop
                     swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
                     lottieAnimHandler.animController("error") // 1) Error Lottie 띄워주기
-                    showAlertPlayStoreUnavailable(requireContext(), requireActivity()) //2) Alert 창 -> PlayStore 로 이동
+                    btmSheetPlayStoreError.showBtmSheetPlayStoreError(requireActivity()) //2) Alert 창 -> PlayStore 로 이동
 
                     //3) 돌아왔을 때 후속처리 (onResume 에서 해주기??)
 

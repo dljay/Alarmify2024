@@ -161,7 +161,7 @@
     <string name="missing_ringtone_alert">\nWe have detected a missing ringtone.\n\nPlease visit Ringtone tab(🔔) for auto recovery.</string>
 
     <!-- 내가 심은. jj- PlayStore 에러 typically 로긴 안된 상태 일 때 -->
-    <string name="ps_error_alert">\nIn order to view our ringtone list, you need to be signed in to Google Play Store.\n\nPlease hit OK to visit Play Store to sign-in.</string>
+    <string name="ps_error_alert">In order to view our ringtone list, you need to be signed in to Google Play Store.\n\nPlease visit Play Store to sign-in.</string>
 
     <string name="menu_about_title">About</string>
     <string name="dialog_about_content">Simple Alarm Clock is an open source project which brings pure alarm experience to you by combining essential features and clean interface.

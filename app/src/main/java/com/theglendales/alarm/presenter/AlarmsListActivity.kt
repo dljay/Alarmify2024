@@ -61,8 +61,6 @@ import java.util.Calendar
 // Issues)
 // 로그인 시키고 복귀했을 때 -- 다시 refresh 하는 로직 필요함. 현재는 listFrag 갔다와도 VModel init{} 이 안되니깐 아무것도 로딩하지 않고 에러창+Alert 그대로 보여줌/.
 
-
-
 // Achievements(O)
 //4. BillingClient Ready(x) issue..
 //*** IAPV3.kt>62: OnBillingServiceDisconnected() => java.lang.IllegalStateException: Already resumed : 왜 exception 못잡지? <- continuation 문제인거지..

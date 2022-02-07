@@ -43,6 +43,7 @@ import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.checkIfRtIsUnplayable
 import com.theglendales.alarm.jjmvvm.util.showAlertIfRtIsMissing
+import com.theglendales.alarm.jjongadd.BtmSheetPlayStoreError
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -54,12 +55,14 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.18D [Google Play Store 계정 연결 안됐을 때 - 처리중]
+//v3.07.18E [Google Play Store 계정 연결 안됐을 때 - 처리 완료]
 // Google Play 로긴 안됐을 때 -> Error Lottie 보여주고 + Alert 창 띄워주기 -> OK 누르면 바로 Google Play 로 이동 성공 (O) !!
 // BtmSheet DialogFragment() 로 바꿨음(O) -> Play Store icon 보여줌.
+// 로그인 시키고 복귀했을 때 -- 다시 refresh + BtmSheet 없애주기 (O) --
 
 // Issues)
-// 로그인 시키고 복귀했을 때 -- 다시 refresh 하는 로직 필요함. 현재는 listFrag 갔다와도 VModel init{} 이 안되니깐 아무것도 로딩하지 않고 에러창+Alert 그대로 보여줌/.
+// 이삿짐 땜에 정신없어서 로그인 후 복귀 로직. 그냥 한번만 더 테스트해보기.
+
 
 // Achievements(O)
 //4. BillingClient Ready(x) issue..
@@ -312,6 +315,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
                 BtmSheetPermission.removePermBtmSheetAndResume() // btmSheet 을 없애줌! Perm 허용 안되었으면 (Cancel 누를때까지) BtmSheet 유지!
             }
         }
+
 
     }
 

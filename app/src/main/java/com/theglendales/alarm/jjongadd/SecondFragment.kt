@@ -246,12 +246,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
                     lottieAnimHandler.animController("error") // 1) Error Lottie 띄워주기
                     btmSheetPlayStoreError.showBtmSheetPlayStoreError(requireActivity()) //2) Alert 창 -> PlayStore 로 이동
-
-                    //3) 돌아왔을 때 후속처리 (onResume 에서 해주기??)
-
                 }
+
                 // B) 제대로 된 리스트 받았을 때 (인터넷 안되면 SharedPref 에서라도 예전에 저장해놓은 리스트를 받음)
                 else {
+                    if(BtmSheetPlayStoreError.isAdded) {BtmSheetPlayStoreError.removePlayErrorBtmSheetAndResume()} // PlayStore 로긴 안되있어 뜬 상태로 -> 로긴 후 복귀했을 때 -> BTMSheet 없애주기.
+
                     exoForUrlPlay.createMp3UrlMap(rtListPlusIAPInfo)
                     if(myIsChipChecked) { //Chip 이 하나 이상 선택된 경우
                         val tagsList = getTagsList()
@@ -396,10 +396,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //todo: 어떤 사유로든 Fb+IAP 로딩이 실패해서 돌아왔을때 자동으로 Refresh 하는 로직  (ex.PlayStore Sign-in 하고 돌아왔을때..)
         Log.d(TAG, "onResume: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
 
-    // 돌아왔을 때 SlidingUpPanel 상태 복원 - 여기 onResume 에서 해주는게 맞음.
+    //A) 돌아왔을 때 SlidingUpPanel 상태 복원 - 여기 onResume 에서 해주는게 맞음.
         when(slidingUpPanelLayout.panelState) {
             SlidingUpPanelLayout.PanelState.COLLAPSED -> collapseSlidingPanel()
             SlidingUpPanelLayout.PanelState.EXPANDED -> expandSlidingPanel()
+        }
+    // B) GooglePlayStore 로그인 하라는 btmSheet 을 보여준뒤 복귀했을때! -> refreshFbIAp() 해줌 -> 완료되면 -> 여기서 observe 중이던곳으로 리스트 전달 -> BtmSheet 삭제됨!
+        if(BtmSheetPlayStoreError.isAdded) {
+        jjMainVModel.refreshFbAndIAPInfo()
         }
 
     // DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서?  신중한 접근 필요. (Update: permission 상관없는듯..)

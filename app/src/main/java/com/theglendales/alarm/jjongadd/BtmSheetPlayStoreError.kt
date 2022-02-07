@@ -52,8 +52,12 @@ object BtmSheetPlayStoreError : BottomSheetDialogFragment() {
         return btmSheetDialog
     }
     fun showBtmSheetPlayStoreError(calledActivity: Activity) {
+        if(isAdded) {
+            Log.d(TAG, "showBtmSheetPlayStoreError: Already Showing .. Return!")
+            return
+        }
         fragActivity = calledActivity as FragmentActivity
-        Log.d(TAG, "showBottomDialog: Starts!")
+        Log.d(TAG, "showBtmSheetPlayStoreError: Starts!")
         val STYLE_NORMAL = 0 // Bottom Sheet 스타일 설정에 들어가는것.. 흐음..
 
         this.apply {

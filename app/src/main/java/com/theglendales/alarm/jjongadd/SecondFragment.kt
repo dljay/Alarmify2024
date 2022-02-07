@@ -1,9 +1,7 @@
 package com.theglendales.alarm.jjongadd
 
 //import android.app.Fragment
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.app.DownloadManager
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -28,7 +26,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.airbnb.lottie.LottieAnimationView
-import com.android.billingclient.api.BillingClient
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
@@ -51,10 +48,8 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
 import com.theglendales.alarm.jjmvvm.util.LottieAnimHandler
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
-import com.theglendales.alarm.jjmvvm.util.showAlertIfRtIsMissing
 import kotlinx.coroutines.launch
 
 
@@ -80,7 +75,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Toast Messenger
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
     //BtmSheet - GooglePlay Store 못 갈 때 에러 보여주기.
-    private val btmSheetPlayStoreError = BtmSheetPlayStoreError // OBJECT 로 만들었음! BottomSheet 하나만 뜨게하기 위해!
+    private val myBtmSheetPSError = BtmSheetPlayStoreError // OBJECT 로 만들었음! BottomSheet 하나만 뜨게하기 위해!
 
 
     //RcView Related
@@ -245,7 +240,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     lottieAnimHandler.animController("stop") // 일단 최초 Loading Animation 이 돌고있었다면 Stop
                     swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
                     lottieAnimHandler.animController("error") // 1) Error Lottie 띄워주기
-                    btmSheetPlayStoreError.showBtmSheetPlayStoreError(requireActivity()) //2) Alert 창 -> PlayStore 로 이동
+                    myBtmSheetPSError.showBtmSheetPlayStoreError(requireActivity()) //2) Alert 창 -> PlayStore 로 이동
                 }
 
                 // B) 제대로 된 리스트 받았을 때 (인터넷 안되면 SharedPref 에서라도 예전에 저장해놓은 리스트를 받음)

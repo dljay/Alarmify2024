@@ -55,13 +55,17 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.18E [Google Play Store 계정 연결 안됐을 때 - 처리 완료]
-// Google Play 로긴 안됐을 때 -> Error Lottie 보여주고 + Alert 창 띄워주기 -> OK 누르면 바로 Google Play 로 이동 성공 (O) !!
-// BtmSheet DialogFragment() 로 바꿨음(O) -> Play Store icon 보여줌.
-// 로그인 시키고 복귀했을 때 -- 다시 refresh + BtmSheet 없애주기 (O) --
+//v3.07.18F [Google Play Store 계정 연결 안됐을 때 - 후속 에러 확인 중 LC 포함]
+/*issue)
+1) onResume 돌아왔을 떄 Loading Circle 보여주기: GooglePlay 로긴 X -> BtmSheet 경고창 -> Background 한번 나갔다 옴 ->
+Circle 안보임! -- <SecondFrag.241> 에서 모든 ANIM STOP 하기 때문. ->
+목표: 돌아왔을 때 LC 떠있고 로긴하고 돌아오면 LC 뜨다가 리스트 받는대로 LC 없어지고 RC 보여줘애함!
 
-// Issues)
-// 이삿짐 땜에 정신없어서 로그인 후 복귀 로직. 그냥 한번만 더 테스트해보기.
+2) MySharedPref 저장파일이 없는 상태에서 (첫 로딩) sharedPref 로딩-> ArrayList 똑같이 반환. => Google Play 로긴 경고창-> 말이 안됨.
+
+3) 왜그런지 이런 에러 떴음 - RESPONSE CODE= DEVELOPER_ERROR (5번) // 아마도 PlayStore launch 한번 안 하고 그냥 시작했을 때.*/
+
+
 
 
 // Achievements(O)

@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -93,7 +94,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Lottie Animation(Loading & Internet Error) + LoadingCircle(로티 X) 관련
     lateinit var lottieAnimationView: LottieAnimationView
     lateinit var lottieAnimHandler: LottieAnimHandler
-    lateinit var purchaseLoadingCircle: CircularProgressIndicator
+    lateinit var centerLoadingCircle: CircularProgressIndicator
     lateinit var frameLayoutForCircle: FrameLayout
 
     //Media Player & MiniPlayer Related
@@ -180,7 +181,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
                     StatusMp.PAUSED -> {showMiniPlayerPlayBtn()}
                     }
-                // b) VuMeter/Loading Circle 등 UI 컨트롤
+                // b) VuMeter/MP Loading Circle 등 UI 컨트롤
                 rcvAdapterInstance.lcVmIvController(StatusEnum) // 원복후 불러도 Prev/CurrentHolder 는 어차피 null 이기에 상관없음.
 
                 })
@@ -234,10 +235,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
         //[MainVModel-1] 1) [네트워크 사용O] Fb 에서 새로운 리스트를 받음/새로고침 2) [네트워크 사용X] a)신규 구매 후 리스트 변화. b) 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
-                Log.d(TAG, "---------------------- [MainVModel <1> - RTLIST] rtListFromFb received.")
-                // A) 빈깡통 리스트 받았을 때 (SharedPref 에서도 리스트를 못 찾은 케이스. PlayStore 로그인 안되어있는 에러일 확률 매우 높음)
+                Log.d(TAG, "---------------------- [MainVModel <1> - RTLIST] rtListFromFb received. Size= ${rtListPlusIAPInfo.size}")
+                // A) 빈깡통 리스트 받았을 때 (a) 기타 에러- SharedPref 에서도 리스트를 못 찾은 케이스 or PlayStore 로그인 안되어있는 에러)
                 if(rtListPlusIAPInfo.isNullOrEmpty()) {
-                    lottieAnimHandler.animController("stop") // 일단 최초 Loading Animation 이 돌고있었다면 Stop
+                    lottieAnimHandler.animController("stop") // 일단 최초 Loading Animation 이 돌고있었다면 Stop // todo: 22.2.11 여기 확인!
                     swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
                     lottieAnimHandler.animController("error") // 1) Error Lottie 띄워주기
                     myBtmSheetPSError.showBtmSheetPlayStoreError(requireActivity()) //2) Alert 창 -> PlayStore 로 이동
@@ -246,6 +247,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 // B) 제대로 된 리스트 받았을 때 (인터넷 안되면 SharedPref 에서라도 예전에 저장해놓은 리스트를 받음)
                 else {
                     if(BtmSheetPlayStoreError.isAdded) {BtmSheetPlayStoreError.removePlayErrorBtmSheetAndResume()} // PlayStore 로긴 안되있어 뜬 상태로 -> 로긴 후 복귀했을 때 -> BTMSheet 없애주기.
+                    if(frameLayoutForCircle.isVisible) { //Center LoadingCircle 이 작동중 (FB 에서 데이터 갖고 오기 에러 or PlayStore 로긴 안되서 -> 확인 후 돌아왔을 때 -> refreshFb 실행중)
+                        jjMainVModel.triggerCenterLCircle(1)
+                    }
 
                     exoForUrlPlay.createMp3UrlMap(rtListPlusIAPInfo)
                     if(myIsChipChecked) { //Chip 이 하나 이상 선택된 경우
@@ -281,13 +285,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             }
         //[MainVModel-3] (구매 전) 클릭 -> Purchase 창 뜨기전까지 Loading Circle 보여주고 없애기
-            jjMainVModel.purchaseCircle.observe(viewLifecycleOwner) { onOffNumber ->
+            jjMainVModel.centerLoadingCircleSwitch.observe(viewLifecycleOwner) { onOffNumber ->
                 Log.d(TAG, "[MainVModel <3> - PurchaseCircle] Valued Received=$onOffNumber ") // 0: 보여주기, 1: 끄기.
                 when(onOffNumber){
                     0 -> {frameLayoutForCircle.visibility = View.VISIBLE
-                        purchaseLoadingCircle.visibility = View.VISIBLE} // 보여주기(O)
+                        centerLoadingCircle.visibility = View.VISIBLE} // 보여주기(O)
                     1 -> {frameLayoutForCircle.visibility = View.GONE} // 끄기(X)
-                    2 -> {purchaseLoadingCircle.visibility = View.GONE}// 2 -> circle 만 없애주기 ()
+                    2 -> {centerLoadingCircle.visibility = View.GONE}// 2 -> circle 만 없애주기 ()
                 }
             }
         //[MainVModel-4] (구매 후) Single DNLD -> UI 반영 (DnldPanel 보여주기 등)
@@ -396,8 +400,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             SlidingUpPanelLayout.PanelState.COLLAPSED -> collapseSlidingPanel()
             SlidingUpPanelLayout.PanelState.EXPANDED -> expandSlidingPanel()
         }
-    // B) GooglePlayStore 로그인 하라는 btmSheet 을 보여준뒤 복귀했을때! -> refreshFbIAp() 해줌 -> 완료되면 -> 여기서 observe 중이던곳으로 리스트 전달 -> BtmSheet 삭제됨!
-        if(BtmSheetPlayStoreError.isAdded) {
+    // B) <1> 어떤 이유로 에러가 나서 RtIAPList 받지 못한 상태에서 나갔다 다시 복귀
+        // <2> GooglePlayStore 로그인 하라는 btmSheet 을 보여준뒤 복귀했을때! -> refreshFbIAp() 해줌 -> 완료되면 -> 여기서 observe 중이던곳으로 리스트 전달 -> BtmSheet 삭제됨!
+        if(BtmSheetPlayStoreError.isAdded) { //todo: .isAded | 혹은 다른 에러로 나갔따 왔을 때 refreshFB() 필요한 경우..
+            //우선 Center 빙글빙글 Circle 작동 -> (추후) Fb 에서 리스트 받는대로 없애줌.
+        jjMainVModel.triggerCenterLCircle(0)
         jjMainVModel.refreshFbAndIAPInfo()
         }
 
@@ -654,7 +661,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG, "setUpLateInitUis: called")
     //Lottie & LoadingCircle
         frameLayoutForCircle = v.findViewById(R.id.fl_loadingCircle)
-        purchaseLoadingCircle = v.findViewById(R.id.loadingCircle_itself)
+        centerLoadingCircle = v.findViewById(R.id.loadingCircle_itself)
         frameLayoutForCircle.visibility = View.GONE// 일단 LoadingCircle 안보이게 하기.
 
         lottieAnimationView = v.findViewById(R.id.id_lottie_secondFrag)

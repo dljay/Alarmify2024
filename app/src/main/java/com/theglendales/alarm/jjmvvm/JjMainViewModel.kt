@@ -18,9 +18,7 @@ import com.theglendales.alarm.jjmvvm.util.DiskSearcher
 import com.theglendales.alarm.jjmvvm.util.PlayStoreUnAvailableException
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
@@ -196,9 +194,9 @@ class JjMainViewModel : ViewModel() {
     private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
     val selectedRow = _selectedRow.asStateFlow()
 
-    private val _purchaseCircle = MutableLiveData<Int>() // Purchase 클릭 -> 구매창 뜨기전 나올 LoadingCircle
-    val purchaseCircle: LiveData<Int> = _purchaseCircle
-
+    private val _centerLoadingCircleSwitch = MutableLiveData<Int>() // Purchase 클릭 -> 구매창 뜨기전 나올 LoadingCircle
+    val centerLoadingCircleSwitch: LiveData<Int> = _centerLoadingCircleSwitch
+    fun triggerCenterLCircle(onOffNumber: Int) {_centerLoadingCircleSwitch.value = onOffNumber} // 0: 보여주기, 1: 아예 다 끄기, 2: 어두운 화면 그대로 두고 Circle 만 안보이게 없애기
     fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean, receivedActivity: Activity) { // todo: Click <-> RCV ViewModel 더 정석으로 찾아서 바꿔보기 + Activity 에 대한 고민..
 //[A] 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
         if(!isPurchaseClicked) {
@@ -217,14 +215,16 @@ class JjMainViewModel : ViewModel() {
 
         val purchaseParentJob = viewModelScope.launch(handler) {
 
-            _purchaseCircle.value = 0 //로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
+            //_centerLoadingCircleSwitch.value = 0 //로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
+            triggerCenterLCircle(0)
 
         //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
             val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
         //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
 
-            _purchaseCircle.value = 2 // 어두운 화면 그대로 두고 Circle 만 안보이게 없애기 (LaunchBilling Flow 에도 Circle 같이 떠서 신경쓰임)
+            //_centerLoadingCircleSwitch.value = 2 // 어두운 화면 그대로 두고 Circle 만 안보이게 없애기 (LaunchBilling Flow 에도 Circle 같이 떠서 신경쓰임)
+            triggerCenterLCircle(2)
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
         //2-j) Verify ->
             iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
@@ -232,11 +232,13 @@ class JjMainViewModel : ViewModel() {
             val isPurchaseAllCompleted = iapV3.k_acknowledgePurchase(purchaseResult, rtObj) // acknowledge 를 여기서 해주고 이제 모든 구입 절차가 끝이 남.
             Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 O] isPurchaseAllCompleted=$isPurchaseAllCompleted")
         // => 여기서 구매절차는 COMPLETE! => invokeOnCompletion 으로 이동
-            _purchaseCircle.value = 1 //로딩 Circle 없애기
+            //_centerLoadingCircleSwitch.value = 1 //로딩 Circle 없애기
+            triggerCenterLCircle(1)
 
         }
         purchaseParentJob.invokeOnCompletion { throwable ->
-            _purchaseCircle.value = 1 // 만약 Purchase Loading Circle 이 켜져있었다면 꺼주기 (Handler 에러 잡히든 말든 무조건 꺼!!)
+            //_centerLoadingCircleSwitch.value = 1 // 만약 Purchase Loading Circle 이 켜져있었다면 꺼주기 (Handler 에러 잡히든 말든 무조건 꺼!!)
+            triggerCenterLCircle(1)
             Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..Thread= ${Thread.currentThread().name}")
             if (throwable != null && !throwable.message.isNullOrEmpty()) {
                 if (throwable.message!!.contains("USER_CANCELED")) {

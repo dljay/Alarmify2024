@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -50,6 +49,7 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.LottieAnimHandler
+import com.theglendales.alarm.jjmvvm.util.LottieENUM
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.launch
 
@@ -233,23 +233,20 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             myNetworkCheckerInstance = context?.let { MyNetWorkChecker(it, jjMainVModel) }!!
 
         //0) 2021.1.6 MainViewModel //todo: 이거 flow 로 바꾸고 lottieAnim("loading") 과 타이밍 비교. 여기 저~~기 위에 써주기 (어차피 onStart() 에서 불릴테니깐)
+
         //[MainVModel-1] 1) [네트워크 사용O] Fb 에서 새로운 리스트를 받음/새로고침 2) [네트워크 사용X] a)신규 구매 후 리스트 변화. b) 단순 listFrag<->SecondFrag 복귀 후 livedata 기존 값 복기
             jjMainVModel.rtInTheCloudList.observe(viewLifecycleOwner) {rtListPlusIAPInfo->
                 Log.d(TAG, "---------------------- [MainVModel <1> - RTLIST] rtListFromFb received. Size= ${rtListPlusIAPInfo.size}")
-                // A) 빈깡통 리스트 받았을 때 (a) 기타 에러- SharedPref 에서도 리스트를 못 찾은 케이스 or PlayStore 로그인 안되어있는 에러)
+                // A) 빈깡통 리스트 받았을 때: 모든 에러 상황에서 빈깡통 리스트를 받음.
                 if(rtListPlusIAPInfo.isNullOrEmpty()) {
-                    lottieAnimHandler.animController("stop") // 일단 최초 Loading Animation 이 돌고있었다면 Stop // todo: 22.2.11 여기 확인!
+                    lottieAnimHandler.animController(LottieENUM.STOP_ALL) // 일단 최초 Loading Animation 이 돌고있었다면 Stop
                     swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
-                    lottieAnimHandler.animController("error") // 1) Error Lottie 띄워주기
-                    myBtmSheetPSError.showBtmSheetPlayStoreError(requireActivity()) //2) Alert 창 -> PlayStore 로 이동
+                    lottieAnimHandler.animController(LottieENUM.ERROR_GENERAL) // 1) Error Lottie 띄워주기
                 }
 
                 // B) 제대로 된 리스트 받았을 때 (인터넷 안되면 SharedPref 에서라도 예전에 저장해놓은 리스트를 받음)
                 else {
-                    if(BtmSheetPlayStoreError.isAdded) {BtmSheetPlayStoreError.removePlayErrorBtmSheetAndResume()} // PlayStore 로긴 안되있어 뜬 상태로 -> 로긴 후 복귀했을 때 -> BTMSheet 없애주기.
-                    if(frameLayoutForCircle.isVisible) { //Center LoadingCircle 이 작동중 (FB 에서 데이터 갖고 오기 에러 or PlayStore 로긴 안되서 -> 확인 후 돌아왔을 때 -> refreshFb 실행중)
-                        jjMainVModel.triggerCenterLCircle(1)
-                    }
+                    if(BtmSheetPlayStoreError.isAdded) {BtmSheetPlayStoreError.removePlayErrorBtmSheet()} // PlayStore 로긴 안되있어 뜬 상태로 -> 로긴 후 복귀했을 때 -> BTMSheet 없애주기.
 
                     exoForUrlPlay.createMp3UrlMap(rtListPlusIAPInfo)
                     if(myIsChipChecked) { //Chip 이 하나 이상 선택된 경우
@@ -259,9 +256,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     } else { // Chip 이 선택 안된 경우.
                         rcvAdapterInstance.refreshRecyclerView(rtListPlusIAPInfo)
                     }
-                    lottieAnimHandler.animController("stop") // Loading Animation 이 돌고있었다면 Stop
+                    lottieAnimHandler.animController(LottieENUM.STOP_ALL) // 어떤 Animation 이 있었던 Stop!
                     swipeRefreshLayout.isRefreshing = false // 새로고침 빙글빙글 있었다면 = false
                 }
+            }
+        //[MainVModel- <1>-ERROR]
+            jjMainVModel.errorIntLiveData.observe(viewLifecycleOwner) { errorIntCode ->
+                when(errorIntCode) { // 0 = PlayStoreUnAvailableException
+                    0 -> {myBtmSheetPSError.showBtmSheetPlayStoreError(requireActivity()) //Alert 창 보여주고-> 클릭시 -> PlayStore 로 이동
+                    }
+                    else -> {} //현재 다른 코드 없음.
+                }
+
             }
         //[MainVModel-2] Network Availability 관련 (listFrag->SecondFrag 오면 두번 들어옴. 1) livedata 기존 값 복기 2)SecondFrag 시작하면서 setNetworkListener()
             jjMainVModel.isNetworkWorking.observe(viewLifecycleOwner) { isNetworkWorking ->
@@ -270,7 +276,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //A-1) true && false (기존에 O 지금은 X) or A-2) false && false (기존도 X 지금도 X) - 혹시 몰라서 넣음.
                 if(jjMainVModel.prevNT && !isNetworkWorking || !jjMainVModel.prevNT && !isNetworkWorking  ) {
                     Log.d(TAG, "[MainVModel <2> - NT] Network Error! Launch Lottie!")
-                    lottieAnimHandler.animController("error")
+                    lottieAnimHandler.animController(LottieENUM.ERROR_GENERAL)
 
                     snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"Please kindly check your network connection status",false)
                     //toastMessenger.showMyToast("Error: Unable to connect",isShort = true)
@@ -278,15 +284,15 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //B) false && true (기존에 X 지금은 O)
                 else if(!jjMainVModel.prevNT && isNetworkWorking) {
                     Log.d(TAG, "[MainVModel <2> - NT] Network Working Again! Remove Error Lottie and Relaunch FB!!")
-                    lottieAnimHandler.animController("stop")
+                    lottieAnimHandler.animController(LottieENUM.STOP_ALL)
                     jjMainVModel.refreshFbAndIAPInfo() // Relaunch FB! -> 사실 lottie 가 사라지면서 기존 RcView 가 보여서 상관없긴 하지만.애초 Network 불가상태로 접속해 있을 수 있음.
                 }
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
 
             }
         //[MainVModel-3] (구매 전) 클릭 -> Purchase 창 뜨기전까지 Loading Circle 보여주고 없애기
-            jjMainVModel.centerLoadingCircleSwitch.observe(viewLifecycleOwner) { onOffNumber ->
-                Log.d(TAG, "[MainVModel <3> - PurchaseCircle] Valued Received=$onOffNumber ") // 0: 보여주기, 1: 끄기.
+            jjMainVModel.purchaseLoadingCircleSwitch.observe(viewLifecycleOwner) { onOffNumber ->
+                Log.d(TAG, "[MainVModel <3> - centerLoadingCircleSwitch] Valued Received=$onOffNumber ") // 0: 보여주기, 1: 끄기.
                 when(onOffNumber){
                     0 -> {frameLayoutForCircle.visibility = View.VISIBLE
                         centerLoadingCircle.visibility = View.VISIBLE} // 보여주기(O)
@@ -401,11 +407,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             SlidingUpPanelLayout.PanelState.EXPANDED -> expandSlidingPanel()
         }
     // B) <1> 어떤 이유로 에러가 나서 RtIAPList 받지 못한 상태에서 나갔다 다시 복귀
-        // <2> GooglePlayStore 로그인 하라는 btmSheet 을 보여준뒤 복귀했을때! -> refreshFbIAp() 해줌 -> 완료되면 -> 여기서 observe 중이던곳으로 리스트 전달 -> BtmSheet 삭제됨!
-        if(BtmSheetPlayStoreError.isAdded) { //todo: .isAded | 혹은 다른 에러로 나갔따 왔을 때 refreshFB() 필요한 경우..
-            //우선 Center 빙글빙글 Circle 작동 -> (추후) Fb 에서 리스트 받는대로 없애줌.
-        jjMainVModel.triggerCenterLCircle(0)
-        jjMainVModel.refreshFbAndIAPInfo()
+        // <2> GooglePlayStore 로그인 하라는 btmSheet 을 보여준뒤 복귀했을때! -> refreshFbIAp() 해줌 -> 완료되면 -> 여기서 observe 중이던곳에서 new 리스트 확인 후 -> BtmSheet 삭제됨!
+        if(BtmSheetPlayStoreError.isAdded) { //todo: .isAdded | 혹은 다른 에러로 나갔따 왔을 때 refreshFB() 필요한 경우..
+
+        lottieAnimHandler.animController(LottieENUM.INIT_LOADING) //우선  빙글빙글 Init Loading 작동 -> (추후) Fb 에서 리스트 받는대로 없애줌.
+        jjMainVModel.refreshFbAndIAPInfo() // refreshFbIAP 해서 GooglePlay 에 이제는 로긴 되어있다면) -> Fb 에서 공갈 아닌 리스트 받아서 lottieAnim 과 BtmSheetPsError 둘 다 없애줄것임.
         }
 
     // DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서?  신중한 접근 필요. (Update: permission 상관없는듯..)
@@ -667,7 +673,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         lottieAnimationView = v.findViewById(R.id.id_lottie_secondFrag)
         lottieAnimHandler = LottieAnimHandler(requireActivity(), lottieAnimationView)
         //일단 lottieAnim - Loading 애니메이션 틀어주기
-        lottieAnimHandler.animController("initialLoading")
+        lottieAnimHandler.animController(LottieENUM.INIT_LOADING)
 
     //Swipe Refresh Layout Related
         swipeRefreshLayout = v.findViewById(R.id.id_swipeRefreshLayout)

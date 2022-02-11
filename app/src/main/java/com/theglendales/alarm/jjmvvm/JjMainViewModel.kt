@@ -44,6 +44,9 @@ class JjMainViewModel : ViewModel() {
     private var unfilteredRtList: List<RtInTheCloud> = ArrayList()
     private val _rtInTheCloudList = MutableLiveData<List<RtInTheCloud>>() // Private& Mutable LiveData
     val rtInTheCloudList: LiveData<List<RtInTheCloud>> = _rtInTheCloudList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
+//Error reporting liveData:
+    private val _errorIntLiveData = MutableLiveData<Int>() // Private& Mutable LiveData
+    val errorIntLiveData: LiveData<Int> = _errorIntLiveData // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
 
     init {
         Log.d(TAG, "init: called.. ^^ Thread=${Thread.currentThread().name} ")
@@ -102,8 +105,9 @@ class JjMainViewModel : ViewModel() {
                         when(throwable) {
                             // Billing Unavailable (Typically Play Store 로그인 안됐을 때 발생.) -> Alert 창으로 PlayStore 이동하게 만들고. 그냥 빈 깡통 리스트 보여주기.
                             is PlayStoreUnAvailableException -> {
-                                //Log.d(TAG, "refreshFbAndIAPInfo: PlayStore 안될때: (typically) Play Store 로그인 안되어있는 경우 발생")
-                                _rtInTheCloudList.value = ArrayList() // 빈깡통 Return -> SecondFrag 에서 a) Lottie Error 애니메이션 띄우고 B) Alert 창 -> PlayStore 이동
+                                //Log.d(TAG, "refreshFbAndIAPInfo: PlayStore 안될때: (typically) Play Store 로그인 안되어있는 경우 발생") //responsedCode= 3 번.
+                                _errorIntLiveData.value = 0 // 0 번:  Observe 중인 ErrorInt 보내서 -> PlayStore 로긴하라는 Alert 창 보여주기.
+                                _rtInTheCloudList.value = ArrayList() // 공갈 RTList 보내서 -> Error Lottie 뜨게끔.
                                 return@invokeOnCompletion
                             }
                             // 그 외 에러인 경우 (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
@@ -194,9 +198,9 @@ class JjMainViewModel : ViewModel() {
     private val _selectedRow = MutableStateFlow<RtInTheCloud>(emptyRtObj)
     val selectedRow = _selectedRow.asStateFlow()
 
-    private val _centerLoadingCircleSwitch = MutableLiveData<Int>() // Purchase 클릭 -> 구매창 뜨기전 나올 LoadingCircle
-    val centerLoadingCircleSwitch: LiveData<Int> = _centerLoadingCircleSwitch
-    fun triggerCenterLCircle(onOffNumber: Int) {_centerLoadingCircleSwitch.value = onOffNumber} // 0: 보여주기, 1: 아예 다 끄기, 2: 어두운 화면 그대로 두고 Circle 만 안보이게 없애기
+    private val _purchaseLoadingCircleSwitch = MutableLiveData<Int>() // Purchase 클릭 -> 구매창 뜨기전 나올 LoadingCircle
+    val purchaseLoadingCircleSwitch: LiveData<Int> = _purchaseLoadingCircleSwitch
+    fun triggerPurchaseLoadingCircle(onOffNumber: Int) {_purchaseLoadingCircleSwitch.value = onOffNumber} // 0: 보여주기, 1: 아예 다 끄기, 2: 어두운 화면 그대로 두고 Circle 만 안보이게 없애기
     fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean, receivedActivity: Activity) { // todo: Click <-> RCV ViewModel 더 정석으로 찾아서 바꿔보기 + Activity 에 대한 고민..
 //[A] 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
         if(!isPurchaseClicked) {
@@ -216,7 +220,7 @@ class JjMainViewModel : ViewModel() {
         val purchaseParentJob = viewModelScope.launch(handler) {
 
             //_centerLoadingCircleSwitch.value = 0 //로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
-            triggerCenterLCircle(0)
+            triggerPurchaseLoadingCircle(0)
 
         //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
             val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
@@ -224,7 +228,7 @@ class JjMainViewModel : ViewModel() {
         //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
 
             //_centerLoadingCircleSwitch.value = 2 // 어두운 화면 그대로 두고 Circle 만 안보이게 없애기 (LaunchBilling Flow 에도 Circle 같이 떠서 신경쓰임)
-            triggerCenterLCircle(2)
+            triggerPurchaseLoadingCircle(2)
             val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
         //2-j) Verify ->
             iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
@@ -233,12 +237,12 @@ class JjMainViewModel : ViewModel() {
             Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 O] isPurchaseAllCompleted=$isPurchaseAllCompleted")
         // => 여기서 구매절차는 COMPLETE! => invokeOnCompletion 으로 이동
             //_centerLoadingCircleSwitch.value = 1 //로딩 Circle 없애기
-            triggerCenterLCircle(1)
+            triggerPurchaseLoadingCircle(1)
 
         }
         purchaseParentJob.invokeOnCompletion { throwable ->
             //_centerLoadingCircleSwitch.value = 1 // 만약 Purchase Loading Circle 이 켜져있었다면 꺼주기 (Handler 에러 잡히든 말든 무조건 꺼!!)
-            triggerCenterLCircle(1)
+            triggerPurchaseLoadingCircle(1)
             Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..Thread= ${Thread.currentThread().name}")
             if (throwable != null && !throwable.message.isNullOrEmpty()) {
                 if (throwable.message!!.contains("USER_CANCELED")) {

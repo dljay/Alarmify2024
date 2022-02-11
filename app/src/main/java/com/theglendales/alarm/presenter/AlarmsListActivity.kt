@@ -55,24 +55,8 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.18F [Google Play Store 계정 연결 안됐을 때 - 후속 에러 확인 중 LC 포함]
-/*issue)
-1) onResume 돌아왔을 떄 Loading Circle 보여주기: GooglePlay 로긴 X -> BtmSheet 경고창 -> Background 한번 나갔다 옴 ->
-Circle 안보임! -- <SecondFrag.241> 에서 모든 ANIM STOP 하기 때문. ->
-목표: 돌아왔을 때 LC 떠있고 로긴하고 돌아오면 LC 뜨다가 리스트 받는대로 LC 없어지고 RC 보여줘애함!
-
-2) MySharedPref 저장파일이 없는 상태에서 (첫 로딩) sharedPref 로딩-> ArrayList 똑같이 반환. => Google Play 로긴 경고창-> 말이 안됨.
-
-3) 왜그런지 이런 에러 떴음 - RESPONSE CODE= DEVELOPER_ERROR (5번) // 아마도 PlayStore launch 한번 안 하고 그냥 시작했을 때.*/
-
-
-
-
-// Achievements(O)
-//4. BillingClient Ready(x) issue..
-//*** IAPV3.kt>62: OnBillingServiceDisconnected() => java.lang.IllegalStateException: Already resumed : 왜 exception 못잡지? <- continuation 문제인거지..
-
-
+//v3.07.18G [Google Play Store 계정 연결 안됐을 때 - 후속 에러 확인 중 LC 포함]
+// PlayStore 로긴 안되있을 때 -> BtmSheet 에러창-> PlayStore 로그인 -> 다시 App
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

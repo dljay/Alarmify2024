@@ -17,7 +17,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.theglendales.alarm.R
 
-private const val TAG="BtmSht_Perm"
+private const val TAG="BtmSheetPlayStoreError"
 
 object BtmSheetPlayStoreError : BottomSheetDialogFragment() {
     private var fragActivity = FragmentActivity()
@@ -32,7 +32,7 @@ object BtmSheetPlayStoreError : BottomSheetDialogFragment() {
 
         tvCancel.setOnClickListener {
             Log.d(TAG, "onCreate: Clicked Cancel.Dismiss Bottom sheet! - GooglePlay")
-            removePlayErrorBtmSheetAndResume()
+            removePlayErrorBtmSheet()
         }
         ivGoToPlayStore.setOnClickListener {
             Log.d(TAG, "onCreate: Yes! Now go to GooglePlay!!")
@@ -67,7 +67,7 @@ object BtmSheetPlayStoreError : BottomSheetDialogFragment() {
         }
     }
 
-    fun removePlayErrorBtmSheetAndResume() {
+    fun removePlayErrorBtmSheet() {
 
         this.apply {
             if(isAdded) { //1) BottomSheet 이 화면에 보이거나 존재하는 상태?. (isAdded=true) if the fragment is currently added to its activity.

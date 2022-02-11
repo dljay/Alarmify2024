@@ -6,38 +6,30 @@ import com.airbnb.lottie.LottieAnimationView
 import com.theglendales.alarm.R
 
 private const val TAG="LottieAnimHandler"
+enum class LottieENUM { INIT_LOADING, ERROR_GENERAL, STOP_ALL}
 class LottieAnimHandler(private val receivedActivity: Activity, private val lottieAnimationView: LottieAnimationView) {
 
     //lottieAnimation Controller
-    fun animController(status: String) {
-        when (status) {
-          /*  "purchaseCircle" -> {
-                receivedActivity.runOnUiThread {
-                    Log.d(TAG, "animController: called")
-                    lottieAnimationView.visibility = LottieAnimationView.VISIBLE
-                    // 불투명 + 투과금지 + 사이즈
-                    lottieAnimationView.setAnimation(R.raw.lottie_circular_loading)}
-            }*/
-
-            "initialLoading" -> {
+    fun animController(lottieEnum: LottieENUM) {
+        when (lottieEnum) {
+            LottieENUM.INIT_LOADING -> {
                 Log.d(TAG, "animController: initialLoading")
                 lottieAnimationView.setAnimation(R.raw.lottie_loading1)
             } //최초 app launch->read.. auto play 기 때문에
-            "error" -> { // 인터넷 안되는 에러
+            LottieENUM.ERROR_GENERAL -> { // 인터넷 안되는 에러
                 receivedActivity.runOnUiThread(Runnable
                 {
-                    Log.d(TAG, "animController: NO INTERNET ERROR!!")
+                    Log.d(TAG, "animController: GENERAL ERROR!!")
                     lottieAnimationView.visibility = LottieAnimationView.VISIBLE
                     lottieAnimationView.setAnimation(R.raw.lottie_error1)
                     //snackBarDeliverer(lottieAnimationView,"Please kindly check your network connection status",false)
                     //여기 SnackBar 에서 View 가 불안정할수 있음=>try this? -> Snackbar.make(requireActivity().findViewById(android.R.id.content), "..", Snackbar.LENGTH_LONG).show()
                 })
             }
-
-            "stop" -> {
+            LottieENUM.STOP_ALL -> {
                 receivedActivity.runOnUiThread(Runnable
                 {
-                    Log.d(TAG, "animController: STOP (any) Animation!!")
+                    Log.d(TAG, "animController: STOP ALL Animation!!")
                     lottieAnimationView.cancelAnimation()
                     lottieAnimationView.visibility = LottieAnimationView.GONE
                 })

@@ -67,8 +67,8 @@ val acraEmail = project.rootProject.file("local.properties")
 android {
     compileSdkVersion(31)
     defaultConfig {
-        versionCode = 30707
-        versionName = "3.07.07"
+        versionCode = 30708 // Version Code = 지속적으로 increment 해야 Google Play Console 에서 받아줌.
+        versionName = "0.01.01A" // User 에게 보여지는 Version Number.
         applicationId = "com.theglendales.alarm"
         minSdkVersion(23)
         targetSdkVersion(31)

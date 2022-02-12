@@ -55,8 +55,10 @@ import org.koin.core.module.Module
 import org.koin.dsl.module
 import java.util.Calendar
 
-//v3.07.18G [Google Play Store 계정 연결 안됐을 때 - 후속 에러 확인 중 LC 포함]
-// PlayStore 로긴 안되있을 때 -> BtmSheet 에러창-> PlayStore 로그인 -> 다시 App
+
+// 30708 (Version Code-Internal) | (Version Name: 0.01.01A) | 추후에 Version CODE 와 별개로 Release 할 때 Version Name 만 v1.00.00 이런식으로 내놓을것.
+// [UI 업데이트 시작 전, 햄버거 메뉴 수정 전]
+// 이후 Action Bar 제일 위 앱 이름 수정? 번역?
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

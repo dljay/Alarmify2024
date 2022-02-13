@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/id_setTime"
+        android:id="@+id/id_BtmNav_SetAlarm"
         android:title="Set Alarm"
         android:icon="@drawable/ic_time_holo_dark"/>
     <item
-        android:id="@+id/id_RingTone"
+        android:id="@+id/id_BtmNav_RingTone"
         android:title="Ringtone"
         android:icon="@drawable/ic_bell_holo_dark"/>
 

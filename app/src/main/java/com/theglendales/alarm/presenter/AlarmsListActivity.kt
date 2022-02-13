@@ -41,9 +41,7 @@ import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
 
 import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.checkIfRtIsUnplayable
 import com.theglendales.alarm.jjmvvm.util.showAlertIfRtIsMissing
-import com.theglendales.alarm.jjongadd.BtmSheetPlayStoreError
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
@@ -56,10 +54,15 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708b (Version Code-Internal)
-// [UI 업데이트 시작 전, 햄버거 메뉴 수정 진행중]
+// 30708c (Version Code-Internal)
+// [UI 업데이트 진행중, 햄버거 메뉴 수정 진행중]
 //Drawer Navigation 은 BottonNavView 와 (왠만하면) 같이 쓰지 말라고 공홈에 써있네.
 //Settings Bottom Fragment 추가 -> 여기서 About .. 뭐 이런것 같이 넣기?
+//1) Burger Menu Icon 안보이고 *(설정) ICON 으로만 사용
+//2) 설정 Page 에 About.. 등 기존 Burger 에 있던 Menu 쓸것만 몇개 넣기.
+//3) 이제 자연스럽게 AlarmClock Xtreme 처럼 Transparent Actionbar 에 그림 연결~~
+//4) DARK THEME / 적용 안되게 바꾸기.
+//5) AlarmListActivity 에서 setTheme() .. 현재 'Dark Theme' 으로 자동 선택되는듯.  무조건 Default 로 가게끔 -> 기타 코드 없애기
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -214,6 +217,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
         this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms, globalGet())
 
+
         val isTablet = !resources.getBoolean(R.bool.isTablet)
         if (isTablet) {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
@@ -239,9 +243,9 @@ class AlarmsListActivity : AppCompatActivity() {
             //2) OnNavigationItemSelectedListener(인터페이스) 안에는 onNavItemSelected(boolean 리턴 메써드) 하나만 있음. 그래서 override 생략 가능sam..
             // 밑에는 한마디로 Override fun onNavItemSelected: Boolean { 이 안에 들어가는 내용임.}
             when(it.itemId) {
-                R.id.id_setTime -> configureTransactions()
-                R.id.id_RingTone -> showSecondFrag(secondFrag)
-                // R.id.menu_item_settings -> this.startActivity(Intent(this, SettingsActivity::class.java))
+                R.id.id_BtmNav_SetAlarm -> configureTransactions()
+                R.id.id_BtmNav_RingTone -> showSecondFrag(secondFrag)
+                //R.id.id_BtmNav_Settings -> this.startActivity(Intent(this, SettingsActivity::class.java))
             }
             Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener -> before hitting true!")
             true
@@ -288,6 +292,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
     override fun onResume() {
         Log.d(TAG, "onResume: jj-called")
         super.onResume()
+        // Settings Fragment 갔다왔으면
 /*    // MyCacher Init() -> MediaPlayer(V2) Init [BackgroundThread] --- 원래 SecondFrag 에 있던것을 이쪽으로 옮겨옴 (ListFrag <-> SecondFrag 왔다리갔다리 무리없게 사용 위해.)
         lifecycleScope.launch {
             Log.d(TAG, "onResume: lifecycle.currentState= ${lifecycle.currentState}, Thread=${Thread.currentThread().name}")

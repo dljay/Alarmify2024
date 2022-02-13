@@ -80,7 +80,9 @@ class ActionBarHandler(
             if(trashIcon!=null) { // nullCheck 내가 넣었음.
                 trashIcon.isVisible = showDelete // 알람 요일설정땜에 여기서 자꾸 뻑남. 근데 이유는 findItem 이 null 값여서.. // 원래코드 = menu.findItem(R.id.... _delete_alarm).isVisible = showDelete
             }
-            actionBar.setDisplayHomeAsUpEnabled(edited.isEdited)
+            actionBar.setDisplayHomeAsUpEnabled(edited.isEdited) // <- back button 보여주기
+
+
         }
 
         return true

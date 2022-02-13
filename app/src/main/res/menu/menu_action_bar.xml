@@ -24,8 +24,8 @@
         android:title="@string/delete_alarm" />
     <item
         android:id="@+id/menu_item_settings"
-        android:icon="@android:drawable/ic_menu_preferences"
-        app:showAsAction="never"
+        android:icon="@drawable/settings_icon_1"
+        app:showAsAction="ifRoom"
         android:title="@string/settings" />
     <item
         android:id="@+id/menu_bugreport"

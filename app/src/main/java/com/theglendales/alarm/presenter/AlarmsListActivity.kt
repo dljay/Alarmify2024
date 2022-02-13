@@ -56,9 +56,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708 (Version Code-Internal) | (Version Name: 0.01.01A) | 추후에 Version CODE 와 별개로 Release 할 때 Version Name 만 v1.00.00 이런식으로 내놓을것.
-// [UI 업데이트 시작 전, 햄버거 메뉴 수정 전]
-// 이후 Action Bar 제일 위 앱 이름 수정? 번역?
+// 30708b (Version Code-Internal)
+// [UI 업데이트 시작 전, 햄버거 메뉴 수정 진행중]
+//Drawer Navigation 은 BottonNavView 와 (왠만하면) 같이 쓰지 말라고 공홈에 써있네.
+//Settings Bottom Fragment 추가 -> 여기서 About .. 뭐 이런것 같이 넣기?
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

@@ -241,6 +241,7 @@ class AlarmsListActivity : AppCompatActivity() {
             when(it.itemId) {
                 R.id.id_setTime -> configureTransactions()
                 R.id.id_RingTone -> showSecondFrag(secondFrag)
+                // R.id.menu_item_settings -> this.startActivity(Intent(this, SettingsActivity::class.java))
             }
             Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener -> before hitting true!")
             true

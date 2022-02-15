@@ -8,6 +8,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,7 +46,8 @@ private const val CURRENT_RT_FILENAME_KEY= "currentRtFileName_Key"
 
 
 class RtPickerActivity : AppCompatActivity() {
-
+    //ToolBar (ActionBar 대신하여 모든 Activity 에 만들어주는 중.)
+    private lateinit var toolBar: Toolbar
     // DiskSearcher
     private val myDiskSearcher: DiskSearcher by globalInject()
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
@@ -96,9 +98,10 @@ class RtPickerActivity : AppCompatActivity() {
 
     //1) Activity 화면 Initialize (ActionBar 등..)
         // 화면 위에 뜨는 타이틀
-            setTitle("Ringtone Picker")
-        // todo: actionBar 꾸미기. 현재 사용중인 actionBar 스타일로 하려면  AlarmListActivity - mActionBarHandler 등 참고. DetailsFrag 는 또 다름 (쓰레기통 표시)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true) // null check?
+        toolBar = findViewById(R.id.id_toolBar_RtPicker)
+        setSupportActionBar(toolBar)
+        //toolBar.title = "Ringtone Picker" // 이미 activity_rt_picker.xml 에서 해줌.
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // 뒤로가기(<-) 표시. null check?
 
     // 2) SlidingUpPanel (AKA MiniPlayer) UI Initialize 및 onClickListener 장착
 

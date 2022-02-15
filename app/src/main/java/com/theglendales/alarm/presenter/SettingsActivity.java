@@ -26,6 +26,7 @@ import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.theglendales.alarm.R;
 import com.theglendales.alarm.configuration.InjectKt;
@@ -39,16 +40,21 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: called..");
         setTheme(dynamicThemeHandler.getIdForName(SettingsActivity.class.getName()));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_activity);
         if (!getResources().getBoolean(R.bool.isTablet)) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
+        // 내가 추가 -> ToolBar 관련
+        Toolbar mySettingsToolBar = findViewById(R.id.id_toolbar_settings);
+        setSupportActionBar(mySettingsToolBar);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu: Called!!");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         return true;
     }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Vibrator
 import android.provider.Settings
+import android.util.Log
 import androidx.preference.CheckBoxPreference
 import androidx.preference.ListPreference
 import androidx.preference.Preference
@@ -25,6 +26,7 @@ import io.reactivex.disposables.CompositeDisposable
 /**
  * Created by Yuriy on 24.07.2017.
  */
+private const val TAG="SettingsFragment"
 
 class SettingsFragment : PreferenceFragmentCompat() {
     private val alarmStreamTypeBit = 1 shl AudioManager.STREAM_ALARM
@@ -40,6 +42,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        Log.d(TAG, "onCreatePreferences: called")
         addPreferencesFromResource(R.xml.preferences)
 
         val category: PreferenceCategory = findPreference("preference_category_sound_key")!!
@@ -71,6 +74,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+        Log.d(TAG, "onPreferenceTreeClick: called")
         when (preference?.key) {
             Prefs.KEY_ALARM_IN_SILENT_MODE -> {
                 val pref = preference as CheckBoxPreference

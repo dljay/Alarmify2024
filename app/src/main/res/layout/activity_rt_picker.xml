@@ -1,44 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+
     tools:context=".presenter.RtPickerActivity">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        android:id="@+id/id_sldUpPnlRtPickerActivity"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/id_toolBar_RtPicker"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="bottom"
-        app:umanoOverlay="false"
-        app:umanoPanelHeight="60dp"
-        app:umanoShadowHeight="0dp">
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:title="Ringtone Picker"
+        app:titleTextColor="@color/mat_red"/>
 
-        <!--1st Child RcView [Song Selector] -->
-        <LinearLayout
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.sothree.slidinguppanel.SlidingUpPanelLayout
+            android:id="@+id/id_sldUpPnlRtPickerActivity"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            app:umanoOverlay="false"
+            app:umanoPanelHeight="60dp"
+            app:umanoShadowHeight="0dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcV_RtPicker"
+            <!--1st Child RcView [Song Selector] -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent">
 
-        </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcV_RtPicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
 
-        <!--2nd child Music Player + Title+ AlbumArt -->
-        <RelativeLayout
-            android:id="@+id/ir_rl_entireSlider"
-            android:layout_width="match_parent"
-            android:layout_height="300dp">
+            </LinearLayout>
 
-            <include layout="@layout/jj_slide_ui2" />
+            <!--2nd child Music Player + Title+ AlbumArt -->
+            <RelativeLayout
+                android:id="@+id/ir_rl_entireSlider"
+                android:layout_width="match_parent"
+                android:layout_height="300dp">
 
-        </RelativeLayout>
+                <include layout="@layout/jj_slide_ui2" />
 
-    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+            </RelativeLayout>
+
+        </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
 
-</FrameLayout>
+    </FrameLayout>
+
+</LinearLayout>
+

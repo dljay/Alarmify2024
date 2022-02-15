@@ -262,7 +262,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
         //[MainVModel- <1>-ERROR]
             jjMainVModel.errorIntLiveData.observe(viewLifecycleOwner) { errorIntCode ->
-                when(errorIntCode) { // 0 = PlayStoreUnAvailableException
+                when(errorIntCode) { // 0 = JjPlayStoreUnAvailableException
                     0 -> {myBtmSheetPSError.showBtmSheetPlayStoreError(requireActivity()) //Alert 창 보여주고-> 클릭시 -> PlayStore 로 이동
                     }
                     else -> {} //현재 다른 코드 없음.

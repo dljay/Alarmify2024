@@ -165,7 +165,6 @@ class AlarmDetailsFragment : Fragment() {
         Log.d(TAG, "onCreateView: jj-called")
         logger.debug { "$this with ${store.editing().value}" }
 
-
         //View Initializing ->
         val view = inflater.inflate(
                 when (prefs.layout()) {

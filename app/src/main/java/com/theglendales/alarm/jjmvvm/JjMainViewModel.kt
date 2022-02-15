@@ -15,7 +15,8 @@ import com.theglendales.alarm.jjmvvm.iapAndDnldManager.*
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.mediaplayer.StatusMp
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.PlayStoreUnAvailableException
+import com.theglendales.alarm.jjmvvm.util.JjPlayStoreUnAvailableException
+import com.theglendales.alarm.jjmvvm.util.JjServiceUnAvailableException
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +68,7 @@ class JjMainViewModel : ViewModel() {
                 val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
                     Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
 
-                    if(throwable !is PlayStoreUnAvailableException) { // BillingUnAvailable(ResponseCode=3) - (typically) PlayStore 로그인 안되서 생기는 에러가 아니라면 Toast 메시지 보여주기.
+                    if(throwable !is JjPlayStoreUnAvailableException) { // BillingUnAvailable(ResponseCode=3) - (typically) PlayStore 로그인 안되서 생기는 에러가 아니라면 Toast 메시지 보여주기.
                         toastMessenger.showMyToast("Failed to fetch IAP information. Error=$throwable",isShort = false)
                     }
                 }
@@ -104,7 +105,7 @@ class JjMainViewModel : ViewModel() {
 
                         when(throwable) {
                             // Billing Unavailable (Typically Play Store 로그인 안됐을 때 발생.) -> Alert 창으로 PlayStore 이동하게 만들고. 그냥 빈 깡통 리스트 보여주기.
-                            is PlayStoreUnAvailableException -> {
+                            is JjPlayStoreUnAvailableException -> {
                                 //Log.d(TAG, "refreshFbAndIAPInfo: PlayStore 안될때: (typically) Play Store 로그인 안되어있는 경우 발생") //responsedCode= 3 번.
                                 _errorIntLiveData.value = 0 // 0 번:  Observe 중인 ErrorInt 보내서 -> PlayStore 로긴하라는 Alert 창 보여주기.
                                 _rtInTheCloudList.value = ArrayList() // 공갈 RTList 보내서 -> Error Lottie 뜨게끔.
@@ -245,12 +246,17 @@ class JjMainViewModel : ViewModel() {
             triggerPurchaseLoadingCircle(1)
             Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..Thread= ${Thread.currentThread().name}")
             if (throwable != null && !throwable.message.isNullOrEmpty()) {
-                if (throwable.message!!.contains("USER_CANCELED")) {
-                    return@invokeOnCompletion
-                } // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지나 기타 아무것도 안 보여주기.
-                else {
-                    Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(X)] - Error. throwable=$throwable ")
-                    toastMessenger.showMyToast("Purchase Error: $throwable", isShort = false)
+                when {
+                    throwable.message!!.contains("USER_CANCELED") -> { // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지나 기타 아무것도 안 보여주기.
+                        return@invokeOnCompletion
+                    }
+                    throwable is JjServiceUnAvailableException -> {
+                        toastMessenger.showMyToast("Purchase Error: Service Unavailable Error. Please check your internet connectivity.", isShort = false)
+                    }
+                    else -> {
+                        Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(X)] - Error. throwable=$throwable ")
+                        toastMessenger.showMyToast("Purchase Error: $throwable", isShort = false)
+                    }
                 }
             } else {// 아무 문제없이 구매가 끝이남.
                 Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(O)] - !!No problemo!!!")

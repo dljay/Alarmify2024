@@ -26,17 +26,14 @@ import io.reactivex.disposables.Disposables
 
 
 /**
- * This class handles options menu and action bar
- *
+ * This class handles options menu and action bar: 내가 ActionBar-> ToolBar 로 변경했음.
+ * AlarmsListActivity.kt 에서 ActionBarHandler() 만들어줌.
  * @author Kate
  */
 private const val TAG="ActionBarHandler"
-class ActionBarHandler(
-        private val mContext: Activity,
-        private val store: UiStore,
-        private val alarms: IAlarmsManager,
-        private val reporter: BugReporter
-) {
+
+
+class ActionBarHandler(private val mContext: Activity,private val store: UiStore,private val alarms: IAlarmsManager,private val reporter: BugReporter) {
     private var sub = Disposables.disposed()
 
     /**
@@ -66,25 +63,41 @@ class ActionBarHandler(
         }
 
         val menuItem = menu.findItem(R.id.menu_share)
+        val settingsIcon = menu.findItem(R.id.menu_item_settings)// 톱니바퀴(설정) 아이콘은 여기서 안보이게. 내가 추가
         val trashIcon = menu.findItem(R.id.set_alarm_menu_delete_alarm) // 내가 추가. 아래에서 trashIcon 대신 menu.findItem(R.id.... _delete_alarm) 넣어놨더니 계속 뻑나서..
         // todo: 뒷맛이 좋지는 않음. 일단 이걸로 모든 요일이 선택되어있는 DetailsFrag 열릴 때 뻑나는건 멈추기는 했음.
 
         val sp = MenuItemCompat.getActionProvider(menuItem) as androidx.appcompat.widget.ShareActionProvider
         sp.setShareIntent(intent)
 
-
-
-        //DetailsFrag 에서 요일을 Chip 으로 변경할떄마다 여기로 들어오네..
+        //(상황에 따른) ActionBar ICON 지정! --  요일을 Chip 으로 변경할떄마다 여기로 들어오네..
         sub = store.editing().subscribe { edited ->
             Log.d(TAG, "onCreateOptionsMenu: jj-inside sub=store.editing().subscribe{}. 'edited'=${edited.toString()}")
-            val showDelete = edited.isEdited && !edited.isNew //Boolean
-
-            if(trashIcon!=null) { // nullCheck 내가 넣었음.
-                trashIcon.isVisible = showDelete // 알람 요일설정땜에 여기서 자꾸 뻑남. 근데 이유는 findItem 이 null 값여서.. // 원래코드 = menu.findItem(R.id.... _delete_alarm).isVisible = showDelete
+            //val showDeleteIcon = edited.isEdited && !edited.isNew //Boolean
+            when(edited.isEdited && !edited.isNew) {
+                true -> { //Details Frag 일 때
+                    //a) 휴지통 ICON 보여주기 (O)
+                    if(trashIcon!=null) { // nullCheck 내가 넣었음.
+                        trashIcon.isVisible = true // 알람 요일설정땜에 여기서 자꾸 뻑남. 근데 이유는 findItem 이 null 값여서.. // 원래코드 = menu.findItem(R.id.... _delete_alarm).isVisible = showDelete
+                    }
+                    //b) 설정(톱니바퀴) ICON 가려주기. (X)
+                    if(settingsIcon!=null) {
+                        settingsIcon.isVisible = false
+                    }
+                }
+                false -> {
+                    //a) 휴지통 ICON 없애주기 (X)
+                    if(trashIcon!=null) {
+                        trashIcon.isVisible = false
+                    }
+                    //b) 설정(톱니바퀴) ICON 보여주기 (O)
+                    if(settingsIcon!=null) {
+                        settingsIcon.isVisible = true
+                    }
+                } //그 외 화면 AlarmsListFrag, SecondFrag
             }
-        //todo
-        toolBarAsActionBar.setDisplayHomeAsUpEnabled(edited.isEdited) // <- back button 보여주기 -- toolBar 로 바꾸고 나서는 여기서 .setHomexxx.. 실행 안되네.
 
+            toolBarAsActionBar.setDisplayHomeAsUpEnabled(edited.isEdited) // <- FAB 클릭 아니고 기존 알람 수정일때.. back button 보여주기 -- toolBar 로 바꾸고 나서는 여기서 .setHomexxx.. 실행 안되네.
         }
         return true
     }

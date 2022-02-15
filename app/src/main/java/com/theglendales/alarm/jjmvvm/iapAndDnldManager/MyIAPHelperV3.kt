@@ -7,13 +7,11 @@ import com.android.billingclient.api.*
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.PlayStoreUnAvailableException
+import com.theglendales.alarm.jjmvvm.util.JjPlayStoreUnAvailableException
+import com.theglendales.alarm.jjmvvm.util.JjServiceUnAvailableException
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.model.mySharedPrefManager
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import java.io.File
 import java.io.IOException
 import kotlin.Exception
@@ -78,6 +76,7 @@ class MyIAPHelperV3(val context: Context ) {
             // Purchase Updated Listener! => Network Error, Offline Payment 등 Issue 있을 수 있음. => Finalized(=isAcknowledged) 필요!
             if (bResult.responseCode == BillingClient.BillingResponseCode.OK && purchasesListReceived != null)
             {
+
                 Log.d(TAG, "i-1) PurchaseResult Listener: A- 정상 신규 구매! (파일 확인 후 없으면)다운로드 진행!. Thread=${Thread.currentThread().name}")
             //***** 여러 종류의 물건을 여러개 살 수 있는 IAP4.0 기능 떄문에 다음과 같은 forLoop 과 purchase.skus[0] 이런 수식이 나왔음. 그러나 우리는 오로지 '단일 종류, 1개 구매' 만 가능.
                 for(purchase in purchasesListReceived) { // List 에는 딱 한개만 들어있어야 한다! (우리는 1개 이상 구매를 허용하지 않으니깐!)
@@ -132,7 +131,7 @@ class MyIAPHelperV3(val context: Context ) {
                         continuation.resume(Unit) // -> continuation 에서 이어서 진행 (원래 코루틴- JjMainVModel> iapParentJob 으로 복귀)
                     }
                     else if(billingResult.responseCode == BillingClient.BillingResponseCode.BILLING_UNAVAILABLE) {
-                        continuation.resumeWithException(PlayStoreUnAvailableException("Play Store unavailable. ResponseCode=3"))
+                        continuation.resumeWithException(JjPlayStoreUnAvailableException("Play Store unavailable. ResponseCode=3"))
                     }
                     else {
                         continuation.resumeWithException(Exception("Error on c_prepBillingClient. responseCode=${billingResult.responseCode}"))
@@ -366,9 +365,11 @@ class MyIAPHelperV3(val context: Context ) {
 
         return suspendCoroutine { continuation ->
             billingClient!!.querySkuDetailsAsync(myParams) {billingResult, skuDetailsList ->
-                if(billingResult.responseCode == BillingClient.BillingResponseCode.OK && !skuDetailsList.isNullOrEmpty()) {
+                if(billingResult.responseCode == BillingClient.BillingResponseCode.OK && !skuDetailsList.isNullOrEmpty()) { // 정상
                     continuation.resume(skuDetailsList)
-                } else {
+                } else if(billingResult.responseCode == BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE) { // Response Code =2, Service Unavailable (인터넷 연결불가일 때.)
+                    continuation.resumeWithException(JjServiceUnAvailableException("Service Unavailable."))
+                } else { // 그 외 에러
                     continuation.resumeWithException(Exception("billingResult-ResponseCode=${billingResult.responseCode}"))
                 }
             }

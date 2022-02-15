@@ -44,6 +44,7 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
      * @param toolBarAsActionBar
      * @return
      */
+
     fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater, toolBarAsActionBar: ActionBar): Boolean {
         Log.d(TAG, "onCreateOptionsMenu: jj-called")
         inflater.inflate(R.menu.menu_action_bar, menu)
@@ -85,7 +86,7 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
                         settingsIcon.isVisible = false
                     }
                 }
-                false -> {
+                false -> { // 그 외 AlarmsListActivity 의 다른 Frag 들 일 때 (AlarmsListFrag, SecondFrag)
                     //a) 휴지통 ICON 없애주기 (X)
                     if(trashIcon!=null) {
                         trashIcon.isVisible = false
@@ -94,9 +95,9 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
                     if(settingsIcon!=null) {
                         settingsIcon.isVisible = true
                     }
-                } //그 외 화면 AlarmsListFrag, SecondFrag
-            }
 
+                }
+            }
             toolBarAsActionBar.setDisplayHomeAsUpEnabled(edited.isEdited) // <- FAB 클릭 아니고 기존 알람 수정일때.. back button 보여주기 -- toolBar 로 바꾸고 나서는 여기서 .setHomexxx.. 실행 안되네.
         }
         return true

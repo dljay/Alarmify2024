@@ -19,6 +19,7 @@ import android.view.View
 import android.view.WindowManager
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.theglendales.alarm.configuration.EditedAlarm
@@ -54,13 +55,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708c (Version Code-Internal)
-// [UI 업데이트 진행중, 햄버거 메뉴 수정 진행중]
-//Drawer Navigation 은 BottonNavView 와 (왠만하면) 같이 쓰지 말라고 공홈에 써있네.
-//Settings Bottom Fragment 추가 -> 여기서 About .. 뭐 이런것 같이 넣기?
-//1) Burger Menu Icon 안보이고 *(설정) ICON 으로만 사용
-//2) 설정 Page 에 About.. 등 기존 Burger 에 있던 Menu 쓸것만 몇개 넣기.
-//3) 이제 자연스럽게 AlarmClock Xtreme 처럼 Transparent Actionbar 에 그림 연결~~
+// 30708e (ToolBar 테스트)
+// ActionBar 대신 ToolBar 사용 테스트
+// list_Activity.xml > toolbar 의 Title 에  DKDK 적어서 출력 성공. a) DetailsFrag 갔을때 <- (home) 뜨는것 추가필요. b) 버거메뉴 추가 시도.
+// 최종적으로는 Coordinator Layout 적용하는것 알아보기.
 //4) DARK THEME / 적용 안되게 바꾸기.
 //5) AlarmListActivity 에서 setTheme() .. 현재 'Dark Theme' 으로 자동 선택되는듯.  무조건 Default 로 가게끔 -> 기타 코드 없애기
 
@@ -78,6 +76,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
     private val myPermHandler = MyPermissionHandler(this)
     private val exoForUrl: ExoForUrl by globalInject() // 여기 적혀있지만 init 은 실제 사용되는 SecondFrag 가 열릴 때  자동으로 이뤄짐.
+    lateinit var toolBar: Toolbar
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -194,7 +193,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "onCreate: !!AlarmListActivitiy onCreate() !!! ")
+        Log.d(TAG, "onCreate: !!AlarmsListActivity onCreate() !!! ")
 
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
@@ -258,7 +257,7 @@ class AlarmsListActivity : AppCompatActivity() {
             myPermHandler.permissionToWriteOnInitialLaunch() //
         }
 
-
+        toolBar = findViewById(R.id.id_toolbar)
     } // onCreate() 여기까지.
 // 추가 1-B)-->
 
@@ -339,7 +338,10 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        return supportActionBar?.let { mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, it) }
+        setSupportActionBar(toolBar)
+        supportActionBar?.setDisplayShowHomeEnabled(true)// ActionBar -> ToolBar 로 바꾸고 새로 추가한 Line
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        return supportActionBar?.let {mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, it) } // 기존에는 it 으로 ActionBar 를 보냈지만 지금은 toolBar 를 전달.
                 ?: false
     }
 

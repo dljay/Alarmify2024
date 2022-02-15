@@ -30,7 +30,7 @@ import io.reactivex.disposables.Disposables
  *
  * @author Kate
  */
-private const val TAG="*ActionBarHandler*"
+private const val TAG="ActionBarHandler"
 class ActionBarHandler(
         private val mContext: Activity,
         private val store: UiStore,
@@ -44,10 +44,10 @@ class ActionBarHandler(
      *
      * @param menu
      * @param inflater
-     * @param actionBar
+     * @param toolBarAsActionBar
      * @return
      */
-    fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater, actionBar: ActionBar): Boolean {
+    fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater, toolBarAsActionBar: ActionBar): Boolean {
         Log.d(TAG, "onCreateOptionsMenu: jj-called")
         inflater.inflate(R.menu.menu_action_bar, menu)
 
@@ -72,19 +72,20 @@ class ActionBarHandler(
         val sp = MenuItemCompat.getActionProvider(menuItem) as androidx.appcompat.widget.ShareActionProvider
         sp.setShareIntent(intent)
 
+
+
         //DetailsFrag 에서 요일을 Chip 으로 변경할떄마다 여기로 들어오네..
         sub = store.editing().subscribe { edited ->
             Log.d(TAG, "onCreateOptionsMenu: jj-inside sub=store.editing().subscribe{}. 'edited'=${edited.toString()}")
-            val showDelete = edited.isEdited && !edited.isNew
+            val showDelete = edited.isEdited && !edited.isNew //Boolean
 
             if(trashIcon!=null) { // nullCheck 내가 넣었음.
                 trashIcon.isVisible = showDelete // 알람 요일설정땜에 여기서 자꾸 뻑남. 근데 이유는 findItem 이 null 값여서.. // 원래코드 = menu.findItem(R.id.... _delete_alarm).isVisible = showDelete
             }
-            actionBar.setDisplayHomeAsUpEnabled(edited.isEdited) // <- back button 보여주기
-
+        //todo
+        toolBarAsActionBar.setDisplayHomeAsUpEnabled(edited.isEdited) // <- back button 보여주기 -- toolBar 로 바꾸고 나서는 여기서 .setHomexxx.. 실행 안되네.
 
         }
-
         return true
     }
 

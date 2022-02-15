@@ -25,6 +25,15 @@
     android:weightSum="10"
     tools:context=".presenter.AlarmsListActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/id_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:title="DKDKDKDK"
+        app:titleTextColor="@color/mat_red"/>
+
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"

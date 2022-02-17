@@ -250,7 +250,7 @@ class RcViewAdapter(
 
         //Log.d(TAG, "refreshRecyclerView: oldList.hashcode= ${oldList.hashCode()}, newlist.hashcode=${newList.hashCode()}")
         Log.d(TAG, "refreshRecyclerView: oldList=$oldList, \n\n newList=$newList") //어찌하여 둘이 같은가?!?!
-        val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(MyDiffCallbackClass(oldList, newList))
+        val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(MyRtDiffCallbackClass(oldList, newList))
         rtPlusIapInfoList = newList
         Log.d(TAG, "refreshRecyclerView: @@@@@@@@ currentRtList.size (AFTER): ${rtPlusIapInfoList.size}")
 
@@ -259,7 +259,7 @@ class RcViewAdapter(
     }
 
     // DiffUtil Class
-    class MyDiffCallbackClass(var oldRingToneList: List<RtInTheCloud>, var newRingToneList: List<RtInTheCloud>) : DiffUtil.Callback() { // Extend by DiffUtil
+    class MyRtDiffCallbackClass(var oldRingToneList: List<RtInTheCloud>, var newRingToneList: List<RtInTheCloud>) : DiffUtil.Callback() { // Extend by DiffUtil
         override fun getOldListSize(): Int {
             return oldRingToneList.size
         }

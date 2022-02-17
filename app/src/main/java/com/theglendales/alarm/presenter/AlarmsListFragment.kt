@@ -1,10 +1,8 @@
 package com.theglendales.alarm.presenter
 
-import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,18 +10,14 @@ import android.util.Log
 import android.view.ContextMenu
 import android.view.ContextMenu.ContextMenuInfo
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
 import android.widget.AdapterView.AdapterContextMenuInfo
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.amulyakhare.textdrawable.TextDrawable
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
@@ -32,17 +26,13 @@ import com.theglendales.alarm.configuration.Store
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
+import com.theglendales.alarm.jjadapters.RcViewAdapter
 import com.theglendales.alarm.logger.Logger
-import com.theglendales.alarm.lollipop
 import com.theglendales.alarm.model.AlarmValue
-import com.melnykov.fab.FloatingActionButton
-import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.checkIfRtIsUnplayable
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
 import com.theglendales.alarm.jjongadd.TimePickerJjong
-import com.theglendales.alarm.model.Alarmtone
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -68,7 +58,9 @@ class AlarmsListFragment : Fragment() {
     private val prefs: Prefs by globalInject()
     private val logger: Logger by globalLogger("AlarmsListFragment")
 
-    private val mAdapter: AlarmListAdapter by lazy { AlarmListAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList()) }
+    //private val mAdapter: AlarmListAdapter by lazy { AlarmListAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList()) }
+    // Rcv 로 교체 시도
+    private val mAdapter: AlarmListRcvAdapter by lazy { AlarmListRcvAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList()) }
     private val inflater: LayoutInflater by lazy { requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater }
 
     private var alarmsSub: Disposable = Disposables.disposed()
@@ -162,9 +154,58 @@ class AlarmsListFragment : Fragment() {
         //2-a. isMissingPurchasedFiles -> false -> Snackbar: Rebuilding DB Completed.
         //2-b. isMissingPurchasedFiles -> true -> Lottie Anim (O)--재생중이거나 1-b 에서 한번 재생했으면 생략 -> download -> Snackbar: Recovering.. please restart later.
     }
+//<1> (내가 작성) RcV Adapter --------------->
+    inner class AlarmListRcvAdapter(alarmTime: Int,label: Int,private var alarmValuesList: List<AlarmValue>) : RecyclerView.Adapter<RowHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup,viewType: Int): RowHolder {
+            val view = LayoutInflater.from(parent.context).inflate(listRowLayoutId, parent, false) // 선택 상황에 따라 -> R.layout.list_row_classic or else..
+
+            return RowHolder(view,0,prefs.layout()) //todo: 알람 id 문제 + inflate 다른걸로.
+        }
+
+        override fun onBindViewHolder(holder: RowHolder, position: Int) {
+            val alarm = alarmValuesList[position]
+            val alarmId = alarm.id
+            //val prev: RowHolder? = holder.rowView.tag as RowHolder?
+            //val idHasChanged = prev?.alarmId != id
+            Log.d(TAG, "onBindViewHolder: alarmId = $alarmId")
+        }
+        override fun getItemCount(): Int {
+            return alarmValuesList.size
+        }
+        
+        fun refreshAlarmList(newAlarmList: List<AlarmValue>) {
+
+            val oldAlarmList = alarmValuesList
+            Log.d(TAG, "refreshAlarmList: oldAlarmList=$oldAlarmList, newAlarmList = $newAlarmList")
+
+            val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(AlarmDiffUtilCallback(oldAlarmList,newAlarmList))
+            alarmValuesList = newAlarmList
+            Log.d(TAG, "refreshAlarmList: @@@@@@@@ currentAlarmList.size (AFTER): ${newAlarmList.size}")
+            diffResult.dispatchUpdatesTo(this)
+        }
+
+        fun getItem(pos: Int): AlarmValue {
+            return alarmValuesList[pos]
+        }
+    }
+    class AlarmDiffUtilCallback(var oldAlarmList: List<AlarmValue>, var newAlarmList: List<AlarmValue>) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int = oldAlarmList.size
+
+        override fun getNewListSize(): Int = newAlarmList.size
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return (oldAlarmList[oldItemPosition].id == newAlarmList[newItemPosition].id) // id 의존 왜냐면 id is unique and unchangeable.
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return (oldAlarmList[oldItemPosition] == newAlarmList[newItemPosition])
+        }
+
+    }
+//<1> <-------------(내가 작성) RcV Adapter& Classes--
 
 // ## Inner Class ##
-    inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values)
+   /* inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values)
     {
 
         private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder
@@ -210,30 +251,10 @@ class AlarmsListFragment : Fragment() {
 
         // ** Row 의 앨범아트 path 가 비어있을 때. )
             // Update: '21.12.14=> 앱 Install 후 생성되는 두개의 알람은 모두 SQL 에서 자동으로 각각 defrt1-2 rta/art 경로를 저장한다! (label: InstallAlarm)
-            /**
+            *//**//**//**//**//**//**//**//**
              * A) 현재 설정되어있는 알람의 '음원'이 문제 있는지 확인 (mainly .rta 나 .art 파일이 폰에 없을때) - art 는 없으면 rta 에서 자동으로 추출되어서 art.isNull.. 은 일어날 확률이 없겠찌?
              * B) 정상적인 Install 후 SQL 이 잘 진행되었다면 여기를 거쳐가서는 안된다!**
-             */
-
-           /* // .art (RT커버) 파일이 없거나  or .rta 파일 재생 불가일때(즉 파일이 디스크에 없을때) =>
-            if(artPathFromAlarmValue.isNullOrEmpty()||isRtUnplayable) {
-                Log.d(TAG, "getView: (1-No Art or Rta File Found) artPathFromAlarmValue=$artPathFromAlarmValue, \nalarm.id=${alarm.id}, alarm.alarmtone.persistedString=${alarm.alarmtone.persistedString}")
-                val currentRtaArtPathList = mySharedPrefManager.getRtOnThePhoneList()
-                if(currentRtaArtPathList.size>0) { // 리스트에 rta 가 1개 이상 있으면
-                        try{
-                            //Log.d(TAG, "getView: .size >0 불렸구나. currentRtaArtPathList=$currentRtaArtPathList")
-                            val defRta1 = currentRtaArtPathList.single { rtOnThePhone -> rtOnThePhone.fileNameWithExt == "defrt01.rta" } // **todo: Safety Check 실제로 뻑남.
-
-                            val rtaPath: String? = defRta1.audioFilePath // 음원 경로
-                            val artPath: String? = defRta1.artFilePathStr // art 경로
-                            artPathFromAlarmValue = artPath // 이것도 다시 지정 -> Glide 가 잘 로딩되야함!
-                            Log.d(TAG, "getView: .size >0 불렸구나. rtaPath=$rtaPath, artPath=$artPath, defRta1= $defRta1")
-                        }catch (e: Exception) {
-                            Toast.makeText(requireContext(), "Unable to load default ringtones.",Toast.LENGTH_SHORT).show()
-                            Log.d(TAG, "getView: Unable to load default ringtones. Error=$e")
-                        }
-                 }
-            }*/
+             *//**//**//**//**//**//**//**//*
             Log.d(TAG, "getView: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
 
             context?.let {
@@ -368,8 +389,7 @@ class AlarmsListFragment : Fragment() {
             }
         }
         return true
-    }
-
+    }*/
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
     //추가1) ->
         Log.d(TAG, "(Line213)onCreateView: jj-created")
@@ -378,39 +398,41 @@ class AlarmsListFragment : Fragment() {
         logger.debug { "onCreateView $this" }
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
-        val listView = view.findViewById(R.id.list_fragment_list) as ListView
+        val recyclerV = view.findViewById(R.id.list_fragment_list) as RecyclerView // listView -> recyclerV 로 변경함.
+        val layoutManager: LinearLayoutManager = LinearLayoutManager(context)
 
 
     //추가2) <-- DiskSearcher
 
     // ListView -->
-        listView.adapter = mAdapter
 
-        listView.isVerticalScrollBarEnabled = false
-        listView.setOnCreateContextMenuListener(this)
-        listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
-      /*  listView.setOnItemClickListener(object: AdapterView.OnItemClickListener{
-            override fun onItemClick(parent: AdapterView<*>?,view: View?,position: Int,id: Long) {}})*/
+        recyclerV.adapter = mAdapter
+        recyclerV.setHasFixedSize(true)
+        recyclerV.layoutManager = layoutManager
+        recyclerV.isVerticalScrollBarEnabled = false
+        recyclerV.setOnCreateContextMenuListener(this)
+        //listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+
 
     // listView.setOnItemClickListener(object: Adapt.....ClickListener{ override...xx} 이것과 같음.
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, position, _ ->
+        /*listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, position, _ ->
             mAdapter.getItem(position)?.id?.let {
                 Log.d(TAG, "onCreateView: Detail 들어가는 IV click listener: alarmId=$it, view.tag= ${view.tag}")
                 uiStore.edit(it, view.tag as RowHolder) // it = AlarmId 임!
             }
-        }
+        }*/
 
     // ListView <--
-        registerForContextMenu(listView)
+        registerForContextMenu(recyclerV)
 
         setHasOptionsMenu(true)
 
         val fab: View = view.findViewById(R.id.fab)
         fab.setOnClickListener { uiStore.createNewAlarm() }
 
-        lollipop {
+       /* lollipop {
             (fab as FloatingActionButton).attachToListView(listView)
-        }
+        }*/
 
         alarmsSub =
                 prefs.listRowLayout
@@ -422,9 +444,10 @@ class AlarmsListFragment : Fragment() {
                             val sorted = alarms
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())
-                                    //.sortedWith(Comparators.RepeatComparator())
-                            mAdapter.clear()
-                            mAdapter.addAll(sorted)
+
+//                            mAdapter.clear()
+//                            mAdapter.addAll(sorted) // sorted = List<AlarmValue>
+                            mAdapter.refreshAlarmList(sorted)
                         }
 
         return view

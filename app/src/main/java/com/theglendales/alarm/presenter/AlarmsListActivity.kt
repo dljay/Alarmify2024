@@ -55,12 +55,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708g (ToolBar 테스트)
-// Achievements
-//1) Settings 메뉴는 오직 ListFrag 일때만 보이게. DetailsFrag , RtPickerActivity 등에서는 <- 버튼만 보이게끔.. (O)
-//2) SettingsActivity 에도 toolbar 적용+ 뒤로가기(<-) 보임 (O)
+// 30708K (ListView -> RcView 로 전환중)
+// AlarmsListFrag.kt
+//일단 뜨는것 완료!!!(O)
 
 //Todos:
+//0) Alarm.id 제대로 넣기 최우선!!
+
+// 이전 todos:
 //1) a) Overflow Icon 안보이게하고 + b) 설정(톱니바퀴) ICON(버튼) + c) 뒤로가기(<-) 는 문제없이 잘보이게.
 //2) Transparent 하게. / RtPickerActivity 에도 적용.
 //3) 설정 Page 에 About.. 등 기존 Burger 에 있던 Menu 쓸것만 몇개 넣기.

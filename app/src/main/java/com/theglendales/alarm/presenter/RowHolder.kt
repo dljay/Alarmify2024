@@ -2,6 +2,7 @@ package com.theglendales.alarm.presenter
 
 import android.view.View
 import android.widget.*
+import androidx.recyclerview.widget.RecyclerView
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
 import com.theglendales.alarm.view.DigitalClock
@@ -9,15 +10,13 @@ import com.theglendales.alarm.view.DigitalClock
 /**
  * Created by Yuriy on 05.08.2017.
  */
-class RowHolder(view: View, id: Int, val layout: Layout) {
+class RowHolder(view: View, id: Int, val layout: Layout) : RecyclerView.ViewHolder(view) {
     val digitalClock: DigitalClock
     val digitalClockContainer: View
     val rowView: View = view
     val onOff: CompoundButton
     val container: View
     val alarmId: Int = id
-    //val daysOfWeek: TextView
-    //val label: TextView
     val detailsButton: View
     val idHasChanged: Boolean
 // 내가 추가->
@@ -38,8 +37,6 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         digitalClockContainer = find(R.id.list_row_digital_clock_container)
         onOff = find(R.id.list_row_on_off_switch) as CompoundButton
         container = find(R.id.list_row_on_off_checkbox_container)
-        //daysOfWeek = find(R.id.list_row_daysOfWeek) as TextView
-         //label = find(R.id.list_row_label) as TextView
         detailsButton = find(R.id.details_button_container) // ' ... ' 이렇게 생긴 놈. -> 지금은 album art 로 대체되어 있음.
         val prev: RowHolder? = rowView.tag as RowHolder?
         idHasChanged = prev?.alarmId != id
@@ -61,9 +58,6 @@ class RowHolder(view: View, id: Int, val layout: Layout) {
         tvFri = find(R.id._tvFri) as TextView
         tvSat = find(R.id._tvSat) as TextView
     // 내가 추가<-
-        
-
-
         // 입력받는 id 를 활용해서 해당 알람이 설정해놓은 Album Art 이미지 찾기.
     }
 

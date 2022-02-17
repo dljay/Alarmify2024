@@ -10,13 +10,13 @@ import com.theglendales.alarm.view.DigitalClock
 /**
  * Created by Yuriy on 05.08.2017.
  */
-class RowHolder(view: View, id: Int, val layout: Layout) : RecyclerView.ViewHolder(view) {
+class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : RecyclerView.ViewHolder(view) {
     val digitalClock: DigitalClock
     val digitalClockContainer: View
     val rowView: View = view
     val onOff: CompoundButton
     val container: View
-    val alarmId: Int = id
+    val alarmId: Int = alarmIdReceived
     val detailsButton: View
     val idHasChanged: Boolean
 // 내가 추가->
@@ -39,7 +39,7 @@ class RowHolder(view: View, id: Int, val layout: Layout) : RecyclerView.ViewHold
         container = find(R.id.list_row_on_off_checkbox_container)
         detailsButton = find(R.id.details_button_container) // ' ... ' 이렇게 생긴 놈. -> 지금은 album art 로 대체되어 있음.
         val prev: RowHolder? = rowView.tag as RowHolder?
-        idHasChanged = prev?.alarmId != id
+        idHasChanged = prev?.alarmId != alarmIdReceived
         rowView.tag = this
 
     // 내가 추가->
@@ -62,4 +62,8 @@ class RowHolder(view: View, id: Int, val layout: Layout) : RecyclerView.ViewHold
     }
 
     private fun find(id: Int): View = rowView.findViewById(id)
+
+    fun fillInEmptyVHolder(emptyRowHolder: RowHolder) {
+
+    }
 }

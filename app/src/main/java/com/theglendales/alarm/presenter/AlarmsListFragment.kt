@@ -3,6 +3,7 @@ package com.theglendales.alarm.presenter
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -18,6 +19,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.amulyakhare.textdrawable.TextDrawable
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
@@ -26,13 +32,15 @@ import com.theglendales.alarm.configuration.Store
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
-import com.theglendales.alarm.jjadapters.RcViewAdapter
+import com.theglendales.alarm.jjadapters.GlideApp
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.checkIfRtIsUnplayable
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
 import com.theglendales.alarm.jjongadd.TimePickerJjong
+import com.theglendales.alarm.model.Alarmtone
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.disposables.Disposables
@@ -156,18 +164,128 @@ class AlarmsListFragment : Fragment() {
     }
 //<1> (내가 작성) RcV Adapter --------------->
     inner class AlarmListRcvAdapter(alarmTime: Int,label: Int,private var alarmValuesList: List<AlarmValue>) : RecyclerView.Adapter<RowHolder>() {
+
         override fun onCreateViewHolder(parent: ViewGroup,viewType: Int): RowHolder {
+            // <1> 여기서 RowHolder 를 담을 View 를 기제작된 xml 을 통해 제공
             val view = LayoutInflater.from(parent.context).inflate(listRowLayoutId, parent, false) // 선택 상황에 따라 -> R.layout.list_row_classic or else..
 
-            return RowHolder(view,0,prefs.layout()) //todo: 알람 id 문제 + inflate 다른걸로.
-        }
+            // <2> RowHolder() Instance 생성: 위에서 받은 View 에 원래 딸려있는 button, textView 등을 findViewById() 로 찾아주고 -> 그것을 RowHolder 형태로 onBindViewHolder() 에 제공.
+            val rowHolder = RowHolder(view,0,prefs.layout()) // 기존에 Yuriv 가 작성해놓은 코드가 RowHolder 제작시 alarmId 를 넣게되어있음. (ListView 사용했을 때는 가능했지)
+            // 하지만 우리는 ListView 를 RcView 로 교체를 했고 여기서는 position 정보가 없어서 alarmId 를 알 수 없으니 그냥 '0' 으로 제공.
+            // 중요한것은 ViewHolder 인터페이스를 승계한 RowHolder instance를 onBindViewHolder 에 넘긴다는 것. 추후 onBindViewHolder 에서 position 통해 alarmId 찾아서 채워줄 예정.
+            rowHolder.apply { digitalClock.setLive(false) } // .setLive 는 현재 시간을 보여줌! 우리는
 
-        override fun onBindViewHolder(holder: RowHolder, position: Int) {
+            return rowHolder
+
+        }
+        // <3> 제공받은 ViewHolder 의 UI(button, textView 등)들은 모두 findViewById() 가 끝났으니, 이제 여기서 내용을 채워줌!
+        override fun onBindViewHolder(rowHolder: RowHolder, position: Int) {
             val alarm = alarmValuesList[position]
             val alarmId = alarm.id
-            //val prev: RowHolder? = holder.rowView.tag as RowHolder?
-            //val idHasChanged = prev?.alarmId != id
-            Log.d(TAG, "onBindViewHolder: alarmId = $alarmId")
+
+        /**
+         * 위에서 받은 Position 별 알람의 정보로 각 Alarm 의 실 내용물 채워주기
+         */
+        //a) 알람 on/off 여부
+            rowHolder.onOff.isChecked = alarm.isEnabled
+        //b) set the alarm text
+            val c = Calendar.getInstance()
+            c.set(Calendar.HOUR_OF_DAY, alarm.hour)
+            c.set(Calendar.MINUTE, alarm.minutes)
+            rowHolder.digitalClock.updateTime(c)
+        //c-1) Row 의 AlbumArt 에 쓰일 아트 Path 읽고
+            var artPathFromAlarmValue: String? = alarm.artFilePath // +++
+            val alarmtoneList: List<Alarmtone> = listOf<Alarmtone>(alarm.alarmtone) // 사실 alarmtone 한개인데 checkIfRtIsMissing 이 List<Alarmtone> 을 받게끔 디자인되어있어서.
+        //c-2) Glide 로 이미지 보여주기->
+            context?.let {
+                GlideApp.with(it).load(artPathFromAlarmValue).circleCrop() //
+                    .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                    .placeholder(R.drawable.placeholder).listener(object :
+                        RequestListener<Drawable> {
+                        override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
+                            Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
+                            return false
+                        }
+                        override fun onResourceReady(resource: Drawable?,model: Any?,target: Target<Drawable>?,dataSource: DataSource?,isFirstResource: Boolean): Boolean {
+                            Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                            return false
+                        }
+
+                    }).into(rowHolder.albumArt)
+            }
+
+        // d) 현재 설정되어있는 알람의 '재생'이 문제 있는지 확인 (mainly .rta 나 .art 파일이 폰에 없을때) - art 는 없으면 rta 에서 자동으로 추출되어서 art.isNull.. 은 일어날 확률이 없겠찌?
+            // 정상적인 Install 후 SQL 이 잘 진행되었다면 여기를 거쳐가서는 안된다!**
+            // Update: '21.12.14=> 앱 Install 후 생성되는 두개의 알람은 모두 SQL 에서 자동으로 각각 defrt1-2 rta/art 경로를 저장한다! (label: InstallAlarm)
+            val isRtUnplayable = checkIfRtIsUnplayable(requireActivity(),alarmtoneList)
+            if(isRtUnplayable) {
+                artPathFromAlarmValue = null // 위에서 지정한 .art 경로를 null 로 없애줌. 왜냐면 RTA 파일이 없는데  커버사진(ART) 보여준들 무슨 의미 있나. 헷가리기만할뿐. [!] 표시됨! (Error Image)
+            }
+            Log.d(TAG, "onBindViewHolder: alarm.id = ${alarm.id}, isRtUnplayable=$isRtUnplayable")
+
+        // e) Delete add, skip animation
+            if (rowHolder.idHasChanged) {rowHolder.onOff.jumpDrawablesToCurrentState()}
+
+            rowHolder.container
+                //onOff
+                .setOnClickListener {
+                    val enable = !alarm.isEnabled
+                    logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
+                    alarms.enable(alarm, enable)
+                }
+
+            Log.d(TAG, "onBindViewHolder: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
+        // f)  시간 누르거나 or AlbumArt 눌렀을 떄 ->
+            // Option A-1) 만약 ListFrag 에서 시간 눌렀을 때 => 바로 Details Frag 로 가고 싶다면 아래를 넣으면 된다!
+            rowHolder.digitalClockContainer.setOnClickListener {
+                val id = mAdapter.getItem(position)?.id
+                //Log.d(TAG, "getView: clicked ++CLOCK CONTAINER++. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
+                uiStore.edit(alarm.id, it.tag as RowHolder)
+            }
+
+            // Option A-2) AlbumArt 쪽 클릭햇을 때 위와 동일!!하게 DetailsFrag 로 감!
+            rowHolder.albumArtContainer.setOnClickListener {
+                val id = mAdapter.getItem(position)?.id
+                //Log.d(TAG, "getView: clicked **ALBUM ART CONTAINER**. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
+                uiStore.edit(alarm.id, it.tag as RowHolder)
+            }
+        // g) Swipe 했을 때 imgBtn 과 DELETE (textView) 담고 있는 LinearLayout
+            rowHolder.swipeDeleteContainer.setOnClickListener {
+                val currentAlarm = mAdapter.getItem(position)
+                alarms.delete(currentAlarm)
+                Log.d(TAG, "onBindViewHolder: [DELETING ALARM] currentAlarm=$currentAlarm, position=$position")
+
+            }
+        // h) 흐음. 이건 쓸모 없는듯 (우리는 Layout 선택 못하게 할것이니..)
+            val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
+
+        // i)  내가 추가:: 요일 표시--> (단순화 버전)
+            //todo: Dark Mode 관련..
+            val daysOfWeekStr = alarm.daysOfWeek.toString() // 설정된 요일 ex) _tw___s (화/목/일 알람 repeat 설정된 상태)
+            for(i in daysOfWeekStr.indices) {
+                if(daysOfWeekStr[i] == '_') { // 알파벳 없는 빈칸이면
+                    // do nothing
+                }  else { // 알파벳이 있으면
+                    when(i) {
+
+                        0 ->{rowHolder.tvMon.text=""
+                            rowHolder.tvMon.background=yesAlarmMon}
+                        1 ->{rowHolder.tvTue.text=""
+                            rowHolder.tvTue.background=yesAlarmTue}
+                        2 ->{rowHolder.tvWed.text=""
+                            rowHolder.tvWed.background=yesAlarmWed}
+                        3 ->{rowHolder.tvThu.text=""
+                            rowHolder.tvThu.background=yesAlarmThu}
+                        4 ->{rowHolder.tvFri.text=""
+                            rowHolder.tvFri.background=yesAlarmFri}
+                        5 ->{rowHolder.tvSat.text=""
+                            rowHolder.tvSat.background=yesAlarmSat}
+                        6-> {rowHolder.tvSun.text=""
+                            rowHolder.tvSun.background=yesAlarmSun}
+                    }
+                }
+            } // 요일추가 for loop 여기까지
+
         }
         override fun getItemCount(): Int {
             return alarmValuesList.size
@@ -190,17 +308,13 @@ class AlarmsListFragment : Fragment() {
     }
     class AlarmDiffUtilCallback(var oldAlarmList: List<AlarmValue>, var newAlarmList: List<AlarmValue>) : DiffUtil.Callback() {
         override fun getOldListSize(): Int = oldAlarmList.size
-
         override fun getNewListSize(): Int = newAlarmList.size
-
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return (oldAlarmList[oldItemPosition].id == newAlarmList[newItemPosition].id) // id 의존 왜냐면 id is unique and unchangeable.
         }
-
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return (oldAlarmList[oldItemPosition] == newAlarmList[newItemPosition])
         }
-
     }
 //<1> <-------------(내가 작성) RcV Adapter& Classes--
 

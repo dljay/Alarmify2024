@@ -55,12 +55,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708K (ListView -> RcView 로 전환중)
+// 30708R (ListView -> RcView 로 전환 완료)
 // AlarmsListFrag.kt
 //일단 뜨는것 완료!!!(O)
+// RcView 로 잘된다!! 이제 테스트 해보기!!
 
 //Todos:
-//0) Alarm.id 제대로 넣기 최우선!!
 
 // 이전 todos:
 //1) a) Overflow Icon 안보이게하고 + b) 설정(톱니바퀴) ICON(버튼) + c) 뒤로가기(<-) 는 문제없이 잘보이게.

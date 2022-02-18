@@ -37,6 +37,7 @@ import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.jjmvvm.util.checkIfRtIsUnplayable
 import com.theglendales.alarm.jjongadd.LottieDiskScanDialogFrag
 import com.theglendales.alarm.jjongadd.TimePickerJjong
@@ -76,6 +77,7 @@ class AlarmsListFragment : Fragment() {
     private var timePickerDialogDisposable = Disposables.disposed()
 
 // 내가 추가-->
+    private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
     //lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
     lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
     //lateinit var myPermHandler: MyPermissionHandler
@@ -221,7 +223,7 @@ class AlarmsListFragment : Fragment() {
             if(isRtUnplayable) {
                 artPathFromAlarmValue = null // 위에서 지정한 .art 경로를 null 로 없애줌. 왜냐면 RTA 파일이 없는데  커버사진(ART) 보여준들 무슨 의미 있나. 헷가리기만할뿐. [!] 표시됨! (Error Image)
             }
-            Log.d(TAG, "onBindViewHolder: alarm.id = ${alarm.id}, isRtUnplayable=$isRtUnplayable")
+            Log.d(TAG, "onBindViewHolder: alarm= $alarm, position=$position,  isRtUnplayable=$isRtUnplayable")
 
         // e) Delete add, skip animation
             if (rowHolder.idHasChanged) {rowHolder.onOff.jumpDrawablesToCurrentState()}
@@ -234,7 +236,7 @@ class AlarmsListFragment : Fragment() {
                     alarms.enable(alarm, enable)
                 }
 
-            Log.d(TAG, "onBindViewHolder: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
+            //Log.d(TAG, "onBindViewHolder: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
         // f)  시간 누르거나 or AlbumArt 눌렀을 떄 ->
             // Option A-1) 만약 ListFrag 에서 시간 눌렀을 때 => 바로 Details Frag 로 가고 싶다면 아래를 넣으면 된다!
             rowHolder.digitalClockContainer.setOnClickListener {
@@ -303,7 +305,13 @@ class AlarmsListFragment : Fragment() {
         }
 
         fun getItem(pos: Int): AlarmValue {
-            return alarmValuesList[pos]
+            return if(pos >= alarmValuesList.size) { //todo: 이거 절대 일어나서는 안되는 에러. 한번 발생한적이 있으므로 유심히 관찰한 후 User 에게 toast 안 뜨게 그냥 지울 것.
+                toastMessenger.showMyToast("[**DEADLY ERROR**] Unable to fetch Alarm(getItem(). Returning list[0].\n Pos=$pos, AlarmValueList.size=${alarmValuesList.size}",isShort = false)
+                alarmValuesList[0]
+            } else {
+                alarmValuesList[pos]
+            }
+
         }
     }
     class AlarmDiffUtilCallback(var oldAlarmList: List<AlarmValue>, var newAlarmList: List<AlarmValue>) : DiffUtil.Callback() {

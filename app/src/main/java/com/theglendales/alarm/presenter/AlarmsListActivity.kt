@@ -55,10 +55,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708R (ListView -> RcView 로 전환 완료)
+// 30708R2 (ListView -> RcView 로 전환 완료)
 // AlarmsListFrag.kt
 //일단 뜨는것 완료!!!(O)
 // RcView 로 잘된다!! 이제 테스트 해보기!!
+// issues) 다음 두 error 가 재구현이 안된다.
+// 1> 분명 Create Alarm 했을 때 Time Picker 에서 고른 시간이 Spinner Time Picker 에 반영 안된걸 봤음.
+// 2> 분명 Swipe Delete 했을 때 ListFrag> RcVAdapter> getItem() 에서 indexOutOfRangeException 뜬것 봤음.
 
 //Todos:
 

@@ -56,16 +56,17 @@ import java.util.Calendar
 
 
 // 30708S3 (Coordinator Layout 으로 변경증. )
-// AlarmsList Activity 에 Coordinator Layout 넣었음. YES!! Very NICE!!
-// ToolBar 를 기존 설정대로 쓰기위해선 Activity 에 넣는것이 최고.. 고민의 여지가 없지.
-
+// AlarmListActivity 에 Coordinator Layout 넣었음 -> 잘된다!! - RcV 스크롤해서 Appbar 사이즈 줄어드는 것 확인했음(O)
+//
 //
 
 // Todos :
-// 기존 Toolbar 가려주고 -> 여기에 있던 내용을 새로 만든 toolbar 로 옮기기 + make it transparent
-// xx 시간 후 알람 울림 표시를 title 로?
-// 이전 todos:
-//1) a) Overflow Icon 안보이게하고 + b) 설정(톱니바퀴) ICON(버튼) + c) 뒤로가기(<-) 는 문제없이 잘보이게.
+// xx 시간 후 알람 울림 표시(현재 안 보이네.. 몇개 지워야 뜨나?) 를 title 로?
+// Fab 버튼 스크롤 내려야 보임.
+// Details Frag, SecondFrag 에서는 무조건 겹쳐주기.
+// ToolBar 꾸미기 (메뉴 없애고 등..)
+// RcV 마지막 Slot 이 BtmNav Panel 에 가려짐.
+
 //2) Transparent 하게. / RtPickerActivity 에도 적용.
 //3) 설정 Page 에 About.. 등 기존 Burger 에 있던 Menu 쓸것만 몇개 넣기.
 //4) DARK THEME / 적용 안되게 바꾸기.

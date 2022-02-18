@@ -55,8 +55,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S2 (Coordinator Layout 으로 변경증. )
-// AlarmsList Activity 에 Coordinator Layout 넣었음.
+// 30708S3 (Coordinator Layout 으로 변경증. )
+// AlarmsList Activity 에 Coordinator Layout 넣었음. YES!! Very NICE!!
 // ToolBar 를 기존 설정대로 쓰기위해선 Activity 에 넣는것이 최고.. 고민의 여지가 없지.
 
 //
@@ -267,7 +267,7 @@ class AlarmsListActivity : AppCompatActivity() {
             myPermHandler.permissionToWriteOnInitialLaunch() //
         }
 
-        toolBar = findViewById(R.id.id_toolbar) // 기존 toolBar
+        toolBar = findViewById(R.id.id_toolbar_Collapsable) // 기존 toolBar
         setSupportActionBar(toolBar)
 
     } // onCreate() 여기까지.

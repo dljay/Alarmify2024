@@ -41,6 +41,8 @@
                 android:id="@+id/id_toolbar_Collapsable"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                app:title="DKDKDKDK"
+                app:titleTextColor="@color/mat_red"
                 app:layout_collapseMode="pin">
 
             </androidx.appcompat.widget.Toolbar>
@@ -57,23 +59,12 @@
         tools:context=".presenter.AlarmsListActivity"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/id_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:minHeight="?attr/actionBarSize"
-            app:title="DKDKDKDK"
-            app:titleTextColor="@color/mat_red"/>
-
         <FrameLayout
             android:id="@+id/main_fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/list_fragment"
             android:layout_weight="9"/>
-
-
 
     </LinearLayout>
 

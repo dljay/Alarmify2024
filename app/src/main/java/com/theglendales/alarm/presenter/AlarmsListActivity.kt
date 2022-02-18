@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.appbar.AppBarLayout
 import com.theglendales.alarm.configuration.EditedAlarm
 import com.theglendales.alarm.configuration.Store
 import com.theglendales.alarm.configuration.globalGet
@@ -88,6 +89,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private val myPermHandler = MyPermissionHandler(this)
     private val exoForUrl: ExoForUrl by globalInject() // 여기 적혀있지만 init 은 실제 사용되는 SecondFrag 가 열릴 때  자동으로 이뤄짐.
     private lateinit var toolBar: Toolbar
+    private lateinit var appBarLayout: AppBarLayout
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -224,13 +226,11 @@ class AlarmsListActivity : AppCompatActivity() {
             //     uiStore.edit(intent.getIntExtra(Intents.EXTRA_ID, -1))
             // }
         }
-
         this.mActionBarHandler = ActionBarHandler(this, uiStore, alarms, globalGet())
-
 
         val isTablet = !resources.getBoolean(R.bool.isTablet)
         if (isTablet) {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT //todo: 종맨 Table Orientation check.
         }
 
         setContentView(R.layout.list_activity)
@@ -270,6 +270,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
         toolBar = findViewById(R.id.id_toolbar_Collapsable) // 기존 toolBar
         setSupportActionBar(toolBar)
+        appBarLayout = findViewById(R.id.id_appBarLayout) // 늘였다 줄였다 관장하는 App Bar Layout
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
@@ -385,7 +386,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
                 })
     }
 
-// 알람 리스트를 보여주는 !! fragment 전환!! 중요!!
+// 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
     private fun showList(@NonNull edited: EditedAlarm) {
     //추가->
     Log.d(TAG, "(Line281)showList: jj-called")
@@ -413,6 +414,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
 
     }
     fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
+        appBarLayout.setExpanded(false,true) // ToolBar 포함된 넓은 부분 Collapse 시키기!
         replace(R.id.main_fragment_container, secondFragReceived)
         commit() //todo: CommittAllowingStateLoss?
         Log.d(TAG, "showSecondFrag: ..... ")
@@ -420,6 +422,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
     }
 
     private fun showDetails(@NonNull edited: EditedAlarm) {
+        appBarLayout.setExpanded(false,true) // ToolBar 포함된 넓은 부분 Collapse 시키기!
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 

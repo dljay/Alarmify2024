@@ -75,6 +75,7 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
         sub = store.editing().subscribe { edited ->
             Log.d(TAG, "onCreateOptionsMenu: jj-inside sub=store.editing().subscribe{}. 'edited'=${edited.toString()}")
             //val showDeleteIcon = edited.isEdited && !edited.isNew //Boolean
+
             when(edited.isEdited && !edited.isNew) {
                 true -> { //Details Frag 일 때
                     //a) 휴지통 ICON 보여주기 (O)

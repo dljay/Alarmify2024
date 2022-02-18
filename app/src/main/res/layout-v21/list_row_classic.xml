@@ -68,7 +68,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        app:cardBackgroundColor="@color/mat_dark_grey_purple_overlay_original"
+        app:cardBackgroundColor="@color/jj_background_SkyBlue_1"
         app:cardElevation="5dp"
         app:cardCornerRadius="8dp"
         android:visibility="visible">

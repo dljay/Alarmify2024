@@ -8,12 +8,10 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import android.view.ContextMenu
+import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView.AdapterContextMenuInfo
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -68,8 +66,8 @@ class AlarmsListFragment : Fragment() {
     private val logger: Logger by globalLogger("AlarmsListFragment")
 
     //private val mAdapter: AlarmListAdapter by lazy { AlarmListAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList()) }
-    // Rcv 로 교체 시도
-    private val mAdapter: AlarmListRcvAdapter by lazy { AlarmListRcvAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList()) }
+
+    private val mAdapter: AlarmListRcvAdapter by lazy { AlarmListRcvAdapter(R.layout.list_row_classic, R.string.alarm_list_title, ArrayList()) } // Rcv 로 교체 했음!!
     private val inflater: LayoutInflater by lazy { requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater }
 
     private var alarmsSub: Disposable = Disposables.disposed()
@@ -225,12 +223,10 @@ class AlarmsListFragment : Fragment() {
             }
             Log.d(TAG, "onBindViewHolder: alarm= $alarm, position=$position,  isRtUnplayable=$isRtUnplayable")
 
-        // e) Delete add, skip animation
+        // e-1) Delete add, skip animation
             if (rowHolder.idHasChanged) {rowHolder.onOff.jumpDrawablesToCurrentState()}
-
-            rowHolder.container
-                //onOff
-                .setOnClickListener {
+        //e-2) onOff
+            rowHolder.container.setOnClickListener {
                     val enable = !alarm.isEnabled
                     logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
                     alarms.enable(alarm, enable)
@@ -326,192 +322,6 @@ class AlarmsListFragment : Fragment() {
     }
 //<1> <-------------(내가 작성) RcV Adapter& Classes--
 
-// ## Inner Class ##
-   /* inner class AlarmListAdapter(alarmTime: Int, label: Int, private val values: List<AlarmValue>) : ArrayAdapter<AlarmValue>(requireContext(), alarmTime, label, values)
-    {
-
-        private fun recycleView(convertView: View?, parent: ViewGroup, id: Int): RowHolder
-        {
-            val tag = convertView?.tag
-
-
-            return when {
-                tag is RowHolder && tag.layout == listRowLayout -> RowHolder(convertView, id, listRowLayout)
-                else -> {
-                    val rowView = inflater.inflate(listRowLayoutId, parent, false)
-                    RowHolder(rowView, id, listRowLayout).apply {
-                        digitalClock.setLive(false)
-                    }
-                }
-            }
-        }
-
-
-
-        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            // get the alarm which we have to display
-
-            val alarm = values[position]
-            val rowHolder = recycleView(convertView, parent, alarm.id)
-
-            rowHolder.onOff.isChecked = alarm.isEnabled
-
-            lollipop {
-                rowHolder.digitalClock.transitionName = "clock" + alarm.id
-                rowHolder.container.transitionName = "onOff" + alarm.id
-                rowHolder.detailsButton.transitionName = "detailsButton" + alarm.id
-            }
-        // 추가-> READ: Row 의 a) AlbumArt 에 쓰일 아트 Path 읽고 b)Glide 로 이미지 보여주기->
-            var artPathFromAlarmValue: String? = alarm.artFilePath // +++
-            val alarmtoneList: List<Alarmtone> = listOf<Alarmtone>(alarm.alarmtone) // 사실 alarmtone 한개인데 checkIfRtIsMissing 이 List<Alarmtone> 을 받게끔 디자인되어있어서.
-
-            val isRtUnplayable = checkIfRtIsUnplayable(requireActivity(),alarmtoneList)
-            if(isRtUnplayable) {
-                artPathFromAlarmValue = null // 위에서 지정한 .art 경로를 null 로 없애줌. 왜냐면 RTA 파일이 없는데  커버사진(ART) 보여준들 무슨 의미 있나. 헷가리기만할뿐.
-            }
-            Log.d(TAG, "getView: alarm.id = ${alarm.id}, isRtUnplayable=$isRtUnplayable")
-
-        // ** Row 의 앨범아트 path 가 비어있을 때. )
-            // Update: '21.12.14=> 앱 Install 후 생성되는 두개의 알람은 모두 SQL 에서 자동으로 각각 defrt1-2 rta/art 경로를 저장한다! (label: InstallAlarm)
-            *//**//**//**//**//**//**//**//**
-             * A) 현재 설정되어있는 알람의 '음원'이 문제 있는지 확인 (mainly .rta 나 .art 파일이 폰에 없을때) - art 는 없으면 rta 에서 자동으로 추출되어서 art.isNull.. 은 일어날 확률이 없겠찌?
-             * B) 정상적인 Install 후 SQL 이 잘 진행되었다면 여기를 거쳐가서는 안된다!**
-             *//**//**//**//**//**//**//**//*
-            Log.d(TAG, "getView: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
-
-            context?.let {
-                GlideApp.with(it).load(artPathFromAlarmValue).circleCrop() //
-                    .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-                    .placeholder(R.drawable.placeholder).listener(object :
-                        RequestListener<Drawable> {
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                            Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
-                            return false
-                        }
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                             Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
-                            return false
-                        }
-                    }).into(rowHolder.albumArt)
-            }
-        //<-추가
-
-            //Delete add, skip animation
-            if (rowHolder.idHasChanged) {
-                rowHolder.onOff.jumpDrawablesToCurrentState()
-            }
-
-            rowHolder.container
-                    //onOff
-                    .setOnClickListener {
-                        val enable = !alarm.isEnabled
-                        logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
-                        alarms.enable(alarm, enable)
-                    }
-//      // Option A-1) 만약 ListFrag 에서 시간 눌렀을 때 => 바로 Details Frag 로 가고 싶다면 아래를 넣으면 된다!
-            rowHolder.digitalClockContainer.setOnClickListener {
-                val id = mAdapter.getItem(position)?.id
-                //Log.d(TAG, "getView: clicked ++CLOCK CONTAINER++. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
-                uiStore.edit(alarm.id, it.tag as RowHolder)
-            }
-
-        // Option A-2) AlbumArt 쪽 클릭햇을 때 위와 동일!!하게 DetailsFrag 로 감!
-            rowHolder.albumArtContainer.setOnClickListener {
-                val id = mAdapter.getItem(position)?.id
-                //Log.d(TAG, "getView: clicked **ALBUM ART CONTAINER**. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
-                uiStore.edit(alarm.id, it.tag as RowHolder)
-            }
-        // swipe 했을 때 imgBtn 과 DELETE (textView) 담고 있는 LinearLayout
-
-            rowHolder.swipeDeleteContainer.setOnClickListener {
-                val currentAlarm = mAdapter.getItem(position)
-                if(currentAlarm!=null) {
-                    alarms.delete(currentAlarm)
-                    Log.d(TAG, "getView: [DELETING ALARM] currentAlarm=$currentAlarm, position=$position")
-
-                } else {
-                    Log.d(TAG, "getView: Failed to DELETE ALARM! currentAlarm=$currentAlarm, position=$position")
-                }
-
-            }
-            // set the alarm text
-            val c = Calendar.getInstance()
-            c.set(Calendar.HOUR_OF_DAY, alarm.hour)
-            c.set(Calendar.MINUTE, alarm.minutes)
-            rowHolder.digitalClock.updateTime(c)
-
-            val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
-            // Set the repeat text or leave it blank if it does not repeat.
-        // 내가 추가:: 요일 표시--> (단순화 버전)
-            //todo: Dark Mode 관련..
-            val daysOfWeekStr = alarm.daysOfWeek.toString() // 설정된 요일 ex) _tw___s (화/목/일 알람 repeat 설정된 상태)
-            for(i in daysOfWeekStr.indices) {
-                if(daysOfWeekStr[i] == '_') { // 알파벳 없는 빈칸이면
-                    // do nothing
-                }  else { // 알파벳이 있으면
-                    when(i) {
-
-                        0 ->{rowHolder.tvMon.text=""
-                            rowHolder.tvMon.background=yesAlarmMon}
-                        1 ->{rowHolder.tvTue.text=""
-                            rowHolder.tvTue.background=yesAlarmTue}
-                        2 ->{rowHolder.tvWed.text=""
-                            rowHolder.tvWed.background=yesAlarmWed}
-                        3 ->{rowHolder.tvThu.text=""
-                            rowHolder.tvThu.background=yesAlarmThu}
-                        4 ->{rowHolder.tvFri.text=""
-                            rowHolder.tvFri.background=yesAlarmFri}
-                        5 ->{rowHolder.tvSat.text=""
-                            rowHolder.tvSat.background=yesAlarmSat}
-                        6-> {rowHolder.tvSun.text=""
-                            rowHolder.tvSun.background=yesAlarmSun}
-                    }
-                }
-            }
-
-            return rowHolder.rowView
-        }
-    }
-// InnerClass <--
-
-    //LongClick related.. i think..
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        val info = item.menuInfo as AdapterContextMenuInfo
-        val alarm = mAdapter.getItem(info.position) ?: return false
-        when (item.itemId) {
-            R.id.delete_alarm -> {
-                // Confirm that the alarm will be deleted.
-                AlertDialog.Builder(activity).setTitle(getString(R.string.delete_alarm))
-                        .setMessage(getString(R.string.delete_alarm_confirm))
-                        .setPositiveButton(android.R.string.ok) { _, _ -> alarms.delete(alarm) }.setNegativeButton(android.R.string.cancel, null).show()
-            }
-            R.id.list_context_enable -> {
-                alarms.getAlarm(alarmId = alarm.id)?.run {
-                    edit {
-                        copy(isEnabled = true)
-                    }
-                }
-            }
-            R.id.list_context_menu_disable -> {
-                alarms.getAlarm(alarmId = alarm.id)?.run {
-                    edit {
-                        copy(isEnabled = false)
-                    }
-                }
-            }
-            R.id.skip_alarm -> {
-                alarms.getAlarm(alarmId = alarm.id)?.run {
-                    if (isSkipping()) {
-                        // removes the skip
-                        edit { this }
-                    } else {
-                        requestSkip()
-                    }
-                }
-            }
-        }
-        return true
-    }*/
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
     //추가1) ->
         Log.d(TAG, "(Line213)onCreateView: jj-created")

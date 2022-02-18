@@ -55,7 +55,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708R2 (ListView -> RcView 로 전환 완료)
+// 30708R2 (ListView -> RcView 로 전환 완료/Coordinator Layout 으로 변경전. )
 // AlarmsListFrag.kt
 //일단 뜨는것 완료!!!(O)
 // RcView 로 잘된다!! 이제 테스트 해보기!!
@@ -64,7 +64,7 @@ import java.util.Calendar
 // 2> 분명 Swipe Delete 했을 때 ListFrag> RcVAdapter> getItem() 에서 indexOutOfRangeException 뜬것 봤음.
 
 //Todos:
-
+//
 // 이전 todos:
 //1) a) Overflow Icon 안보이게하고 + b) 설정(톱니바퀴) ICON(버튼) + c) 뒤로가기(<-) 는 문제없이 잘보이게.
 //2) Transparent 하게. / RtPickerActivity 에도 적용.

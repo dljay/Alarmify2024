@@ -39,9 +39,12 @@ import io.reactivex.functions.Consumer;
 
 public class InfoFragment extends Fragment implements ViewFactory {
     private static final String TAG="*InfoFragment*";
-
     private static final String DM12 = "E h:mm aa";
     private static final String DM24 = "E kk:mm";
+
+    // -->
+
+    // <--
 
     private TextSwitcher textView;
     private TextSwitcher remainingTime;

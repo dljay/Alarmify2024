@@ -56,13 +56,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S3 (Coordinator Layout 으로 변경증. )
+// 30708S4 (Coordinator Layout 으로 변경증. )
 // AlarmListActivity 에 Coordinator Layout 넣었음 -> 잘된다!! - RcV 스크롤해서 Appbar 사이즈 줄어드는 것 확인했음(O)
-//
+// Remaining Hr/Min 표시 (InfoFragment.java) -> Alarm List Activity 로 이동. -> Collapsed 됐을 떄 가려주기.
 //
 
 // Todos :
-// xx 시간 후 알람 울림 표시(현재 안 보이네.. 몇개 지워야 뜨나?) 를 title 로?
+//
 // Fab 버튼 스크롤 내려야 보임.
 // Details Frag, SecondFrag 에서는 무조건 겹쳐주기.
 // ToolBar 꾸미기 (메뉴 없애고 등..)
@@ -389,6 +389,7 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
 // 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
     private fun showList(@NonNull edited: EditedAlarm) {
     //추가->
+    appBarLayout.setExpanded(true,true) // ToolBar 포함된 넓은 부분 Expand 시키기!
     Log.d(TAG, "(Line281)showList: jj-called")
     //<-추가
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)

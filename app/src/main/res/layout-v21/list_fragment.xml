@@ -54,22 +54,7 @@
         android:background="#00000000"
         android:elevation="1dp">
 
-        <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:layout_alignParentBottom="true"
-            android:background="?android:attr/colorBackground"
-            android:elevation="25dp">
 
-            <fragment
-                android:id="@+id/list_activity_info_fragment"
-                android:name="com.theglendales.alarm.presenter.InfoFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#00000000"
-                tools:layout="@layout/info_fragment"/>
-        </FrameLayout>
 
         <com.melnykov.fab.FloatingActionButton
             android:id="@+id/fab"

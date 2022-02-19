@@ -345,18 +345,8 @@ class AlarmsListFragment : Fragment() {
         recyclerV.setOnCreateContextMenuListener(this)
         //listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
 
-
-    // listView.setOnItemClickListener(object: Adapt.....ClickListener{ override...xx} 이것과 같음.
-        /*listView.onItemClickListener = AdapterView.OnItemClickListener { _, view, position, _ ->
-            mAdapter.getItem(position)?.id?.let {
-                Log.d(TAG, "onCreateView: Detail 들어가는 IV click listener: alarmId=$it, view.tag= ${view.tag}")
-                uiStore.edit(it, view.tag as RowHolder) // it = AlarmId 임!
-            }
-        }*/
-
     // ListView <--
         registerForContextMenu(recyclerV)
-
         setHasOptionsMenu(true)
 
         val fab: View = view.findViewById(R.id.fab)
@@ -366,8 +356,7 @@ class AlarmsListFragment : Fragment() {
             (fab as FloatingActionButton).attachToListView(listView)
         }*/
 
-        alarmsSub =
-                prefs.listRowLayout
+        alarmsSub = prefs.listRowLayout
                         .observe()
                         .switchMap { uiStore.transitioningToNewAlarmDetails() }
                         .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }

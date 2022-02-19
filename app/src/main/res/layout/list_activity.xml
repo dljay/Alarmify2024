@@ -38,15 +38,36 @@
             app:expandedTitleMarginStart="64dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
+            <!-- 실제 ToolBar-->
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/id_toolbar_Collapsable"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title="DKDKDKDK"
+
                 app:titleTextColor="@color/mat_red"
                 app:layout_collapseMode="pin">
-
             </androidx.appcompat.widget.Toolbar>
+
+            <FrameLayout
+                android:id="@+id/frameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:background="@color/transparent"
+                android:elevation="25dp">
+
+                <!-- XX 시간 후 울립니다 뜨는 창-->
+                <fragment
+                    android:id="@+id/list_activity_info_fragment"
+                    android:name="com.theglendales.alarm.presenter.InfoFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:layout_gravity="bottom"
+                    android:background="#00000000"
+                    tools:layout="@layout/info_fragment"/>
+            </FrameLayout>
+
+
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

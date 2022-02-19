@@ -49,7 +49,7 @@
             </androidx.appcompat.widget.Toolbar>
 
             <FrameLayout
-                android:id="@+id/frameLayout"
+                android:id="@+id/alarmTimeReminder"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentBottom="true"
@@ -68,10 +68,24 @@
             </FrameLayout>
 
 
-
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <com.melnykov.fab.FloatingActionButton
+        android:id="@+id/fab_listActivity"
+        app:fab_colorNormal="?android:attr/colorActivatedHighlight"
+        app:fab_colorPressed="?android:attr/colorActivatedHighlight"
+        android:backgroundTint="?android:attr/colorActivatedHighlight"
+        android:backgroundTintMode="src_atop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="28dp"
+        android:elevation="175dp"
+        android:src="@drawable/ic_menu_add" />
 
     <LinearLayout
         android:layout_width="match_parent"

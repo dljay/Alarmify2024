@@ -17,6 +17,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.FrameLayout
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -36,6 +37,7 @@ import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.*
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
@@ -56,10 +58,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S4 (Coordinator Layout 으로 변경증. )
-// AlarmListActivity 에 Coordinator Layout 넣었음 -> 잘된다!! - RcV 스크롤해서 Appbar 사이즈 줄어드는 것 확인했음(O)
-// Remaining Hr/Min 표시 (InfoFragment.java) -> Alarm List Activity 로 이동. -> Collapsed 됐을 떄 가려주기.
-//
+// 30708S6 (Coordinator Layout 으로 변경증. )
+//Issues
+//-- ** ㅅㅂ ERRROR!! SWIPE DELETE 펼친 후 클릭 눌렀을 때 밑에 알람 삭제되는 현상.. ** -- > Skip 관련된듯?????
+//-- Why DetailsFrag 나 ListFrag 올 때 Logd 난리 터지나... 수십번...logd...
 
 // Todos :
 //
@@ -86,10 +88,13 @@ class AlarmsListActivity : AppCompatActivity() {
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
     private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
+    private val fab by lazy { findViewById<FloatingActionButton>(R.id.fab_listActivity) }
     private val myPermHandler = MyPermissionHandler(this)
     private val exoForUrl: ExoForUrl by globalInject() // 여기 적혀있지만 init 은 실제 사용되는 SecondFrag 가 열릴 때  자동으로 이뤄짐.
+    // AppBarLayout & ToolBar 관련
     private lateinit var toolBar: Toolbar
     private lateinit var appBarLayout: AppBarLayout
+    private lateinit var alarmTimeReminder: FrameLayout
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -271,6 +276,34 @@ class AlarmsListActivity : AppCompatActivity() {
         toolBar = findViewById(R.id.id_toolbar_Collapsable) // 기존 toolBar
         setSupportActionBar(toolBar)
         appBarLayout = findViewById(R.id.id_appBarLayout) // 늘였다 줄였다 관장하는 App Bar Layout
+        alarmTimeReminder = findViewById(R.id.alarmTimeReminder) //FrameLayout
+
+    // AppBaR Expand/Collapse Listener. AppBar 가 (72% 이상) 접혔을 때 'xHrxMn 후 울립니다' 표기하는 View 를 없애줌.
+        appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+        //todo: 실제 기기별로 totalScrollRange 가 다를것임. 실 기기에서 Double Check. (Ex. 에뮬레이터 8 FOLDABLE 로 했을 때 totalScrollRange = 357)
+            // totalScrollRange = 전체 스크롤 가능 범위 Ex) 갤 S20 에서 totalScrollRange = 378, verticalOffset: 완전 확장시 (=0), 완전 Collapsed = -378 // 기기마다 값은 다를것으로 예상됨.
+            val percentClosed = (kotlin.math.abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange.toFloat() * 100).toInt()
+            //Log.d(TAG, "onCreate: verticalOffset=$verticalOffset, totalScrollRange = ${appBarLayout.totalScrollRange}, percentClosed=$percentClosed")
+
+            when(percentClosed) {
+                in 0..72 -> { // xx 시간 후 울립니다 표시(O) // 0 -> 72 이하.
+                    if(alarmTimeReminder.visibility == View.GONE) {
+                        //Log.d(TAG, "onCreate: alarmTimeReminder: Gone -> Visible 로 만들기!")
+                        alarmTimeReminder.visibility = View.VISIBLE
+                    }
+                }
+                in 73..100 -> { // xx 시간 후 울립니다 표시(X) // (73 이상 100 이하)
+                    // 이미 View 가 Hide 되어있으면 return
+                    if(alarmTimeReminder.visibility == View.VISIBLE) {
+                        //Log.d(TAG, "onCreate: alarmTimeReminder: Visible-> Gone 으로 만들기!")
+                        alarmTimeReminder.visibility = View.GONE
+                    }
+                } //
+            }
+        })
+
+    // Fab_listActivity 22_02_19 FAB 버튼: v21\list_fragment.xml 과 AlarmslistFragment.kt 에 있는 놈 없애고 -> 여기에 심음. 일단 잘되서 둔다!
+        fab.setOnClickListener { uiStore.createNewAlarm() }
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
@@ -278,10 +311,10 @@ class AlarmsListActivity : AppCompatActivity() {
 
 
 
-override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
-    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    myPermHandler.onRequestPermissionsResult(requestCode,permissions, grantResults) //MyPermissionHanlder.kt> onReqPerResult() 로 넘어감.
-    }
+    override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        myPermHandler.onRequestPermissionsResult(requestCode,permissions, grantResults) //MyPermissionHanlder.kt> onReqPerResult() 로 넘어감.
+        }
 // <--추가 1-B)
 
 
@@ -389,8 +422,9 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
 // 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
     private fun showList(@NonNull edited: EditedAlarm) {
     //추가->
-    appBarLayout.setExpanded(true,true) // ToolBar 포함된 넓은 부분 Expand 시키기!
     Log.d(TAG, "(Line281)showList: jj-called")
+    appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
+
     //<-추가
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
@@ -410,20 +444,29 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
                 }
         }
 
-    //내가 추가-> btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
+    //내가 추가->
+        // a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
     btmNavView.visibility =View.VISIBLE
+        // b) Fab 버튼 다시 보이게 하기.
+    if(fab.visibility == View.GONE) { // B) 다른 Frag 갔다와서 Fab 이 안 보인다면 보여줄것!
+        fab.visibility = View.VISIBLE
+    }
 
     }
     fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
-        appBarLayout.setExpanded(false,true) // ToolBar 포함된 넓은 부분 Collapse 시키기!
+        appBarLayout.setExpanded(false,true) // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
+
         replace(R.id.main_fragment_container, secondFragReceived)
         commit() //todo: CommittAllowingStateLoss?
+        if(fab.visibility == View.VISIBLE) { // B) Fab 버튼이 보인다면 없애줄것!
+            fab.visibility = View.GONE
+        }
         Log.d(TAG, "showSecondFrag: ..... ")
 
     }
 
     private fun showDetails(@NonNull edited: EditedAlarm) {
-        appBarLayout.setExpanded(false,true) // ToolBar 포함된 넓은 부분 Collapse 시키기!
+        appBarLayout.setExpanded(false,true) // A)ToolBar 포함된 넓은 부분 Collapse 시키기!
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
@@ -438,7 +481,10 @@ override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out 
         }
         // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
         btmNavView.visibility =View.GONE
-        //
+        if(fab.visibility == View.VISIBLE) { // B) Fab 버튼이 보인다면 없애줄것!
+            fab.visibility = View.GONE
+        }
+
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

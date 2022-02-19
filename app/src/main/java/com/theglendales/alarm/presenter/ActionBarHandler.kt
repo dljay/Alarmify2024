@@ -49,6 +49,7 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
         Log.d(TAG, "onCreateOptionsMenu: jj-called")
         inflater.inflate(R.menu.menu_action_bar, menu)
 
+
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
 
@@ -118,7 +119,7 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
     fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_item_settings -> mContext.startActivity(Intent(mContext, SettingsActivity::class.java))
-            R.id.menu_review -> showSayThanks()
+            R.id.menu_review -> showSayThanks() // store.createNewAlarm() <- 이걸로 해도 알람 잘 생성되는듯.
             R.id.menu_bugreport -> showBugreport()
             R.id.set_alarm_menu_delete_alarm -> deleteAlarm()
             R.id.menu_about -> showAbout()

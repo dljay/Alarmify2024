@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.AdapterView.AdapterContextMenuInfo
-import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +22,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
+import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
 import com.theglendales.alarm.configuration.Prefs
@@ -348,9 +348,10 @@ class AlarmsListFragment : Fragment() {
     // ListView <--
         registerForContextMenu(recyclerV)
         setHasOptionsMenu(true)
+    // 기존 Fab 코드 (Fragment 에 있을 때)
+        /*val fab: View = view.findViewById(R.id.fab)
+        fab.setOnClickListener { uiStore.createNewAlarm() }*/ // 22_02_19: 여기와 list_fragment.xml 에 있는 R.id.fab 버튼 없애고 AlarmsListActivity.XML 에 FAB 심음.
 
-        val fab: View = view.findViewById(R.id.fab)
-        fab.setOnClickListener { uiStore.createNewAlarm() }
 
        /* lollipop {
             (fab as FloatingActionButton).attachToListView(listView)
@@ -382,11 +383,18 @@ class AlarmsListFragment : Fragment() {
         backSub = uiStore.onBackPressed().subscribe {
             Log.d(TAG, "(Line267) onResume: jj-backsub=uiStore.xxx.. requireActivity()")
             requireActivity().finish() }
+
         listRowLayout = prefs.layout()
         listRowLayoutId = when (listRowLayout) {
             Layout.COMPACT -> R.layout.list_row_compact
             Layout.CLASSIC -> R.layout.list_row_classic
             else -> R.layout.list_row_bold
+        }
+
+        // ListActivity 로 Fab 버튼을 옮긴 후 코드 (Fragment View 생성과 동시에 ListActivity 에 있는 Fab 을 찾아서 보여줌)
+        val fabInListActivity = requireActivity().findViewById<FloatingActionButton>(R.id.fab_listActivity)
+        if(fabInListActivity!=null && fabInListActivity.visibility == View.GONE) {
+            fabInListActivity.visibility = View.VISIBLE
         }
     }
 
@@ -401,7 +409,16 @@ class AlarmsListFragment : Fragment() {
     override fun onDestroy() {
         Log.d(TAG, "(Line286)onDestroy: ,,,")
         super.onDestroy()
+    //ListFrag 가 Destroy 될 때가 비로소 SecondFrag , DetailsFrag 준비가 완료되는 시점과 비슷함. 따라서 Fab 버튼을 먼저 없애주지 않고 해당 시점에 없애주기 위해 넣을려했으나
+    // 되려 Listfrag 에서 SecondFrag 버튼 클릭과 동시에 FAB 는 없어지는게 자연스러운것 같아서 일단 Comment Out 시킴.
+//        val fabInListActivity = requireActivity().findViewById<FloatingActionButton>(R.id.fab_listActivity)
+//        if(fabInListActivity!=null && fabInListActivity.visibility == View.VISIBLE) {
+//            fabInListActivity.visibility = View.GONE
+//        }
+
         alarmsSub.dispose()
+
+
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenuInfo?) {

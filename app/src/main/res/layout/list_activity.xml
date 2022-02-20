@@ -111,7 +111,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@color/mat_dark_grey_purple_overlay_original"
+        android:background="@drawable/roundstyle1_withcolor"
         app:itemTextColor="@color/bottom_nav_color"
         app:itemIconTint="@color/bottom_nav_color"
         android:layout_gravity="bottom"

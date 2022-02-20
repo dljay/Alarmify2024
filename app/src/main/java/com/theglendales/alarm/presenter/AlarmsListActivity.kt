@@ -18,10 +18,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
+import androidx.appcompat.app.ActionBarDrawerToggle
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
 import com.theglendales.alarm.configuration.EditedAlarm
@@ -37,6 +39,7 @@ import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 import com.melnykov.fab.FloatingActionButton
 import com.theglendales.alarm.*
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
@@ -58,10 +61,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S11 (Tool Bar - Hamburger MEnu / Drawer 넣기 전)
+// 30708S11a (Tool Bar - Drawer-Navigation View/ Burger Menu ICON 안 보이는 상태.)
+
 // Achievements:
 
 // Issues:
+// 추후 btm_Nav_View 와 호환 문제 없는지 check.
 
 // Todos :
 // ToolBar 꾸미기 (메뉴 없애고 등..)
@@ -90,6 +95,11 @@ class AlarmsListActivity : AppCompatActivity() {
     private lateinit var toolBar: Toolbar
     private lateinit var appBarLayout: AppBarLayout
     private lateinit var alarmTimeReminder: FrameLayout
+    // Drawer Layout (Navigation View) 왼쪽에서 튀어나오는 메뉴 관련
+    private lateinit var toggleDrawer: ActionBarDrawerToggle
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var drawerNavView: NavigationView
+
     //내가 추가<-
 
     // lazy because it seems that AlarmsListActivity.<init> can be called before Application.onCreate()
@@ -268,10 +278,24 @@ class AlarmsListActivity : AppCompatActivity() {
             myPermHandler.permissionToWriteOnInitialLaunch() //
         }
 
-        toolBar = findViewById(R.id.id_toolbar_Collapsable) // 기존 toolBar
+    // Toolbar & appbarLayout
+        toolBar = findViewById(R.id.id_toolbar_Collapsable) // Collapsible toolBar
         setSupportActionBar(toolBar)
         appBarLayout = findViewById(R.id.id_appBarLayout) // 늘였다 줄였다 관장하는 App Bar Layout
         alarmTimeReminder = findViewById(R.id.alarmTimeReminder) //FrameLayout
+
+        supportActionBar?.setDisplayHomeAsUpEnabled(true) // 이거 하면 ToolBar 에 백버튼(<-) + Overflow ICON (... 세로) 다 뜬다!
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burgermenu_dehaze_1)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+
+    // Drawer Layout (navigation view)
+        drawerLayout = findViewById(R.id.id_drawerLayout) //String Resource= 시각 장애인 위함.
+        drawerNavView = findViewById(R.id.id_nav_view)
+        toggleDrawer = ActionBarDrawerToggle(this, drawerLayout,toolBar,R.string.openNavBlind, R.string.closeNavBlind)// Drawer (Navigaton View)열리는 Toggle
+        drawerLayout.addDrawerListener(toggleDrawer)
+        toggleDrawer.syncState() // 그냥 이제 사용준비 되었다는 의미라네.
+
+
 
     // AppBaR Expand/Collapse Listener. AppBar 가 (72% 이상) 접혔을 때 'xHrxMn 후 울립니다' 표기하는 View 를 없애줌.
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -383,14 +407,18 @@ class AlarmsListActivity : AppCompatActivity() {
         Log.d(TAG, "onCreateOptionsMenu: called")
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 이거 하면 ToolBar 에 백버튼(<-) + Overflow ICON (... 세로) 다 뜬다!
-        supportActionBar?.setDisplayShowHomeEnabled(true)// ActionBar -> ToolBar 로 바꾸고 새로 추가한 Line
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burger_dehaze_2)
         supportActionBar?.setDisplayShowTitleEnabled(true)
         return supportActionBar?.let {mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, it) } // 기존에는 it 으로 ActionBar 를 보냈지만 지금은 toolBar 를 전달.
                 ?: false
     }
 
+    // ToolBar 메뉴(About/Purchase History/Donate.. 등) 선택에 따른 Listener
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return mActionBarHandler.onOptionsItemSelected(item)
+       /* if(toggleActionBarDrawer.onOptionsItemSelected(item)) {
+            return true // user 가 toggle 을 click 했으면 -> true 를 보냄.
+        }*/
     }
 // onBackPressed no.2
     override fun onBackPressed() {

@@ -163,6 +163,10 @@
     <!-- 내가 심은. jj- PlayStore 에러 typically 로긴 안된 상태 일 때 -->
     <string name="ps_error_alert">In order to view our ringtone list, you need to be signed in to <b>GOOGLE PLAY STORE</b>.</string>
 
+    <!-- 내가 심은. jj- Navigatoin Drawer 시각 장애인용 Strings -->
+    <string name="openNavBlind">Open</string>
+    <string name="closeNavBlind">Close</string>
+
     <string name="menu_about_title">About</string>
     <string name="dialog_about_content">Simple Alarm Clock is an open source project which brings pure alarm experience to you by combining essential features and clean interface.
 

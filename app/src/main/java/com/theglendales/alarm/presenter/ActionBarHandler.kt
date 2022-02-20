@@ -45,10 +45,10 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
      * @return
      */
 
+    // 액티비티가 시작할 때 한번만 호출되는 함수로 Menu 와 같은 초기 설정 작업이 이뤄지는 함수.
     fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater, toolBarAsActionBar: ActionBar): Boolean {
         Log.d(TAG, "onCreateOptionsMenu: jj-called")
         inflater.inflate(R.menu.menu_action_bar, menu)
-
 
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"

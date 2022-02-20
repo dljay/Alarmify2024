@@ -102,8 +102,6 @@
             tools:layout="@layout/list_fragment"
             android:layout_weight="9"/>
 
-
-
     </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

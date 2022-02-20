@@ -58,10 +58,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S7 (Coordinator Layout 으로 변경증. )
+// 30708S10 2/20(Sun) (BtmNav -- 밑에서 안 보이는것. RcV 내려야만 보임. LinearLayout 밖에 두느냐 안에 두느냐..)
 // Acheivements:
 // -- SWIPE DELETE 펼친 후 클릭 눌렀을 때 밑에 알람 삭제되는 현상 -> holder 삭제 순간의 pos 확인해주는것으로 해결.(O)
 // Issues:
+// (BtmNav -- 밑에서 안 보이는것. RcV 내려야만 보임. LinearLayout 밖에 두느냐 안에 두느냐..)
 // Todos :
 //
 // Fab 버튼 스크롤 내려야 보임.
@@ -447,7 +448,7 @@ class AlarmsListActivity : AppCompatActivity() {
         // a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
     btmNavView.visibility =View.VISIBLE
         // b) Fab 버튼 다시 보이게 하기.
-    if(fab.visibility == View.GONE) { // B) 다른 Frag 갔다와서 Fab 이 안 보인다면 보여줄것!
+    if(fab.visibility == View.GONE) { // B) 다른 Frag 갔다와서 Fab 이 안 보인다면 보여줄것! -- ListFrag 에서 Resume() 과 Destroyed() 에서 requiredActivity.findView..() 에서 해줄수도 있지만 그냥 이렇게.
         fab.visibility = View.VISIBLE
     }
 

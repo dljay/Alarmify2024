@@ -251,7 +251,7 @@ class AlarmsListFragment : Fragment() {
             rowHolder.swipeDeleteContainer.setOnClickListener {
                 //val currentAlarm = mAdapter.getItem(position) // 이전에는 getItem(position) 였는데 -> 삭제시 기존 Position 을 승계해서 밑에줄 아이템이 지워지는 문제
                 val currentAlarm = mAdapter.getItem(rowHolder.adapterPosition) //  => 삭제 순간의 Pos 을 반영한 getAdapterPosition() 으로 변경!
-                alarms.delete(currentAlarm)
+                alarms.delete(currentAlarm) // 문제는 이게 되기전에 아래 sub 에서 한번 refresh 하고. 삭제되면 또 refresh 한다. 두번..
                 
                 Log.d(TAG, "onBindViewHolder: [DELETING ALARM] currentAlarm=$currentAlarm, position=$position")
 
@@ -369,8 +369,6 @@ class AlarmsListFragment : Fragment() {
                             val sorted = alarms
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())
-
-
                             mAdapter.refreshAlarmList(sorted)
                             //mAdapter.notifyDataSetChanged() // 이거 넣으면 훨씬 빠르지만 일단은 안 쓰는것으로..
                         }

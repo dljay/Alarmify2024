@@ -58,8 +58,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S11 2/20(Sun) (BtmNav -- 밑에서 안 보이는것. RcV 내려야만 보임. LinearLayout 밖에 두느냐 안에 두느냐..)
-// Acheivements:
+// 30708S11
+// Achievements:
 
 // Issues:
 

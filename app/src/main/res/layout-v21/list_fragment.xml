@@ -27,6 +27,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Padding Bottom 으로 ListActivity.xml 에 있는 BtmNav 와 안 겹치에 했는데 -->
+        <!-- 뭔가 어설픔. 추후 다시 확인. -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_fragment_list"
             android:layout_width="match_parent"
@@ -38,6 +40,7 @@
             android:divider="#B1B1B1"
             android:dividerHeight="10dp"
 
+            android:paddingBottom="65dp"
             tools:layout="@layout/list_fragment"
             tools:listitem="@layout/list_row_classic"/>
 

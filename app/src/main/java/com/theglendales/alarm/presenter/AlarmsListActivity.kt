@@ -58,18 +58,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S10 2/20(Sun) (BtmNav -- 밑에서 안 보이는것. RcV 내려야만 보임. LinearLayout 밖에 두느냐 안에 두느냐..)
+// 30708S11 2/20(Sun) (BtmNav -- 밑에서 안 보이는것. RcV 내려야만 보임. LinearLayout 밖에 두느냐 안에 두느냐..)
 // Acheivements:
-// -- SWIPE DELETE 펼친 후 클릭 눌렀을 때 밑에 알람 삭제되는 현상 -> holder 삭제 순간의 pos 확인해주는것으로 해결.(O)
-// Issues:
-// (BtmNav -- 밑에서 안 보이는것. RcV 내려야만 보임. LinearLayout 밖에 두느냐 안에 두느냐..)
-// Todos :
-//
-// Fab 버튼 스크롤 내려야 보임.
-// Details Frag, SecondFrag 에서는 무조건 겹쳐주기.
-// ToolBar 꾸미기 (메뉴 없애고 등..)
-// RcV 마지막 Slot 이 BtmNav Panel 에 가려짐.
 
+// Issues:
+
+// Todos :
+// ToolBar 꾸미기 (메뉴 없애고 등..)
 //2) Transparent 하게. / RtPickerActivity 에도 적용.
 //3) 설정 Page 에 About.. 등 기존 Burger 에 있던 Menu 쓸것만 몇개 넣기.
 //4) DARK THEME / 적용 안되게 바꾸기.

@@ -58,11 +58,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S6 (Coordinator Layout 으로 변경증. )
-//Issues
-//-- ** ㅅㅂ ERRROR!! SWIPE DELETE 펼친 후 클릭 눌렀을 때 밑에 알람 삭제되는 현상.. ** -- > Skip 관련된듯?????
-//-- Why DetailsFrag 나 ListFrag 올 때 Logd 난리 터지나... 수십번...logd...
-
+// 30708S7 (Coordinator Layout 으로 변경증. )
+// Acheivements:
+// -- SWIPE DELETE 펼친 후 클릭 눌렀을 때 밑에 알람 삭제되는 현상 -> holder 삭제 순간의 pos 확인해주는것으로 해결.(O)
+// Issues:
 // Todos :
 //
 // Fab 버튼 스크롤 내려야 보임.

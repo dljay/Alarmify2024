@@ -69,11 +69,8 @@ data class AlarmValue(
     }
 
     override fun toString(): String {
-        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // \nalertSoundUri= ${alertSoundUri}, \nalarmtone=${alarmtone.toString()}, \nartFilePath=$artFilePath \nlabel=$label")
-
-        // 여기서
-//        val listFromSharedPref = mySharedPrefManager.getRtOneThePhoneList()
-//        rtaPath = listFromSharedPref[randomNumber].audioFilePath
+//        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes // \nalertSoundUri= ${alertSoundUri}, \nalarmtone=${alarmtone.toString()}, \nartFilePath=$artFilePath \nlabel=$label")
+        Log.d(TAG, "toString: called. id=$id hour=$hour minutes=$minutes")
 
         val box = if (isEnabled) "[x]" else "[ ]"
         return "$id $box $hour:$minutes $daysOfWeek $label"

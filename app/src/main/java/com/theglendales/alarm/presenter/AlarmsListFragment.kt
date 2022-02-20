@@ -249,8 +249,10 @@ class AlarmsListFragment : Fragment() {
             }
         // g) Swipe 했을 때 imgBtn 과 DELETE (textView) 담고 있는 LinearLayout
             rowHolder.swipeDeleteContainer.setOnClickListener {
-                val currentAlarm = mAdapter.getItem(position)
+                //val currentAlarm = mAdapter.getItem(position) // 이전에는 getItem(position) 였는데 -> 삭제시 기존 Position 을 승계해서 밑에줄 아이템이 지워지는 문제
+                val currentAlarm = mAdapter.getItem(rowHolder.adapterPosition) //  => 삭제 순간의 Pos 을 반영한 getAdapterPosition() 으로 변경!
                 alarms.delete(currentAlarm)
+                
                 Log.d(TAG, "onBindViewHolder: [DELETING ALARM] currentAlarm=$currentAlarm, position=$position")
 
             }
@@ -292,11 +294,11 @@ class AlarmsListFragment : Fragment() {
         fun refreshAlarmList(newAlarmList: List<AlarmValue>) {
 
             val oldAlarmList = alarmValuesList
-            Log.d(TAG, "refreshAlarmList: oldAlarmList=$oldAlarmList, newAlarmList = $newAlarmList")
+            Log.d(TAG, "refreshAlarmList: oldAlarmList=$oldAlarmList,\nnewAlarmList = $newAlarmList")
 
             val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(AlarmDiffUtilCallback(oldAlarmList,newAlarmList))
             alarmValuesList = newAlarmList
-            Log.d(TAG, "refreshAlarmList: @@@@@@@@ currentAlarmList.size (AFTER): ${newAlarmList.size}")
+            Log.d(TAG, "refreshAlarmList: @@@@@@@@ AlarmList.size: (OLD)=${oldAlarmList.size}, (NEW): ${newAlarmList.size}")
             diffResult.dispatchUpdatesTo(this)
         }
 
@@ -305,6 +307,7 @@ class AlarmsListFragment : Fragment() {
                 toastMessenger.showMyToast("[**DEADLY ERROR**] Unable to fetch Alarm(getItem(). Returning list[0].\n Pos=$pos, AlarmValueList.size=${alarmValuesList.size}",isShort = false)
                 alarmValuesList[0]
             } else {
+                Log.d(TAG, "getItem: returning alarm at pos[$pos], alarm=${alarmValuesList[pos]}")
                 alarmValuesList[pos]
             }
 
@@ -367,9 +370,9 @@ class AlarmsListFragment : Fragment() {
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())
 
-//                            mAdapter.clear()
-//                            mAdapter.addAll(sorted) // sorted = List<AlarmValue>
+
                             mAdapter.refreshAlarmList(sorted)
+                            //mAdapter.notifyDataSetChanged() // 이거 넣으면 훨씬 빠르지만 일단은 안 쓰는것으로..
                         }
 
         return view

@@ -62,13 +62,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S12 (Drawer- Navigation View(O))
+// 30708S12b (Drawer- Navigation View(O))
 
 // Achievements:
-
+// three dots 가려주기. (onCreateOptions() return false 로 바꿔서 해결.) (O)
 // Issues:
-// Details/SecondFrag Toolbar 가 그냥 빈칸임..
-// three dots 가려주기.
+// App Share 가능하게끔 기존 코드 참조하여 onOptionsItemSelected() 에 작성하기.
 // 추후 btm_Nav_View 와 호환 문제 없는지 check.
 
 // Todos :
@@ -422,11 +421,11 @@ class AlarmsListActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         Log.d(TAG, "onCreateOptionsMenu: called")
-        //supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burger_dehaze_2)*/
-        //supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
-        return supportActionBar?.let {mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, it) } // 기존에는 it 으로 ActionBar 를 보냈지만 지금은 toolBar 를 전달.
-                ?: false
+        return false
+        // 세로 점 세개 (overflow menu) 를 사용하고 싶으면 아래를 활성화 시킬것.
+//        supportActionBar?.setDisplayShowTitleEnabled(false)
+//        return supportActionBar?.let {mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, it) } // 기존에는 it 으로 ActionBar 를 보냈지만 지금은 toolBar 를 전달.
+//                ?: false
     }
 
     // ** NavViewClickListener 사용 후 이건 더 이상 안 들어오는듯..

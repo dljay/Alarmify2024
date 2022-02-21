@@ -33,7 +33,7 @@ import io.reactivex.disposables.Disposables
 private const val TAG="ActionBarHandler"
 
 
-class ActionBarHandler(private val mContext: Activity,private val store: UiStore,private val alarms: IAlarmsManager,private val reporter: BugReporter) {
+class ActionBarHandler(private val mContext: Activity,private val store: UiStore, private val alarms: IAlarmsManager,private val reporter: BugReporter) {
     private var sub = Disposables.disposed()
 
     /**
@@ -45,11 +45,13 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
      * @return
      */
 
-    // 액티비티가 시작할 때 한번만 호출되는 함수로 Menu 와 같은 초기 설정 작업이 이뤄지는 함수.
+    // 세로 점 세 개(overflow option menu) 를 어떤 모양 Frag 시작할 때
     fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater, toolBarAsActionBar: ActionBar): Boolean {
+
         Log.d(TAG, "onCreateOptionsMenu: jj-called")
         inflater.inflate(R.menu.menu_action_bar, menu)
 
+        // APP Share 하기 :  GooglePlay Store 링크를 메일이나 그 외 건으로 발송.
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
 

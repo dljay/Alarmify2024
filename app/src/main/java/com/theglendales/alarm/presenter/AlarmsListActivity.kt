@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.theglendales.alarm.configuration.EditedAlarm
 import com.theglendales.alarm.configuration.Store
 import com.theglendales.alarm.configuration.globalGet
@@ -61,7 +62,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S11b (Tool Bar - Drawer-Navigation View/ Burger Menu ICON 보이는 상태.)
+// 30708S12 (Drawer- Navigation View(O))
 
 // Achievements:
 
@@ -97,6 +98,8 @@ class AlarmsListActivity : AppCompatActivity() {
     private lateinit var toolBar: Toolbar
     private lateinit var appBarLayout: AppBarLayout
     private lateinit var alarmTimeReminder: FrameLayout
+    private lateinit var collapsingTBLayout: CollapsingToolbarLayout
+
     // Drawer Layout (Navigation View) 왼쪽에서 튀어나오는 메뉴 관련
     private lateinit var toggleDrawer: ActionBarDrawerToggle
     private lateinit var drawerLayout: DrawerLayout
@@ -285,6 +288,10 @@ class AlarmsListActivity : AppCompatActivity() {
         setSupportActionBar(toolBar)
         //supportActionBar?.setDisplayShowHomeEnabled(true)
         appBarLayout = findViewById(R.id.id_appBarLayout) // 늘였다 줄였다 관장하는 App Bar Layout
+        collapsingTBLayout = findViewById(R.id.id_collapsingToolBarLayout)
+        collapsingTBLayout.isTitleEnabled = false // 일단 화면에 제목 안 보여주고 시작 -> 추후 AppBarLayout 줄어들면 보여주기.
+
+
 
         // xx 시간 후에 알람이 울립니다
         alarmTimeReminder = findViewById(R.id.alarmTimeReminder) //FrameLayout
@@ -314,6 +321,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     if(alarmTimeReminder.visibility == View.GONE) {
                         //Log.d(TAG, "onCreate: alarmTimeReminder: Gone -> Visible 로 만들기!")
                         alarmTimeReminder.visibility = View.VISIBLE
+                        collapsingTBLayout.isTitleEnabled=false
                     }
                 }
                 in 73..100 -> { // xx 시간 후 울립니다 표시(X) // (73 이상 100 이하)
@@ -322,8 +330,14 @@ class AlarmsListActivity : AppCompatActivity() {
                         //Log.d(TAG, "onCreate: alarmTimeReminder: Visible-> Gone 으로 만들기!")
                         alarmTimeReminder.visibility = View.GONE
                     }
+                    if(percentClosed>90) {
+                        collapsingTBLayout.isTitleEnabled=true
+                    } else if(percentClosed <90) {
+                        collapsingTBLayout.isTitleEnabled=false
+                    }
                 } //
             }
+
         })
 
     // Fab_listActivity 22_02_19 FAB 버튼: v21\list_fragment.xml 과 AlarmslistFragment.kt 에 있는 놈 없애고 -> 여기에 심음. 일단 잘되서 둔다!
@@ -410,7 +424,7 @@ class AlarmsListActivity : AppCompatActivity() {
         Log.d(TAG, "onCreateOptionsMenu: called")
         //supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burger_dehaze_2)*/
         //supportActionBar?.setDisplayShowHomeEnabled(true)
-        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         return supportActionBar?.let {mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, it) } // 기존에는 it 으로 ActionBar 를 보냈지만 지금은 toolBar 를 전달.
                 ?: false
     }
@@ -478,8 +492,9 @@ class AlarmsListActivity : AppCompatActivity() {
         if(fab.visibility == View.GONE) { // B) 다른 Frag 갔다와서 Fab 이 안 보인다면 보여줄것! -- ListFrag 에서 Resume() 과 Destroyed() 에서 requiredActivity.findView..() 에서 해줄수도 있지만 그냥 이렇게.
             fab.visibility = View.VISIBLE
         }
-    // c) ToolBar 가 안보이면 보이게 하기.
-        if(supportActionBar!=null) {supportActionBar?.show()}
+    // C)ToolBar 보여주기(O)
+    if(supportActionBar != null) {supportActionBar?.show()}
+
 
     }
     fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
@@ -492,10 +507,9 @@ class AlarmsListActivity : AppCompatActivity() {
         if(fab.visibility == View.VISIBLE) {
             fab.visibility = View.GONE
         }
-    // C) ToolBar 가 있다면 가려줄것.
-        if(supportActionBar!=null) {
-            supportActionBar?.hide()
-        }
+    // C) ToolBar Hide 시키기
+        if(supportActionBar != null) {supportActionBar?.hide()}
+
         Log.d(TAG, "showSecondFrag: ..... ")
 
     }
@@ -520,11 +534,8 @@ class AlarmsListActivity : AppCompatActivity() {
         if(fab.visibility == View.VISIBLE) { // B) Fab 버튼이 보인다면 없애줄것!
             fab.visibility = View.GONE
         }
-        // ToolBar 가려주기
-        if(supportActionBar!=null) {
-            supportActionBar?.hide()
-        }
-
+        // ToolBar Hide 시키기
+        if(supportActionBar != null) {supportActionBar?.hide()}
 
     }
 

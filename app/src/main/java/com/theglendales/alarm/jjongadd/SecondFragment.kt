@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -161,6 +162,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         rcView = view.findViewById<RecyclerView>(R.id.id_rcV_2ndFrag)
         layoutManager = LinearLayoutManager(context)
         rcView.layoutManager = layoutManager
+        rcView.isNestedScrollingEnabled =false // // !! 중요!! 이걸 설정해놓아야 ListActivity>collapsingToolBarLayout 이 현재 RcV 의 Scroll 에 반응해서 열리거나 Collapse 되지 않는다!
+        // 다음과 같이 설정도 가능 -> ViewCompat.setNestedScrollingEnabled(rcView, false)
+
     //BtmSht_SingleDnld init (싱글톤으로)
         btmSht_SingleDNLDV = BtmShtSingleDNLDV2.newInstance()
 

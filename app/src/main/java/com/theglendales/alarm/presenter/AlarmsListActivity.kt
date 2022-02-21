@@ -18,11 +18,13 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
@@ -512,6 +514,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
         val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
+
         Log.d(TAG, "showSecondFrag: ..... ")
 
     }

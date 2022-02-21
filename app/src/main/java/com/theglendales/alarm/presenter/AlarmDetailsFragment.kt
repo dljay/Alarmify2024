@@ -448,6 +448,8 @@ class AlarmDetailsFragment : Fragment() {
     override fun onResume() {
         Log.d(TAG, "onResume: *here we have backButtonSub")
         super.onResume()
+        // Tool Bar 가려주기
+
         disposables = CompositeDisposable()
 
         disposables.add(editor.distinctUntilChanged().subscribe { editor ->

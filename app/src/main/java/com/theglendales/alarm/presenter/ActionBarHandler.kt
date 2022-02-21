@@ -65,7 +65,6 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
         }
 
         val menuItem = menu.findItem(R.id.menu_share)
-        val settingsIcon = menu.findItem(R.id.menu_item_settings)// 톱니바퀴(설정) 아이콘은 여기서 안보이게. 내가 추가
         val trashIcon = menu.findItem(R.id.set_alarm_menu_delete_alarm) // 내가 추가. 아래에서 trashIcon 대신 menu.findItem(R.id.... _delete_alarm) 넣어놨더니 계속 뻑나서..
         // todo: 뒷맛이 좋지는 않음. 일단 이걸로 모든 요일이 선택되어있는 DetailsFrag 열릴 때 뻑나는건 멈추기는 했음.
 
@@ -78,29 +77,33 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
             //val showDeleteIcon = edited.isEdited && !edited.isNew //Boolean
 
             when(edited.isEdited && !edited.isNew) {
-                true -> { //Details Frag 일 때
-                    //a) 휴지통 ICON 보여주기 (O)
+            //Details Frag 일 때
+                true -> {
+                    //Log.d(TAG, "onCreateOptionsMenu: Details Frag for sure?")
+                    //a) 뒤로가기(<-) 보여주기
+                    //toolBarAsActionBar.setDisplayHomeAsUpEnabled(true)
+                    //b) 휴지통 ICON 보여주기 (O)
                     if(trashIcon!=null) { // nullCheck 내가 넣었음.
                         trashIcon.isVisible = true // 알람 요일설정땜에 여기서 자꾸 뻑남. 근데 이유는 findItem 이 null 값여서.. // 원래코드 = menu.findItem(R.id.... _delete_alarm).isVisible = showDelete
                     }
-                    //b) 설정(톱니바퀴) ICON 가려주기. (X)
-                    if(settingsIcon!=null) {
-                        settingsIcon.isVisible = false
-                    }
+
                 }
-                false -> { // 그 외 AlarmsListActivity 의 다른 Frag 들 일 때 (AlarmsListFrag, SecondFrag)
-                    //a) 휴지통 ICON 없애주기 (X)
+            // AlarmsListFrag, SecondFrag
+                false -> {
+                    //Log.d(TAG, "onCreateOptionsMenu: listFrag or SEcondFrag ")
+                    //a) 버거 메뉴 표시(삼선) & 뒤로가기 없애주기
+                    toolBarAsActionBar.setDisplayHomeAsUpEnabled(false) // <- 뒤로가기 안 보이게 하기.
+                    toolBarAsActionBar.setDisplayShowHomeEnabled(true)
+                    //b) 휴지통 ICON 없애주기 (X)
                     if(trashIcon!=null) {
                         trashIcon.isVisible = false
                     }
-                    //b) 설정(톱니바퀴) ICON 보여주기 (O)
-                    if(settingsIcon!=null) {
-                        settingsIcon.isVisible = true
-                    }
+
 
                 }
             }
-            toolBarAsActionBar.setDisplayHomeAsUpEnabled(edited.isEdited) // <- FAB 클릭 아니고 기존 알람 수정일때.. back button 보여주기 -- toolBar 로 바꾸고 나서는 여기서 .setHomexxx.. 실행 안되네.
+            //toolBarAsActionBar.setDisplayShowTitleEnabled(true) // 무관하게 Title 은 항상 보여줌
+
         }
         return true
     }
@@ -117,6 +120,7 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
      * @return
      */
     fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d(TAG, "onOptionsItemSelected: called. item= $item")
         when (item.itemId) {
             R.id.menu_item_settings -> mContext.startActivity(Intent(mContext, SettingsActivity::class.java))
             R.id.menu_review -> showSayThanks() // store.createNewAlarm() <- 이걸로 해도 알람 잘 생성되는듯.

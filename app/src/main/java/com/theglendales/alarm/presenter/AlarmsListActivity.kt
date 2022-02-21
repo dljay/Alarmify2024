@@ -61,11 +61,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S11a (Tool Bar - Drawer-Navigation View/ Burger Menu ICON 안 보이는 상태.)
+// 30708S11b (Tool Bar - Drawer-Navigation View/ Burger Menu ICON 보이는 상태.)
 
 // Achievements:
 
 // Issues:
+// Details/SecondFrag Toolbar 가 그냥 빈칸임..
+// three dots 가려주기.
 // 추후 btm_Nav_View 와 호환 문제 없는지 check.
 
 // Todos :
@@ -281,12 +283,11 @@ class AlarmsListActivity : AppCompatActivity() {
     // Toolbar & appbarLayout
         toolBar = findViewById(R.id.id_toolbar_Collapsable) // Collapsible toolBar
         setSupportActionBar(toolBar)
+        //supportActionBar?.setDisplayShowHomeEnabled(true)
         appBarLayout = findViewById(R.id.id_appBarLayout) // 늘였다 줄였다 관장하는 App Bar Layout
-        alarmTimeReminder = findViewById(R.id.alarmTimeReminder) //FrameLayout
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true) // 이거 하면 ToolBar 에 백버튼(<-) + Overflow ICON (... 세로) 다 뜬다!
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burgermenu_dehaze_1)
-        supportActionBar?.setDisplayShowTitleEnabled(true)
+        // xx 시간 후에 알람이 울립니다
+        alarmTimeReminder = findViewById(R.id.alarmTimeReminder) //FrameLayout
 
     // Drawer Layout (navigation view)
         drawerLayout = findViewById(R.id.id_drawerLayout) //String Resource= 시각 장애인 위함.
@@ -294,6 +295,10 @@ class AlarmsListActivity : AppCompatActivity() {
         toggleDrawer = ActionBarDrawerToggle(this, drawerLayout,toolBar,R.string.openNavBlind, R.string.closeNavBlind)// Drawer (Navigaton View)열리는 Toggle
         drawerLayout.addDrawerListener(toggleDrawer)
         toggleDrawer.syncState() // 그냥 이제 사용준비 되었다는 의미라네.
+        // Nav Menu 클릭 했을 때 -> ActionBar Handler > onOptionsItemSelected 로 보냄.
+        drawerNavView.setNavigationItemSelectedListener {
+            mActionBarHandler.onOptionsItemSelected(it)
+        }
 
 
 
@@ -326,8 +331,6 @@ class AlarmsListActivity : AppCompatActivity() {
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
-
-
 
 
     override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
@@ -405,20 +408,21 @@ class AlarmsListActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         Log.d(TAG, "onCreateOptionsMenu: called")
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true) // 이거 하면 ToolBar 에 백버튼(<-) + Overflow ICON (... 세로) 다 뜬다!
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burger_dehaze_2)
+        //supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burger_dehaze_2)*/
+        //supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(true)
         return supportActionBar?.let {mActionBarHandler.onCreateOptionsMenu(menu, menuInflater, it) } // 기존에는 it 으로 ActionBar 를 보냈지만 지금은 toolBar 를 전달.
                 ?: false
     }
 
-    // ToolBar 메뉴(About/Purchase History/Donate.. 등) 선택에 따른 Listener
+    // ** NavViewClickListener 사용 후 이건 더 이상 안 들어오는듯..
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return mActionBarHandler.onOptionsItemSelected(item)
-       /* if(toggleActionBarDrawer.onOptionsItemSelected(item)) {
+        Log.d(TAG, "onOptionsItemSelected: called")
+        if(toggleDrawer.onOptionsItemSelected(item)) {
             return true // user 가 toggle 을 click 했으면 -> true 를 보냄.
-        }*/
+        }
+        return mActionBarHandler.onOptionsItemSelected(item)
+
     }
 // onBackPressed no.2
     override fun onBackPressed() {
@@ -468,21 +472,29 @@ class AlarmsListActivity : AppCompatActivity() {
         }
 
     //내가 추가->
-        // a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
-    btmNavView.visibility =View.VISIBLE
-        // b) Fab 버튼 다시 보이게 하기.
-    if(fab.visibility == View.GONE) { // B) 다른 Frag 갔다와서 Fab 이 안 보인다면 보여줄것! -- ListFrag 에서 Resume() 과 Destroyed() 에서 requiredActivity.findView..() 에서 해줄수도 있지만 그냥 이렇게.
-        fab.visibility = View.VISIBLE
-    }
+    // a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
+        btmNavView.visibility =View.VISIBLE
+    // b) Fab 버튼 다시 보이게 하기.
+        if(fab.visibility == View.GONE) { // B) 다른 Frag 갔다와서 Fab 이 안 보인다면 보여줄것! -- ListFrag 에서 Resume() 과 Destroyed() 에서 requiredActivity.findView..() 에서 해줄수도 있지만 그냥 이렇게.
+            fab.visibility = View.VISIBLE
+        }
+    // c) ToolBar 가 안보이면 보이게 하기.
+        if(supportActionBar!=null) {supportActionBar?.show()}
 
     }
     fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
-        appBarLayout.setExpanded(false,true) // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
+    // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
+        appBarLayout.setExpanded(false,true)
 
         replace(R.id.main_fragment_container, secondFragReceived)
         commit() //todo: CommittAllowingStateLoss?
-        if(fab.visibility == View.VISIBLE) { // B) Fab 버튼이 보인다면 없애줄것!
+    // B) Fab 버튼이 보인다면 없애줄것!
+        if(fab.visibility == View.VISIBLE) {
             fab.visibility = View.GONE
+        }
+    // C) ToolBar 가 있다면 가려줄것.
+        if(supportActionBar!=null) {
+            supportActionBar?.hide()
         }
         Log.d(TAG, "showSecondFrag: ..... ")
 
@@ -504,9 +516,15 @@ class AlarmsListActivity : AppCompatActivity() {
         }
         // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
         btmNavView.visibility =View.GONE
+        // Fab 없애주기
         if(fab.visibility == View.VISIBLE) { // B) Fab 버튼이 보인다면 없애줄것!
             fab.visibility = View.GONE
         }
+        // ToolBar 가려주기
+        if(supportActionBar!=null) {
+            supportActionBar?.hide()
+        }
+
 
     }
 

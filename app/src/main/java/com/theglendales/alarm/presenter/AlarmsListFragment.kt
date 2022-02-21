@@ -327,7 +327,7 @@ class AlarmsListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
     //추가1) ->
-        Log.d(TAG, "(Line213)onCreateView: jj-created")
+        Log.d(TAG, "(Line330)onCreateView: jj-created")
     //<-추가1)
 
         logger.debug { "onCreateView $this" }
@@ -376,10 +376,9 @@ class AlarmsListFragment : Fragment() {
         return view
     }
 
-
-
     override fun onResume() {
         Log.d(TAG, "onResume: jj-OnResume() TOP line")
+
         super.onResume()
         backSub = uiStore.onBackPressed().subscribe {
             Log.d(TAG, "(Line267) onResume: jj-backsub=uiStore.xxx.. requireActivity()")
@@ -391,6 +390,7 @@ class AlarmsListFragment : Fragment() {
             Layout.CLASSIC -> R.layout.list_row_classic
             else -> R.layout.list_row_bold
         }
+
 
         // ListActivity 로 Fab 버튼을 옮긴 후 코드 (Fragment View 생성과 동시에 ListActivity 에 있는 Fab 을 찾아서 보여줌)
         val fabInListActivity = requireActivity().findViewById<FloatingActionButton>(R.id.fab_listActivity)

@@ -35,6 +35,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.DataSource
@@ -448,6 +449,8 @@ class AlarmDetailsFragment : Fragment() {
     override fun onResume() {
         Log.d(TAG, "onResume: *here we have backButtonSub")
         super.onResume()
+
+
         // Tool Bar 가려주기
 
         disposables = CompositeDisposable()

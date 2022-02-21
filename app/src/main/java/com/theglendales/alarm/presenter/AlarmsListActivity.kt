@@ -62,13 +62,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S12b (Drawer- Navigation View(O))
+// 30708S12c (Drawer- Navigation View(O))
 
 // Achievements:
-// three dots 가려주기. (onCreateOptions() return false 로 바꿔서 해결.) (O)
+// AppBarLayout 이 a) ListFrag: ActionBar 위치까지만 Collapse & Expand b) DetailsFrag, SecondFrag 에서는 완전히 Collapse (Action Bar 위치도 무시!)
 // Issues:
-// App Share 가능하게끔 기존 코드 참조하여 onOptionsItemSelected() 에 작성하기.
-// 추후 btm_Nav_View 와 호환 문제 없는지 check.
+
+
 
 // Todos :
 // ToolBar 꾸미기 (메뉴 없애고 등..)
@@ -491,12 +491,14 @@ class AlarmsListActivity : AppCompatActivity() {
         if(fab.visibility == View.GONE) { // B) 다른 Frag 갔다와서 Fab 이 안 보인다면 보여줄것! -- ListFrag 에서 Resume() 과 Destroyed() 에서 requiredActivity.findView..() 에서 해줄수도 있지만 그냥 이렇게.
             fab.visibility = View.VISIBLE
         }
-    // C)ToolBar 보여주기(O)
-    if(supportActionBar != null) {supportActionBar?.show()}
-
+    // C) AppBarLayout 설정변경 -> ToolBar 보여주는데까지 Collapse 시키기(O)
+        //if(supportActionBar != null) {supportActionBar?.show()}
+        val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+    // % 참고: Java 에서는 params.setScrollFlags(xxx SCROLL | FLAG_EXIT ... ) 이런식으로 '|' 파이프라인을 쓰는데. 그게 Kotlin 에서는 or 임. bitwise INT... 흐음.
 
     }
-    fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
+    private fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
     // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
         appBarLayout.setExpanded(false,true)
 
@@ -506,9 +508,10 @@ class AlarmsListActivity : AppCompatActivity() {
         if(fab.visibility == View.VISIBLE) {
             fab.visibility = View.GONE
         }
-    // C) ToolBar Hide 시키기
-        if(supportActionBar != null) {supportActionBar?.hide()}
+    // C) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
 
+        val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
         Log.d(TAG, "showSecondFrag: ..... ")
 
     }
@@ -533,8 +536,10 @@ class AlarmsListActivity : AppCompatActivity() {
         if(fab.visibility == View.VISIBLE) { // B) Fab 버튼이 보인다면 없애줄것!
             fab.visibility = View.GONE
         }
-        // ToolBar Hide 시키기
-        if(supportActionBar != null) {supportActionBar?.hide()}
+        // C) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
+        val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
+
 
     }
 

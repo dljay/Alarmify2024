@@ -64,15 +64,16 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708S13 (Drawer- Navigation View(O))
+// 30708T1
 
 // Achievements:
+// Drawer- Navigation View(O)
 // AppBarLayout 이 a) ListFrag: ActionBar 위치까지만 Collapse & Expand b) DetailsFrag, SecondFrag 에서는 완전히 Collapse (Action Bar 위치도 무시!)
+
 // Issues:
 
-
-
 // Todos :
+// Drawer 메뉴 변경 및 연결하기. 선택 후 복귀 했을 때 Drawer 사라지게?
 // ToolBar 꾸미기 (메뉴 없애고 등..)
 //2) Transparent 하게. / RtPickerActivity 에도 적용.
 //3) 설정 Page 에 About.. 등 기존 Burger 에 있던 Menu 쓸것만 몇개 넣기.
@@ -511,7 +512,6 @@ class AlarmsListActivity : AppCompatActivity() {
             fab.visibility = View.GONE
         }
     // C) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
-
         val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
 

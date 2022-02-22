@@ -86,6 +86,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var rcView: RecyclerView
     lateinit var layoutManager: LinearLayoutManager
 
+
     //Swipe Refresh
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
@@ -166,6 +167,22 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         rcView.layoutManager = layoutManager
         rcView.isNestedScrollingEnabled =false // // !! 중요!! 이걸 설정해놓아야 ListActivity>collapsingToolBarLayout 이 현재 RcV 의 Scroll 에 반응해서 열리거나 Collapse 되지 않는다!
         // 다음과 같이 설정도 가능 -> ViewCompat.setNestedScrollingEnabled(rcView, false)
+
+
+
+        //rcV 현재 보이는 마지막 칸 Listener
+        /*rcView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                
+                val totalItemCount = layoutManager.itemCount
+                val lastVisible= layoutManager.findLastCompletelyVisibleItemPosition()
+                Log.d(TAG, "onScrolled: lastVisible=$lastVisible")
+                if(lastVisible >= totalItemCount -1) {
+                    Log.d(TAG, "onScrolled: JjongHyuk Last Visible. ")
+                }
+            }
+        })*/
 
     //BtmSht_SingleDnld init (싱글톤으로)
         btmSht_SingleDNLDV = BtmShtSingleDNLDV2.newInstance()
@@ -394,6 +411,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         setChipListener(view)
         //setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
         registerSwipeRefreshListener()
+
+
 
     }
 
@@ -759,6 +778,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         Log.d(TAG,"setUpSlidingPanel: slidingUpPanelLayout: 1)PanelState=${slidingUpPanelLayout.panelState}, 2)isActivated=${slidingUpPanelLayout.isActivated}")
         slidingUpPanelLayout.setDragView(cl_upperUi_entireWindow) //setDragView = 펼치는 Drag 가능 영역 지정
 
+
         // A. 기존에 클릭 후 다른 Frag 갔다 돌아온 경우. (Panel 은 Collapsed 아니면 Expanded 상태 유지중임.)
         if (shouldPanelBeVisible) {
             Log.d(TAG, "setUpSlidingPanel: HEY isInitialPanelSetup=$shouldPanelBeVisible")
@@ -789,7 +809,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                 if (slideOffset == 0.0f && GlbVars.clickedTrId == entireListCount) { //마지막 트랙 클릭.
                     rcView.post { // 메인 ui 스레드에서는 다른 업무 처리로 바뻐서 다른 thread (워커스레드?) 를 만들어줌.
-                        rcView.smoothScrollBy(0, 300) //제일 밑 트랙을 300dp 위로 밀어줌.
+                        rcView.smoothScrollBy(0, 300) //RcV 전체를 약300dp 위로 밀어줌.
                         // todo: 추후 rcView 사이즈 변경될 때 고려 ->정확한 calculation 필요  https://greedy0110.tistory.com/41
                         Log.d(TAG, "myOnItemClick: 살짝 슬라이드! 마지막 트랙 보이게!")
                         //Log.d(TAG, "onPanelSlide: entirelistcount: $entireListCount")
@@ -838,6 +858,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 }
             }
         })
+
 
 
     }

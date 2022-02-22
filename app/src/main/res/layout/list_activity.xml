@@ -101,7 +101,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:weightSum="10"
             tools:context=".presenter.AlarmsListActivity"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -109,8 +108,7 @@
                 android:id="@+id/main_fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:layout="@layout/list_fragment"
-                android:layout_weight="9"/>
+                tools:layout="@layout/list_fragment"/>
 
         </LinearLayout>
 

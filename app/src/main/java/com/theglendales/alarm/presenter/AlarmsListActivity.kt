@@ -70,7 +70,7 @@ import java.util.Calendar
 // MiniPlayer 완전 열리면(EXPAND) BtmNavView 를 Animate Slide In & Out (O) 완전 잘된다.
 
 // Issues:
-
+// SecondFrag 마지막 칸 BtmNavView 에 짤림. (해결방법들: PaddingBottom runtime 조절/ RcV 마지막이면 BtmNav FadeOut-> 근데 Chip 떔시.. /
 // Todos :
 // Drawer 메뉴 변경 및 연결하기. 선택 후 복귀 했을 때 Drawer 사라지게
 

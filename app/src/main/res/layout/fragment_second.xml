@@ -172,13 +172,13 @@
             </com.airbnb.lottie.LottieAnimationView>
 
             <FrameLayout
+                android:id="@+id/frameLayout_RcView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:clickable="true"
                 android:focusable="true"
                 android:visibility="visible">
-
 
                 <!--1st child-b) Swipe+RcView!  -->
                 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -199,6 +199,8 @@
                 <include layout="@layout/loadingcircle_overlay_1"/>
 
             </FrameLayout>
+
+
 
         </LinearLayout>
 

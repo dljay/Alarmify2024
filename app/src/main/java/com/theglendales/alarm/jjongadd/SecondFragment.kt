@@ -31,6 +31,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -105,6 +106,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Sliding Panel Related
     var shouldPanelBeVisible = false
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout    //findViewById(R.id.id_slidingUpPanel)  }
+    lateinit var btmNavViewFromActivity: BottomNavigationView
 
     //a) Sliding Panel: Upper Ui
 
@@ -721,6 +723,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         mPlayer_bdg5_popular = v.findViewById(R.id.mPlayer_badge_5_Popular)
         mPlayer_bdg6_misc = v.findViewById(R.id.mPlayer_badge_6_Misc)
 
+        //Activity 에서 받은 BottomNavView (추후 SlidingPanel 이 EXPAND/COLLAPSE 될 때 VISIBLE/INVISIBLE 해준다.)
+        btmNavViewFromActivity = requireActivity().findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) // todo: check
+
     //Title Scroll horizontally. 흐르는 텍스트
         tv_upperUi_title.apply {
             isSingleLine = true
@@ -774,10 +779,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.ANCHORED // 위치를 60%로 초기 시작
         slidingUpPanelLayout.addPanelSlideListener(object :SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View?, slideOffset: Float) {
-                // Panel 이 열리고 닫힐때의 callback
                 //Log.d(TAG, "onPanelSlide: Panel State=${slidingUpPanelLayout.panelState}")
                 shouldPanelBeVisible = true // 이제 Panel 이 열렸으니깐. todo: 이거 bool 값에 의존하는게 괜찮을지..
-
                 upperUiHolder.alpha = 1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
 
                 // 트랙 클릭-> 미니플레이어가 등장! (그 이전에는 offset = -xxx 값임.)
@@ -797,20 +800,29 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 if (!slidingUpPanelLayout.isOverlayed && slideOffset > 0.2f) { //안겹치게 설정된 상태에서 panel 이 열리는 중 (20%만 열리면 바로 모퉁이 감추기!)
                     //Log.d(TAG, "onPanelSlide: Hiding 모퉁이! yo! ")
                     slidingUpPanelLayout.isOverlayed = true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
+
+
+
                 }
 
             }
 
             @SuppressLint("ClickableViewAccessibility") // 아래 constLayout_entire.setxx... 이거 장애인 warning 없애기
             override fun onPanelStateChanged(panel: View?,previousState: SlidingUpPanelLayout.PanelState?,newState: SlidingUpPanelLayout.PanelState?) {
+                Log.d(TAG, "onPanelStateChanged: previousState= $previousState, newState=$newState")
+
+            //1) 접힌상태-> 완전히 열리는 상태로 전환(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행.
+
+
+            //2) 완전히 열린 상태 -> 접히는 상태로 전환 // // DRAGGING -> EXPANDED -> DRAGGING 으로 진행.
+            //3) 완전 열린상태(EXPAND) or MiniPlayer 만 보여주는 상태 (COLLAPSED)
                 when (newState) {
                     SlidingUpPanelLayout.PanelState.EXPANDED -> {
-                        Log.d(TAG, "onPanelStateChanged: Sliding Panel Expanded")
+                        Log.d(TAG, "onPanelStateChanged: previousState= $previousState, newState=$newState, Sliding Panel Expanded")
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)// ↓ arrow 전환 visibility }
 
                         // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
                         constLayout_entire.setOnTouchListener { _, _ -> true }
-
                     }
                     SlidingUpPanelLayout.PanelState.COLLAPSED -> {
                         Log.d(TAG, "onPanelStateChanged: Sliding Panel Collapsed")

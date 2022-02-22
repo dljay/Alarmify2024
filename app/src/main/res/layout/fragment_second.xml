@@ -203,10 +203,12 @@
         </LinearLayout>
 
         <!--2nd child - Slider aka mini player  -->
+        <!--Mini Player ^ 눌렀을 때 나오는 공간. ScrollView 를 쓰는것도 괜찮지만
+         About the Ringtone 란을 글자 수 맞춰서 하면 특별히 Scroll 필요없을듯.-->
         <RelativeLayout
             android:id="@+id/ir_rl_entireSlider"
             android:layout_width="match_parent"
-            android:layout_height="350dp">
+            android:layout_height="300dp">
 
             <include layout="@layout/jj_slide_ui2" />
 

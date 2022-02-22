@@ -73,7 +73,12 @@ import java.util.Calendar
 // Issues:
 
 // Todos :
-// Drawer 메뉴 변경 및 연결하기. 선택 후 복귀 했을 때 Drawer 사라지게?
+// SecondFrag UMANO SlidingPanel 확장시 BtmNavView 숨기기? 시도?
+// Drawer 메뉴 변경 및 연결하기. 선택 후 복귀 했을 때 Drawer 사라지게
+
+// ToolBar 꾸미기 (메뉴 없애고 등..)
+// 사계절별로 AppBarLayout 에 보여줄 사진 바꾸기
+// RtPickerActivity 에도...
 // ToolBar 꾸미기 (메뉴 없애고 등..)
 //2) Transparent 하게. / RtPickerActivity 에도 적용.
 //3) 설정 Page 에 About.. 등 기존 Burger 에 있던 Menu 쓸것만 몇개 넣기.

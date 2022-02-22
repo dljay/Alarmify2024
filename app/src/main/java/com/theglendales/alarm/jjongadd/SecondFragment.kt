@@ -809,12 +809,18 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             @SuppressLint("ClickableViewAccessibility") // 아래 constLayout_entire.setxx... 이거 장애인 warning 없애기
             override fun onPanelStateChanged(panel: View?,previousState: SlidingUpPanelLayout.PanelState?,newState: SlidingUpPanelLayout.PanelState?) {
-                Log.d(TAG, "onPanelStateChanged: previousState= $previousState, newState=$newState")
+                Log.d(TAG, "onPanelStateChanged: previousState= $previousState -> newState=$newState")
+                //Log.d(TAG, "onPanelStateChanged: btmNavView.height=  ${btmNavViewFromActivity.height}")
+            //1) 접힌상태-> 완전히 열리는 상태로 전환중(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행 (대략 0.4 초 소요)
+            if(previousState== SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
+            btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f)
+            }
+            //2) 완전히 열린 상태 -> 접히는 상태로 전환 // // DRAGGING -> EXPANDED -> DRAGGING 으로 진행 (대략 0.4 초 소요)
+            else if(previousState== SlidingUpPanelLayout.PanelState.EXPANDED && newState == SlidingUpPanelLayout.PanelState.DRAGGING){
+                btmNavViewFromActivity.animate().translationY(0F).alpha(1.0f) // '0F 까지!' View 를 올리는 것.
+            }
 
-            //1) 접힌상태-> 완전히 열리는 상태로 전환(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행.
 
-
-            //2) 완전히 열린 상태 -> 접히는 상태로 전환 // // DRAGGING -> EXPANDED -> DRAGGING 으로 진행.
             //3) 완전 열린상태(EXPAND) or MiniPlayer 만 보여주는 상태 (COLLAPSED)
                 when (newState) {
                     SlidingUpPanelLayout.PanelState.EXPANDED -> {

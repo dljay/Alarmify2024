@@ -64,16 +64,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708T1
+// 30708T2
 
 // Achievements:
-// Drawer- Navigation View(O)
-// AppBarLayout 이 a) ListFrag: ActionBar 위치까지만 Collapse & Expand b) DetailsFrag, SecondFrag 에서는 완전히 Collapse (Action Bar 위치도 무시!)
+// MiniPlayer 완전 열리면(EXPAND) BtmNavView 를 Animate Slide In & Out (O) 완전 잘된다.
 
 // Issues:
 
 // Todos :
-// SecondFrag UMANO SlidingPanel 확장시 BtmNavView 숨기기? 시도?
 // Drawer 메뉴 변경 및 연결하기. 선택 후 복귀 했을 때 Drawer 사라지게
 
 // ToolBar 꾸미기 (메뉴 없애고 등..)

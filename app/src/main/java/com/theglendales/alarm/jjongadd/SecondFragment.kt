@@ -85,6 +85,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var rcvAdapterInstance: RcViewAdapter
     lateinit var rcView: RecyclerView
     lateinit var layoutManager: LinearLayoutManager
+    lateinit var flRcView: FrameLayout // RcView 를 감싸고 있는 FrameLayout -- 마지막 SLOT 보이게 하기 위해서 runTime Padding 조절 (흰색 칸 없앨때는 Padding 없애고)
 
 
     //Swipe Refresh
@@ -166,9 +167,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         layoutManager = LinearLayoutManager(context)
         rcView.layoutManager = layoutManager
         rcView.isNestedScrollingEnabled =false // // !! 중요!! 이걸 설정해놓아야 ListActivity>collapsingToolBarLayout 이 현재 RcV 의 Scroll 에 반응해서 열리거나 Collapse 되지 않는다!
-        // 다음과 같이 설정도 가능 -> ViewCompat.setNestedScrollingEnabled(rcView, false)
-
-
+    // 다음과 같이 설정도 가능 -> ViewCompat.setNestedScrollingEnabled(rcView, false)
 
         //rcV 현재 보이는 마지막 칸 Listener
         /*rcView.addOnScrollListener(object : RecyclerView.OnScrollListener(){
@@ -190,7 +189,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //  LIVEDATA ->
 
         //1) ViewModel 생성(RcvVModel/MediaPlayerVModel)
-            jjMainVModel = ViewModelProvider(requireActivity()).get(JjMainViewModel::class.java)
+        jjMainVModel = ViewModelProvider(requireActivity()).get(JjMainViewModel::class.java)
 
         //2) LiveData Observe
         //Media Player ViewMODEL Observe
@@ -425,12 +424,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         super.onResume()
         //todo: 어떤 사유로든 Fb+IAP 로딩이 실패해서 돌아왔을때 자동으로 Refresh 하는 로직  (ex.PlayStore Sign-in 하고 돌아왔을때..)
         Log.d(TAG, "onResume: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
+        Log.d(TAG, "onResume:PanelState= ${slidingUpPanelLayout.panelState}")
 
     //A) 돌아왔을 때 SlidingUpPanel 상태 복원 - 여기 onResume 에서 해주는게 맞음.
         when(slidingUpPanelLayout.panelState) {
-            SlidingUpPanelLayout.PanelState.COLLAPSED -> collapseSlidingPanel()
-            SlidingUpPanelLayout.PanelState.EXPANDED -> expandSlidingPanel()
+            SlidingUpPanelLayout.PanelState.HIDDEN -> {flRcView.setPadding(0,0,0,120)}
+            SlidingUpPanelLayout.PanelState.COLLAPSED -> {collapseSlidingPanel()
+                flRcView.setPadding(0,0,0,0)
+            }
+            SlidingUpPanelLayout.PanelState.EXPANDED -> {expandSlidingPanel()
+                flRcView.setPadding(0,0,0,0)
+            }
         }
+
     // B) <1> 어떤 이유로 에러가 나서 RtIAPList 받지 못한 상태에서 나갔다 다시 복귀
         // <2> GooglePlayStore 로그인 하라는 btmSheet 을 보여준뒤 복귀했을때! -> refreshFbIAp() 해줌 -> 완료되면 -> 여기서 observe 중이던곳에서 new 리스트 확인 후 -> BtmSheet 삭제됨!
         if(BtmSheetPlayStoreError.isAdded) { //todo: .isAdded | 혹은 다른 에러로 나갔따 왔을 때 refreshFB() 필요한 경우..
@@ -703,6 +709,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Swipe Refresh Layout Related
         swipeRefreshLayout = v.findViewById(R.id.id_swipeRefreshLayout)
 
+
     // SlidingUpPanel
         slidingUpPanelLayout = v.findViewById(R.id.id_slidingUpPanel)
 
@@ -744,6 +751,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         //Activity 에서 받은 BottomNavView (추후 SlidingPanel 이 EXPAND/COLLAPSE 될 때 VISIBLE/INVISIBLE 해준다.)
         btmNavViewFromActivity = requireActivity().findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) // todo: check
+
+    // RcV 를 감싸는 FrameLayout [RcV 마지막 칸이 짤리는 문제가 있어서 PaddingBottom 으로 해결중. 최초 SecondFrag 열었을때는 ]
+        flRcView =v.findViewById(R.id.frameLayout_RcView)
+        Log.d(TAG, "setUpLateInitUis: PanelState=${slidingUpPanelLayout.panelState}")
+
+
 
     //Title Scroll horizontally. 흐르는 텍스트
         tv_upperUi_title.apply {
@@ -829,8 +842,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             @SuppressLint("ClickableViewAccessibility") // 아래 constLayout_entire.setxx... 이거 장애인 warning 없애기
             override fun onPanelStateChanged(panel: View?,previousState: SlidingUpPanelLayout.PanelState?,newState: SlidingUpPanelLayout.PanelState?) {
-                Log.d(TAG, "onPanelStateChanged: previousState= $previousState -> newState=$newState")
+                Log.d(TAG, "onPanelStateChanged: previousState= $previousState -> newState=$newState, isActivated= ${slidingUpPanelLayout.isActivated}")
                 //Log.d(TAG, "onPanelStateChanged: btmNavView.height=  ${btmNavViewFromActivity.height}")
+
             //1) 접힌상태-> 완전히 열리는 상태로 전환중(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행 (대략 0.4 초 소요)
             if(previousState== SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
             btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f)
@@ -844,16 +858,22 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //3) 완전 열린상태(EXPAND) or MiniPlayer 만 보여주는 상태 (COLLAPSED)
                 when (newState) {
                     SlidingUpPanelLayout.PanelState.EXPANDED -> {
-                        Log.d(TAG, "onPanelStateChanged: previousState= $previousState, newState=$newState, Sliding Panel Expanded")
+                        Log.d(TAG, "onPanelStateChanged: Sliding Panel= EXPANDED")
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)// ↓ arrow 전환 visibility }
 
                         // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
                         constLayout_entire.setOnTouchListener { _, _ -> true }
+                        flRcView.setPadding(0,0,0,0)
                     }
                     SlidingUpPanelLayout.PanelState.COLLAPSED -> {
-                        Log.d(TAG, "onPanelStateChanged: Sliding Panel Collapsed")
+                        Log.d(TAG, "onPanelStateChanged: Sliding Panel= COLLAPSED")
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
                         slidingUpPanelLayout.isOverlayed = false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
+                        flRcView.setPadding(0,0,0,0)
+                    }
+                    SlidingUpPanelLayout.PanelState.HIDDEN -> {
+                        Log.d(TAG, "onPanelStateChanged: Sliding Panel = HIDDEN")
+                        flRcView.setPadding(0,0,0,120)
                     }
                 }
             }

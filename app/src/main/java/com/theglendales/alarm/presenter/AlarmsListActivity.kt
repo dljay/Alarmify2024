@@ -64,13 +64,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708T2
+// 30708T3
 
 // Achievements:
-// MiniPlayer 완전 열리면(EXPAND) BtmNavView 를 Animate Slide In & Out (O) 완전 잘된다.
+// SlidingUpPanel 정리해줌. 한번 더 정리하기.
 
 // Issues:
-// SecondFrag 마지막 칸 BtmNavView 에 짤림. (해결방법들: PaddingBottom runtime 조절/ RcV 마지막이면 BtmNav FadeOut-> 근데 Chip 떔시.. /
+// SecondFrag 마지막 칸 BtmNavView 에 짤림. (해결방법들: View 더했다 사라지게 하기? // PaddingBottom runtime 조절/ RcV 마지막이면 BtmNav FadeOut-> 근데 Chip 떔시.. /
 // Todos :
 // Drawer 메뉴 변경 및 연결하기. 선택 후 복귀 했을 때 Drawer 사라지게
 

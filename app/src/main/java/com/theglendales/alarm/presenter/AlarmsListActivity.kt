@@ -64,10 +64,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708T3
+// 30708U1 -
 
 // Achievements:
-// SlidingUpPanel -- flRcView setPadding 설정해줌. 한번 더 정리하기.
+// SlidingUpPanel -- Panel State 에 따라 setPadding(Bottom) 해줌.
 
 // Issues:
 // SecondFrag 마지막 칸 BtmNavView 에 짤림. (해결방법들: View 더했다 사라지게 하기? // PaddingBottom runtime 조절/ RcV 마지막이면 BtmNav FadeOut-> 근데 Chip 떔시.. /

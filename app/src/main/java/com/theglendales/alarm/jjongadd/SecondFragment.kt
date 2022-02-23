@@ -423,12 +423,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     override fun onResume() {
         super.onResume()
         //todo: 어떤 사유로든 Fb+IAP 로딩이 실패해서 돌아왔을때 자동으로 Refresh 하는 로직  (ex.PlayStore Sign-in 하고 돌아왔을때..)
-        Log.d(TAG, "onResume: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
-        Log.d(TAG, "onResume:PanelState= ${slidingUpPanelLayout.panelState}")
+        Log.d(TAG, "onResume: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState} // PanelState= ${slidingUpPanelLayout.panelState}")
+
 
     //A) 돌아왔을 때 SlidingUpPanel 상태 복원 - 여기 onResume 에서 해주는게 맞음.
         when(slidingUpPanelLayout.panelState) {
-            SlidingUpPanelLayout.PanelState.HIDDEN -> {flRcView.setPadding(0,0,0,120)}
+            SlidingUpPanelLayout.PanelState.HIDDEN -> {flRcView.setPadding(0,0,0,140)}
             SlidingUpPanelLayout.PanelState.COLLAPSED -> {collapseSlidingPanel()
                 flRcView.setPadding(0,0,0,0)
             }
@@ -855,7 +855,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
 
 
-            //3) 완전 열린상태(EXPAND) or MiniPlayer 만 보여주는 상태 (COLLAPSED)
+            //3) 완전 열린상태(EXPAND) or MiniPlayer 만 보여주는 상태 (COLLAPSED) 설정 ( RcView 짤리지 않게 paddingBottom 까지 설정)
                 when (newState) {
                     SlidingUpPanelLayout.PanelState.EXPANDED -> {
                         Log.d(TAG, "onPanelStateChanged: Sliding Panel= EXPANDED")
@@ -873,7 +873,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     }
                     SlidingUpPanelLayout.PanelState.HIDDEN -> {
                         Log.d(TAG, "onPanelStateChanged: Sliding Panel = HIDDEN")
-                        flRcView.setPadding(0,0,0,120)
+                        flRcView.setPadding(0,0,0,140)
                     }
                 }
             }

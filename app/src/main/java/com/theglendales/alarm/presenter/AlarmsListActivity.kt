@@ -67,7 +67,7 @@ import java.util.Calendar
 // 30708T3
 
 // Achievements:
-// SlidingUpPanel 정리해줌. 한번 더 정리하기.
+// SlidingUpPanel -- flRcView setPadding 설정해줌. 한번 더 정리하기.
 
 // Issues:
 // SecondFrag 마지막 칸 BtmNavView 에 짤림. (해결방법들: View 더했다 사라지게 하기? // PaddingBottom runtime 조절/ RcV 마지막이면 BtmNav FadeOut-> 근데 Chip 떔시.. /

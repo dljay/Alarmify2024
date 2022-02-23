@@ -70,9 +70,9 @@ import java.util.Calendar
 // Menu 추가 및 변경 (아이콘 추가 등)
 
 // Issues:
-// SecondFrag 마지막 칸 BtmNavView 에 짤림. (해결방법들: View 더했다 사라지게 하기? // PaddingBottom runtime 조절/ RcV 마지막이면 BtmNav FadeOut-> 근데 Chip 떔시.. /
+
 // Todos :
-// Drawer 메뉴 변경 및 연결하기. 선택 후 복귀 했을 때 Drawer 사라지게
+//[MyPrefActivity 만들어주기..]
 
 // ToolBar 꾸미기 (메뉴 없애고 등..)
 // 사계절별로 AppBarLayout 에 보여줄 사진 바꾸기
@@ -309,6 +309,7 @@ class AlarmsListActivity : AppCompatActivity() {
         toggleDrawer.syncState() // 그냥 이제 사용준비 되었다는 의미라네.
         // Nav Menu 클릭 했을 때 -> ActionBar Handler > onOptionsItemSelected 로 보냄.
         drawerNavView.setNavigationItemSelectedListener {
+            drawerLayout.closeDrawers() // 메뉴 선택했으니 Drawer 닫아줄것.
             mActionBarHandler.onOptionsItemSelected(it)
         }
 

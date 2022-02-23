@@ -71,7 +71,8 @@
     <string name="prealarm_off_summary">Pre-alarm is switched off</string>
     <string name="master_volume">Master volume</string>
     <string name="menu_share">Share</string>
-    <string name="menu_bugreport">Send a bugreport</string>
+    <!-- Send a bugreport 를 Contact Us 로 바꿈.-->
+    <string name="menu_bugreport">Contact Us</string>
     <string name="dialog_say_thanks_review_button">Rate the app</string>
     <string name="dialog_bugreport_hint">Describe your complaint here</string>
     <string name="longclick_dismiss_title">Longclick dismiss</string>
@@ -195,7 +196,9 @@
 
        \n\n<font color="#FF0000">If nothing from the above list helps</font>, please write us a message in the field below. We will do our best to try to help you.
    </string>
-    <string name="dialog_say_thanks_title">Say thanks</string>
+    <!-- 내가 추가 -->
+    <string name="dialog_purchased_items">Purchased Items</string>
+    <string name="dialog_say_thanks_title">Help Our Team</string>
     <string name="dialog_say_thanks_review_message">Thanks a lot for taking your time to say thanks! “Simple Alarm Clock” is an open source non-profit project. We will never use ads or gather user data to earn money. However, we are extremely happy if you like our work. One of the best ways to say thanks is to write a positive review. You can also ask a question or leave your feature request.</string>
     <string name="dialog_say_thanks_premium_text">If you really like the app, you could consider upgrading to the premium version! Premium sounds great, does it not?</string>
     <string name="dialog_say_thanks_donate_message">Another great way to support the app is to buy me a coffee or a donut! You can do this using one of the following options</string>

@@ -17,24 +17,25 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item
+   <!-- <item
         android:id="@+id/set_alarm_menu_delete_alarm"
         android:icon="@android:drawable/ic_menu_delete"
         app:showAsAction="ifRoom|withText"
-        android:title="@string/delete_alarm" />
+        android:title="@string/delete_alarm" />-->
     <item
         android:id="@+id/menu_item_settings"
         android:icon="@drawable/settings_icon_1"
         app:showAsAction="never"
         android:title="@string/settings" />
+   <item
+       android:id="@+id/menu_purchased_items"
+       android:icon="@drawable/shopping_cart_48px"
+       app:showAsAction="never"
+       android:title="@string/dialog_purchased_items"/>
+
     <item
-        android:id="@+id/menu_bugreport"
-        android:icon="@android:drawable/ic_menu_send"
-        app:showAsAction="never"
-        android:title="@string/menu_bugreport" />
-    <item
-        android:id="@+id/menu_review"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:id="@+id/menu_help_our_team"
+        android:icon="@drawable/dollar_48px"
         app:showAsAction="never"
         android:title="@string/dialog_say_thanks_title" />
     <item
@@ -42,6 +43,11 @@
         app:actionProviderClass="androidx.appcompat.widget.ShareActionProvider"
         app:showAsAction="never"
         android:title="@string/menu_share" />
+    <item
+        android:id="@+id/menu_contact_us"
+        android:icon="@android:drawable/ic_menu_send"
+        app:showAsAction="never"
+        android:title="@string/menu_bugreport" />
     <item
         android:id="@+id/menu_about"
         app:showAsAction="never"

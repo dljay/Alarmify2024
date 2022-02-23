@@ -180,8 +180,8 @@
     <!-- Label for analog clock gadget, shown in list of all gadgets -->
     <string name="analog_gadget">Analog clock</string>
 
-    <!-- Menu item title for general Alarm Clock Settings -->
-    <string name="settings">Settings</string>
+    <!-- Menu item title for general Alarm Clock Settings: jj settings 를 Preferences 로 바꿈.-->
+    <string name="settings">Preferences</string>
 
     <!--
          Setting title for whether the alarm should play in silent mode.

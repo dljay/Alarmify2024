@@ -67,8 +67,8 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
         }
 
         val menuItem = menu.findItem(R.id.menu_share)
-        val trashIcon = menu.findItem(R.id.set_alarm_menu_delete_alarm) // 내가 추가. 아래에서 trashIcon 대신 menu.findItem(R.id.... _delete_alarm) 넣어놨더니 계속 뻑나서..
-        // todo: 뒷맛이 좋지는 않음. 일단 이걸로 모든 요일이 선택되어있는 DetailsFrag 열릴 때 뻑나는건 멈추기는 했음.
+        //val trashIcon = menu.findItem(R.id.set_alarm_menu_delete_alarm) // 내가 추가. 아래에서 trashIcon 대신 menu.findItem(R.id.... _delete_alarm) 넣어놨더니 계속 뻑나서..
+        // 뒷맛이 좋지는 않음. 일단 이걸로 모든 요일이 선택되어있는 DetailsFrag 열릴 때 뻑나는건 멈추기는 했음.
 
         val sp = MenuItemCompat.getActionProvider(menuItem) as androidx.appcompat.widget.ShareActionProvider
         sp.setShareIntent(intent)
@@ -85,9 +85,9 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
                     //a) 뒤로가기(<-) 보여주기
                     //toolBarAsActionBar.setDisplayHomeAsUpEnabled(true)
                     //b) 휴지통 ICON 보여주기 (O)
-                    if(trashIcon!=null) { // nullCheck 내가 넣었음.
+                  /*  if(trashIcon!=null) { // nullCheck 내가 넣었음.
                         trashIcon.isVisible = true // 알람 요일설정땜에 여기서 자꾸 뻑남. 근데 이유는 findItem 이 null 값여서.. // 원래코드 = menu.findItem(R.id.... _delete_alarm).isVisible = showDelete
-                    }
+                    }*/
 
                 }
             // AlarmsListFrag, SecondFrag
@@ -97,9 +97,9 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
                     toolBarAsActionBar.setDisplayHomeAsUpEnabled(false) // <- 뒤로가기 안 보이게 하기.
                     toolBarAsActionBar.setDisplayShowHomeEnabled(true)
                     //b) 휴지통 ICON 없애주기 (X)
-                    if(trashIcon!=null) {
+                   /* if(trashIcon!=null) {
                         trashIcon.isVisible = false
-                    }
+                    }*/
 
 
                 }
@@ -124,10 +124,11 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
     fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(TAG, "onOptionsItemSelected: called. item= $item")
         when (item.itemId) {
-            R.id.menu_item_settings -> mContext.startActivity(Intent(mContext, SettingsActivity::class.java))
-            R.id.menu_review -> showSayThanks() // store.createNewAlarm() <- 이걸로 해도 알람 잘 생성되는듯.
-            R.id.menu_bugreport -> showBugreport()
-            R.id.set_alarm_menu_delete_alarm -> deleteAlarm()
+            R.id.menu_item_settings -> mContext.startActivity(Intent(mContext, SettingsActivity::class.java)) // Settings -> Preferences 로 Text 변경했음.
+            R.id.menu_help_our_team -> showSayThanks() // store.createNewAlarm() <- 이걸로 해도 알람 잘 생성되는듯.
+            R.id.menu_contact_us -> showBugreport() // BugReport -> Contact Us 로 Text 변경했음.
+            //R.id.menu_purchased_items -> //todo: Purchased Items 보여줄 activity? 추가.
+            //R.id.set_alarm_menu_delete_alarm -> deleteAlarm()
             R.id.menu_about -> showAbout()
             android.R.id.home -> store.onBackPressed().onNext("ActionBar")
         }

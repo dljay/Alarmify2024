@@ -64,10 +64,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708U1 -
+// 30708U2 [Menu 변경 진행중]
 
 // Achievements:
-// SlidingUpPanel -- Panel State 에 따라 setPadding(Bottom) 해줌.
+// Menu 추가 및 변경 (아이콘 추가 등)
 
 // Issues:
 // SecondFrag 마지막 칸 BtmNavView 에 짤림. (해결방법들: View 더했다 사라지게 하기? // PaddingBottom runtime 조절/ RcV 마지막이면 BtmNav FadeOut-> 근데 Chip 떔시.. /

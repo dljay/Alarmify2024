@@ -72,7 +72,9 @@
     <string name="master_volume">Master volume</string>
     <string name="menu_share">Share</string>
     <!-- Send a bugreport 를 Contact Us 로 바꿈.-->
-    <string name="menu_bugreport">Contact Us</string>
+    <string name="menu_bugreport">Bug Report</string>
+    <!-- JJ Str 추가-->
+    <string name="menu_contact_us">Contact Us</string>
     <string name="dialog_say_thanks_review_button">Rate the app</string>
     <string name="dialog_bugreport_hint">Describe your complaint here</string>
     <string name="longclick_dismiss_title">Longclick dismiss</string>
@@ -185,6 +187,12 @@
        \n\nSupport the app:
        \n· <a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a>
    </string>
+
+    <!--JJ 추가 Contact Us -->
+    <string name="dialog_contact_us">
+    Have any issues? Reach out to our support team for immediate assistance at ssibal@gmail.com
+    </string>
+
     <string name="dialog_bugreport_faq"><b>Common issues and how to fix them</b>
        \n\n<b><font color="#FF0000">If after the update all alarms disappeared and are not saved anymore</font></b>, it means that during the update Android has locked our database. It is a bug in Android OS and the only way to resolve this is to reinstall!
 
@@ -196,9 +204,11 @@
 
        \n\n<font color="#FF0000">If nothing from the above list helps</font>, please write us a message in the field below. We will do our best to try to help you.
    </string>
-    <!-- 내가 추가 -->
+    <!-- 내가 추가 시작 -->
     <string name="dialog_purchased_items">Purchased Items</string>
     <string name="dialog_say_thanks_title">Help Our Team</string>
+    <string name="dialog_contact_us_title">Contact Us</string>
+    <!-- 내가 추가 종료 -->
     <string name="dialog_say_thanks_review_message">Thanks a lot for taking your time to say thanks! “Simple Alarm Clock” is an open source non-profit project. We will never use ads or gather user data to earn money. However, we are extremely happy if you like our work. One of the best ways to say thanks is to write a positive review. You can also ask a question or leave your feature request.</string>
     <string name="dialog_say_thanks_premium_text">If you really like the app, you could consider upgrading to the premium version! Premium sounds great, does it not?</string>
     <string name="dialog_say_thanks_donate_message">Another great way to support the app is to buy me a coffee or a donut! You can do this using one of the following options</string>

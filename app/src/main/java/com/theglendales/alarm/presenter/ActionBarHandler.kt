@@ -126,14 +126,16 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
         when (item.itemId) {
             R.id.menu_item_settings -> mContext.startActivity(Intent(mContext, SettingsActivity::class.java)) // Settings -> Preferences 로 Text 변경했음.
             R.id.menu_help_our_team -> showSayThanks() // store.createNewAlarm() <- 이걸로 해도 알람 잘 생성되는듯.
-            R.id.menu_contact_us -> showBugreport() // BugReport -> Contact Us 로 Text 변경했음.
+            R.id.menu_contact_us -> showContactUs() // BugReport -> Contact Us 로 Text 변경했음.
             //R.id.menu_purchased_items -> //todo: Purchased Items 보여줄 activity? 추가.
             //R.id.set_alarm_menu_delete_alarm -> deleteAlarm()
-            R.id.menu_about -> showAbout()
+            //R.id.menu_about -> showAbout()
             android.R.id.home -> store.onBackPressed().onNext("ActionBar")
         }
         return true
     }
+
+
 
     private fun showAbout() {
         AlertDialog.Builder(mContext).apply {
@@ -161,6 +163,21 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
             }
             setNegativeButton(android.R.string.cancel, null)
         }.show()
+    }
+
+    private fun showContactUs() {
+        val inflator = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+        val dialogView = inflator.inflate(R.layout.dialog_contact_us, null)
+        dialogView.findViewById<TextView>(R.id.dialog_contactus_textview).movementMethod = LinkMovementMethod.getInstance()
+
+        androidx.appcompat.app.AlertDialog.Builder(mContext).apply {
+            setPositiveButton(android.R.string.ok) {_, _ -> }
+            setTitle(R.string.dialog_contact_us_title)
+            setView(dialogView)
+            setCancelable(true)
+        }.create().show()
+
     }
 
     private fun showSayThanks() {

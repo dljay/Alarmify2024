@@ -47,9 +47,9 @@
         android:id="@+id/menu_contact_us"
         android:icon="@android:drawable/ic_menu_send"
         app:showAsAction="never"
-        android:title="@string/menu_bugreport" />
-    <item
+        android:title="@string/menu_contact_us" />
+    <!--<item
         android:id="@+id/menu_about"
         app:showAsAction="never"
-        android:title="@string/menu_about_title" />
+        android:title="@string/menu_about_title" />-->
 </menu>

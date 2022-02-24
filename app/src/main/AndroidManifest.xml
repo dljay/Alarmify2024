@@ -55,7 +55,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/DefaultDarkTheme" />
         <activity
-            android:name=".presenter.PurchaseHistoryActivity"
+            android:name=".presenter.PurchasedItemsActivity"
             android:exported="false"
             android:parentActivityName=".presenter.AlarmsListActivity"
             android:screenOrientation="portrait"

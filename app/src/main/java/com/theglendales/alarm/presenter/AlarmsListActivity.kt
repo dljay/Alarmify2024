@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.01 온갖 업데이트 후 Play- 정상/ Android Studio, Gradle, Kotlin Migration 등..
+// 30708V1.02 온갖 업데이트 후 Play- 정상/ Android Studio, Gradle, Kotlin Migration 등..
 
 // Achievements/Work In Progress:
 // Purchase History (Purchased Items - ToolBar 완료)
@@ -72,8 +72,10 @@ import java.util.Calendar
 // Issues:
 
 // Todos :
-//[MyPrefActivity 만들어주기..]
+// todo: SharedPref 에 savePurchasedItemsHistory() 넣기? iap 에서 진행하면서 저장 -> PurchasedItemsActivity 에서 Logd 로 확인 작업. -> 슬슬 RCV 만들기
+// Design 은 McDonald 디자인 참고? https://dribbble.com/shots/10061206-McDonald-s-Redesign-User-Profile
 
+//[MyPrefActivity 만들어주기..]
 // ToolBar 꾸미기 (메뉴 없애고 등..)
 // 사계절별로 AppBarLayout 에 보여줄 사진 바꾸기
 // RtPickerActivity 에도...
@@ -268,7 +270,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
         val secondFrag = SecondFragment()
         //val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
-        btmNavView.setOnNavigationItemSelectedListener {
+        btmNavView.setOnItemSelectedListener {
             // 1) .setOnNav....Listener() 메써드는 onNavigationxxListener(인터페이스를 implement 한 인자를 람다로 받음)
             //2) OnNavigationItemSelectedListener(인터페이스) 안에는 onNavItemSelected(boolean 리턴 메써드) 하나만 있음. 그래서 override 생략 가능sam..
             // 밑에는 한마디로 Override fun onNavItemSelected: Boolean { 이 안에 들어가는 내용임.}

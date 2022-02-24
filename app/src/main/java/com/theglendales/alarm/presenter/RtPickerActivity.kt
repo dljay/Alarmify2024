@@ -143,34 +143,42 @@ class RtPickerActivity : AppCompatActivity() {
 
             // B) Observe - RtPicker 로 User 가 RingTone 을 골랐을 때
 
-            rtPickerVModel.selectedRow.observe(this, { rtWithAlbumArt->
-                Log.d(TAG, "onCreate: rtPickerVModel 옵저버!! rtTitle=${rtWithAlbumArt.rtTitle}, \n rtaPath= ${rtWithAlbumArt.audioFilePath}, artPath= ${rtWithAlbumArt.artFilePathStr}")
-            //B-1) Intent 에 현재 선택된 RT 의 정보담기  (AlarDetailsFrag.kt 로 연결됨) .. RT 계속 바꿀때마다 Intent.putExtra 하는데 overWrite 되는듯.
-                resultIntent.putExtra(PICKER_RESULT_RT_TITLE,rtWithAlbumArt.rtTitle)
-                resultIntent.putExtra(PICKER_RESULT_AUDIO_PATH,rtWithAlbumArt.audioFilePath)
-                resultIntent.putExtra(PICKER_RESULT_ART_PATH,rtWithAlbumArt.artFilePathStr)
+            rtPickerVModel.selectedRow.observe(this) { rtWithAlbumArt ->
+                Log.d(TAG,"onCreate: rtPickerVModel 옵저버!! rtTitle=${rtWithAlbumArt.rtTitle}, \n rtaPath= ${rtWithAlbumArt.audioFilePath}, artPath= ${rtWithAlbumArt.artFilePathStr}")
+                //B-1) Intent 에 현재 선택된 RT 의 정보담기  (AlarDetailsFrag.kt 로 연결됨) .. RT 계속 바꿀때마다 Intent.putExtra 하는데 overWrite 되는듯.
+                resultIntent.putExtra(PICKER_RESULT_RT_TITLE, rtWithAlbumArt.rtTitle)
+                resultIntent.putExtra(PICKER_RESULT_AUDIO_PATH, rtWithAlbumArt.audioFilePath)
+                resultIntent.putExtra(PICKER_RESULT_ART_PATH, rtWithAlbumArt.artFilePathStr)
                 setResult(RESULT_OK, resultIntent)
-            //B-2) 음악 Player 에 UI 업데이트
+                //B-2) 음악 Player 에 UI 업데이트
                 //B-2-a) Sliding Panel 전체
                 // 최초 SlidingPanel 이 HIDDEN(안보이는 상태)면 열어주기.
                 if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
-                    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED } // 이미 EXPAND/Collapsed 상태로 보이면 Panel 은 그냥 둠 [.COLLAPSED = (위만) 보이는 상태임!]
+                    slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+                } // 이미 EXPAND/Collapsed 상태로 보이면 Panel 은 그냥 둠 [.COLLAPSED = (위만) 보이는 상태임!]
 
-            //B-2-b) Sliding Panel - Upper UI
+                //B-2-b) Sliding Panel - Upper UI
                 //제목
-                    // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
-                    var spaceFifteen="               " // 15칸
-                    var spaceTwenty="                    " // 20칸
-                    var spaceFifty="                                                 " //50칸 (기존 사용)
-                    var spaceSixty="                                                           " //60칸
-                    tv_upperUi_title.text = spaceFifteen+ rtWithAlbumArt.rtTitle // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
-                    if(rtWithAlbumArt.rtTitle!!.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가]
-                    else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
-                        }
+                // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
+                var spaceFifteen = "               " // 15칸
+                var spaceTwenty = "                    " // 20칸
+                var spaceFifty = "                                                 " //50칸 (기존 사용)
+                var spaceSixty = "                                                           " //60칸
+                tv_upperUi_title.text =
+                    spaceFifteen + rtWithAlbumArt.rtTitle // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
+                if (rtWithAlbumArt.rtTitle!!.length < 6) {
+                    tv_upperUi_title.append(spaceSixty)
+                } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가]
+                else {
+                    tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
+                }
 
                 //AlbumCover
-                val glideBuilder = GlideApp.with(this).load(rtWithAlbumArt.artFilePathStr).centerCrop()
-                    .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).placeholder(R.drawable.placeholder)
+                val glideBuilder =
+                    GlideApp.with(this).load(rtWithAlbumArt.artFilePathStr).centerCrop()
+                        .error(R.drawable.errordisplay)
+                        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                        .placeholder(R.drawable.placeholder)
 
                 glideBuilder.into(iv_upperUi_thumbNail)
                 glideBuilder.into(iv_lowerUi_bigThumbnail)
@@ -179,11 +187,12 @@ class RtPickerActivity : AppCompatActivity() {
                 tv_lowerUi_about.text = rtWithAlbumArt.rtDescription // Rt 설명
                 iv_lowerUi_bigThumbnail.setImageDrawable(iv_upperUi_thumbNail.drawable) // AlbumArt 현재 상단 UI 앨범아트 고대로 갖고와서 설정.
                 //Badges
-                val badgeStrRaw = rtWithAlbumArt.badgeStr // ex. "INT,NAT,POP" -> Intense, Nature, Popular 뭔 이런식.
+                val badgeStrRaw =
+                    rtWithAlbumArt.badgeStr // ex. "INT,NAT,POP" -> Intense, Nature, Popular 뭔 이런식.
                 val badgeStrList = BadgeSortHelper.getBadgesListFromStr(badgeStrRaw)
                 showOrHideBadges(badgeStrList)
 
-            })
+            }
         //(나) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & ExoForLocal 그대로 사용 예정. [** 현재 SecondFrag 에서는 MpVModel X MainVModel 로 통합되었음**]
         // (음악 재생 상태에 따른 플레이어 UI 업데이트) (RT 선택시 음악 재생은 RtPickerAdapter 에서 바로함.)
             //A) 생성
@@ -191,19 +200,27 @@ class RtPickerActivity : AppCompatActivity() {
 
             //B) Observe
                 //B-1) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
-        rtPickerVModel.getMpStatusLiveData().observe(this, { StatusEnum ->
-                    Log.d(TAG, "onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
-                    // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
-                    when(StatusEnum) {
-                        StatusMp.PLAY -> {showMiniPlayerPauseBtn()} // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
-                        StatusMp.BUFFERING -> {showMiniPlayerPlayBtn()}
-                        StatusMp.ERROR -> {showMiniPlayerPlayBtn()}//
-                        StatusMp.PAUSED -> {showMiniPlayerPlayBtn()}
-                        }
-                        // b) VuMeter/Loading Circle 등 UI 컨트롤? 여기서는 필요없을듯..
-                    })
+        rtPickerVModel.getMpStatusLiveData().observe(this) { StatusEnum ->
+            Log.d(TAG,"onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
+            // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
+            when (StatusEnum) {
+                StatusMp.PLAY -> {
+                    showMiniPlayerPauseBtn()
+                } // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
+                StatusMp.BUFFERING -> {
+                    showMiniPlayerPlayBtn()
+                }
+                StatusMp.ERROR -> {
+                    showMiniPlayerPlayBtn()
+                }//
+                StatusMp.PAUSED -> {
+                    showMiniPlayerPlayBtn()
+                }
+            }
+            // b) VuMeter/Loading Circle 등 UI 컨트롤? 여기서는 필요없을듯..
+        }
 
-                    //VHolderUiHandler.LcVmIvController(StatusEnum)
+        //VHolderUiHandler.LcVmIvController(StatusEnum)
 
                 //B-2) Seekbar 관련
                     //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)

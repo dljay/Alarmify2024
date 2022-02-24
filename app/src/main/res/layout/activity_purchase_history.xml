@@ -7,6 +7,15 @@
     android:orientation="vertical"
     tools:context=".presenter.PurchaseHistoryActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/id_toolBar_PurchasedItems"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        app:title="Purchased Items"
+        app:titleTextColor="@color/mat_red"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

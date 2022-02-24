@@ -32,9 +32,7 @@
         android:icon="@mipmap/ic_main2"
         android:installLocation="internalOnly"
         android:label="@string/app_name_jjong">
-        <activity
-            android:name=".PurchaseHistoryActivity"
-            android:exported="false" />
+
         <!-- Activity to set a new or modify existing alarm -->
         <activity
             android:name=".presenter.AlarmsListActivity"
@@ -49,9 +47,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity> <!-- Application Settings -->
-        <!-- RtPicker Activity (Child of 메인- AlarmsListActivity) -->
+        <!-- RtPicker Activity 외 -->
         <activity
             android:name=".presenter.RtPickerActivity"
+            android:exported="false"
+            android:parentActivityName=".presenter.AlarmsListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/DefaultDarkTheme" />
+        <activity
+            android:name=".presenter.PurchaseHistoryActivity"
             android:exported="false"
             android:parentActivityName=".presenter.AlarmsListActivity"
             android:screenOrientation="portrait"

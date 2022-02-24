@@ -123,7 +123,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
-        useIR = true
+        //useIR = true // 코틀린 Multi Platform 지원을 위해 '중간 단계 변환 사용할지 여부를 선택하는 옵션'
     }
 }
 
@@ -145,11 +145,11 @@ dependencies {
     //implementation("org.koin:koin-android-architecture:2.1.5") // sharedViewModel 쓰기 위해서 이거..?
 // <--
 
-    implementation("androidx.fragment:fragment:1.4.0")
-    implementation("androidx.preference:preference:1.1.1")
+    implementation("androidx.fragment:fragment:1.4.1")
+    implementation("androidx.preference:preference:1.2.0")
 //jjong added
-    implementation("com.google.android.material:material:1.4.0")
-    implementation("androidx.appcompat:appcompat:1.4.0")
+    implementation("com.google.android.material:material:1.5.0")
+    implementation("androidx.appcompat:appcompat:1.4.1")
     implementation("androidx.core:core-ktx:1.7.0")
     //VuMeter
     implementation ("io.gresse.hugo.vumeterlibrary:vumeterlibrary:1.0.17")
@@ -158,7 +158,7 @@ dependencies {
     kapt ("android.arch.lifecycle:compiler:1.1.1")
     kapt ("com.github.bumptech.glide:compiler:4.12.0")
     //Firebase
-    implementation("com.google.firebase:firebase-firestore:24.0.0")
+    implementation("com.google.firebase:firebase-firestore:24.0.1")
     //SlidingUpPanel
     implementation("com.sothree.slidinguppanel:library:3.4.0")
     //Lottie
@@ -166,15 +166,15 @@ dependencies {
     //Coroutine
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0") // **이 버전 올릴 때 위애-core 도 같이 올려줄것! 안그러면 난리남!
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.1.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0")
     //Flow 사용 위해 넣음 (22.1.5)
 
     implementation("androidx.activity:activity-ktx:1.4.0")
-    implementation("androidx.fragment:fragment-ktx:1.4.0") //(Secondfrag.kt 에서 by viewmodels 로 쉽게 inject 하는것 이거 사용)
+    implementation("androidx.fragment:fragment-ktx:1.4.1") //(Secondfrag.kt 에서 by viewmodels 로 쉽게 inject 하는것 이거 사용)
     //Flow 사용 위해 넣음 2 (repeatOnLifecycle() 사용위해)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
     //ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.14.0")
     //GSON (SharedPref 에 Object 저장용)
@@ -184,7 +184,7 @@ dependencies {
     // Swipe Reveal Layout (ListView 에서 Swipe 할 수 있게 하는 3rd party)
     implementation("com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1")
     //Billing Client (IAP related!)
-    implementation ("com.android.billingclient:billing-ktx:4.0.0")
+    implementation ("com.android.billingclient:billing-ktx:4.1.0")
 
 
 }
@@ -200,6 +200,7 @@ dependencies {
 dependencies {
 
 
+    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")//    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")

@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708U4 [Menu 변경 진행중 - 3] 2/24, 21:39
+// 30708V1.0 온갖 업데이트 후 Play- 정상/ Android Studio, Gradle, Kotlin Migration 등..
 
 // Achievements:
 // Menu 추가 및 변경 (아이콘 추가 등)

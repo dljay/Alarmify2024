@@ -51,14 +51,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             findPreference<Preference>("vibrate")?.let { category.removePreference(it) }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            category.removePreference(findPreference(Prefs.KEY_ALARM_IN_SILENT_MODE))
-        }
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            findPreference<PreferenceCategory>("preference_category_ui")
-                    ?.removePreference(findPreference(Prefs.LIST_ROW_LAYOUT))
-        }
+        category.removePreference(findPreference(Prefs.KEY_ALARM_IN_SILENT_MODE)!!)
 
         findPreference<Preference>("theme")?.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { _, _ ->
             Handler().post {
@@ -73,7 +66,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    override fun onPreferenceTreeClick(preference: Preference?): Boolean {
+    override fun onPreferenceTreeClick(preference: Preference): Boolean {
         Log.d(TAG, "onPreferenceTreeClick: called")
         when (preference?.key) {
             Prefs.KEY_ALARM_IN_SILENT_MODE -> {
@@ -96,10 +89,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onResume() {
         super.onResume()
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            val alarmInSilentModePref = findPreference<CheckBoxPreference>(Prefs.KEY_ALARM_IN_SILENT_MODE)!!
-            alarmInSilentModePref.isChecked = (systemModeRingerStreamsAffected() and alarmStreamTypeBit) == 0
-        }
 
         findPreference<VolumePreference>("volume_preference")!!.onResume()
 

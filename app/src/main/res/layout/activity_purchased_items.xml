@@ -16,11 +16,10 @@
         app:title="Purchased Items"
         app:titleTextColor="@color/mat_red"/>
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/purch_items_rcView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="SSSSSdoifjosdjf ">
+        android:layout_height="match_parent"/>
 
-    </TextView>
 
 </LinearLayout>

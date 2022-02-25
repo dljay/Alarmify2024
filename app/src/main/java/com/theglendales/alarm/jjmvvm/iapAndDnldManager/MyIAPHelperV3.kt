@@ -164,7 +164,7 @@ class MyIAPHelperV3(val context: Context ) {
         return suspendCoroutine { continuation ->
 
             billingClient!!.queryPurchasesAsync(BillingClient.SkuType.INAPP) { _, listOfPurchases ->
-                Log.d(TAG, "d1_A_addPurchaseBoolToList: <D1-A> called. ")
+                Log.d(TAG, "d1_A_addPurchaseBoolToList: <D1-A> called. listOfPurchases=$listOfPurchases")
                 continuation.resume(listOfPurchases)
             }
         }
@@ -250,7 +250,8 @@ class MyIAPHelperV3(val context: Context ) {
                 {
                     Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-2> ☺ PurchaseState is PURCHASED for trackID=$trackID, itemName=$iapName")
                     rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
-
+                    rtListPlusIAPInfo[indexOfRtObj].orderID = purchase.orderId
+                    rtListPlusIAPInfo[indexOfRtObj].purchaseTime = purchase.purchaseTime
                     //*******구매는 확인되었으나 item(ex p1001.rta 등) 이 phone 에 없다 (삭제 혹은 재설치?)
                     if (!myDiskSearcher.isSameFileOnThePhone(fileSupposedToBeAt)) {
                         multiDNLDNeededList.add(rtObject)

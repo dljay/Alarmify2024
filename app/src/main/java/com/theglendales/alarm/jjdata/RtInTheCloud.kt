@@ -6,11 +6,12 @@ private const val TAG="RtInTheCloud_DataClass"
 
 data class RtInTheCloud(val title: String="", val tags: String="", val description: String="", val imageURL: String="", val mp3URL: String="",
                         val id: Int = 0, val iapName: String="", val bdgStrArray: ArrayList<String> = arrayListOf(),
-                        var itemPrice: String="", var purchaseBool: Boolean=false)
+                        var itemPrice: String="", var purchaseBool: Boolean=false, var orderID: String="", var purchaseTime: Long = 0L)
 {
     override fun toString(): String
     {
-        return "ringtoneClass: id =$id, title='$title', itemPrice=$itemPrice, purchaseBool=$purchaseBool, iapName= $iapName, bdgStrArray=$bdgStrArray, tags ='$tags', description='$description', \nimage='$imageURL', mp3URL = $mp3URL)"
+        return "ringtoneClass: id =$id, title='$title', itemPrice=$itemPrice, purchaseBool=$purchaseBool, orderId=$orderID, purchaseTime=$purchaseTime," +
+                "iapName= $iapName, bdgStrArray=$bdgStrArray, tags ='$tags', description='$description', \nimage='$imageURL', mp3URL = $mp3URL)"
     }
 //DATA CLASS 이기 때문에 아래 fun equals.. fun hashCode() 는 필요 없다고 하는데. 일단은 넣어놓음.
 //equals & hashCode() 등 관련: https://thdev.tech/kotlin/2020/09/15/kotlin_effective_02/

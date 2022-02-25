@@ -29,7 +29,7 @@ class PurchasedItemsActivity : AppCompatActivity() {
         val entireList = mySharedPrefManager.getRtInTheCloudList() // 현재 Firebase 에 등록된 모든 Ringtone 들
         Log.d(TAG, "onCreate: entireList=$entireList")
         val purchaseBoolTrueList = entireList.filter { rtInTheCloud -> rtInTheCloud.purchaseBool }
-        Log.d(TAG, "onCreate: purchaseBoolTrueList=  $purchaseBoolTrueList") //todo: [RT_NAME], [*Purchase Date], [*Transaction ID], [*Price]
+        Log.d(TAG, "onCreate: purchaseBoolTrueList=  $purchaseBoolTrueList") //todo: [RT_NAME], [*Purchase Date], [*Transaction ID], [*Price], [Art 경로]
 
 
     }

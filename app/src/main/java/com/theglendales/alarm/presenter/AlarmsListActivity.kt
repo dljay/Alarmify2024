@@ -64,10 +64,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.02 온갖 업데이트 후 Play- 정상/ Android Studio, Gradle, Kotlin Migration 등..
+// 30708V1.03 온갖 업데이트 후 Play- 정상/ Android Studio, Gradle, Kotlin Migration 등..
 
 // Achievements/Work In Progress:
-// Purchase History (Purchased Items - ToolBar 완료)
+// RtInTheCloud 에 PurchaseTime, OrderID 추가 완료.
 
 // Issues:
 

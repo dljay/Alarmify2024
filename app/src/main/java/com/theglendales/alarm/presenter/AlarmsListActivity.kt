@@ -72,7 +72,7 @@ import java.util.Calendar
 // Issues:
 
 // Todos :
-// todo: SharedPref 에 savePurchasedItemsHistory() 넣기? iap 에서 진행하면서 저장 -> PurchasedItemsActivity 에서 Logd 로 확인 작업. -> 슬슬 RCV 만들기
+// 한때 샀다가 Refund 한것 어떻게 표시할지? 표시 가능하기는 한지?
 // Design 은 McDonald 디자인 참고? https://dribbble.com/shots/10061206-McDonald-s-Redesign-User-Profile
 
 //[MyPrefActivity 만들어주기..]

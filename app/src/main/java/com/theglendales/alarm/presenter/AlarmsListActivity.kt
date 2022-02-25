@@ -64,10 +64,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.03 온갖 업데이트 후 Play- 정상/ Android Studio, Gradle, Kotlin Migration 등..
+// 30708V1.04 온갖 업데이트 후 Play- 정상/ Android Studio, Gradle, Kotlin Migration 등..
 
 // Achievements/Work In Progress:
 // RtInTheCloud 에 PurchaseTime, OrderID 추가 완료.
+// PurchasedItemsActivity> 정보 받기 완료. 이제 rcView 로 꾸미기.
 
 // Issues:
 

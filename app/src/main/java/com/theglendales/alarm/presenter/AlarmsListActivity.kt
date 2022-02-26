@@ -64,9 +64,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.05
+// 30708V1.06
 
 // Achievements/Work In Progress:
+// purchasedItemsActivity> RT 구매건 없을때 가정. Lottie 넣었음.
 // PurchasedItemsActivity> RcV/Adapter 로 Display 성공 (Order ID, Purchase Date, Price, Title, ALbumArt)
 
 // Issues:

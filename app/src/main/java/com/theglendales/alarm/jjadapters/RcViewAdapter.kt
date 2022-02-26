@@ -34,7 +34,6 @@ private const val TAG = "RcVAdapter"
 
 interface RcCommInterface {
     fun onRcvClick(rtObj: RtInTheCloud, isPurchaseClicked: Boolean)
-
 }
 
 class RcViewAdapter(

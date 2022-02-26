@@ -118,8 +118,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             }
                 }
                 .let { disposables.add(it) }
-
-        findListPreference(Prefs.SKIP_DURATION_KEY)
+        // 삭제 22/02/26
+        /*findListPreference(Prefs.SKIP_DURATION_KEY) //Skip alarm notification 어쩌구
                 .let { skipDurationPref ->
                     prefs.skipDuration
                             .observe()
@@ -131,7 +131,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 .let { disposables.add(it) }
 
-        findListPreference(Prefs.KEY_PREALARM_DURATION)
+        findListPreference(Prefs.KEY_PREALARM_DURATION)//PreAlarm (본 알람 울리기 x분전 울리는것.)
                 .let { prealarmDurationPref ->
                     prefs.preAlarmDuration
                             .observe()
@@ -143,7 +143,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             }
 
                 }
-                .let { disposables.add(it) }
+                .let { disposables.add(it) }*/
 
         findListPreference(Prefs.KEY_FADE_IN_TIME_SEC)
                 .let { fadeInPref ->
@@ -158,7 +158,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 }
                 .let { disposables.add(it) }
 
-        val theme = findListPreference("theme")
+       /* val theme = findListPreference("theme")
         theme.summary = theme.entry
 
         lollipop {
@@ -170,7 +170,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         }
                     }
                     .let { disposables.add(it) }
-        }
+        }*/
     }
 
     override fun onPause() {

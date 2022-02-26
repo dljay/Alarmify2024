@@ -82,7 +82,6 @@ class AlarmsListFragment : Fragment() {
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
 
-
     private val myTimePickerJjong: TimePickerJjong by globalInject()
 
     //lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.

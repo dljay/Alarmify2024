@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit
 
 class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mContext, attrs) {
     private var ringtone: Ringtone? = null
-    private var ringtoneSummary: TextView? = null
+    // private var ringtoneSummary: TextView? = null
     private val disposable = CompositeDisposable()
 
     private val klaxon: KlaxonPlugin by globalInject(named("volumePreferenceDemo"))
@@ -66,10 +66,10 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
             bindPrealarmSeekBar(view.findById(R.id.seekbar_dialog_seekbar_prealarm_volume))
             bindAudioManagerVolume(view.findById(R.id.seekbar_dialog_seekbar_master_volume))
 
-            view.findById<View>(R.id.settings_ringtone).setOnClickListener {
+            /*view.findById<View>(R.id.settings_ringtone).setOnClickListener {
                 context.startActivity(Intent(Settings.ACTION_SOUND_SETTINGS))
-            }
-            ringtoneSummary = view.findById(R.id.settings_ringtone_summary)
+            }*/
+            //ringtoneSummary = view.findById(R.id.settings_ringtone_summary)
             onResume()
         }
     }
@@ -83,9 +83,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
     }
 
     fun onResume() {
-        ringtoneSummary?.text = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))
-                ?.getTitle(context)
-                ?: context.getText(R.string.silent_alarm_summary)
+        // ringtoneSummary?.text = RingtoneManager.getRingtone(context, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM))?.getTitle(context)?: context.getText(R.string.silent_alarm_summary)
     }
 
     override fun onPrepareForRemoval() {

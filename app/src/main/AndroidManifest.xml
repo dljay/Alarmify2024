@@ -60,6 +60,14 @@
             android:parentActivityName=".presenter.AlarmsListActivity"
             android:screenOrientation="portrait"
             android:theme="@style/DefaultDarkTheme" />
+
+        <activity
+            android:name=".presenter.HelpOurTeamActivity"
+            android:exported="false"
+            android:parentActivityName=".presenter.AlarmsListActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/DefaultDarkTheme" />
+
         <activity
             android:name=".presenter.SettingsActivity"
             android:excludeFromRecents="true"

@@ -47,8 +47,8 @@ class PurchasedItemsActivity : AppCompatActivity() {
 
     //2) Shared Pref 에서 a) 현재 RcV 에 보여지는 모든 List 받고-> b) 그 중 purchaseBool=true 인것만 걸러서 c) RcV 로 List 전달.
         val entireList = mySharedPrefManager.getRtInTheCloudList() // 현재 Firebase 에 등록된 모든 Ringtone 들
-        //val purchaseBoolTrueList = entireList.filter { rtInTheCloud -> rtInTheCloud.purchaseBool } // 그 중에서 purchaseBool=true 인 놈만 받기.
-        val purchaseBoolTrueList = listOf<RtInTheCloud>()
+        val purchaseBoolTrueList = entireList.filter { rtInTheCloud -> rtInTheCloud.purchaseBool } // 그 중에서 purchaseBool=true 인 놈만 받기.
+        //val purchaseBoolTrueList = listOf<RtInTheCloud>() // Lottie TEST 위해 : 강제로 list==0 으로..
         Log.d(TAG, "onCreate: purchaseBoolTrueList=$purchaseBoolTrueList") //todo:  [*Purchase Date], [Art URL], [RT_NAME], [ORDER_ID],  [PRICE]
 
     //3) RcView 셋업
@@ -68,7 +68,7 @@ class PurchasedItemsActivity : AppCompatActivity() {
         lottieAnimHandler = LottieAnimHandler(this, lottieAnimationView)
 
     //6) Refresh RcV or Show Lottie (구매내역 없음!)
-        // Lottie TEST : 강제로 list==0 으로..
+
 
         if(purchaseBoolTrueList.isEmpty()) {
             lottieAnimHandler.animController(LottieENUM.PURCHASED_ITEM_EMPTY)

@@ -125,7 +125,7 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
         Log.d(TAG, "onOptionsItemSelected: called. item= $item")
         when (item.itemId) {
             R.id.menu_item_settings -> mContext.startActivity(Intent(mContext, SettingsActivity::class.java)) // Settings -> Preferences 로 Text 변경했음.
-            R.id.menu_help_our_team -> showSayThanks() // store.createNewAlarm() <- 이걸로 해도 알람 잘 생성되는듯.
+            R.id.menu_help_our_team -> showSayThanks() // todo: HelpOurTeamActivity 로 Donation (IAP) 만들기 // store.createNewAlarm() <- 이걸로 해도 알람 잘 생성되는듯.
             R.id.menu_contact_us -> showContactUs() // BugReport -> Contact Us 로 Text 변경했음.
             R.id.menu_purchased_items -> mContext.startActivity(Intent(mContext, PurchasedItemsActivity::class.java)) // Settings -> Preferences 로 Text 변경했음.
             //R.id.set_alarm_menu_delete_alarm -> deleteAlarm()

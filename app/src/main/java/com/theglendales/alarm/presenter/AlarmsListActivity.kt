@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.07[Menu-Preference 수정 후]
+// 30708V1.07[Menu-Preference 수정 후. // Menu > [Help Our Team (=Donation) 제작 전]
 
 // Achievements/Work In Progress:
 // Menu-Preferences 수정 완료
@@ -74,6 +74,7 @@ import java.util.Calendar
 // Issues:
 
 // Todos :
+// Menu > [Help Our Team (=Donation) 제작]
 // Design 은 McDonald 디자인 참고? https://dribbble.com/shots/10061206-McDonald-s-Redesign-User-Profile
 
 //[MyPrefActivity 만들어주기..]

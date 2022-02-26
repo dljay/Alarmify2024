@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.06
+// 30708V1.06[Menu-Preference 수정 전]
 
 // Achievements/Work In Progress:
 // purchasedItemsActivity> RT 구매건 없을때 가정. Lottie 넣었음.

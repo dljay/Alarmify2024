@@ -36,9 +36,11 @@
             app:singleSelection="true"
             app:singleLine="false">
 
+        <!-- Chip 마다 붙인 태그 = Play Console 에 등록된 Product id 와 일치해야함!-->
             <com.google.android.material.chip.Chip
                 android:id="@+id/donation_chip_1"
                 style="@style/customChipStyle"
+                android:tag="@string/donation_iapName_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -53,6 +55,7 @@
             <com.google.android.material.chip.Chip
                 android:id="@+id/donation_chip_2"
                 style="@style/customChipStyle"
+                android:tag="@string/donation_iapName_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"

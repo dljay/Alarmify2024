@@ -25,12 +25,19 @@
     <string name="chip5_Popular">Popular</string>
     <string name="chip6_Misc">Misc.</string>
 
-    <!--Chip Strings2 DONATION.. Chip 표시되는 글자들에 대한 string variable-->
+    <!--Chip Strings2 DONATION 관련.. Chip 표시되는 글자들에 대한 string variable-->
     <string name="chip1_donation">PRICE1</string>
     <string name="chip2_donation">PRICE2</string>
     <string name="chip3_donation">PRICE3</string>
     <string name="chip4_donation">PRICE4</string>
     <string name="chip5_donation">PRICE5</string>
+
+    <!-- Chip - Donation 용도: Play Console 에 등록된 id 와 일치해야함!! -->
+    <string name="donation_iapName_1">donationIap1</string>
+    <string name="donation_iapName_2">donationIap2</string>
+
+
+
 
     <!--Permission 내가 추가 -->
     <string name="bottomSheet_Message1">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again.\n\nHitting <b>CANCEL</b> will dismiss your purchase and disable restoring previously purchased ringtones.</string>

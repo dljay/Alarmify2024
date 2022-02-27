@@ -229,6 +229,7 @@ class MyIAPHelperV3(val context: Context ) {
                     if (purchase.quantity != 1) {
                         Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-1> [IAP] 심각한 문제. Quantity 가 1개가 아님! Quantity=${purchase.quantity}")
                         toastMessenger.showMyToast("More than one IAP sku IDs.", isShort = true)
+
                     }
                     if (indexOfRtObj < 0) {
                         Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-1> List 에서 현재 purchase.sku(=${purchase.skus[0]}) 에 매칭하는 rtObject 를 찾을 수 없음.")

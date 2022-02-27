@@ -188,44 +188,52 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     //  LIVEDATA ->
 
-        //1) ViewModel 생성(RcvVModel/MediaPlayerVModel)
+        //1) ViewModel 생성
         jjMainVModel = ViewModelProvider(requireActivity()).get(JjMainViewModel::class.java)
 
         //2) LiveData Observe
         //Media Player ViewMODEL Observe
             //2-B-가) MP: MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
-        jjMainVModel.getMpStatusLiveData().observe(viewLifecycleOwner, { StatusEnum ->
-                Log.d(TAG, "MpViewModel-mpStatus) 옵저버! Current Music Play Status: $StatusEnum")
-                // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
-                when(StatusEnum) {
-                    StatusMp.PLAY -> {showMiniPlayerPauseBtn()} // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
-                    StatusMp.BUFFERING -> {showMiniPlayerPlayBtn()}
-                    StatusMp.ERROR -> {showMiniPlayerPlayBtn()}
-                    StatusMp.PAUSED -> {showMiniPlayerPlayBtn()}
-                    }
-                // b) VuMeter/MP Loading Circle 등 UI 컨트롤
-                rcvAdapterInstance.lcVmIvController(StatusEnum) // 원복후 불러도 Prev/CurrentHolder 는 어차피 null 이기에 상관없음.
+        jjMainVModel.getMpStatusLiveData().observe(viewLifecycleOwner) { StatusEnum ->
+            Log.d(TAG, "MpViewModel-mpStatus) 옵저버! Current Music Play Status: $StatusEnum")
+            // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
+            when (StatusEnum) {
+                StatusMp.PLAY -> {
+                    showMiniPlayerPauseBtn()
+                } // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
+                StatusMp.BUFFERING -> {
+                    showMiniPlayerPlayBtn()
+                }
+                StatusMp.ERROR -> {
+                    showMiniPlayerPlayBtn()
+                }
+                StatusMp.PAUSED -> {
+                    showMiniPlayerPlayBtn()
+                }
+            }
+            // b) VuMeter/MP Loading Circle 등 UI 컨트롤
+            rcvAdapterInstance.lcVmIvController(StatusEnum) // 원복후 불러도 Prev/CurrentHolder 는 어차피 null 이기에 상관없음.
 
-                })
+        }
 
-            //2-B-나) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
-        jjMainVModel.getSongDurationLiveData().observe(viewLifecycleOwner, { dur ->
-                Log.d(TAG, "MpViewModel-songDuration duration received = ${dur.toInt()}")
-                seekBar.max = dur.toInt()
-                // c) **GlbVar 저장용 **
-                //GlbVars.seekBarMax = dur.toInt()
-            })
-            //2-B-다) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
-        jjMainVModel.getCurrentPosLiveData().observe(viewLifecycleOwner, { playbackPos ->
-                //Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
-                    seekBar.progress = playbackPos.toInt() +200
-                // c) **GlbVars 저장용 ** 현재 재생중인 seekbar 위치
-                //GlbVars.seekbarProgress = playbackPos.toInt() +200
-                //GlbVars.playbackPos = playbackPos
-                })
+        //2-B-나) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
+        jjMainVModel.getSongDurationLiveData().observe(viewLifecycleOwner) { dur ->
+            Log.d(TAG, "MpViewModel-songDuration duration received = ${dur.toInt()}")
+            seekBar.max = dur.toInt()
+            // c) **GlbVar 저장용 **
+            //GlbVars.seekBarMax = dur.toInt()
+        }
+        //2-B-다) MP: seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
+        jjMainVModel.getCurrentPosLiveData().observe(viewLifecycleOwner) { playbackPos ->
+            //Log.d(TAG, "onViewCreated: playback Pos=${playbackPos.toInt()} ")
+            seekBar.progress = playbackPos.toInt() + 200
+            // c) **GlbVars 저장용 ** 현재 재생중인 seekbar 위치
+            //GlbVars.seekbarProgress = playbackPos.toInt() +200
+            //GlbVars.playbackPos = playbackPos
+        }
 
 
-            //Fragments should always use the viewLifecycleOwner to trigger UI updates.
+        //Fragments should always use the viewLifecycleOwner to trigger UI updates.
              viewLifecycleOwner.lifecycleScope.launch {
                 //repeatOnLifeCycle() : 이 블록 안은 이 lifecycle 의 onStart() 에서 실행- onStop() 에서 cancel. lifecycle 시작하면 자동 re-launch!
                 lifecycle.repeatOnLifecycle(State.RESUMED) {

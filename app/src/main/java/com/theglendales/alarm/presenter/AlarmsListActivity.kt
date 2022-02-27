@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.07b[Menu-Preference 수정 후. // Menu > [Help Our Team (=Donation) 제작 중- Chip Implemented]
+// 30708V1.07c[(=Donation) 제작 중- Chip Implemented, 가격표시 ok . 실제 IAP 삽입 전.]
 
 // Achievements/Work In Progress:
 // Menu-Preferences 수정 완료

@@ -3,7 +3,6 @@ package com.theglendales.alarm.presenter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.ViewManager
 import android.widget.Button
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.*
@@ -77,10 +76,16 @@ class HelpOurTeamActivity : AppCompatActivity() {
         btnDonate.setOnClickListener {
             Log.d(TAG, "setBtnDonateListener: clicked to Donate!")
             //a) 현재 선택되어있는 Chip 과 동일한 IAPNAME 을 가진 RtObj 찾기
-            val selectedChip = chipGroup.checkedChipId //todo: 실제 Chip 을 찾아야함.
-            val rtObjViaChipTag = jjHelpUsVModel.getRtObjectViaChipTag(selectedChip.ta)
+            val checkedChipId = chipGroup.checkedChipId
+            val selectedChip: Chip = when(checkedChipId) {
+                R.id.donation_chip_1 -> {findViewById(R.id.donation_chip_1)}
+                R.id.donation_chip_2 -> {findViewById(R.id.donation_chip_2)}
+                else -> {findViewById<Chip>(R.id.donation_chip_1)} // todo: 여기로는 절대 들어와서는 안됨, 달리 써놓을 코드가 없어서 일단은 이렇게 써놓음
+            }
+            val rtObjViaChipTag = jjHelpUsVModel.getRtObjectViaChipTag(selectedChip.tag as String)
+
             //b) 실제 구입과정.
-            jjHelpUsVModel.onDonationBtnClicked()
+            jjHelpUsVModel.onDonationBtnClicked(rtObjViaChipTag)
         }
     }
     private fun setDonationChipListener() {

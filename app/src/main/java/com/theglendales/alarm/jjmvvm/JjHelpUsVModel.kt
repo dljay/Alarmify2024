@@ -1,5 +1,6 @@
 package com.theglendales.alarm.jjmvvm
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,12 +34,12 @@ class JjHelpUsVModel : ViewModel() {
 
     //2) Chip 을 클릭했을 때 결제 처리.
     fun onDonationBtnClicked(rtObj: RtInTheCloud) {
-
+        Log.d(TAG, "onDonationBtnClicked: Clicked. rtobj.iapName= ${rtObj.iapName}")
     }
     //3) Chip 의 Tag 와 일치하는 IAP Name 을 갖고 있는 rtObj 을 반환.
     fun getRtObjectViaChipTag(chipTag: String): RtInTheCloud {
         val rtList = _rtListLiveData.value
-        val rtObj = rtList.single{ rtObj -> rtObj.iapName == chipTag}
+        val rtObj = rtList.single{ rtObj -> rtObj.iapName == chipTag} //todo: IAP init 전에 클릭 테스트. try/catch?
         return rtObj
     }
 

@@ -25,6 +25,13 @@
     <string name="chip5_Popular">Popular</string>
     <string name="chip6_Misc">Misc.</string>
 
+    <!--Chip Strings2 DONATION.. Chip 표시되는 글자들에 대한 string variable-->
+    <string name="chip1_donation">PRICE1</string>
+    <string name="chip2_donation">PRICE2</string>
+    <string name="chip3_donation">PRICE3</string>
+    <string name="chip4_donation">PRICE4</string>
+    <string name="chip5_donation">PRICE5</string>
+
     <!--Permission 내가 추가 -->
     <string name="bottomSheet_Message1">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again.\n\nHitting <b>CANCEL</b> will dismiss your purchase and disable restoring previously purchased ringtones.</string>
 
@@ -209,6 +216,7 @@
        \n\n<font color="#FF0000">If nothing from the above list helps</font>, please write us a message in the field below. We will do our best to try to help you.
    </string>
     <!-- 내가 추가 시작 -->
+    <string name="dialog_help_our_team">Help Our Team</string>
     <string name="dialog_purchased_items">Purchased Alarm Tones</string>
     <string name="dialog_say_thanks_title">Help Our Team</string>
     <string name="dialog_contact_us_title">Contact Us</string>

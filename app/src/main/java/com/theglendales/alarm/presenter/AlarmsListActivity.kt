@@ -64,14 +64,16 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.07c[(=Donation) 제작 중- Chip Implemented, 가격표시 ok . 실제 IAP 삽입 전.]
-
-// Achievements/Work In Progress:
-// Menu-Preferences 수정 완료
-// purchasedItemsActivity> RT 구매건 없을때 가정. Lottie 넣었음.
-// PurchasedItemsActivity> RcV/Adapter 로 Display 성공 (Order ID, Purchase Date, Price, Title, ALbumArt)
+// 30708V1.10 [ HelpOurTeam 에 IAP 심는중- 가격 Display 진행]
 
 // Issues:
+//-- 다른 Activity 갔다왔을 때 LiveData 등 괜찮을지 CHECK!
+//- PlayConsole 에 상품 iapName (id) 이 등록 안되어 있어서 그냥 skuDetailsList 가 '0' 인듯.
+//=> d2_B_addPriceToList() 에서 skuDetailsList SecondFrag 에서 로딩해서 비교해보기. 현재는 '0' 이라서 그 다음줄 for.. 에 아예 안들어가는듯.
+//- 1회성 구입 X consumable 로직으로 보기
+//->로딩시 화면 가운데에 Circle 보여주기
+
+
 
 // Todos :
 // Menu > [Help Our Team (=Donation) 제작]

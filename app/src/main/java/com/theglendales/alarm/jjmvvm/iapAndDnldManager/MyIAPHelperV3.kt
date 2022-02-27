@@ -326,7 +326,7 @@ class MyIAPHelperV3(val context: Context ) {
 
     }
     fun d2_B_addPriceToList(skuDetailsList: List<SkuDetails>) {
-
+        Log.d(TAG, "d2_B_addPriceToList: skuDetailsList = $skuDetailsList")
         for(skuDetails in skuDetailsList)
         {
             //something better than .single? -> 근데 실제 연산 속도가 개당 .001 초니깐

@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.*
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.JjHelpUsVModel
@@ -55,7 +56,7 @@ class HelpOurTeamActivity : AppCompatActivity() {
     //3-B) IAP 에서 받은 정보로 -- 가격 업뎃 Collect (onResume 다음에)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                jjHelpUsVModel.rtListLiveData.collect{ rtList ->
+                jjHelpUsVModel.rtListPlusPricesLiveData.collect{ rtList ->
                     Log.d(TAG, "onCreate: rtList=$rtList")
                     displayPriceOnChips(rtList)
                 }
@@ -117,6 +118,16 @@ class HelpOurTeamActivity : AppCompatActivity() {
 
             chip.text = donationPrice
         }
+    }
+    private fun snackBarDeliverer(msg: String, isShort: Boolean) {
+        Log.d(TAG, "snackBarMessenger: Show Snackbar. Message=[$msg]")
+        if(isShort) {
+            Snackbar.make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_SHORT).show()
+        }else {
+            Snackbar.make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG).show()
+        }
+
+
     }
 
 

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewManager
+import android.widget.Button
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.*
 import com.google.android.material.chip.Chip
@@ -26,9 +27,12 @@ class HelpOurTeamActivity : AppCompatActivity() {
     //ToolBar (ActionBar 대신하여 모든 Activity 에 만들어주는 중.)
     private lateinit var toolBar: Toolbar
 
-    //Chip Related
+    //Chips
     lateinit var chipGroup: ChipGroup
     var myIsChipChecked = false
+
+    //Donate Btn
+    lateinit var btnDonate: Button
 
     //ViewModel
     lateinit var jjHelpUsVModel: JjHelpUsVModel
@@ -37,13 +41,15 @@ class HelpOurTeamActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_help_our_team)
 
-    //1) Activity 화면 Initialize (ActionBar 등..)
+    //1) Activity 화면 및 UI Initialize (ActionBar 등..)
         toolBar = findViewById(R.id.id_toolbar_help_our_team)
+        btnDonate = findViewById(R.id.id_btn_donateNow)
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 뒤로가기(<-) 표시. null check?
 
-    //2) Chip Listener Setup
+    //2) Chip & Donate Btn Listener Setup
         setDonationChipListener()
+        setBtnDonateListener()
 
     //3-A) ViewModel 생성
         jjHelpUsVModel = ViewModelProvider(this)[JjHelpUsVModel::class.java]
@@ -58,12 +64,25 @@ class HelpOurTeamActivity : AppCompatActivity() {
 
         }
     }
+
+
+
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: called")
     }
 
 // **** My Methods
+    private fun setBtnDonateListener() {
+        btnDonate.setOnClickListener {
+            Log.d(TAG, "setBtnDonateListener: clicked to Donate!")
+            //a) 현재 선택되어있는 Chip 과 동일한 IAPNAME 을 가진 RtObj 찾기
+            val selectedChip = chipGroup.checkedChipId //todo: 실제 Chip 을 찾아야함.
+            val rtObjViaChipTag = jjHelpUsVModel.getRtObjectViaChipTag(selectedChip.ta)
+            //b) 실제 구입과정.
+            jjHelpUsVModel.onDonationBtnClicked()
+        }
+    }
     private fun setDonationChipListener() {
         Log.d(TAG, "setDonationChipListener: called")
         chipGroup = findViewById(R.id.id_chipGroup_HelpOurTeam)

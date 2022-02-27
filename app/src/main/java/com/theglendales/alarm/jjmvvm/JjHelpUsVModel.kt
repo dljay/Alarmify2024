@@ -32,5 +32,14 @@ class JjHelpUsVModel : ViewModel() {
     }
 
     //2) Chip 을 클릭했을 때 결제 처리.
+    fun onDonationBtnClicked(rtObj: RtInTheCloud) {
+
+    }
+    //3) Chip 의 Tag 와 일치하는 IAP Name 을 갖고 있는 rtObj 을 반환.
+    fun getRtObjectViaChipTag(chipTag: String): RtInTheCloud {
+        val rtList = _rtListLiveData.value
+        val rtObj = rtList.single{ rtObj -> rtObj.iapName == chipTag}
+        return rtObj
+    }
 
 }

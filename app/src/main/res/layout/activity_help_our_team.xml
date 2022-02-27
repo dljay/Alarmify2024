@@ -70,6 +70,13 @@
 
         </com.google.android.material.chip.ChipGroup>
 
+        <Button
+            android:id="@+id/id_btn_donateNow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btnText_donate"
+            android:gravity="center"/>
+
     </LinearLayout>
 
     <TextView

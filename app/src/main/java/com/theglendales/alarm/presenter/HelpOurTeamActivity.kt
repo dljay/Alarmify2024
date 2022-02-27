@@ -2,6 +2,7 @@ package com.theglendales.alarm.presenter
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.widget.Toolbar
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -45,10 +46,15 @@ class HelpOurTeamActivity : AppCompatActivity() {
             chip.setOnCheckedChangeListener { _, isChecked ->
                 //a) 아이콘 hide/show
                 when (isChecked) {
-                    true -> {chip.isChipIconVisible = false}
-                    false -> {chip.isChipIconVisible = true}
+                    true -> {chip.isChipIconVisible = false
+                        Log.d(TAG, "setDonationChipListener: Chip.id=${chip.id}")
+                        // donateProcess(chip.id)
+                    }
+                    false -> {chip.isChipIconVisible = true
+                    }
                 }
+
             }
-        }
+        } //for loop
     }
 }

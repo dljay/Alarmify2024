@@ -71,7 +71,7 @@ import java.util.Calendar
 // 로딩 Circle 구현
 //1) DonationClick -> LoadingCircle 도는 중 background 나갔을 때. (MyIAP>h_getSkuDetails() 에 Delay 넣고 여유있게 테스트해보기.)
 //- 최우선 순위: Purchase 창 뜨게 할 것. <- app reconnect?
-//- 그냥 onPause()  할때 job cancel?
+//- 그냥 onPause()  할때 job cancel? -- onResume() 에서 JjVModel. getAllProductsPrice() 실행? (혹시 가격 뜨기도 전에 나갈수 있긴 하니깐..)
 //- viewModelScope.coroutineContext.job 하면 현재 진행중인 Job 이 나온다는데.
 //- Donation Click- > 바로 app background- > 뒤로가기(<-) 클릭 ->  Toast 주렁주렁 메시지 안나오게.
 //- SecondFrag 에도 적용.

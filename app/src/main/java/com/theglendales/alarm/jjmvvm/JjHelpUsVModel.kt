@@ -79,6 +79,8 @@ class JjHelpUsVModel : ViewModel() {
         //E) 위의 viewModelScope.launch{} 코루틴 job 이 끝나면(invokeOnCompletion) => **** 드디어 LiveData 업데이트
         getAllPricesJob.invokeOnCompletion { throwable ->
             //E-1) 에러 발생!
+
+
             if(throwable!=null) {
                 Log.d(TAG, "getAllProductsPrice(invokeOnCompletion): [E] Error.. throwable=$throwable ")
                 when(throwable) {

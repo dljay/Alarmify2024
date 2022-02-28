@@ -34,8 +34,8 @@
         <string name="chip5_donation">PRICE5</string>
 
         <!-- Chip - Donation 용도: Play Console 에 등록된 id 와 일치해야함!! -->
-        <string name="donation_iapName_1">donationIap1</string>
-        <string name="donation_iapName_2">donationIap2</string>
+        <string name="donation_iapName_1">donation_p1</string>
+        <string name="donation_iapName_2">donation_p2</string>
 
         <!-- Donate Btn text-->
         <string name="btnText_donate">DONATE</string>
@@ -263,4 +263,5 @@
        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

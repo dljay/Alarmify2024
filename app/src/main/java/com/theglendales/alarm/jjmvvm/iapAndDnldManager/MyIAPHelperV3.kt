@@ -307,7 +307,8 @@ class MyIAPHelperV3(val context: Context ) {
         Log.d(TAG, "d2_A_addPriceToList: <D2-A> called. ThreadName=${Thread.currentThread().name}")
         val itemNameList = ArrayList<String>()
         rtListPlusIAPInfo.forEach {rtObject -> itemNameList.add(rtObject.iapName)}
-
+    // rtObj 의 IAPName 으로 구성된 itemNameList 를 만들고 -> PlayConsole 에 등록된 동일한 iapName 으로 확인 후 -> 아래 skuDetailsList 가 만들어짐!
+        // 즉, 현재 제공하는 iapName 과 매칭하는 PlayConsole Product 가 없으면 -> skuDetailsList 는 null 이 된다.
         val myParams = SkuDetailsParams.newBuilder()
         myParams.setSkusList(itemNameList).setType(BillingClient.SkuType.INAPP)
         //여기서 잠시 JJMainViewModel 코루틴스코프 정지! (suspend!)

@@ -23,6 +23,7 @@ import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForLocal
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
 import com.theglendales.alarm.jjmvvm.spinner.SpinnerAdapter
 import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.MyStringStorage
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.jjongadd.TimePickerJjong
 import com.theglendales.alarm.logger.LogcatLogWriter
@@ -151,6 +152,7 @@ fun startKoin(context: Context): Koin {
         single<MultiDownloaderV3> {MultiDownloaderV3(context = context)}
         single<ExoForUrl> {ExoForUrl(context = context)}
         single<ExoForLocal> {ExoForLocal(context = context)}
+        single<MyStringStorage> {MyStringStorage(context = context)}
         // 내가 추가 <--
 
         factory(named("volumePreferenceDemo")) {

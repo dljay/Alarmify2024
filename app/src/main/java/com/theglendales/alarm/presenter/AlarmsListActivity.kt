@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.10 [ HelpOurTeam 에 IAP 심는중- 가격 Display 진행]
+// 30708V1.11 [ HelpOurTeam 에 IAP 심는중- LiveData 사용. Price IAP 로부터 받기 OK]
 
 // Issues:
 //-- 다른 Activity 갔다왔을 때 LiveData 등 괜찮을지 CHECK!

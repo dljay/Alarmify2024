@@ -1,12 +1,16 @@
 package com.theglendales.alarm.jjmvvm
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.JjPlayStoreUnAvailableException
+import com.theglendales.alarm.jjmvvm.util.MyStringStorage
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.model.mySharedPrefManager
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -19,17 +23,25 @@ private const val TAG="JjHelpUsVModel"
 
 class JjHelpUsVModel : ViewModel() {
 
+//UTIL - String Storage & Toast Deliverer
+    private val strStorage: MyStringStorage by globalInject()
+    private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
+
 // Dummy List<RtInTheCloud>
-    private val rtDonationA = RtInTheCloud(iapName = "donationIap1", itemPrice = "$4.44")
-    private val rtDonationB = RtInTheCloud(iapName = "donationIap2", itemPrice = "$5.55")
+    private val rtDonationA = RtInTheCloud(iapName = strStorage.getStringYo("donationP1"), itemPrice = "$4.44") // res/@string 에 있는데 context 가 있어야 R.string 접근가능해서..strStorage 사용키로.
+    private val rtDonationB = RtInTheCloud(iapName = strStorage.getStringYo("donationP2"), itemPrice = "$5.55")
     private val rtDummyList = mutableListOf<RtInTheCloud>(rtDonationA, rtDonationB)
+
+    private var finalList: List<RtInTheCloud> = ArrayList()
 // Price 받기 (Donation 이지만 사실상 MyIAPHelperV3.kt 에서 RtCloud 리스트받고 결제하는것과 동일!!)
-    private val _rtListPlusPricesLiveData = MutableStateFlow<List<RtInTheCloud>>(rtDummyList)
-    val rtListPlusPricesLiveData: StateFlow<List<RtInTheCloud>> = _rtListPlusPricesLiveData.asStateFlow()
+    private val _rtListPlusPricesLiveData = MutableLiveData<List<RtInTheCloud>>(rtDummyList)
+    val rtListPlusPricesLiveData: LiveData<List<RtInTheCloud>> = _rtListPlusPricesLiveData
+
+
+
 //IAP
     private val iapV3: MyIAPHelperV3 by globalInject()
-// Toast Deliverer
-    private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
+
     init {
         // IAP INIT -> Price Update
         getAllProductsPrice()
@@ -73,13 +85,17 @@ class JjHelpUsVModel : ViewModel() {
                     } // 공갈 리스트 보냄.
                     else -> { // 그 외 에러인 경우 (기기에 사전 저장되었던) sharedPref 받아서 -> LiveData 에 전달.
                         val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList()
-                        _rtListPlusPricesLiveData.value = listSavedOnPhone
+                        finalList = listSavedOnPhone
+                        _rtListPlusPricesLiveData.value = finalList
                         return@invokeOnCompletion
                     }
                 }
             } else { // 에러 없으면
+
                 val rtListPlusPriceInfo = iapV3.e_getFinalList()
-                _rtListPlusPricesLiveData.value = rtListPlusPriceInfo
+                Log.d(TAG, "getAllProductsPrice: Called. rtListPlusPriceInfo=$rtListPlusPriceInfo")
+                finalList = rtListPlusPriceInfo
+                _rtListPlusPricesLiveData.value = finalList
             }
         }
         // 최종적으로 LiveData 에 전달!
@@ -92,7 +108,7 @@ class JjHelpUsVModel : ViewModel() {
     }
     //3) Chip 의 Tag 와 일치하는 IAP Name 을 갖고 있는 rtObj 을 반환.
     fun getRtObjectViaChipTag(chipTag: String): RtInTheCloud {
-        val rtList = _rtListPlusPricesLiveData.value
+        val rtList = finalList
         val rtObj = rtList.single{ rtObj -> rtObj.iapName == chipTag} //todo: IAP init 전에 클릭 테스트. try/catch?
         return rtObj
     }

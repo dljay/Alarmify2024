@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 private const val TAG="HelpOurTeamActivity"
 /*Chips
 0.99 Buy us a coffee
-4.99
+1.99
 9.99
 19.99
 99.99*/
@@ -56,10 +56,11 @@ class HelpOurTeamActivity : AppCompatActivity() {
     //3-B) IAP 에서 받은 정보로 -- 가격 업뎃 Collect (onResume 다음에)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                jjHelpUsVModel.rtListPlusPricesLiveData.collect{ rtList ->
+                jjHelpUsVModel.rtListPlusPricesLiveData.observe(this@HelpOurTeamActivity){ rtList ->
                     Log.d(TAG, "onCreate: rtList=$rtList")
                     displayPriceOnChips(rtList)
                 }
+
             }
 
         }
@@ -114,9 +115,14 @@ class HelpOurTeamActivity : AppCompatActivity() {
         Log.d(TAG, "displayPriceOnChips: called")
         for(i in 0 until chipGroup.childCount) {
             val chip: Chip = chipGroup.getChildAt(i) as Chip
-            val donationPrice = rtList.first { rtObj -> rtObj.iapName == chip.tag }.itemPrice // .tag 로 검색하여 동일한 Chip 을 찾은 뒤 chip 에 가격 표시
+            try{
+                val donationPrice = rtList.first { rtObj -> rtObj.iapName == chip.tag as String }.itemPrice // .tag 로 검색하여 동일한 Chip 을 찾은 뒤 chip 에 가격 표시
+                chip.text = donationPrice
+            }catch (e: Exception) {
+                Log.d(TAG, "displayPriceOnChips: Exception .. e=$e")
+                snackBarDeliverer("Unable to display donation price. \nError= $e", isShort = false)
+            }
 
-            chip.text = donationPrice
         }
     }
     private fun snackBarDeliverer(msg: String, isShort: Boolean) {

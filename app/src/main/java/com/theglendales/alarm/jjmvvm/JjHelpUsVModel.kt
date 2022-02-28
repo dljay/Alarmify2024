@@ -8,18 +8,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.SkuDetails
-import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.iapAndDnldManager.MyIAPHelperV3
 import com.theglendales.alarm.jjmvvm.util.JjPlayStoreUnAvailableException
+import com.theglendales.alarm.jjmvvm.util.JjServiceUnAvailableException
 import com.theglendales.alarm.jjmvvm.util.MyStringStorage
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.model.mySharedPrefManager
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
 private const val TAG="JjHelpUsVModel"
@@ -53,7 +51,7 @@ class JjHelpUsVModel : ViewModel() {
     //1) 가격을 받고 HelpOurTeamActivity.kt 에 알려서 Chip 에 적힌 가격 update
     private fun getAllProductsPrice() {
         // A) IAP Init
-        
+
         // B) Exception Handler
         val handler = CoroutineExceptionHandler { _, throwable ->
             Log.d(TAG, "getAllProductsPrice: [B] [handler] Exception Thrown! Throwable=$throwable")
@@ -71,6 +69,7 @@ class JjHelpUsVModel : ViewModel() {
             iapV3.b_feedRtList(rtDummyList)
             //C-3) Billing Client - Start Connection
             iapV3.c_prepBillingClient()
+
         //D) get Price and add to the List in IAP
             launch {
                 val skuDetailsList= iapV3.d2_A_addPriceToList()
@@ -112,25 +111,36 @@ class JjHelpUsVModel : ViewModel() {
         val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler
         val donationClickJob = viewModelScope.launch(handler) {
         //a) Trigger Loading Circle
-            //triggerPurchaseLoadingCircle(0)
+            triggerPurchaseLoadingCircle(0)
 
         //b) SkuDetailsList 받기.
             val donationIapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
             val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(donationIapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
         //c) 구매창 보여주기 + User 가 구매한 결과(Yes or No - purchaseResult) 받기
-            //triggerPurchaseLoadingCircle(2)
+            triggerPurchaseLoadingCircle(2)
             val donationPurchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
         //d) Verify ->
             iapV3.j_checkVerification(donationPurchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
-        //e) [구매인정!] Consume & Acknowledge 둘 다 해줘야한다!!!! [기존 JjMainViewModel] 은 non-consumable 여서 Acknowledge 만 해줬음.
+        //e) [구매인정!] Consume 만 해주고 Acknowledge 는 안해줬는데 잘되는듯.. 혹 둘 다 해줘야될지 차후 확인 필요 !!!! [기존 JjMainViewModel] 은 non-consumable 여서 Acknowledge 만 해줬음.
             val isDonationAllCompleted = iapV3.k_consumePurchase(donationPurchaseResult)
-        //todo: f) Acknowloedge 까지 해줄지. 동시에 Acknowledge 놓칠경우 잡아줄지도 확인 필요.
+        //todo: f) Acknowledge 까지 해줄지. 동시에 Acknowledge 놓칠경우 잡아줄지도 확인 필요.
         }
         donationClickJob.invokeOnCompletion { throwable ->
-            if(throwable!=null) {
-                Log.d(TAG, "onDonationBtnClicked: error Occurred")
-                toastMessenger.showMyToast("Unable to complete donation process. Error = $throwable",isShort = false)
-            } else {
+            triggerPurchaseLoadingCircle(1)
+            if (throwable != null && !throwable.message.isNullOrEmpty()) {
+                when {
+                    throwable.message!!.contains("USER_CANCELED") -> { // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지나 기타 아무것도 안 보여주기.
+                        return@invokeOnCompletion
+                    }
+                    throwable is JjServiceUnAvailableException -> {
+                        toastMessenger.showMyToast("Error: Service Unavailable Error. Please check your internet connectivity.", isShort = false)
+                    }
+                    else -> {
+                        Log.d(TAG,"onTrackClicked: [donationClickJob-invokeOnCompletion(X)] - Error. throwable=$throwable ")
+                        toastMessenger.showMyToast("Error: $throwable", isShort = false)
+                    }
+                }
+            }else {
                 toastMessenger.showMyToast("We sincerely appreciate your help!",isShort = true)
             }
         }
@@ -141,5 +151,11 @@ class JjHelpUsVModel : ViewModel() {
         val rtObj = rtList.single{ rtObj -> rtObj.iapName == chipTag} //todo: IAP init 전에 클릭 테스트. try/catch?
         return rtObj
     }
+    //4) Loading Circle 관련
+    private val _donationClickLoadingCircleSwitch = MutableLiveData<Int>() // Purchase 클릭 -> 구매창 뜨기전 나올 LoadingCircle
+    val donationClickLoadingCircleSwitch: LiveData<Int> = _donationClickLoadingCircleSwitch
+    fun triggerPurchaseLoadingCircle(onOffNumber: Int) {_donationClickLoadingCircleSwitch.value = onOffNumber} // 0: 보여주기, 1: 아예 다 끄기, 2: 어두운 화면 그대로 두고 Circle 만 안보이게 없애기
+
+
 
 }

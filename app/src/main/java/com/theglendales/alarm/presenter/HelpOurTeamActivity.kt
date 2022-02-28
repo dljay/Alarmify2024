@@ -3,12 +3,15 @@ package com.theglendales.alarm.presenter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.*
 import androidx.lifecycle.Observer
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
 import com.theglendales.alarm.jjdata.RtInTheCloud
@@ -35,6 +38,10 @@ class HelpOurTeamActivity : AppCompatActivity() {
     //Donate Btn
     lateinit var btnDonate: Button
 
+    // Loading Circle
+    lateinit var frameLayoutForCircle: FrameLayout
+    lateinit var centerLoadingCircle: CircularProgressIndicator
+
     //ViewModel
     lateinit var jjHelpUsVModel: JjHelpUsVModel
 
@@ -47,6 +54,10 @@ class HelpOurTeamActivity : AppCompatActivity() {
         btnDonate = findViewById(R.id.id_btn_donateNow)
         setSupportActionBar(toolBar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 뒤로가기(<-) 표시. null check?
+
+        frameLayoutForCircle = findViewById(R.id.fl_loadingCircle) // Loading Circle 관련
+        frameLayoutForCircle.visibility = View.GONE// 일단 LoadingCircle 안보이게 하기.
+        centerLoadingCircle = findViewById(R.id.loadingCircle_itself)
 
     //2) Chip & Donate Btn Listener Setup
         setDonationChipListener()
@@ -61,17 +72,30 @@ class HelpOurTeamActivity : AppCompatActivity() {
                     Log.d(TAG, "onCreate: rtList=$rtList")
                     displayPriceOnChips(rtList)
                 }
+                jjHelpUsVModel.donationClickLoadingCircleSwitch.observe(this@HelpOurTeamActivity) {onOffNumber ->
+                    Log.d(TAG, "onCreate: onOffNumber=$onOffNumber")
+                    when(onOffNumber){
+                        0 -> {frameLayoutForCircle.visibility = View.VISIBLE
+                            centerLoadingCircle.visibility = View.VISIBLE} // 보여주기(O)
+                        1 -> {frameLayoutForCircle.visibility = View.GONE} // 끄기(X)
+                        2 -> {centerLoadingCircle.visibility = View.GONE}// 2 -> circle 만 없애주기 ()
+                    }
+                }
 
             }
 
         }
     }
 
-
-
+    override fun onPause() {
+        Log.d(TAG, "onPause: called")
+        jjHelpUsVModel.triggerPurchaseLoadingCircle(1) // APP 이 Background 로 갈때는 => 아예 다 꺼주기
+        super.onPause()
+    }
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: called")
+        //init IAP?
     }
 
 // **** My Methods

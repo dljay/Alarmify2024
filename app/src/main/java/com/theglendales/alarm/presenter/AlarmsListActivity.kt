@@ -64,20 +64,21 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.11 [ HelpOurTeam 에 IAP 심는중- LiveData 사용. Price IAP 로부터 받기 OK- Donate 버튼 준비전.]
+// 30708V1.11 [ 로딩 Circle 구현 했음. 추가 이슈 확인중.,]
 //
 
 // Issues:
-//-- 다른 Activity 갔다왔을 때 LiveData 등 괜찮을지 CHECK!
-// .observe deprecated 문제..
-// setBtnDonateListener() - else {} 문 처리.
 // 로딩 Circle 구현
-//- PlayConsole 에 상품 iapName (id) 이 등록 안되어 있어서 그냥 skuDetailsList 가 '0' 인듯.
-//=> d2_B_addPriceToList() 에서 skuDetailsList SecondFrag 에서 로딩해서 비교해보기. 현재는 '0' 이라서 그 다음줄 for.. 에 아예 안들어가는듯.
-//- 1회성 구입 X consumable 로직으로 보기
-//->로딩시 화면 가운데에 Circle 보여주기
-
-
+//1) DonationClick -> LoadingCircle 도는 중 background 나갔을 때. (MyIAP>h_getSkuDetails() 에 Delay 넣고 여유있게 테스트해보기.)
+//- 최우선 순위: Purchase 창 뜨게 할 것. <- app reconnect?
+//- 그냥 onPause()  할때 job cancel?
+//- viewModelScope.coroutineContext.job 하면 현재 진행중인 Job 이 나온다는데.
+//- Donation Click- > 바로 app background- > 뒤로가기(<-) 클릭 ->  Toast 주렁주렁 메시지 안나오게.
+//- SecondFrag 에도 적용.
+//
+//2) 다른 Item 등록 () -- rtDummyList 받는것 다른 xx.kt 파일에 적기?
+//3) repeatOn .. 맞게썼는지..
+//4) 빨갱이 SecondFrag 에러.
 
 // Todos :
 // Menu > [Help Our Team (=Donation) 제작]

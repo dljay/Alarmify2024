@@ -16,75 +16,88 @@
         app:title="@string/dialog_help_our_team"
         app:titleTextColor="@color/mat_red"/>
 
-    <!-- Chips -->
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/blackish_trans"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/id_chipGroup_HelpOurTeam"
+        <!-- Chips -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            app:chipSpacingHorizontal="2dp"
-            app:chipSpacingVertical="0dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:singleSelection="true"
-            app:singleLine="false">
+            android:background="@color/blackish_trans"
+            android:orientation="vertical">
 
-        <!-- Chip 마다 붙인 태그 = Play Console 에 등록된 Product id 와 일치해야함!-->
-            <com.google.android.material.chip.Chip
-                android:id="@+id/donation_chip_1"
-                style="@style/customChipStyle"
-                android:tag="@string/donation_iapName_1"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/id_chipGroup_HelpOurTeam"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                app:chipSpacingHorizontal="2dp"
+                app:chipSpacingVertical="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:singleSelection="true"
+                app:singleLine="false">
+
+                <!-- Chip 마다 붙인 태그 = Play Console 에 등록된 Product id 와 일치해야함!-->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/donation_chip_1"
+                    style="@style/customChipStyle"
+                    android:tag="@string/donation_iapName_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:checkable="true"
+                    android:checked="false"
+                    android:text="@string/chip1_donation"
+                    app:checkedIcon="@drawable/chip_check_empty_background"
+                    app:chipIcon="@drawable/chip1_coffee_24"
+                    app:chipIconVisible="true"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/donation_chip_2"
+                    style="@style/customChipStyle"
+                    android:tag="@string/donation_iapName_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:checkable="true"
+                    android:checked="false"
+                    android:text="@string/chip2_donation"
+                    app:checkedIcon="@drawable/chip_check_empty_background"
+                    app:chipIcon="@drawable/chip2_lunch_24"
+                    app:chipIconVisible="true"/>
+
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <Button
+                android:id="@+id/id_btn_donateNow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:checkable="true"
-                android:checked="false"
-                android:text="@string/chip1_donation"
-                app:checkedIcon="@drawable/chip_check_empty_background"
-                app:chipIcon="@drawable/chip1_coffee_24"
-                app:chipIconVisible="true"/>
+                android:text="@string/btnText_donate"
+                android:gravity="center"/>
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/donation_chip_2"
-                style="@style/customChipStyle"
-                android:tag="@string/donation_iapName_2"
+            <TextView
+                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:checkable="true"
-                android:checked="false"
-                android:text="@string/chip2_donation"
-                app:checkedIcon="@drawable/chip_check_empty_background"
-                app:chipIcon="@drawable/chip2_lunch_24"
-                app:chipIconVisible="true"/>
+                android:gravity="center_horizontal"
+                android:text="For real nigga we need help.."/>
+
+        </LinearLayout>
+
+        <!--Loading Circle: 마지막 View will simply overlay everything else. -->
+        <include layout="@layout/loadingcircle_overlay_1"/>
+
+    </FrameLayout>
 
 
-        </com.google.android.material.chip.ChipGroup>
 
-        <Button
-            android:id="@+id/id_btn_donateNow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/btnText_donate"
-            android:gravity="center"/>
 
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:text="For real nigga we need help.."/>
 
 
 </LinearLayout>

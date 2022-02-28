@@ -12,6 +12,7 @@ import com.theglendales.alarm.jjmvvm.util.JjServiceUnAvailableException
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.model.mySharedPrefManager
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.delay
 import java.io.File
 import java.io.IOException
 import kotlin.Exception
@@ -20,7 +21,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 /********************************************************************************************************************************************************************************************
-    a_initBillingClient() => BillingClient() Init 하는 method (현재 사용 안하고 init{} 에서 해주는데 효과없네
+    a_initBillingClient() => BillingClient() Init + Listener
     b_FeedRtList() => JJMainViewModel -> Fb에서 받은 rtList ->rtListPlusIAPInfo 에 덧씌워줌.
     c_PrepBillingClient() => billingClient.startConnection -> AsyncCallback (코루틴 잠시 정지) -> billingResult -> JjMainVModel -> d1, d2 (parallel) 호출
 
@@ -357,13 +358,11 @@ class MyIAPHelperV3(val context: Context ) {
 
 
 
-
-
-
 // ************************************************** <2> Clicked to buy
 //****** h) SkuDetail 받기
     suspend fun h_getSkuDetails(iapNameAsList: List<String>): List<SkuDetails> {
         Log.d(TAG, "h_getSkuDetails: called")
+        //delay(2000L)
         val myParams = SkuDetailsParams.newBuilder().apply {setSkusList(iapNameAsList).setType(BillingClient.SkuType.INAPP)}.build()
 
         return suspendCoroutine { continuation ->

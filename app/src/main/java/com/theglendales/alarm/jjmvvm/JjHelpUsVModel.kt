@@ -1,10 +1,13 @@
 package com.theglendales.alarm.jjmvvm
 
+import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.SkuDetails
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
@@ -103,8 +106,34 @@ class JjHelpUsVModel : ViewModel() {
     }
 
     //2) Chip 을 클릭했을 때 결제 처리.
-    fun onDonationBtnClicked(rtObj: RtInTheCloud) {
+    fun onDonationBtnClicked(receivedActivity: Activity, rtObj: RtInTheCloud) {
         Log.d(TAG, "onDonationBtnClicked: Clicked. rtobj.iapName= ${rtObj.iapName}")
+
+        val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler
+        val donationClickJob = viewModelScope.launch(handler) {
+        //a) Trigger Loading Circle
+            //triggerPurchaseLoadingCircle(0)
+
+        //b) SkuDetailsList 받기.
+            val donationIapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
+            val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(donationIapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
+        //c) 구매창 보여주기 + User 가 구매한 결과(Yes or No - purchaseResult) 받기
+            //triggerPurchaseLoadingCircle(2)
+            val donationPurchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
+        //d) Verify ->
+            iapV3.j_checkVerification(donationPurchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
+        //e) [구매인정!] Consume & Acknowledge 둘 다 해줘야한다!!!! [기존 JjMainViewModel] 은 non-consumable 여서 Acknowledge 만 해줬음.
+            val isDonationAllCompleted = iapV3.k_consumePurchase(donationPurchaseResult)
+        //todo: f) Acknowloedge 까지 해줄지. 동시에 Acknowledge 놓칠경우 잡아줄지도 확인 필요.
+        }
+        donationClickJob.invokeOnCompletion { throwable ->
+            if(throwable!=null) {
+                Log.d(TAG, "onDonationBtnClicked: error Occurred")
+                toastMessenger.showMyToast("Unable to complete donation process. Error = $throwable",isShort = false)
+            } else {
+                toastMessenger.showMyToast("We sincerely appreciate your help!",isShort = true)
+            }
+        }
     }
     //3) Chip 의 Tag 와 일치하는 IAP Name 을 갖고 있는 rtObj 을 반환.
     fun getRtObjectViaChipTag(chipTag: String): RtInTheCloud {

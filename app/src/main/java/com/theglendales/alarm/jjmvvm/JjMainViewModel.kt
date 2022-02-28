@@ -234,7 +234,7 @@ class JjMainViewModel : ViewModel() {
         //2-j) Verify ->
             iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
         //2-k) [구매인정!] Acknowledge!!
-            val isPurchaseAllCompleted = iapV3.k_acknowledgePurchase(purchaseResult, rtObj) // acknowledge 를 여기서 해주고 이제 모든 구입 절차가 끝이 남.
+            val isPurchaseAllCompleted = iapV3.l_acknowledgePurchase(purchaseResult, rtObj) // acknowledge 를 여기서 해주고 이제 모든 구입 절차가 끝이 남.
             Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 O] isPurchaseAllCompleted=$isPurchaseAllCompleted")
         // => 여기서 구매절차는 COMPLETE! => invokeOnCompletion 으로 이동
             //_centerLoadingCircleSwitch.value = 1 //로딩 Circle 없애기

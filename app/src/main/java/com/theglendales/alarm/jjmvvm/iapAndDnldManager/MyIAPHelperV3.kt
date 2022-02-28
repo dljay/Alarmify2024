@@ -415,11 +415,28 @@ class MyIAPHelperV3(val context: Context ) {
             throw Exception("if문 통과못했음. Verify Valid Signature Error")
         }
     }
+    suspend fun k_consumePurchase(purchase: Purchase): Boolean {
+        Log.d(TAG, "k_consumePurchase: called. Purchase = $purchase")
+        return suspendCoroutine { continuation ->
+            val params = ConsumeParams.newBuilder()
+                .setPurchaseToken(purchase.purchaseToken)
+                .build()
+            billingClient!!.consumeAsync(params) { billingResult, purchaseToken ->
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    Log.d(TAG, "k_consumePurchase: Consumed? .. BillingResponseCode= ${billingResult.responseCode}")
+                    continuation.resume(true)
+                    //continuation.resume(purchaseToken)
+                } else {
+                    continuation.resumeWithException(Exception("consume 중 Error 흐음. billingResult.responseCode= ${billingResult.responseCode}" ))
+                }
+            }
+        }
+    }
 
-    suspend fun k_acknowledgePurchase(purchaseResult: Purchase, rtInTheCloud: RtInTheCloud): Boolean {
+    suspend fun l_acknowledgePurchase(purchaseResult: Purchase, rtInTheCloud: RtInTheCloud): Boolean {
 
         if(purchaseResult.isAcknowledged) { // 현재 진행중인 구매건이기때문에 이쪽으로 들어올 확률은 없음. 이전 인도놈 코드 따라 쓴것으로 과거 물품에 대해서도 isAcknowledged 체크를 해줘서 안전빵으로 써줌.
-            Log.d(TAG, "k_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 이미 구매인정 되있는 상태 return!") // 어떤 연유로 이미 구매인정이 되있는 상태라면 그냥 true 반환하고 return
+            Log.d(TAG, "l_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 이미 구매인정 되있는 상태 return!") // 어떤 연유로 이미 구매인정이 되있는 상태라면 그냥 true 반환하고 return
             return true
         } else {//[구매 마무리 절차] 신규구매시 100% 이쪽으로 들어와야함 -> 기본적으로 신규 물품은 우리가 직접 구매확인(isAcknowledged) 을 해줘야함!
 
@@ -432,7 +449,7 @@ class MyIAPHelperV3(val context: Context ) {
                     {
                         // ############################## 신규 구매 정상적으로 완료 #######################
                         //[구입인정] + purchaseBool 값 변경 반영(true)
-                        Log.d(TAG, "k_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 구매인정 부가 했음!!")
+                        Log.d(TAG, "l_acknowledgePurchase: iapName= ${rtInTheCloud.iapName}, 구매인정 부가 했음!!")
                         reflectPurchaseToOurLists(true, rtInTheCloud)
                         continuation.resume(true) // isPurchaseCompleted =true 로 모든 구입 절차가 끝났음을 알림.
                     } else {

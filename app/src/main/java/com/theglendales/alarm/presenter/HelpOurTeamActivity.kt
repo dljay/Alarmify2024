@@ -88,7 +88,7 @@ class HelpOurTeamActivity : AppCompatActivity() {
             val rtObjViaChipTag = jjHelpUsVModel.getRtObjectViaChipTag(selectedChip.tag as String)
 
             //b) 실제 구입과정.
-            jjHelpUsVModel.onDonationBtnClicked(rtObjViaChipTag)
+            jjHelpUsVModel.onDonationBtnClicked(this, rtObjViaChipTag)
         }
     }
     private fun setDonationChipListener() {

@@ -68,6 +68,7 @@ import java.util.Calendar
 
 // Issues:
 //-- 다른 Activity 갔다왔을 때 LiveData 등 괜찮을지 CHECK!
+// .observe deprecated 문제..
 //- PlayConsole 에 상품 iapName (id) 이 등록 안되어 있어서 그냥 skuDetailsList 가 '0' 인듯.
 //=> d2_B_addPriceToList() 에서 skuDetailsList SecondFrag 에서 로딩해서 비교해보기. 현재는 '0' 이라서 그 다음줄 for.. 에 아예 안들어가는듯.
 //- 1회성 구입 X consumable 로직으로 보기

@@ -19,6 +19,8 @@
     android:baselineAligned="true"
     android:orientation="horizontal">
 
+
+
     <com.theglendales.alarm.view.DontPressWithParentLayout
         android:id="@+id/list_row_on_off_checkbox_container"
         style="@style/alarm_list_albumArt_Container"

@@ -384,11 +384,14 @@ class AlarmsListFragment : Fragment() {
             requireActivity().finish() }
 
         listRowLayout = prefs.layout()
+
         listRowLayoutId = when (listRowLayout) {
-            Layout.COMPACT -> R.layout.list_row_compact
+            Layout.COMPACT -> R.layout.list_row_classic// 원래: R.layout.list_row_compact 였으나 계속 RowHolder 에서 findView 에서 null 에러나서 이걸로 바꿈.
             Layout.CLASSIC -> R.layout.list_row_classic
             else -> R.layout.list_row_bold
         }
+        Log.d(TAG, "onResume: listRowLayoutId= $listRowLayoutId, listRowLayout=$listRowLayout")
+
 
 
         // ListActivity 로 Fab 버튼을 옮긴 후 코드 (Fragment View 생성과 동시에 ListActivity 에 있는 Fab 을 찾아서 보여줌)

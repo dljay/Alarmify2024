@@ -21,7 +21,7 @@ import kotlinx.coroutines.*
 private const val TAG="JjHelpUsVModel"
 
 class JjHelpUsVModel : ViewModel() {
-
+//todo: String 영어 -> .. 번역..
 //UTIL - String Storage & Toast Deliverer
     private val strStorage: MyStringStorage by globalInject()
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
@@ -143,10 +143,15 @@ class JjHelpUsVModel : ViewModel() {
         }
     }
     //3) Chip 의 Tag 와 일치하는 IAP Name 을 갖고 있는 rtObj 을 반환.
-    fun getRtObjectViaChipTag(chipTag: String): RtInTheCloud {
+    fun getRtObjectViaChipTag(chipTag: String): RtInTheCloud? {
         val rtList = finalList
-        val rtObj = rtList.single{ rtObj -> rtObj.iapName == chipTag} //todo: IAP init 전에 클릭 테스트. try/catch?
-        return rtObj
+        try{
+            val rtObj = rtList.single{ rtObj -> rtObj.iapName == chipTag} //todo: IAP init 전에 클릭 테스트
+            return rtObj
+        }catch (e:Exception) {
+            Log.d(TAG, "getRtObjectViaChipTag: exception= $e")
+            return null
+        }
     }
     //4) Loading Circle 관련
     private val _donationClickLoadingCircleSwitch = MutableLiveData<Int>() // Purchase 클릭 -> 구매창 뜨기전 나올 LoadingCircle

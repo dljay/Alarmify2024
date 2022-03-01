@@ -17,8 +17,10 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.theglendales.alarm.R
+import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
 import com.theglendales.alarm.jjmvvm.JjHelpUsVModel
+import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.launch
 
 private const val TAG="HelpOurTeamActivity"
@@ -32,7 +34,8 @@ class HelpOurTeamActivity : AppCompatActivity() {
 
     //ToolBar (ActionBar 대신하여 모든 Activity 에 만들어주는 중.)
     private lateinit var toolBar: Toolbar
-
+    //Toast Messenger
+    private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
     //Chips
     lateinit var chipGroup: ChipGroup
     var myIsChipChecked = false
@@ -138,7 +141,12 @@ class HelpOurTeamActivity : AppCompatActivity() {
             val rtObjViaChipTag = jjHelpUsVModel.getRtObjectViaChipTag(selectedChip.tag as String)
 
             //b) 실제 구입과정.
-            jjHelpUsVModel.onDonationBtnClicked(this, rtObjViaChipTag)
+            if(rtObjViaChipTag!=null) { // 사전에 IAP 에서 데이터 가져오는데 문제가 없었다는 가정하에.
+                jjHelpUsVModel.onDonationBtnClicked(this, rtObjViaChipTag)
+            } else {
+                toastMessenger.showMyToast("We're sorry. We cannot process your donation at the moment.",isShort = false)
+            }
+
         }
     }
     private fun setDonationChipListener() {
@@ -164,16 +172,27 @@ class HelpOurTeamActivity : AppCompatActivity() {
     }
     private fun displayPriceOnChips(rtList: List<RtInTheCloud>) {
         Log.d(TAG, "displayPriceOnChips: called")
+        var exceptionToCatch= Exception("")
+        var isErrorDisplayingPrice = false
+
         for(i in 0 until chipGroup.childCount) {
             val chip: Chip = chipGroup.getChildAt(i) as Chip
             try{
                 val donationPrice = rtList.first { rtObj -> rtObj.iapName == chip.tag as String }.itemPrice // .tag 로 검색하여 동일한 Chip 을 찾은 뒤 chip 에 가격 표시
                 chip.text = donationPrice
+                isErrorDisplayingPrice = false
             }catch (e: Exception) {
                 Log.d(TAG, "displayPriceOnChips: Exception .. e=$e")
-                snackBarDeliverer("Unable to display donation price. \nError= $e", isShort = false)
+                isErrorDisplayingPrice = true
+                exceptionToCatch = e
+                //snackBarDeliverer("Unable to display donation price in local currency. \nError= $e", isShort = false) // GooglePlay Store - Sign In 안됐을때 나오는 Toast 메시지와 겹쳐서..
             }
         }
+        if(isErrorDisplayingPrice && !exceptionToCatch.message.isNullOrEmpty()) {
+            //todo: 아래 Toast 로 하면 jjHelpVModel > Please sign in to Google Play 와 연달아서 나오니깐 그냥 textView 에 "Unable to display price in local currency" 로 써주도록 하자.
+            //toastMessenger.showMyToast(getString(R.string.unable_to_display_price)+ "\nError= $exceptionToCatch",isShort = true) //jjHelpVModel > Please sign in to Google Play 와 연달아서 나옴.
+        }
+
     }
     private fun snackBarDeliverer(msg: String, isShort: Boolean) {
         Log.d(TAG, "snackBarMessenger: Show Snackbar. Message=[$msg]")

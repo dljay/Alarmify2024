@@ -64,14 +64,15 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.13 [ 로딩 Circle 구현 했음. 추가 이슈 확인중.,]
+// 30708V1.14 [ 로딩 Circle 구현 했음. 추가 이슈 확인중.,]
 //Achievements:
 // 로딩 Circle 구현
 // 모든 Donation 등록 (0.99, 2.99, 9.99, 19.99 다른 Item 등록 () -- rtDummyList 받는것 다른 xx.kt 파일에 적기)
+// Repeaton.. 맞게쓴것 같음.
 
 // Issues:
 
-//3) repeatOn .. 맞게썼는지..
+
 //4) 빨갱이 SecondFrag 에러.
 
 // Todos :

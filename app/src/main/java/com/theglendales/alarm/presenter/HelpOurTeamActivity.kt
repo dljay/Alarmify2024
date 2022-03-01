@@ -1,14 +1,17 @@
 package com.theglendales.alarm.presenter
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Observer
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.progressindicator.CircularProgressIndicator
@@ -67,22 +70,25 @@ class HelpOurTeamActivity : AppCompatActivity() {
     //3-B) IAP 에서 받은 정보로 -- 가격 업뎃 Collect (onResume 다음에)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                jjHelpUsVModel.rtListPlusPricesLiveData.observe(this@HelpOurTeamActivity){ rtList ->
-                    Log.d(TAG, "onCreate: rtList=$rtList")
-                    displayPriceOnChips(rtList)
-                }
-                jjHelpUsVModel.donationClickLoadingCircleSwitch.observe(this@HelpOurTeamActivity) {onOffNumber ->
-                    Log.d(TAG, "onCreate: onOffNumber=$onOffNumber")
-                    when(onOffNumber){
-                        0 -> {frameLayoutForCircle.visibility = View.VISIBLE
-                            centerLoadingCircle.visibility = View.VISIBLE} // 보여주기(O)
-                        1 -> {frameLayoutForCircle.visibility = View.GONE} // 끄기(X)
-                        2 -> {centerLoadingCircle.visibility = View.GONE}// 2 -> circle 만 없애주기 ()
+                launch {
+                    jjHelpUsVModel.rtListPlusPricesLiveData.observe(this@HelpOurTeamActivity){ rtList ->
+                        Log.d(TAG, "onCreate: rtList=$rtList")
+                        displayPriceOnChips(rtList)
                     }
                 }
 
+                launch {
+                    jjHelpUsVModel.donationClickLoadingCircleSwitch.observe(this@HelpOurTeamActivity) {onOffNumber ->
+                        Log.d(TAG, "onCreate: onOffNumber=$onOffNumber")
+                        when(onOffNumber){
+                            0 -> {frameLayoutForCircle.visibility = View.VISIBLE
+                                centerLoadingCircle.visibility = View.VISIBLE} // 보여주기(O)
+                            1 -> {frameLayoutForCircle.visibility = View.GONE} // 끄기(X)
+                            2 -> {centerLoadingCircle.visibility = View.GONE}// 2 -> circle 만 없애주기 ()
+                        }
+                    }
+                }
             }
-
         }
     }
 
@@ -115,14 +121,19 @@ class HelpOurTeamActivity : AppCompatActivity() {
     private fun setBtnDonateListener() {
         btnDonate.setOnClickListener {
             Log.d(TAG, "setBtnDonateListener: clicked to Donate!")
-            //a) 현재 선택되어있는 Chip 과 동일한 IAPNAME 을 가진 RtObj 찾기
+            //a) Chip 이 선택 안되어있을 때
+            if(chipGroup.checkedChipId == View.NO_ID) {
+                snackBarDeliverer(getString(R.string.select_at_least_one),isShort = true)
+                return@setOnClickListener
+            }
+            //b) 현재 선택되어있는 Chip 과 동일한 IAPNAME 을 가진 RtObj 찾기
             val checkedChipId = chipGroup.checkedChipId
             val selectedChip: Chip = when(checkedChipId) {
                 R.id.donation_chip_1 -> {findViewById(R.id.donation_chip_1)}
                 R.id.donation_chip_2 -> {findViewById(R.id.donation_chip_2)}
                 R.id.donation_chip_3 -> {findViewById(R.id.donation_chip_3)}
                 R.id.donation_chip_4 -> {findViewById(R.id.donation_chip_4)}
-                else -> {findViewById<Chip>(R.id.donation_chip_1)} // todo: 여기로는 절대 들어와서는 안됨, 달리 써놓을 코드가 없어서 일단은 이렇게 써놓음
+                else -> {findViewById<Chip>(R.id.donation_chip_1)} // Chip 설정 안되었을 때 위에서 SnackBar 보여주니깐 여기로는 절대 들어올 일 없음.
             }
             val rtObjViaChipTag = jjHelpUsVModel.getRtObjectViaChipTag(selectedChip.tag as String)
 

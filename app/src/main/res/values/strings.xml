@@ -41,6 +41,8 @@
 
         <!-- Donate Btn text-->
         <string name="btnText_donate">DONATE</string>
+        <!-- Donation 금액(Chip) 안 누르고 DONATE 버튼 눌렀을 때 -->
+        <string name="select_at_least_one">Please select the donation amount.</string>
 
     <!-- <<<<<<<<<< DONATION 관련.. 여기까지  -->
 

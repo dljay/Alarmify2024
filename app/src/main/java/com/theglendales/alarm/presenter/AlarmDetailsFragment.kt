@@ -167,12 +167,13 @@ class AlarmDetailsFragment : Fragment() {
         logger.debug { "$this with ${store.editing().value}" }
 
         //View Initializing ->
-        val view = inflater.inflate(
+        val view = inflater.inflate(R.layout.details_fragment_classic
+                /* [JJLAY] 기존 코드.
                 when (prefs.layout()) {
                     Layout.CLASSIC -> R.layout.details_fragment_classic
                     Layout.COMPACT -> R.layout.details_fragment_compact
                     else -> R.layout.details_fragment_bold
-                },
+                }*/,
                 container,
                 false
         )

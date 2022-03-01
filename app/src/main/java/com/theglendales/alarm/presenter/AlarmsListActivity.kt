@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17 [Android 12.0 (API 31) 크래쉬 이슈 해결 전- RowHolder. Style 어쩌구 문제여서 고치기 시작..드디어.. ]
+// 30708V1.17b [Android 12.0 (API 31) 크래쉬 이슈 해결 전- RowHolder. Style 어쩌구 문제여서 고친 후 ]
 //Achievements:
 // 로딩 Circle 구현
 // 모든 Donation 등록 (0.99, 2.99, 9.99, 19.99 다른 Item 등록 () -- rtDummyList 받는것 다른 xx.kt 파일에 적기)
@@ -72,7 +72,8 @@ import java.util.Calendar
 // 빨갱이 SecondFrag 에러.(O)
 
 // Issues:
-
+// 우선 Layout 관련 정리.
+// Galaxy 에서 FAB 으로 CreateAlarm -> 백버튼 몇번 누르니 Crash..
 // Todos :
 
 // ToolBar 꾸미기 (메뉴 없애고 등..)

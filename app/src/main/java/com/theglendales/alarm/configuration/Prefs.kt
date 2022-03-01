@@ -33,8 +33,8 @@ class Prefs private constructor(
                     when {
                         !lollipop() -> Layout.CLASSIC
                         it == LIST_ROW_LAYOUT_CLASSIC -> Layout.CLASSIC
-                        it == LIST_ROW_LAYOUT_COMPACT -> Layout.COMPACT
-                        else -> Layout.BOLD
+                        it == LIST_ROW_LAYOUT_COMPACT -> Layout.CLASSIC // [JJLAY] // 기존 Layout.COMPACT
+                        else -> Layout.CLASSIC // [JJLAY]기존 Layout.BOLD
                     }
                 }.blockingFirst()
     }

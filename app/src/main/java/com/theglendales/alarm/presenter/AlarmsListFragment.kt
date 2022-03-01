@@ -256,7 +256,7 @@ class AlarmsListFragment : Fragment() {
 
             }
         // h) 흐음. 이건 쓸모 없는듯 (우리는 Layout 선택 못하게 할것이니..)
-            val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
+            //val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
 
         // i)  내가 추가:: 요일 표시--> (단순화 버전)
             //todo: Dark Mode 관련..
@@ -385,12 +385,14 @@ class AlarmsListFragment : Fragment() {
 
         listRowLayout = prefs.layout()
 
-        listRowLayoutId = when (listRowLayout) {
-            Layout.COMPACT -> R.layout.list_row_classic// 원래: R.layout.list_row_compact 였으나 계속 RowHolder 에서 findView 에서 null 에러나서 이걸로 바꿈.
+        listRowLayoutId = R.layout.list_row_classic
+        // [JJLAY] 기존 코드
+        /*listRowLayoutId = when (listRowLayout) {
+            Layout.COMPACT -> R.layout.list_row_compact // classic 아니면 계속 RowHolder 에서 findView 에서 null 에러..
             Layout.CLASSIC -> R.layout.list_row_classic
             else -> R.layout.list_row_bold
-        }
-        Log.d(TAG, "onResume: listRowLayoutId= $listRowLayoutId, listRowLayout=$listRowLayout")
+        }*/
+        //Log.d(TAG, "onResume: listRowLayoutId= $listRowLayoutId, listRowLayout=$listRowLayout") // Layout.COMPACT 였음.
 
 
 

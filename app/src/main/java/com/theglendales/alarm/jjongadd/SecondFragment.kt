@@ -236,7 +236,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //Fragments should always use the viewLifecycleOwner to trigger UI updates.
              viewLifecycleOwner.lifecycleScope.launch {
                 //repeatOnLifeCycle() : 이 블록 안은 이 lifecycle 의 onStart() 에서 실행- onStop() 에서 cancel. lifecycle 시작하면 자동 re-launch!
-                lifecycle.repeatOnLifecycle(State.RESUMED) {
+                viewLifecycleOwner.repeatOnLifecycle(State.RESUMED) {
                     launch {
                         jjMainVModel.selectedRow.collect { rtInTheCloudObj -> currentClickedTrId = rtInTheCloudObj.id
                             Log.d(TAG,"[MainVModel <0> - Selected Row] !!!  옵저버!! 트랙ID= ${rtInTheCloudObj.id}, \n currentClickedTrId=$currentClickedTrId")

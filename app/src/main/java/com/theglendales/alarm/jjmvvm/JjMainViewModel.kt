@@ -253,6 +253,9 @@ class JjMainViewModel : ViewModel() {
                     throwable is JjServiceUnAvailableException -> {
                         toastMessenger.showMyToast("Purchase Error: Service Unavailable Error. Please check your internet connectivity.", isShort = false)
                     }
+                    throwable is CancellationException -> {
+                        Log.d(TAG, "Purchase Error: job Cancellation Exception.. =_=")
+                    }
                     else -> {
                         Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(X)] - Error. throwable=$throwable ")
                         toastMessenger.showMyToast("Purchase Error: $throwable", isShort = false)

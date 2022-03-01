@@ -362,7 +362,7 @@ class MyIAPHelperV3(val context: Context ) {
 //****** h) SkuDetail 받기
     suspend fun h_getSkuDetails(iapNameAsList: List<String>): List<SkuDetails> {
         Log.d(TAG, "h_getSkuDetails: called")
-        //delay(2000L)
+        //delay(2000L) // Loading Circle  테스트 용도로 심음.
         val myParams = SkuDetailsParams.newBuilder().apply {setSkusList(iapNameAsList).setType(BillingClient.SkuType.INAPP)}.build()
 
         return suspendCoroutine { continuation ->

@@ -16,9 +16,7 @@ import com.theglendales.alarm.jjmvvm.util.JjServiceUnAvailableException
 import com.theglendales.alarm.jjmvvm.util.MyStringStorage
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.model.mySharedPrefManager
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 private const val TAG="JjHelpUsVModel"
 
@@ -137,6 +135,9 @@ class JjHelpUsVModel : ViewModel() {
                     throwable is JjServiceUnAvailableException -> {
                         toastMessenger.showMyToast("Error: Service Unavailable Error. Please check your internet connectivity.", isShort = false)
                     }
+                    throwable is CancellationException -> { //- Donation Click-> app background -> 복귀 후 뒤로가기(<-) 클릭 -> Job Cancel 된다. 이때 JobCancellationException 뜬다 (Toast 없이 logd 로만 표시)
+                        Log.d(TAG, "onDonationBtnClicked: job Cancellation Exception.. =_=")
+                    }
                     else -> {
                         Log.d(TAG,"onTrackClicked: [donationClickJob-invokeOnCompletion(X)] - Error. throwable=$throwable ")
                         toastMessenger.showMyToast("Error: $throwable", isShort = false)
@@ -158,6 +159,9 @@ class JjHelpUsVModel : ViewModel() {
     val donationClickLoadingCircleSwitch: LiveData<Int> = _donationClickLoadingCircleSwitch
     fun triggerPurchaseLoadingCircle(onOffNumber: Int) {_donationClickLoadingCircleSwitch.value = onOffNumber} // 0: 보여주기, 1: 아예 다 끄기, 2: 어두운 화면 그대로 두고 Circle 만 안보이게 없애기
 
-
+    //5) 현재 진행중인 Job 을 보여주는 function
+    /*fun showCurrentJob() {
+        Log.d(TAG, "showCurrentJob: currentJob=${viewModelScope.coroutineContext.job} ")
+    }*/
 
 }

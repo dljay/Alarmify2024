@@ -469,7 +469,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
     override fun onPause() {
         super.onPause()
-
+        jjMainVModel.triggerPurchaseLoadingCircle(1) // Purchase 로딩 중 나갔다 들어오면 내가 심은 LoadingCircle 때문에 화면이 어두컴컴)
         Log.d(TAG, "onPause: 2nd Frag! // viewLifecycleOwner.lifecycle.currentState=${viewLifecycleOwner.lifecycle.currentState}")
         Log.d(TAG, "onPause: 2nd Frag! // lifecycle.currentState=${lifecycle.currentState}")
         //collapseSlidingPanel()

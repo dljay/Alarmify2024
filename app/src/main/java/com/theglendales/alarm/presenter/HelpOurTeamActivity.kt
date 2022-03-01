@@ -88,14 +88,28 @@ class HelpOurTeamActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        Log.d(TAG, "onPause: called")
-        jjHelpUsVModel.triggerPurchaseLoadingCircle(1) // APP 이 Background 로 갈때는 => 아예 다 꺼주기
         super.onPause()
+        // onPause 에서 ViewModel 통해 ViewModelScope.job 을 Cancel 해주면. 돌아왔을 때 Donation 버튼 눌러도 계속 JobCancelException 에러 뜬다.
+        jjHelpUsVModel.triggerPurchaseLoadingCircle(1) // APP 이 Background 로 갈때는 => 아예 다 꺼주기
+        Log.d(TAG, "onPause: called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        //jjHelpUsVModel.showCurrentJob()
+        Log.d(TAG, "onStop: called")
+
     }
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume: called")
         //init IAP?
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        Log.d(TAG, "onDestroy: called")
     }
 
 // **** My Methods

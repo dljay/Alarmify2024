@@ -64,23 +64,19 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.15 [ 로딩 Circle 구현 했음. 추가 이슈 확인중.,]
+// 30708V1.16 [Android 12.0 (API 31) 크래쉬 이슈 해결 전 ]
 //Achievements:
 // 로딩 Circle 구현
 // 모든 Donation 등록 (0.99, 2.99, 9.99, 19.99 다른 Item 등록 () -- rtDummyList 받는것 다른 xx.kt 파일에 적기)
-// Repeaton.. 맞게쓴것 같음. (O)
+// RepeatOn.. 맞게쓴것 같음. (O)
 // 빨갱이 SecondFrag 에러.(O)
 
 // Issues:
 
-
-
 // Todos :
 
-
-
 // ToolBar 꾸미기 (메뉴 없애고 등..)
-// 사계절별로 AppBarLayout 에 보여줄 사진 바꾸기
+
 // RtPickerActivity 에도...
 // ToolBar 꾸미기 (메뉴 없애고 등..)
 //2) Transparent 하게. / RtPickerActivity 에도 적용.

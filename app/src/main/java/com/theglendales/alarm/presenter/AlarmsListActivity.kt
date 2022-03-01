@@ -71,15 +71,13 @@ import java.util.Calendar
 // Repeaton.. 맞게쓴것 같음.
 
 // Issues:
+// 빨갱이 SecondFrag 에러.
 
-
-//4) 빨갱이 SecondFrag 에러.
 
 // Todos :
-// Menu > [Help Our Team (=Donation) 제작]
-// Design 은 McDonald 디자인 참고? https://dribbble.com/shots/10061206-McDonald-s-Redesign-User-Profile
 
-//[MyPrefActivity 만들어주기..]
+
+
 // ToolBar 꾸미기 (메뉴 없애고 등..)
 // 사계절별로 AppBarLayout 에 보여줄 사진 바꾸기
 // RtPickerActivity 에도...

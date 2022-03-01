@@ -25,15 +25,9 @@ class JjHelpUsVModel : ViewModel() {
 //UTIL - String Storage & Toast Deliverer
     private val strStorage: MyStringStorage by globalInject()
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
-
-// Dummy List<RtInTheCloud>
-    private val rtDonationA = RtInTheCloud(iapName = strStorage.getStringYo("donationP1"), itemPrice = "$4.44") // res/@string 에 있는데 context 가 있어야 R.string 접근가능해서..strStorage 사용키로.
-    private val rtDonationB = RtInTheCloud(iapName = strStorage.getStringYo("donationP2"), itemPrice = "$5.55")
-    private val rtDummyList = mutableListOf<RtInTheCloud>(rtDonationA, rtDonationB)
-
     private var finalList: List<RtInTheCloud> = ArrayList()
 // Price 받기 (Donation 이지만 사실상 MyIAPHelperV3.kt 에서 RtCloud 리스트받고 결제하는것과 동일!!)
-    private val _rtListPlusPricesLiveData = MutableLiveData<List<RtInTheCloud>>(rtDummyList)
+    private val _rtListPlusPricesLiveData = MutableLiveData<List<RtInTheCloud>>()
     val rtListPlusPricesLiveData: LiveData<List<RtInTheCloud>> = _rtListPlusPricesLiveData
 
 
@@ -64,7 +58,7 @@ class JjHelpUsVModel : ViewModel() {
             Log.d(TAG, "getAllProductsPrice: [C] ViewModelScope.launch{}")
 
             //C-2) RtList (공갈) -> IAP 에 전달 -> 이후 정보 채워서 받을 예정
-            iapV3.b_feedRtList(rtDummyList)
+            iapV3.b_feedRtList(getIapNameDummyList())
             //C-3) Billing Client - Start Connection
             iapV3.c_prepBillingClient()
 
@@ -159,7 +153,17 @@ class JjHelpUsVModel : ViewModel() {
     val donationClickLoadingCircleSwitch: LiveData<Int> = _donationClickLoadingCircleSwitch
     fun triggerPurchaseLoadingCircle(onOffNumber: Int) {_donationClickLoadingCircleSwitch.value = onOffNumber} // 0: 보여주기, 1: 아예 다 끄기, 2: 어두운 화면 그대로 두고 Circle 만 안보이게 없애기
 
-    //5) 현재 진행중인 Job 을 보여주는 function
+    //5) <중요!> 여기서 DummyList 에 넣어준 iapName 을 기반으로 IAP -> PlayConsole 에 등록된 상품의 iapName 정보를 갖고 옴 -> 이후 가격 표시가 되는 원리.
+    private fun getIapNameDummyList(): MutableList<RtInTheCloud> {
+        // Dummy List<RtInTheCloud>
+        val rtDonationP1 = RtInTheCloud(iapName = strStorage.getStringYo("donationP1"),itemPrice = "$0.00") // res/@string 에 있는데 context 가 있어야 R.string 접근가능해서..strStorage 사용키로.
+        val rtDonationP2 = RtInTheCloud(iapName = strStorage.getStringYo("donationP2"), itemPrice = "$0.00")
+        val rtDonationP3 = RtInTheCloud(iapName = strStorage.getStringYo("donationP3"), itemPrice = "$0.00")
+        val rtDonationP4 = RtInTheCloud(iapName = strStorage.getStringYo("donationP4"), itemPrice = "$0.00")
+
+        return mutableListOf(rtDonationP1, rtDonationP2, rtDonationP3, rtDonationP4)
+    }
+    //6) 현재 진행중인 Job 을 보여주는 function
     /*fun showCurrentJob() {
         Log.d(TAG, "showCurrentJob: currentJob=${viewModelScope.coroutineContext.job} ")
     }*/

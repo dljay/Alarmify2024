@@ -21,10 +21,9 @@ import kotlinx.coroutines.launch
 private const val TAG="HelpOurTeamActivity"
 /*Chips
 0.99 Buy us a coffee
-1.99
-9.99
-19.99
-99.99*/
+2.99 Buy us a burger
+9.99 Buy us a bottle of wine
+19.99 Buy us a programming book  */
 // 중복 선택 불가능, IAP 로 가격 표시,
 class HelpOurTeamActivity : AppCompatActivity() {
 
@@ -121,6 +120,8 @@ class HelpOurTeamActivity : AppCompatActivity() {
             val selectedChip: Chip = when(checkedChipId) {
                 R.id.donation_chip_1 -> {findViewById(R.id.donation_chip_1)}
                 R.id.donation_chip_2 -> {findViewById(R.id.donation_chip_2)}
+                R.id.donation_chip_3 -> {findViewById(R.id.donation_chip_3)}
+                R.id.donation_chip_4 -> {findViewById(R.id.donation_chip_4)}
                 else -> {findViewById<Chip>(R.id.donation_chip_1)} // todo: 여기로는 절대 들어와서는 안됨, 달리 써놓을 코드가 없어서 일단은 이렇게 써놓음
             }
             val rtObjViaChipTag = jjHelpUsVModel.getRtObjectViaChipTag(selectedChip.tag as String)
@@ -161,7 +162,6 @@ class HelpOurTeamActivity : AppCompatActivity() {
                 Log.d(TAG, "displayPriceOnChips: Exception .. e=$e")
                 snackBarDeliverer("Unable to display donation price. \nError= $e", isShort = false)
             }
-
         }
     }
     private fun snackBarDeliverer(msg: String, isShort: Boolean) {

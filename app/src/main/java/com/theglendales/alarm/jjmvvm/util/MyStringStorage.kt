@@ -12,6 +12,12 @@ class MyStringStorage(context: Context) {
             "donationP2" -> {
                 "donation_p2"
             }
+            "donationP3" -> {
+                "donation_p3"
+            }
+            "donationP4" -> {
+                "donation_p4"
+            }
             else -> {
                 ""
             }

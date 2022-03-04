@@ -302,7 +302,8 @@ class AlarmsListFragment : Fragment() {
         }
 
         fun getItem(pos: Int): AlarmValue {
-            return if(pos >= alarmValuesList.size) { //todo: 이거 절대 일어나서는 안되는 에러. 한번 발생한적이 있으므로 유심히 관찰한 후 User 에게 toast 안 뜨게 그냥 지울 것.
+            return if(pos >= alarmValuesList.size) { //todo: 이거 절대 일어나서는 안되는 에러. 벌써 두번이나 알람 지우다 발생한적이 있음. 유심히 관찰.. + User 에게 toast 안 뜨게 그냥 지울 것.
+                Log.d(TAG, "getItem: [**DEADLY ERROR**] Unable to fetch Alarm(getItem(). Returning list[0].\n Pos=$pos, AlarmValueList.size=${alarmValuesList.size}")
                 toastMessenger.showMyToast("[**DEADLY ERROR**] Unable to fetch Alarm(getItem(). Returning list[0].\n Pos=$pos, AlarmValueList.size=${alarmValuesList.size}",isShort = false)
                 alarmValuesList[0]
             } else {

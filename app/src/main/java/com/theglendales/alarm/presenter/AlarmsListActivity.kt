@@ -69,6 +69,7 @@ import java.util.Calendar
 
 
 // 30708V1.17Xy [알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]
+
 //Achievements:
 // 시작은 GalS20 에서 FAB(Create Alarm) -> BackButton 여러번 눌렀을 때 Crash 나는것으로 시작.
 //해결법1) 7+ 군데 Pending Intent FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT 같이 넣는것

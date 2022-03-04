@@ -21,9 +21,11 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
 {
     private val MY_READ_PERMISSION_CODE = 812 // Download(Write) 후 파일 읽을때. WRITE PERMISSION 하면 자동으로 Permission Granted!
     private val MY_WRITE_PERMISSION_CODE = 2480 // Download 용
+    private val MY_READ_PHONE_STATE_CODE = 8914 // S+ (ap31 용)
     private val myBtmShtObjInst = BtmSheetPermission // OBJECT 로 만들었음! BottomSheet 하나만 뜨게하기 위해!
     //private var needToDownloadList = mutableListOf<DownloadableItem>()
 
+// [****** 1. PERMISSION: WRITE *********]
     //1-a> Permission to Write (앱 최초 설치시 등장)
     fun permissionToWriteOnInitialLaunch() {
 
@@ -69,6 +71,51 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
         ActivityCompat.requestPermissions(receivedActivity, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), MY_WRITE_PERMISSION_CODE)
         // 폰에 기본으로 설정된 "xx Permission 허락합니까?" Dialog -> 여기서 결과 Y/N 여부에 따라 아래 onRequestPermissionsResult 로 반응.
     }
+// [****** 2. PERMISSION: READ PHONE STATE *********]
+    fun permissionReadPhoneState() {
+
+        Log.d(TAG, "permissionReadPhoneState: API LVL= ${Build.VERSION.SDK_INT}")
+        if (ContextCompat.checkSelfPermission(receivedActivity.applicationContext, android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED)
+        { // 1) 권한 허용 안된 상태
+            if (ActivityCompat.shouldShowRequestPermissionRationale(receivedActivity,android.Manifest.permission.READ_PHONE_STATE))// 이전 거부한적있으면 should..()가 true 반환
+            {// 1-a) 이전에 한번 거부한적이 있는경우 showBottomDialog() 함수를 실행
+                Log.d(TAG, "permissionReadPhoneState: 1-a) 이전에 한번 거부한적이 있다.")
+
+                // bottomSheet 두번 뜨는것 방지위해 다음 코드를 넣었음!
+
+                val fm = myBtmShtObjInst.fragmentManager
+                if(fm==null) {
+                    Log.d(TAG, "permissionReadPhoneState: fm is null==bottomSheet NOT(XX) displayed or prepared!!!!")
+                }
+                if(fm!=null) { // BottomSheet 이 display 된 상태.
+                    Log.d(TAG, "permissionReadPhoneState: fm not null..something is(OO) displayed already")
+                    val fragTransaction = fm.beginTransaction()
+                    fm.executePendingTransactions()
+                    //fm 에서의 onCreateView/Dialog() 작용은 Asynchronous 기 때문에. <-요기 executePending() 을 통해서 다 실행(?)한 후.에.야 밑에 .isAdded 에 걸림.
+                }
+
+                if(!myBtmShtObjInst.isAdded) {// 아무것도 display 안된 상태.
+                    myBtmShtObjInst.showBtmPermDialog(receivedActivity)
+                    Log.d(TAG, "permissionReadPhoneState: ***DISPLAY 벤치휭~ BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
+                }
+
+            } else { // 1-b) 최초로 권한 요청!
+                //권한 요청
+                Log.d(TAG, "permissionReadPhoneState: 1-b) 처음으로 권한 요청드립니다!!")
+                reqPerm_ReadState()
+            }
+        } else { // 2) 이미 권한 허용이 된 상태
+            Log.d(TAG, "permissionReadPhoneState: 2) 이미 권한이 허용된 상태!")
+            myBtmShtObjInst.removePermBtmSheetAndResume()
+
+        }
+    }
+    private fun reqPerm_ReadState() {
+        Log.d(TAG, "reqPerm_ReadState: called")
+        ActivityCompat.requestPermissions(receivedActivity, arrayOf(android.Manifest.permission.READ_PHONE_STATE), MY_READ_PHONE_STATE_CODE)
+        // 폰에 기본으로 설정된 "xx Permission 허락합니까?" Dialog -> 여기서 결과 Y/N 여부에 따라 아래 onRequestPermissionsResult 로 반응.
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray)
     {
         Log.d(TAG, "onRequestPermissionsResult: INSIDE PermissionHandler.kt!")
@@ -76,19 +123,37 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
         when(requestCode) {
             MY_WRITE_PERMISSION_CODE -> {
                 if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){ //Permission 허용 Yes 했을 때
-                    Log.d(TAG, "onRequestPermissionsResult: Permission Allowed(O)!!")
+                    Log.d(TAG, "onRequestPermissionsResult: [WRITE_PERM] Permission Allowed(O)!!")
                     myBtmShtObjInst.removePermBtmSheetAndResume() //todo : 이 줄 없애도 될듯.. 여기서 보여주지도 않은 벤치췽~ bottomsht 왜 없애?
                 }
                 else if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED){ //Permission 허용 No 했을 때
-                    Log.d(TAG, "onRequestPermissionsResult: PERMISSION_DENIED (or BACKGROUND clicked.)")
+                    Log.d(TAG, "onRequestPermissionsResult: [WRITE_PERM] PERMISSION_DENIED (or BACKGROUND clicked.)")
                     //todo: LiveData -> SecondFrag 로 "Permission Denied" 되었음 전달?
                     if(!myBtmShtObjInst.isAdded) {//아무것도 display 안된 상태.
-                        Log.d(TAG, "permissionToWrite: ***DISPLAY 벤치휭~ BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
+                        Log.d(TAG, "permissionToWrite: [WRITE_PERM] ***DISPLAY 벤치휭~ BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
                         myBtmShtObjInst.showBtmPermDialog(receivedActivity) //Settings & Cancel 갈 수 있는 BottomFrag
                     }
                 }
                 else {
-                    Log.d(TAG, "onRequestPermissionsResult: Permission DENIED!!(XXX)..") //기타? 아마도 No 인듯..
+                    Log.d(TAG, "onRequestPermissionsResult: [WRITE_PERM] Permission DENIED!!(XXX)..") //기타? 아마도 No 인듯..
+                    Toast.makeText(receivedActivity,"Permission Denied.", Toast.LENGTH_LONG).show()
+                }
+            }
+            MY_READ_PHONE_STATE_CODE -> {
+                if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){ //Permission 허용 Yes 했을 때
+                    Log.d(TAG, "onRequestPermissionsResult: [READ_PHONE_STATE] Permission Allowed(O)!!")
+                    myBtmShtObjInst.removePermBtmSheetAndResume() //todo : 이 줄 없애도 될듯.. 여기서 보여주지도 않은 벤치췽~ bottomsht 왜 없애?
+                }
+                else if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_DENIED){ //Permission 허용 No 했을 때
+                    Log.d(TAG, "onRequestPermissionsResult: [READ_PHONE_STATE] PERMISSION_DENIED (or BACKGROUND clicked.)")
+                    //todo: LiveData -> SecondFrag 로 "Permission Denied" 되었음 전달?
+                    if(!myBtmShtObjInst.isAdded) {//아무것도 display 안된 상태.
+                        Log.d(TAG, "onRequestPermissionsResult:[READ_PHONE_STATE]  ***DISPLAY 벤치휭~ BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
+                        myBtmShtObjInst.showBtmPermDialog(receivedActivity) //Settings & Cancel 갈 수 있는 BottomFrag
+                    }
+                }
+                else {
+                    Log.d(TAG, "onRequestPermissionsResult: [READ_PHONE_STATE] Permission DENIED!!(XXX)..") //기타? 아마도 No 인듯..
                     Toast.makeText(receivedActivity,"Permission Denied.", Toast.LENGTH_LONG).show()
                 }
             }
@@ -96,6 +161,8 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
         }
 
     }
+
+
 // 이전 IAP->Download <-> Permission 연결되었을때 코드 (21.12.26 전)
 /*    fun permissionForSingleDNLD(receivedDownloadableItem: DownloadableItem) {
         Log.d(TAG, "permissionForSingleDNLD: Downloadable Item =$receivedDownloadableItem")

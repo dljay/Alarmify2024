@@ -1,6 +1,7 @@
 package com.theglendales.alarm.background
 
 import android.app.Notification
+import android.util.Log
 import com.theglendales.alarm.BuildConfig
 import com.theglendales.alarm.interfaces.IAlarmsManager
 import com.theglendales.alarm.interfaces.Intents
@@ -18,6 +19,7 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
 import java.util.Calendar
 
+private const val TAG="AlertService"
 interface AlertPlugin {
     fun go(alarm: PluginAlarmData, prealarm: Boolean, targetVolume: Observable<TargetVolume>): Disposable
 }
@@ -119,6 +121,7 @@ class AlertService(
     }
 
     private fun stateValid(event: Event): Boolean {
+        Log.d(TAG, "stateValid: jj event=$event")
         return when {
             activeAlarms.requireValue().isEmpty() -> {
                 when (event) {

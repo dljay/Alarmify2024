@@ -103,7 +103,7 @@ public class ScheduledReceiver {
 
             Intent showList = new Intent(context, AlarmsListActivity.class);
             showList.putExtra(Intents.EXTRA_ID, id);
-            PendingIntent showIntent = PendingIntent.getActivity(context, id, showList, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent showIntent = PendingIntent.getActivity(context, id, showList, PendingIntent.FLAG_IMMUTABLE);
 
             long milliseconds = nextOptional.get().nextNonPrealarmTime();
             am.setAlarmClock(new AlarmClockInfo(milliseconds, showIntent),

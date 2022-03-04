@@ -18,10 +18,13 @@ package com.theglendales.alarm.model
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.PresentationToModelIntents
 import com.theglendales.alarm.logger.Logger
+
+private const val TAG="AlarmsReceiver"
 
 class AlarmsReceiver : BroadcastReceiver() {
     private val alarms: Alarms by globalInject()
@@ -56,8 +59,9 @@ class AlarmsReceiver : BroadcastReceiver() {
                 log.debug { "Snooze $id" }
                 alarms.getAlarm(id)?.snooze()
             }
-
+            // 알람 울렸을 때 Dismiss 누르면 이쪽으로 들어옴.
             PresentationToModelIntents.ACTION_REQUEST_DISMISS -> {
+                Log.d(TAG, "onReceive: jj Hit 'Dismiss!'")
                 val id = intent.getIntExtra(AlarmsScheduler.EXTRA_ID, -1)
                 log.debug { "Dismiss $id" }
                 alarms.getAlarm(id)?.dismiss()

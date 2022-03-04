@@ -42,7 +42,7 @@ interface AlarmSetter {
                         // must be here, otherwise replace does not work
                         setClass(mContext, AlarmsReceiver::class.java)
                     },
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
             am.cancel(pendingAlarm)
         }
@@ -55,7 +55,7 @@ interface AlarmSetter {
                         putExtra(EXTRA_ID, id)
                         putExtra(EXTRA_TYPE, typeName)
                     }
-                    .let { PendingIntent.getBroadcast(mContext, pendingAlarmRequestCode, it, PendingIntent.FLAG_UPDATE_CURRENT) }
+                    .let { PendingIntent.getBroadcast(mContext, pendingAlarmRequestCode, it, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT) } //[JJFLAG]
 
             setAlarmStrategy.setRTCAlarm(calendar, pendingAlarm)
         }
@@ -75,7 +75,7 @@ interface AlarmSetter {
                         setClass(mContext, AlarmsReceiver::class.java)
                         putExtra(EXTRA_ID, id)
                     }
-                    .let { PendingIntent.getBroadcast(mContext, id, it, PendingIntent.FLAG_UPDATE_CURRENT) }
+                    .let { PendingIntent.getBroadcast(mContext, id, it, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT) }
 
             setAlarmStrategy.setInexactAlarm(calendar, pendingAlarm)
         }
@@ -89,7 +89,7 @@ interface AlarmSetter {
                         // must be here, otherwise replace does not work
                         setClass(mContext, AlarmsReceiver::class.java)
                     },
-                    PendingIntent.FLAG_UPDATE_CURRENT
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
             am.cancel(pendingAlarm)
         }
@@ -140,7 +140,7 @@ interface AlarmSetter {
                         mContext,
                         100500,
                         Intent(mContext, AlarmsListActivity::class.java),
-                        PendingIntent.FLAG_UPDATE_CURRENT
+                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
                 am.setAlarmClock(AlarmManager.AlarmClockInfo(calendar.timeInMillis, pendingShowList), pendingIntent)
             }

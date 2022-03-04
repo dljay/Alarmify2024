@@ -36,6 +36,7 @@ import com.theglendales.alarm.notificationBuilder
  * Glue class: connects AlarmAlert IntentReceiver to AlarmAlert activity. Passes
  * through Alarm ID.
  */
+private const val TAG="NotificationsPlugin"
 class NotificationsPlugin(
         private val logger: Logger,
         private val mContext: Context,
@@ -44,14 +45,14 @@ class NotificationsPlugin(
 ) {
     fun show(alarm: PluginAlarmData, index: Int, startForeground: Boolean) {
         /* Close dialogs and window shade */
-        mContext.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+        //mContext.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) //t 수정..
 
         // Trigger a notification that, when clicked, will show the alarm
         // alert dialog. No need to check for fullscreen since this will always
         // be launched from a user action.
         val notify = Intent(mContext, AlarmAlertFullScreen::class.java)
         notify.putExtra(Intents.EXTRA_ID, alarm.id)
-        val pendingNotify = PendingIntent.getActivity(mContext, alarm.id, notify, 0)
+        val pendingNotify = PendingIntent.getActivity(mContext, alarm.id, notify, PendingIntent.FLAG_IMMUTABLE) // 원래는 마지막 칸이 '0' 였음.
         val pendingSnooze = PresentationToModelIntents.createPendingIntent(mContext,
                 PresentationToModelIntents.ACTION_REQUEST_SNOOZE, alarm.id)
         val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,

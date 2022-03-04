@@ -4,6 +4,8 @@ package com.theglendales.alarm.presenter
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.AlarmManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -19,10 +21,12 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -64,17 +68,20 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17b [Android 12.0 (API 31) 크래쉬 이슈 해결 전- RowHolder. Style 어쩌구 문제여서 고친 후. GalS20 BackButton 고치는 과정 전 ]
+// 30708V1.17XX [Android 12.0 (API 31) 크래쉬 이슈 해결: ]
 //Achievements:
-// 로딩 Circle 구현
-// 모든 Donation 등록 (0.99, 2.99, 9.99, 19.99 다른 Item 등록 () -- rtDummyList 받는것 다른 xx.kt 파일에 적기)
-// RepeatOn.. 맞게쓴것 같음. (O)
-// 빨갱이 SecondFrag 에러.(O)
+// 시작은 GalS20 에서 FAB(Create Alarm) -> BackButton 여러번 눌렀을 때 Crash 나는것으로 시작.
+//해결법1) 7+ 군데 Pending Intent FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT 같이 넣는것
+//해결법2) Permission 관련 READ_PHONE_STATE 와 SCHEDULE_EXACT_ALARM 넣는것으로 해결.
+
+//
 
 // Issues:
+// 하위 버전 호환 테스트 안됐음.
 // 우선 Layout 관련 정리.
-// Galaxy 에서 FAB 으로 CreateAlarm -> 백버튼 몇번 누르니 Crash..
+
 // Todos :
+// 우선은 현재 버전 백업 -> 1.17C 로 다시 복귀 후 다시 현재 상태로 거슬러 올라가기 .. OR 현재 상태에서 api.SDKINT= s(API31) .. 이걸로 조져보기..
 
 // ToolBar 꾸미기 (메뉴 없애고 등..)
 
@@ -289,6 +296,11 @@ class AlarmsListActivity : AppCompatActivity() {
 
             myPermHandler.permissionToWriteOnInitialLaunch() //
         }
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S) { // S = API 31
+            myPermHandler.permissionReadPhoneState()
+
+        }
+
 
     // Toolbar & appbarLayout
         toolBar = findViewById(R.id.id_toolbar_Collapsable) // Collapsible toolBar
@@ -379,8 +391,20 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onResume() {
         Log.d(TAG, "onResume: jj-called")
+        //permission.SCHEDULE_EXACT_ALARM 퍼미션 됐는지 확인작업 + read_phone_storage permission 관련.
+       /* val alarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val hasPermission: Boolean = alarmManager.canScheduleExactAlarms()
+        Log.d(TAG, "onResume: Schedule Exact.. hasPermission=$hasPermission") // 현재 true 로 뜬다.*/
+      /*  if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S) {
+
+            Log.d(TAG, "onCreate: read_phonestorage 체크..int=${ContextCompat.checkSelfPermission(this.applicationContext, android.Manifest.permission.READ_PHONE_STATE)}")
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_PHONE_STATE), 8914)
+            Log.d(TAG, "onCreate: read_phonestorage 체크..int=${ContextCompat.checkSelfPermission(this.applicationContext, android.Manifest.permission.READ_PHONE_STATE)}")
+        }*/
+
         super.onResume()
         // Settings Fragment 갔다왔으면
 /*    // MyCacher Init() -> MediaPlayer(V2) Init [BackgroundThread] --- 원래 SecondFrag 에 있던것을 이쪽으로 옮겨옴 (ListFrag <-> SecondFrag 왔다리갔다리 무리없게 사용 위해.)
@@ -394,7 +418,7 @@ class AlarmsListActivity : AppCompatActivity() {
         NotificationSettings().checkSettings(this)
 
     //Permission 관련
-        // A) Permission 을 허용하라는 btmSheet 을 보여준뒤 복귀했을때!
+        // A) Permission 을 허용하라는 btmSheet 을 보여준뒤 복귀했을때! [WRITE_EXTERNAL_STORAGE]
         if(BtmSheetPermission.isAdded) {
             if (ContextCompat.checkSelfPermission(this.applicationContext,
                     android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
@@ -402,6 +426,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 BtmSheetPermission.removePermBtmSheetAndResume() // btmSheet 을 없애줌! Perm 허용 안되었으면 (Cancel 누를때까지) BtmSheet 유지!
             }
         }
+        // B)
 
 
     }

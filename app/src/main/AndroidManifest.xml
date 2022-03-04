@@ -4,6 +4,8 @@
     <!-- 참고 maxSdkVersion="19" 의 뜻은 '18'까지만 Permission 체크하라는 뜻. no longer needed.. 그 후로는 필요없음. -->
     <!-- Protection level: NORMAL PERMISSION: 앱 상 별도의 허락이 필요없는 PERMISSION 들 system automatically grants this.. without asking -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -12,8 +14,7 @@
         android:name="android.permission.WRITE_SETTINGS"
         android:maxSdkVersion="19" /> <!-- Dangerous. READ_PHONE_STATE 의 경우. 전화가 와도 알람이 안 멈추는것 같음.. -->
     <uses-permission
-        android:name="android.permission.READ_PHONE_STATE"
-        android:maxSdkVersion="22" />
+        android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" /> <!-- 아직 안 알아봄... -->
@@ -24,6 +25,11 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
     <uses-permission android:name="com.android.vending.BILLING" />
+
+    <!--S+ (API31) 에서는 다음 Permission 이 필요한 듯. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+
+
 
     <application
         android:name=".configuration.AlarmApplication"

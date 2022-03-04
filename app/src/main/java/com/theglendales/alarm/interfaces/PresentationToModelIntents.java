@@ -17,6 +17,6 @@ public class PresentationToModelIntents {
         Intent intent = new Intent(action);
         intent.putExtra(Intents.EXTRA_ID, id);
         intent.setClass(context, AlarmsReceiver.class);
-        return PendingIntent.getBroadcast(context, id, intent, 0);
+        return PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

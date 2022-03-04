@@ -70,7 +70,7 @@ class BackgroundNotifications(
             setClass(mContext, TransparentActivity::class.java)
             putExtra(Intents.EXTRA_ID, id)
         }.let {
-            PendingIntent.getActivity(mContext, id, it, 0)
+            PendingIntent.getActivity(mContext, id, it, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
         val pendingDismiss = PresentationToModelIntents.createPendingIntent(mContext,

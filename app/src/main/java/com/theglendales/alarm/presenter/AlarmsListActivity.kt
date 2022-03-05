@@ -75,7 +75,7 @@ import java.util.Calendar
 //해결법1) 7+ 군데 Pending Intent FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT 같이 넣는것
 //해결법2) Permission 관련 READ_PHONE_STATE 와 SCHEDULE_EXACT_ALARM 넣는것으로 해결.
 // 일단 showDetails() 안에 commit() -> commitNow() 로 하면 Synchronous 여서 해결은 된다.
-// B.u.t! 근본적으로 왜 두번(혹은 세번) 불리는지 파악이 시급..
+// B.u.t! 근본적으로 왜 SecondFrag 갔다오면 두번(혹은 세번) 불리는지 파악이 시급.. -> Fab 심지어 원래 있던 ListFrag 에 원복해도 마찬가지였음.
 
 // Issues:
 //[알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]

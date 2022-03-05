@@ -353,7 +353,7 @@ class AlarmsListFragment : Fragment() {
         setHasOptionsMenu(true)
     // 기존 Fab 코드 (Fragment 에 있을 때)
         /*val fab: View = view.findViewById(R.id.fab)
-        fab.setOnClickListener { uiStore.createNewAlarm() }*/ // 22_02_19: 여기와 list_fragment.xml 에 있는 R.id.fab 버튼 없애고 AlarmsListActivity.XML 에 FAB 심음.
+        fab.setOnClickListener { uiStore.createNewAlarm() } // 22_02_19: 여기와 list_fragment.xml 에 있는 R.id.fab 버튼 없애고 AlarmsListActivity.XML 에 FAB 심음.*/
 
 
        /* lollipop {

@@ -68,14 +68,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Xy2 [Fab 클릭 -> TimePicker 반영 안되는것 추적중. API30, API31 공통. 3/5(토) 11:42 ]
+// 30708V1.17Xy3 [Fab 클릭 -> TimePicker 반영 안되는것 추적중. 왜 ConfigureTransActions() 가 두번 불릴까??? API30, API31 공통. 3/5(토) 13:51 ]
 
 //Achievements:
 // 시작은 GalS20 에서 FAB(Create Alarm) -> BackButton 여러번 눌렀을 때 Crash 나는것으로 시작.
 //해결법1) 7+ 군데 Pending Intent FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT 같이 넣는것
 //해결법2) Permission 관련 READ_PHONE_STATE 와 SCHEDULE_EXACT_ALARM 넣는것으로 해결.
-
-//
+// 일단 showDetails() 안에 commit() -> commitNow() 로 하면 Synchronous 여서 해결은 된다.
+// B.u.t! 근본적으로 왜 두번(혹은 세번) 불리는지 파악이 시급..
 
 // Issues:
 //[알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]
@@ -565,6 +565,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
             val detailsFragment = AlarmDetailsFragment().apply {arguments = Bundle()}
             supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, detailsFragment).commitAllowingStateLoss()
+        //todo: [미봉책] .CommitNow() 로 하면 Synchronous 니까 일단 configureTransactions x2 -> showDetails() x2 되는것 해결은 된다.
         }
         // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
         btmNavView.visibility =View.GONE

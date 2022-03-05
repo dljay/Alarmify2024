@@ -23,6 +23,7 @@
  */
 package com.theglendales.alarm.statemachine
 
+import android.util.Log
 import com.theglendales.alarm.logger.Logger
 import kotlin.properties.Delegates
 
@@ -110,6 +111,7 @@ import kotlin.properties.Delegates
  * It is inspired by an
  * [Android SM](https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/core/java/com/android/internal/util/StateMachine.java)
  */
+private const val TAG="StateMachine"
 internal class StateMachine<T : Any>(
         val name: String,
         private val logger: Logger
@@ -222,7 +224,8 @@ internal class StateMachine<T : Any>(
 
     /** Goes all states from root to [currentState] and invokes [State.enter] */
     private fun enterInitialState(event: T?) = withProcessingFlag {
-        val toEnter = branchToRoot(currentState).reversed()
+        Log.d(TAG, "enterInitialState: called.")
+        val toEnter = branchToRoot(currentState).reversed() // toEnter: List<State<T>>
         logger.debug { "[$name] entering $toEnter" }
         toEnter.forEach { it.enter(event) }
         performTransitions(event)

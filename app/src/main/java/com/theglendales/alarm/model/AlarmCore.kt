@@ -348,6 +348,7 @@ class AlarmCore(
                 }
 
                 override fun onResume() {
+                    Log.d(TAG, "onResume: called.")
                     val nextTime = calculateNextTime()
                     setAlarm(nextTime, CalendarType.NORMAL)
                     showSkipNotification(nextTime)
@@ -652,6 +653,7 @@ class AlarmCore(
     }
 
     private fun setAlarm(calendar: Calendar, calendarType: CalendarType) {
+        Log.d(TAG, "setAlarm: called..")
         mAlarmsScheduler.setAlarm(container.id, calendarType, calendar, container)
         alarmStore.modify { withNextTime(calendar) }
     }
@@ -702,7 +704,7 @@ class AlarmCore(
         private var handled: Boolean = false
 
         final override fun enter(reason: Event?) {
-            Log.d(TAG, "enter: (override) called")
+            Log.d(TAG, "enter: (reason=$reason) called")
             when (reason) {
                 null -> onResume()
                 else -> {

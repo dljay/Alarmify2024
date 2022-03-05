@@ -365,7 +365,7 @@ class AlarmsListFragment : Fragment() {
                         .switchMap { uiStore.transitioningToNewAlarmDetails() }
                         .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
                         .subscribe { alarms ->
-                            Log.d(TAG, "(Line 251) onCreateView: alarmsSub~!! alarms=$alarms")
+                            Log.d(TAG, "(Line 368) onCreateView: alarmsSub~!! alarms=$alarms")
                             val sorted = alarms
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())
@@ -423,8 +423,6 @@ class AlarmsListFragment : Fragment() {
 //        }
 
         alarmsSub.dispose()
-
-
     }
 
     override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenuInfo?) {

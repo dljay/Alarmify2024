@@ -68,14 +68,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Xy3 [Fab 클릭 -> TimePicker 반영 안되는것 추적중. 왜 ConfigureTransActions() 가 두번 불릴까??? API30, API31 공통. 3/5(토) 13:51 ]
+// 30708V1.17Xy4 [Fab 클릭 -> TimePicker 반영 안되는것 추적중. ListActivity> createAlarm 에서 editing-subscribe 관련. 미스테리 solve 중. API30, API31 공통. 3/5(토) 13:51 ]
 
 //Achievements:
-// 시작은 GalS20 에서 FAB(Create Alarm) -> BackButton 여러번 눌렀을 때 Crash 나는것으로 시작.
-//해결법1) 7+ 군데 Pending Intent FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT 같이 넣는것
-//해결법2) Permission 관련 READ_PHONE_STATE 와 SCHEDULE_EXACT_ALARM 넣는것으로 해결.
-// 일단 showDetails() 안에 commit() -> commitNow() 로 하면 Synchronous 여서 해결은 된다.
-// B.u.t! 근본적으로 왜 SecondFrag 갔다오면 두번(혹은 세번) 불리는지 파악이 시급.. -> Fab 심지어 원래 있던 ListFrag 에 원복해도 마찬가지였음.
+//요지는 fab 을 누르는 순간:
+//a) AlarmsListActivity>createNewAlarm(LINE165) 에서 editing.onNext 로 EditedAlarm(신규)를 보냄
+//b) configureTransactions(Line484) 에서 subscribe 중 (uistore.editing)
+//c) 문제는 SecondFrag 갔다 온 뒤에 .subscribe 에 동일 신규 알람 두개가 온다는 것. 즉, ListFrag 기존에 있던 (생성 예정 신규 알람)이 onDestroy() 에서도 안 없어진듯?
 
 // Issues:
 //[알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]
@@ -166,6 +165,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     Log.d(TAG, "(line97) createNewAlarm: jj- called")
                     transitioningToNewAlarmDetails.onNext(true)
                     val newAlarm = alarms.createNewAlarm()
+                    Log.d(TAG, "createNewAlarm: newAlarm=$newAlarm")
                     editing.onNext(EditedAlarm(
                             isNew = true,
                             value = Optional.of(newAlarm.data),
@@ -231,9 +231,11 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
+        Log.d(TAG, "onSaveInstanceState: called")
         super.onSaveInstanceState(outState)
         outState.putInt("version", BuildConfig.VERSION_CODE)
         uiStore.editing().value?.writeInto(outState)
+        Log.d(TAG, "onSaveInstanceState: ${uiStore.editing()}")
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -483,7 +485,8 @@ class AlarmsListActivity : AppCompatActivity() {
         subscriptions = uiStore.editing()
                 .distinctUntilChanged { edited -> edited.isEdited }
                 .subscribe(Consumer { edited ->
-                    Log.d(TAG, "(line268!)configureTransactions: jj- edited= $edited") // edited 는 (type) EditedAlarm
+
+                    Log.d(TAG, "(line268!)configureTransactions: jj- edited.isEdited= ${edited.isEdited}, edited= $edited") // edited 는 (type) EditedAlarm
                     when {
                         lollipop() && isDestroyed -> return@Consumer
                         edited.isEdited -> showDetails(edited)

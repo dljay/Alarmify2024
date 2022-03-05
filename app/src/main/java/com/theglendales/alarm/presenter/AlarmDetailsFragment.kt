@@ -166,30 +166,24 @@ class AlarmDetailsFragment : Fragment() {
         Log.d(TAG, "onCreateView: jj-called")
         logger.debug { "$this with ${store.editing().value}" }
 
-        //View Initializing ->
+    //View Initializing ->
         val view = inflater.inflate(R.layout.details_fragment_classic
                 /* [JJLAY] 기존 코드.
                 when (prefs.layout()) {
                     Layout.CLASSIC -> R.layout.details_fragment_classic
                     Layout.COMPACT -> R.layout.details_fragment_compact
                     else -> R.layout.details_fragment_bold
-                }*/,
-                container,
-                false
-        )
+                }*/,container,false)
         this.fragmentView = view
-        //View Initializing <-
+    //View Initializing <-
 
-
-        // RTPicker onClickListener 셋업-- > 설정시 '현재 설정된 RT 의 File 이름' 이 필요하기에 밑에 line 5xx 'selectedRtFileName' 을 받을때 -> setRtPickerClickListener() 로 해줌.
-
+    // RTPicker onClickListener 셋업-- > 설정시 '현재 설정된 RT 의 File 이름' 이 필요하기에 밑에 line 5xx 'selectedRtFileName' 을 받을때 -> setRtPickerClickListener() 로 해줌.
             //[Ringtone] 써있는 전체 박스 중 아무데나 눌렀을 때
         clRtPickerContainer.setOnClickListener {
-
             val intent = Intent(requireActivity(), RtPickerActivity::class.java) //  현재 Activity 에서 -> RtPicker_Test1 Activity 로 이동.
             startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
         }
-        // RtPicker onClickListener 셋업 <--
+    // RtPicker onClickListener 셋업 <--
         rowHolder.run {
             this.container.setOnClickListener {
                 modify("onOff") { editor ->
@@ -208,26 +202,21 @@ class AlarmDetailsFragment : Fragment() {
 //            digitalClockContainer.setOnClickListener {
 //                disposableDialog = myTimePickerJjong.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
 //            }
-
-
             rowView.setOnClickListener {
                 saveAlarm()
-
             }
         // 내가 추가-> 스위치 파트&시계 파트 둘다 아예 &&안보이게&& 만들기!
 //            digitalClockContainer.visibility=View.GONE
 //            onOff.visibility=View.GONE
-
         // 내가 추가<--
 
         } // rowHolder.run <--
 
     //TimePicker Spinner 설정 및 시간 골랐을 때 시스템과 연결해주는 부분 --->
-        timePickerSpinner.setIs24HourView(false) // amp Pm 시스템으로
-        //기존에 설정된 알람 시간은 밑에 onResume() >disposables.. 라인 410(?) 언저리 에서 해줬음!! 대 성공!!!
+        timePickerSpinner.setIs24HourView(false) // am Pm 시스템으로
 
         timePickerSpinner.setOnTimeChangedListener { view, hourOfDay, minute ->
-            Log.d(TAG, "onCreateView: Hour=$hourOfDay, minute=$minute")
+            Log.d(TAG, "onCreateView: [setOnTimeChangedListener] Hour=$hourOfDay, minute=$minute")
             val pickedTime: PickedTime = PickedTime(hourOfDay, minute)
             disposableDialog = myTimePickerJjong.timePickerSpinnerTracker(hourOfDay,minute).subscribe(pickerConsumer)
             //disposableDialog = myTimePickerJjong.showTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer) // 기존 material TimePicker 구현용도.
@@ -240,18 +229,17 @@ class AlarmDetailsFragment : Fragment() {
 
     //** 신규 알람 생성할때 TimePicker 보여주는 것. (기존에는 TimePickerDialogFragment.showxx() 였지만 -> myTimePickerJjong.. 으로 바꿈.)
         store.transitioningToNewAlarmDetails().firstOrError().subscribe { isNewAlarm ->
-                    Log.d(TAG, "onCreateView: jj-!!subscribe-1")
+                    Log.d(TAG, "onCreateView: [isNewAlarm=$isNewAlarm] jj-!!subscribe-1")
 
 
         //** a)신규 User 가 알람 생성시 =>  RT를 "현재 사용 가능한 RT 중에서 Random 으로 골라주기"
-
                     if (isNewAlarm) {
                     // 현재 가용 가능한 RT 리스트 (스피너의 드랍다운 메뉴) 갯수를 파악하여 그중 하나 random! 으로 골라주기!
                         val availableRtCount= DiskSearcher.finalRtArtPathList.size
                         var rndRtPos = (0..availableRtCount).random()
                         if(rndRtPos == availableRtCount && rndRtPos >= 0 ) {rndRtPos = 0 } // ex. 총 갯수가 5개인데 5번이 뽑히면 안되니깐..
 
-                        Log.d(TAG, "onCreateView: jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
+                        Log.d(TAG, "onCreateView: [isNewAlarm=$isNewAlarm] jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
 
                         val randomRtaPath = DiskSearcher.finalRtArtPathList[rndRtPos].audioFilePath //todo: null error check or sharedPref 에서 꺼내오는게 낫지 않겠나? (sharedPref 는 항상..)
                         val randomArtPath = DiskSearcher.finalRtArtPathList[rndRtPos].artFilePathStr
@@ -263,7 +251,7 @@ class AlarmDetailsFragment : Fragment() {
 
                     }
 
-                }.addToDisposables()
+        }.addToDisposables()
 
         //pre-alarm
 //        mPreAlarmRow.setOnClickListener {
@@ -343,9 +331,7 @@ class AlarmDetailsFragment : Fragment() {
 
 
 // ******** ====> DISK 에 있는 파일들(mp3) 찾고 거기서 mp3, albumArt(bitmap-mp3 안 메타데이터) 리스트를 받는 프로세스 (코루틴으로 실행X) ===> //막 0.01 초 걸리고 그래서.. 코루틴으로 하기가 좀 그래..
-
     // a)RT 제목(TextView), b)RT Description, c) Album Art (ImageView), d) Badge  UI 업데이트
-
 
     private fun updateUisForRt(selectedRtFileName: String) {
 
@@ -583,7 +569,7 @@ class AlarmDetailsFragment : Fragment() {
                         isEnabled = true)
 
             }
-            //Log.d(TAG, "Picker consumer: inside..")
+            Log.d(TAG, "Picker consumer: inside..")
 
         }
 

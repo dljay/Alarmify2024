@@ -701,6 +701,7 @@ class AlarmCore(
         private var handled: Boolean = false
 
         final override fun enter(reason: Event?) {
+            Log.d(TAG, "enter: (override) called")
             when (reason) {
                 null -> onResume()
                 else -> {

@@ -30,6 +30,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
     //private val myDiskSearcher: DiskSearcher by globalInject() // 내가 추가
 
     private fun createStore(initial: AlarmValue): AlarmStore {
+        Log.d(TAG, "createStore: called")
         class AlarmStoreIR : AlarmStore {
             private val subject = BehaviorSubject.createDefault(initial)
             override var value: AlarmValue
@@ -53,11 +54,12 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
     }
 
     override fun create(cursor: Cursor): AlarmStore {
+        Log.d(TAG, "create(cursor: Cursor): ")
         return createStore(fromCursor(cursor, calendars))
     }
 
     override fun create(): AlarmStore {
-        Log.d(TAG, "create: Creating alarm here!")
+        Log.d(TAG, "create(x): Creating alarm here!")
         return createStore(create(
                 calendars = calendars,
                 idMapper = { container ->

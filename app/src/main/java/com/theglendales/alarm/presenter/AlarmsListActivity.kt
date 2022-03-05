@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Xy [알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]
+// 30708V1.17Xy2 [Fab 클릭 -> TimePicker 반영 안되는것 추적중 3/5(토) 11:42]
 
 //Achievements:
 // 시작은 GalS20 에서 FAB(Create Alarm) -> BackButton 여러번 눌렀을 때 Crash 나는것으로 시작.
@@ -78,7 +78,9 @@ import java.util.Calendar
 //
 
 // Issues:
-// 하위 버전 호환 테스트 안됐음.
+//[알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]
+// Fab 클릭 -> TimePicker 시간이 SPinner TimePicker 에 반영 안되는것. (원인: DetailsFrag 가 두번 열려서 그렇다!!)
+// 하위 버전 호환 테스트 API 30만 됐음.
 // 우선 Layout 관련 정리.
 
 // Todos :
@@ -311,8 +313,6 @@ class AlarmsListActivity : AppCompatActivity() {
         collapsingTBLayout = findViewById(R.id.id_collapsingToolBarLayout)
         collapsingTBLayout.isTitleEnabled = false // 일단 화면에 제목 안 보여주고 시작 -> 추후 AppBarLayout 줄어들면 보여주기.
 
-
-
         // xx 시간 후에 알람이 울립니다
         alarmTimeReminder = findViewById(R.id.alarmTimeReminder) //FrameLayout
 
@@ -538,7 +538,7 @@ class AlarmsListActivity : AppCompatActivity() {
         appBarLayout.setExpanded(false,true)
 
         replace(R.id.main_fragment_container, secondFragReceived)
-        commit() //todo: CommittAllowingStateLoss?
+        commit() //현재 상태에서 특별히 쓸 이유 안 보임. CommittAllowingStateLoss 해도 detailsFrag 두번 켜지는 문제는 해결 안됨.
     // B) Fab 버튼이 보인다면 없애줄것!
         if(fab.visibility == View.VISIBLE) {
             fab.visibility = View.GONE
@@ -552,6 +552,7 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 
     private fun showDetails(@NonNull edited: EditedAlarm) {
+        Log.d(TAG, "showDetails: called. ")
         appBarLayout.setExpanded(false,true) // A)ToolBar 포함된 넓은 부분 Collapse 시키기!
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)

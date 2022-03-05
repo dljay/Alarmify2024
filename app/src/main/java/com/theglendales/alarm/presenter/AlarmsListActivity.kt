@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Xy2 [Fab 클릭 -> TimePicker 반영 안되는것 추적중 3/5(토) 11:42]
+// 30708V1.17Xy2 [Fab 클릭 -> TimePicker 반영 안되는것 추적중. API30, API31 공통. 3/5(토) 11:42 ]
 
 //Achievements:
 // 시작은 GalS20 에서 FAB(Create Alarm) -> BackButton 여러번 눌렀을 때 Crash 나는것으로 시작.

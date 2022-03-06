@@ -206,7 +206,7 @@ class AlarmsListFragment : Fragment() {
                             return false
                         }
                         override fun onResourceReady(resource: Drawable?,model: Any?,target: Target<Drawable>?,dataSource: DataSource?,isFirstResource: Boolean): Boolean {
-                            Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
+                            //Log.d(TAG,"onResourceReady: Glide - 알람 ID[${alarm.id}]의 ROW Album Art 로딩 성공!") // debug 결과 절대 순.차.적으로 진행되지는 않음!
                             return false
                         }
 
@@ -220,7 +220,7 @@ class AlarmsListFragment : Fragment() {
             if(isRtUnplayable) {
                 artPathFromAlarmValue = null // 위에서 지정한 .art 경로를 null 로 없애줌. 왜냐면 RTA 파일이 없는데  커버사진(ART) 보여준들 무슨 의미 있나. 헷가리기만할뿐. [!] 표시됨! (Error Image)
             }
-            Log.d(TAG, "onBindViewHolder: alarm= $alarm, position=$position,  isRtUnplayable=$isRtUnplayable")
+            //Log.d(TAG, "onBindViewHolder: alarm= $alarm, position=$position,  isRtUnplayable=$isRtUnplayable") // <-- 여기 logd 중요 정보 많음.
 
         // e-1) Delete add, skip animation
             if (rowHolder.idHasChanged) {rowHolder.onOff.jumpDrawablesToCurrentState()}
@@ -424,6 +424,11 @@ class AlarmsListFragment : Fragment() {
 
         alarmsSub.dispose()
     }
+
+    /*override fun onDetach() {
+        Log.d(TAG, "onDetach: called.")
+        super.onDetach()
+    }*/
 
     override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenuInfo?) {
         // Inflate the menu from xml.

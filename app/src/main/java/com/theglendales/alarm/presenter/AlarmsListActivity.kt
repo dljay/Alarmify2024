@@ -4,8 +4,6 @@ package com.theglendales.alarm.presenter
 
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.app.AlarmManager
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
@@ -20,15 +18,12 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
@@ -68,23 +63,26 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Xy4 [Fab 클릭 -> TimePicker 반영 안되는것 추적중. ListActivity> createAlarm 에서 editing-subscribe 관련. 미스테리 solve 중. API30, API31 공통. 3/5(토) 13:51 ]
+// 30708V1.17Xy5 [Fab 클릭 -> TimePicker 반영 안되는것 추적중. SecondFrag 오갈때 ListFrag 가 다수 생성되고 있었음! 22/3/6/ 오후 10:54]
 
 //Achievements:
-//요지는 fab 을 누르는 순간:
-//a) AlarmsListActivity>createNewAlarm(LINE165) 에서 editing.onNext 로 EditedAlarm(신규)를 보냄
-//b) configureTransactions(Line484) 에서 subscribe 중 (uistore.editing)
-//c) 문제는 SecondFrag 갔다 온 뒤에 .subscribe 에 동일 신규 알람 두개가 온다는 것. 즉, ListFrag 기존에 있던 (생성 예정 신규 알람)이 onDestroy() 에서도 안 없어진듯?
 
 // Issues:
-//[알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]
-// Fab 클릭 -> TimePicker 시간이 SPinner TimePicker 에 반영 안되는것. (원인: DetailsFrag 가 두번 열려서 그렇다!!)
-// 하위 버전 호환 테스트 API 30만 됐음.
-// 우선 Layout 관련 정리.
+// Fab 클릭 -> TimePicker 시간이 SPinner TimePicker 에 반영 안되는것.
+//******************************************
+//1. ListFrag->SecondFrag n번 갔다 와서-> 알람 클릭(=Details Frag 열림). Details Frag- Cancel 때리고.
+//-> ListFrag 복귀할 때 ListFra 가 n번 열림. -> 다시 DetailsFrag 클릭(transition from n번 뜬다!!)
+//메모리값을 보았을 때 ListFrag 는 같은 놈이 n개 열려있고 DetailsFrag 는 각 다른 놈 열렸다가 동시에 n 개가 닫히면서 -> 새로운 listFrag n 개를 생성.
+//결론은 SecondFrag 가 두번 열려있어서 subscribe 자체가 두번 되어있는 상태에서 -> fab 클릭 -> 두번 뜬다.
+//--4번 SecondFrag 갔다와서 DetailFrag 갔따-Cancel -> ListFrag 4개 떴따!!!
+//2. ListFrag <-> SecondFrag: 둘이 왔다갔다할때는 정상적으로 한번씩 불리네.
+//******************************************
 
 // Todos :
+//[알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]
 // 우선은 현재 버전 백업 -> 1.17C 로 다시 복귀 후 다시 현재 상태로 거슬러 올라가기 .. OR 현재 상태에서 api.SDKINT= s(API31) .. 이걸로 조져보기..
-
+// 하위 버전 호환 테스트 API 30만 됐음.
+// 하위 버전 호환 테스트 API 30만 됐음.
 // ToolBar 꾸미기 (메뉴 없애고 등..)
 
 // RtPickerActivity 에도...
@@ -162,15 +160,15 @@ class AlarmsListActivity : AppCompatActivity() {
 
             // USER 가 직접 생성하는 알람에 대해서만 createNewAlarm() 이 불림!
                 override fun createNewAlarm() {
-                    Log.d(TAG, "(line97) createNewAlarm: jj- called")
+
+                    Log.d(TAG, "(line160) createNewAlarm: jj- called. editing.value=${editing.value}")
                     transitioningToNewAlarmDetails.onNext(true)
                     val newAlarm = alarms.createNewAlarm()
-                    Log.d(TAG, "createNewAlarm: newAlarm=$newAlarm")
-                    editing.onNext(EditedAlarm(
-                            isNew = true,
-                            value = Optional.of(newAlarm.data),
-                            id = newAlarm.id,
-                            holder = Optional.absent()))
+                    Log.d(TAG, "(line163) createNewAlarm: newAlarm=$newAlarm, newAlarm.hashCode=${newAlarm.hashCode()}") // 각 1회씩 뜬다.
+                // 새로 만든 newAlarm 을 EditedAlarm Object 로 만들어서 ConfigureTransActions()로 보냄
+                    val editedAlarm = EditedAlarm(isNew = true, value = Optional.of(newAlarm.data),id = newAlarm.id,holder = Optional.absent())
+                    editing.onNext(editedAlarm)
+                    Log.d(TAG, "(line 166) createNewAlarm: ----------finished sending via RxJava. editedAlarm=$editedAlarm \n  editing.value=${editing.value}")
                 }
 
                 override fun transitioningToNewAlarmDetails(): Subject<Boolean> {
@@ -230,7 +228,7 @@ class AlarmsListActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
+    override fun onSaveInstanceState(outState: Bundle) { // Background 로 app 나갈 때 이쪽으로 들어와서 saveInstance 함.
         Log.d(TAG, "onSaveInstanceState: called")
         super.onSaveInstanceState(outState)
         outState.putInt("version", BuildConfig.VERSION_CODE)
@@ -240,20 +238,21 @@ class AlarmsListActivity : AppCompatActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "onCreate: !!AlarmsListActivity onCreate() !!! ")
+        Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
 
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
 
-        when {
+        when { // Activity 가 완전히 종료(Destroy) 되고 다시 onCreate 할 때 기존에 save 된 InstanceState 가 있으면 여기서 불림. (Drawer>Help our team.activity 등 갔다와서는 안 불리네..)
             savedInstanceState != null && savedInstanceState.getInt("version", BuildConfig.VERSION_CODE) == BuildConfig.VERSION_CODE -> {
                 val restored = editedAlarmFromSavedInstanceState(savedInstanceState)
                 logger.debug { "Restored $this with $restored" }
+                Log.d(TAG, "onCreate: restored with saveInstance (restored=$restored)")
                 uiStore.editing().onNext(restored)
             }
-            else -> {
-                val initialState = EditedAlarm()
-                logger.debug { "Created $this with $initialState" }
+            else -> { // ** APP Launch 했을 때 일로 들어옴.. (SavedInstanceState 가 없으니깐..)
+                val editedAlarm = EditedAlarm() //
+                logger.debug { "Created $this with $editedAlarm / editedAlarm.hashCode=${editedAlarm.hashCode()}" } // = Created AlarmsListActivity with EditedAlarm(id=-1)
             }
             // if (intent != null && intent.hasExtra(Intents.EXTRA_ID)) {
             //     //jump directly to editor
@@ -372,7 +371,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
     override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        myPermHandler.onRequestPermissionsResult(requestCode,permissions, grantResults) //MyPermissionHanlder.kt> onReqPerResult() 로 넘어감.
+        myPermHandler.onRequestPermissionsResult(requestCode,permissions, grantResults) //MyPermissionHandler.kt> onReqPerResult() 로 넘어감.
         }
 // <--추가 1-B)
 
@@ -396,7 +395,8 @@ class AlarmsListActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onResume() {
-        Log.d(TAG, "onResume: jj-called")
+        Log.d(TAG, "onResume: jj-called. subscriptions.toString=${subscriptions.toString()}")
+
         //permission.SCHEDULE_EXACT_ALARM 퍼미션 됐는지 확인작업 + read_phone_storage permission 관련.
        /* val alarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val hasPermission: Boolean = alarmManager.canScheduleExactAlarms()
@@ -438,7 +438,6 @@ class AlarmsListActivity : AppCompatActivity() {
         Log.d(TAG, "onStop: jj-called")
     //SharedPref 에 저장되어 있는 현재 second Frag 의 재생정보를 삭제!
         //mySharedPrefManager.calledFromActivity()
-
         super.onStop()
         this.subscriptions.dispose()
 
@@ -483,22 +482,21 @@ class AlarmsListActivity : AppCompatActivity() {
     private fun configureTransactions() {
         Log.d(TAG, "(line316)configureTransactions: . Begins.")
         subscriptions = uiStore.editing()
-                .distinctUntilChanged { edited -> edited.isEdited }
-                .subscribe(Consumer { edited ->
-
-                    Log.d(TAG, "(line268!)configureTransactions: jj- edited.isEdited= ${edited.isEdited}, edited= $edited") // edited 는 (type) EditedAlarm
+                .distinctUntilChanged { editedAlarm -> editedAlarm.isEdited } //distinctUntilChanged= 중복 filtering (ex. 1,2,2,3,1,1,2 => 1,2,3,1,2 만 받음) +  .isEdited=true 인 놈만 걸름.
+                .subscribe(Consumer { editedAlarm ->
+                    Log.d(TAG, "(line485!)configureTransactions: jj- editedAlarm.isEdited= ${editedAlarm.isEdited}, editedAlarm.hashCode= ${editedAlarm.hashCode()}") // editedAlarm 는 (type) EditedAlarm
                     when {
                         lollipop() && isDestroyed -> return@Consumer
-                        edited.isEdited -> showDetails(edited)
+                        editedAlarm.isEdited -> showDetails(editedAlarm)
                         else -> {
-                            Log.d(TAG, "(line270)configureTransactions: else->showlist() 안!!")
-                            showList(edited)}
+                            Log.d(TAG, "(line490)configureTransactions: else->showList() 안!! editedAlarm=$editedAlarm")
+                            showList(editedAlarm)}
                     }
                 })
     }
 
 // 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
-    private fun showList(@NonNull edited: EditedAlarm) {
+    private fun showList(@NonNull editedAlarm: EditedAlarm) {
     //추가->
     Log.d(TAG, "(Line281)showList: jj-called")
     appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
@@ -512,7 +510,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 logger.debug { "skipping fragment transition, because already showing $currentFragment" }
                 }
             else -> {
-                logger.debug { "transition from: $currentFragment to show list, edited: $edited" }
+                logger.debug { "transition from: $currentFragment to show list, editedAlarm.hashCode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
                 // ListFrag 를 로딩>
                     val listFragment = AlarmsListFragment()
                     supportFragmentManager.beginTransaction().apply {
@@ -553,8 +551,27 @@ class AlarmsListActivity : AppCompatActivity() {
         Log.d(TAG, "showSecondFrag: ..... ")
 
     }
+   /* private fun showSecondFrag(secondFragReceived: Fragment) {
+       //A) ToolBar 포함된 넓은 부분 Expand 시키기
+        appBarLayout.setExpanded(false,true)
 
-    private fun showDetails(@NonNull edited: EditedAlarm) {
+       val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+
+       when(currentFragment) {
+           is SecondFragment -> {
+               logger.debug { "[jjadded] skipping frag transition, it's already shwoing $currentFragment" }
+           }
+           else -> {
+               logger.debug { "transition from: $currentFragment to SecondFrag" }
+               supportFragmentManager.beginTransaction().apply {
+
+               }.replace(R.id.main_fragment_container, secondFragReceived).commitAllowingStateLoss()
+           }
+       }
+
+    }*/
+
+    private fun showDetails(@NonNull editedAlarm: EditedAlarm) {
         Log.d(TAG, "showDetails: called. ")
         appBarLayout.setExpanded(false,true) // A)ToolBar 포함된 넓은 부분 Collapse 시키기!
 
@@ -564,7 +581,7 @@ class AlarmsListActivity : AppCompatActivity() {
             logger.debug { "skipping fragment transition, because already showing $currentFragment" }
         } else
         {
-            logger.debug { "transition from: $currentFragment to show details, edited: $edited" }
+            logger.debug { "transition from: $currentFragment to show details, editedAlarm.Hashcode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
 
             val detailsFragment = AlarmDetailsFragment().apply {arguments = Bundle()}
             supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, detailsFragment).commitAllowingStateLoss()

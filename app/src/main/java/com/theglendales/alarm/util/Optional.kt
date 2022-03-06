@@ -1,5 +1,7 @@
 package com.theglendales.alarm.util
 
+import android.util.Log
+private const val TAG="Optional_DataClass"
 data class Optional<T>(val of: T?) {
     fun isPresent(): Boolean = of != null
     fun get(): T = of!!
@@ -18,6 +20,11 @@ data class Optional<T>(val of: T?) {
 
         @JvmStatic
         fun <T> of(value: T): Optional<T> = Optional(value)
+    }
+
+    override fun toString(): String {
+        Log.d(TAG, "toString: of=$of")
+        return ""
     }
 }
 

@@ -63,21 +63,18 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Y1 [Fab 클릭 -> TimePicker 반영 안되는것 일단 해결. 제일 쉬운 방법으로. 22/3/7/ 오후 10:48]
+// 30708V1.17Y2 [Fab 클릭 -> TimePicker 반영 안되는것 해결. BtmNav-> ConfigureTransActions 거치지 않고 바로 ShowList 로. 22/3/7/ 오후 11:39]
 
-//Achievements:
-// 현재 해결책: *b) showSecondFrag 할떄마다 subscriptions 를 clear?
-
-//******************************************
-//1. ListFrag->SecondFrag n번 갔다 와서-> 알람 클릭(=Details Frag 열림). Details Frag- Cancel 때리고.
-//-> ListFrag 복귀할 때 ListFra 가 n번 열림. -> 다시 DetailsFrag 클릭(transition from n번 뜬다!!)
-//메모리값을 보았을 때 ListFrag 는 같은 놈이 n개 열려있고 DetailsFrag 는 각 다른 놈 열렸다가 동시에 n 개가 닫히면서 -> 새로운 listFrag n 개를 생성.
-//결론은 SecondFrag 가 두번 열려있어서 subscribe 자체가 두번 되어있는 상태에서 -> fab 클릭 -> 두번 뜬다.
-//--4번 SecondFrag 갔다와서 DetailFrag 갔따-Cancel -> ListFrag 4개 떴따!!!
-//2. ListFrag <-> SecondFrag: 둘이 왔다갔다할때는 정상적으로 한번씩 불리네.
-//******************************************
+// Achievements:
+// 현재 해결책:
+//*a) SecondFrag 에서 ListFrag 로 돌아올 때 BtmNav 로 치면 ConfigureTransActions() 를 거치지 않고 바로 ShowList 해줌.,
+//ShowList 에는 원래 argument 로 editedAlarm 이 들어가는데, 오직 Lollipop (API21) 을 위한 것이였기에 argument 없애줌 일단 잘됨.
+//
+//TODOS:
+//- 사실 API31 PendingIntent 수정 후 여기까지 옴. API 23~ API31 알람 잘 되는지 음악재생/DONATION/ 다운로드 및 구매 잘 되는지 확인 할것.
 
 // Todos :
+
 //[알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]
 // 우선은 현재 버전 백업 -> 1.17C 로 다시 복귀 후 다시 현재 상태로 거슬러 올라가기 .. OR 현재 상태에서 api.SDKINT= s(API31) .. 이걸로 조져보기..
 // 하위 버전 호환 테스트 API 30만 됐음.
@@ -283,7 +280,7 @@ class AlarmsListActivity : AppCompatActivity() {
         //val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
         btmNavView.setOnItemSelectedListener {
             when(it.itemId) {
-                R.id.id_BtmNav_SetAlarm -> configureTransactions()
+                R.id.id_BtmNav_SetAlarm -> showList()
                 R.id.id_BtmNav_RingTone -> showSecondFrag(secondFrag)
             }
             Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener -> before hitting true!")
@@ -483,25 +480,27 @@ class AlarmsListActivity : AppCompatActivity() {
         uiStore.onBackPressed().onNext(AlarmsListActivity::class.java.simpleName)
     }
 // ***** !!! 여기서 showList() 로 감!!!! *****
-    private fun configureTransactions() {
+    private fun configureTransactions() { // 주의: 만약 configureTransActions() 가 n번 불리면, Subscribe 를 n번함.. -> ListFrag 에서 FAB 버튼/ DetailsFrag 열려고 할 때 우수수 열림.
     Log.d(TAG, "configureTransactions: called")
-        // 네번 SecondFrag 로 가면 Subscribe 를 네번함..
+
+    // uiStore.editing().subscribe = UiStore Class 의 editing (BehaviorSubject = LiveData 의 Emit 으로 생각하면 편함) 을 subscribe (=observe)
+    // USER 가 FAB 버튼 누르거나 ListFrag 의 알람칸 클릭했을 때 여기서 uiStore.editing 을 '구독중(=observe)' 하다 알아서 DetailsFrag 보여줌.
         subscriptions = uiStore.editing().distinctUntilChanged { editedAlarm -> editedAlarm.isEdited } //distinctUntilChanged= 중복 filtering (ex. 1,2,2,3,1,1,2 => 1,2,3,1,2 만 받음) +  .isEdited=true 인 놈만 걸름.
                 .subscribe(Consumer { editedAlarm ->
-                    Log.d(TAG, "(line486!)configureTransactions: jj- editedAlarm.isEdited= ${editedAlarm.isEdited}, editedAlarm.hashCode= ${editedAlarm.hashCode()}") // editedAlarm 는 (type) EditedAlarm
+                    Log.d(TAG, "[SUB] (line486!)configureTransactions: jj- editedAlarm.isEdited= ${editedAlarm.isEdited}, editedAlarm.hashCode= ${editedAlarm.hashCode()}") // editedAlarm 는 (type) EditedAlarm
 
                     when {
                         lollipop() && isDestroyed -> return@Consumer
                         editedAlarm.isEdited -> showDetails(editedAlarm)
                         else -> {
-                            Log.d(TAG, "(line490)configureTransactions: else->showList() 안!! editedAlarm=$editedAlarm")
-                            showList(editedAlarm)}
+                            Log.d(TAG, "[SUB] (line490)configureTransactions: else->showList() 안!! editedAlarm=$editedAlarm")
+                            showList()}
                     }
                 })
     }
 
 // 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
-    private fun showList(@NonNull editedAlarm: EditedAlarm) {
+    private fun showList() {
     //추가->
 
     Log.d(TAG, "(Line281)showList: jj-called")
@@ -516,7 +515,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 logger.debug { "skipping fragment transition, because already showing $currentFragment" }
                 }
             else -> {
-                logger.debug { "transition from: $currentFragment to show list, editedAlarm.hashCode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
+                //logger.debug { "transition from: $currentFragment to show list, editedAlarm.hashCode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
                 // ListFrag 를 로딩>
                     val listFragment = AlarmsListFragment()
                 Log.d(TAG, "showList: created New ListFrag = $listFragment, ListFrag.hashCode= ${listFragment.hashCode()}")
@@ -543,7 +542,9 @@ class AlarmsListActivity : AppCompatActivity() {
 
     }
     private fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
-    subscriptions.dispose()
+    // ListFrag 나 DetailsFrag 는 서로 이동시에는 subscription 으로 EditeAlarm 받아서 이동하지만, BtmNav 로 오갈때  열릴 때 configureTransActions() 함수가 불리면서 계속 subscribe 함.
+        //subscriptions.dispose() // todo: 추후 a) 신규알람생성(createNewAlarm-FAB 버튼)시 TimePicker 가 Spinner TimePicker 에 반영 안되는문제 발생 or
+        //todo: b) Second Frag N번 왔다갔다 한 후 Details Frag 열 때 log 에  '다수의 ListFrag 로부터의 이동' 이 뜨면. 해당 subscriptions.dispose 다시 활성화해보기.
     // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
         appBarLayout.setExpanded(false,true)
     // B) SecondFrag 로딩

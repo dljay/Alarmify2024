@@ -380,7 +380,8 @@ class AlarmsListFragment : Fragment() {
         Log.d(TAG, "onResume: jj-OnResume() TOP line")
 
         super.onResume()
-        backSub = uiStore.onBackPressed().subscribe {
+        backSub = uiStore.onBackPressed().subscribe { // .subscribe = livedata 의 observe 와 같음.  onBackPressed  var 를 return 하는 onBackPressed() 를 Subscribe.
+            // 여기 onBackPressed -> ListActivity onBackPressed 가 실행됨.
             Log.d(TAG, "(Line267) onResume: jj-backsub=uiStore.xxx.. requireActivity()")
             requireActivity().finish() }
 

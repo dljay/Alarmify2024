@@ -439,22 +439,16 @@ class AlarmDetailsFragment : Fragment() {
         // Tool Bar 가려주기
 
         disposables = CompositeDisposable()
-
         disposables.add(editor.distinctUntilChanged().subscribe { editor ->
             rowHolder.digitalClock.updateTime(Calendar.getInstance().apply {
                     //new) ** TimePickerSpinner 에 "기존에 설정된 알람 시간"을 그대로 보여주기!!!! 대성공!!=>
                         timePickerSpinner.hour = editor.hour
                         timePickerSpinner.minute = editor.minutes
                     })
-
-
                 rowHolder.onOff.isChecked = editor.isEnabled
-
                     //mPreAlarmCheckBox.isChecked = editor.isPrealarm
-
             //****알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
                     //mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
-
                     //val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
 
                 // Local 언어 때문에 when(요일이름) 을 작성할수 없어. Int 로 된 Str 을 받는 방법으로 바꿈  ex. [0,3,4] (=월,목,금)

@@ -63,12 +63,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Xy5 [Fab 클릭 -> TimePicker 반영 안되는것 추적중. SecondFrag 오갈때 ListFrag 가 다수 생성되고 있었음! 22/3/6/ 오후 10:54]
+// 30708V1.17Y1 [Fab 클릭 -> TimePicker 반영 안되는것 일단 해결. 제일 쉬운 방법으로. 22/3/7/ 오후 10:48]
 
 //Achievements:
+// 현재 해결책: *b) showSecondFrag 할떄마다 subscriptions 를 clear?
 
-// Issues:
-// Fab 클릭 -> TimePicker 시간이 SPinner TimePicker 에 반영 안되는것.
 //******************************************
 //1. ListFrag->SecondFrag n번 갔다 와서-> 알람 클릭(=Details Frag 열림). Details Frag- Cancel 때리고.
 //-> ListFrag 복귀할 때 ListFra 가 n번 열림. -> 다시 DetailsFrag 클릭(transition from n번 뜬다!!)
@@ -154,8 +153,9 @@ class AlarmsListActivity : AppCompatActivity() {
                 }
 
                 override fun onBackPressed(): PublishSubject<String> {
-                    Log.d(TAG, "onBackPressed(Line111): no.1 jj-!!called!!")
-                    return onBackPressed
+
+                    Log.d(TAG, "onBackPressed(Line111): no.1 jj-!!called!! ")
+                    return onBackPressed // 마치 LiveData 에서 function 을 Observe 하듯.
                 }
 
             // USER 가 직접 생성하는 알람에 대해서만 createNewAlarm() 이 불림!
@@ -282,17 +282,12 @@ class AlarmsListActivity : AppCompatActivity() {
         val secondFrag = SecondFragment()
         //val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
         btmNavView.setOnItemSelectedListener {
-            // 1) .setOnNav....Listener() 메써드는 onNavigationxxListener(인터페이스를 implement 한 인자를 람다로 받음)
-            //2) OnNavigationItemSelectedListener(인터페이스) 안에는 onNavItemSelected(boolean 리턴 메써드) 하나만 있음. 그래서 override 생략 가능sam..
-            // 밑에는 한마디로 Override fun onNavItemSelected: Boolean { 이 안에 들어가는 내용임.}
             when(it.itemId) {
                 R.id.id_BtmNav_SetAlarm -> configureTransactions()
                 R.id.id_BtmNav_RingTone -> showSecondFrag(secondFrag)
-                //R.id.id_BtmNav_Settings -> this.startActivity(Intent(this, SettingsActivity::class.java))
             }
             Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener -> before hitting true!")
-            true
-            // we don't write return true in the lambda function, it will always return the last line of that function
+            true // we don't write return true in the lambda function, it will always return the last line of that function
         }
     // 추가: Permission 검사 (App 최초 설치시 반드시 거치며, no 했을때는 벤치휭~ BtmSheet 계속 뜬다. yes 하면 그다음부터는 안 뜸.)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 Write, DOWNLOAD 에 특별한 Permission 필요 없는듯?
@@ -363,11 +358,17 @@ class AlarmsListActivity : AppCompatActivity() {
         })
 
     // Fab_listActivity 22_02_19 FAB 버튼: v21\list_fragment.xml 과 AlarmslistFragment.kt 에 있는 놈 없애고 -> 여기에 심음. 일단 잘되서 둔다!
-        fab.setOnClickListener { uiStore.createNewAlarm() }
+        fab.setOnClickListener {
+            uiStore.createNewAlarm()
+            //showListOfFragsAdded()
+        }
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
+    private fun showListOfFragsAdded() {
 
+    Log.d(TAG, "showListOfFragsAdded: \n******************* \n${supportFragmentManager.fragments}\nbackStackEntry Count= ${supportFragmentManager.backStackEntryCount} \n****************")
+    }
 
     override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -396,8 +397,20 @@ class AlarmsListActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onResume() {
         Log.d(TAG, "onResume: jj-called. subscriptions.toString=${subscriptions.toString()}")
-
-        //permission.SCHEDULE_EXACT_ALARM 퍼미션 됐는지 확인작업 + read_phone_storage permission 관련.
+        super.onResume()
+        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+        NotificationSettings().checkSettings(this)
+        //Permission 관련
+        // A) Permission 을 허용하라는 btmSheet 을 보여준뒤 복귀했을때! [WRITE_EXTERNAL_STORAGE]
+        if(BtmSheetPermission.isAdded) {
+            if (ContextCompat.checkSelfPermission(this.applicationContext,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            { // user 가 settings>app>perm 에서 허용해줬으면
+                BtmSheetPermission.removePermBtmSheetAndResume() // btmSheet 을 없애줌! Perm 허용 안되었으면 (Cancel 누를때까지) BtmSheet 유지!
+            }
+        }
+        Log.d(TAG, "onResume: supportFrag.fragments=${supportFragmentManager.fragments}")
+        //permission.SCHEDULE_EXACT_ALARM 퍼미션 됐는지 확인작업 + read_phone_storage permission 관련. =>MANIFEST 에 써놓았으니 생략 가능?
        /* val alarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val hasPermission: Boolean = alarmManager.canScheduleExactAlarms()
         Log.d(TAG, "onResume: Schedule Exact.. hasPermission=$hasPermission") // 현재 true 로 뜬다.*/
@@ -408,7 +421,7 @@ class AlarmsListActivity : AppCompatActivity() {
             Log.d(TAG, "onCreate: read_phonestorage 체크..int=${ContextCompat.checkSelfPermission(this.applicationContext, android.Manifest.permission.READ_PHONE_STATE)}")
         }*/
 
-        super.onResume()
+
         // Settings Fragment 갔다왔으면
 /*    // MyCacher Init() -> MediaPlayer(V2) Init [BackgroundThread] --- 원래 SecondFrag 에 있던것을 이쪽으로 옮겨옴 (ListFrag <-> SecondFrag 왔다리갔다리 무리없게 사용 위해.)
         lifecycleScope.launch {
@@ -417,19 +430,10 @@ class AlarmsListActivity : AppCompatActivity() {
             myCacherInstance.initCacheVariables() // -> MediaPlayer(V2) Init
         }*/
 
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-        NotificationSettings().checkSettings(this)
 
-    //Permission 관련
-        // A) Permission 을 허용하라는 btmSheet 을 보여준뒤 복귀했을때! [WRITE_EXTERNAL_STORAGE]
-        if(BtmSheetPermission.isAdded) {
-            if (ContextCompat.checkSelfPermission(this.applicationContext,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
-            { // user 가 settings>app>perm 에서 허용해줬으면
-                BtmSheetPermission.removePermBtmSheetAndResume() // btmSheet 을 없애줌! Perm 허용 안되었으면 (Cancel 누를때까지) BtmSheet 유지!
-            }
-        }
-        // B)
+
+
+
 
 
     }
@@ -480,11 +484,12 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 // ***** !!! 여기서 showList() 로 감!!!! *****
     private fun configureTransactions() {
-        Log.d(TAG, "(line316)configureTransactions: . Begins.")
-        subscriptions = uiStore.editing()
-                .distinctUntilChanged { editedAlarm -> editedAlarm.isEdited } //distinctUntilChanged= 중복 filtering (ex. 1,2,2,3,1,1,2 => 1,2,3,1,2 만 받음) +  .isEdited=true 인 놈만 걸름.
+    Log.d(TAG, "configureTransactions: called")
+        // 네번 SecondFrag 로 가면 Subscribe 를 네번함..
+        subscriptions = uiStore.editing().distinctUntilChanged { editedAlarm -> editedAlarm.isEdited } //distinctUntilChanged= 중복 filtering (ex. 1,2,2,3,1,1,2 => 1,2,3,1,2 만 받음) +  .isEdited=true 인 놈만 걸름.
                 .subscribe(Consumer { editedAlarm ->
-                    Log.d(TAG, "(line485!)configureTransactions: jj- editedAlarm.isEdited= ${editedAlarm.isEdited}, editedAlarm.hashCode= ${editedAlarm.hashCode()}") // editedAlarm 는 (type) EditedAlarm
+                    Log.d(TAG, "(line486!)configureTransactions: jj- editedAlarm.isEdited= ${editedAlarm.isEdited}, editedAlarm.hashCode= ${editedAlarm.hashCode()}") // editedAlarm 는 (type) EditedAlarm
+
                     when {
                         lollipop() && isDestroyed -> return@Consumer
                         editedAlarm.isEdited -> showDetails(editedAlarm)
@@ -498,11 +503,12 @@ class AlarmsListActivity : AppCompatActivity() {
 // 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
     private fun showList(@NonNull editedAlarm: EditedAlarm) {
     //추가->
+
     Log.d(TAG, "(Line281)showList: jj-called")
     appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
 
     //<-추가
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container) // first searches through fragments that are currently added to the manager's activity
 
         when(currentFragment)
         {
@@ -513,11 +519,13 @@ class AlarmsListActivity : AppCompatActivity() {
                 logger.debug { "transition from: $currentFragment to show list, editedAlarm.hashCode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
                 // ListFrag 를 로딩>
                     val listFragment = AlarmsListFragment()
+                Log.d(TAG, "showList: created New ListFrag = $listFragment, ListFrag.hashCode= ${listFragment.hashCode()}")
                     supportFragmentManager.beginTransaction().apply {
                         this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
                         Log.d(TAG, "showList: not lollipop()")
                     }.replace(R.id.main_fragment_container, listFragment).commitAllowingStateLoss()
-                }
+
+            }
         }
 
     //내가 추가->
@@ -535,16 +543,17 @@ class AlarmsListActivity : AppCompatActivity() {
 
     }
     private fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
+    subscriptions.dispose()
     // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
         appBarLayout.setExpanded(false,true)
-
+    // B) SecondFrag 로딩
         replace(R.id.main_fragment_container, secondFragReceived)
-        commit() //현재 상태에서 특별히 쓸 이유 안 보임. CommittAllowingStateLoss 해도 detailsFrag 두번 켜지는 문제는 해결 안됨.
-    // B) Fab 버튼이 보인다면 없애줄것!
+        commit() //현재 상태에서 특별히 쓸 이유 안 보임. CommitAllowingStateLoss 해도 detailsFrag 두번 켜지는 문제는 해결 안됨.
+    // C) Fab 버튼이 보인다면 없애줄것!
         if(fab.visibility == View.VISIBLE) {
             fab.visibility = View.GONE
         }
-    // C) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
+    // D) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
         val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
 

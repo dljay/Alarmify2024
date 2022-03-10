@@ -530,7 +530,10 @@ class AlarmDetailsFragment : Fragment() {
     }
 
     private fun saveAlarm() {
+        //var finalEditedVersion: AlarmValue
         editor.firstOrError().subscribe { editorToSave ->
+            //finalEditedVersion = editorToSave
+            // alarm bool 값 변경 후 아래에서 저장 시도.
             alarms.getAlarm(alarmId)?.run {
                 edit { withChangeData(editorToSave) }
             }

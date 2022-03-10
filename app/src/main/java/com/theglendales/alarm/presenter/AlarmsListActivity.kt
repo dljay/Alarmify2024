@@ -63,12 +63,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Y2 [Fab 클릭 -> TimePicker 반영 안되는것 해결. BtmNav-> ConfigureTransActions 거치지 않고 바로 ShowList 로. 22/3/7/ 오후 11:39]
+// 30708V1.17Y3 [FAB 로 신규 알람 생성중 (강제)종료시 저장되는 문제. 22/3/11 00:01]
 
 // Achievements:
 // 현재 해결책:
-//*a) SecondFrag 에서 ListFrag 로 돌아올 때 BtmNav 로 치면 ConfigureTransActions() 를 거치지 않고 바로 ShowList 해줌.,
-//ShowList 에는 원래 argument 로 editedAlarm 이 들어가는데, 오직 Lollipop (API21) 을 위한 것이였기에 argument 없애줌 일단 잘됨.
+// alarm ID 를 바꾸는건 에러나고 리스크 있음. 차라리 AlarmValue.kt(DataClass) 에 var isSaved: Boolean = false 넣고 -> DetailsFrag - saveAlarm() 에서 bool 값 변경 후 저장하기.
+// 이후 listFrag - bindViewHolder 에서 .isSaved=false 면 바로 삭제..
+// 관건은 saveAlarm 에서 값 modify 후 그 변경된 객체를 저장하는게 어렵네..
+
 //
 //TODOS:
 //- 사실 API31 PendingIntent 수정 후 여기까지 옴. API 23~ API31 알람 잘 되는지 음악재생/DONATION/ 다운로드 및 구매 잘 되는지 확인 할것.

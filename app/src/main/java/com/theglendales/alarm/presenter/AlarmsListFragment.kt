@@ -155,7 +155,6 @@ class AlarmsListFragment : Fragment() {
             myDiskSearcher.updateList(resultList)
 
         }
-        //todo: isMissingPurchasedFiles() check -> DNLD -> SnackBar
         //1-a. isDiskScanNeeded -> false -> Lottie Anim (X)
         //1-b. isDiskScanNeeded -> true -> Lottie Anim (O)
         //2-a. isMissingPurchasedFiles -> false -> Snackbar: Rebuilding DB Completed.
@@ -185,6 +184,12 @@ class AlarmsListFragment : Fragment() {
         /**
          * 위에서 받은 Position 별 알람의 정보로 각 Alarm 의 실 내용물 채워주기
          */
+        //0) 해당 알람이 신규 알람 생성 중(Fab 버튼 사용) 앱 강제종료로 Save 가 안된 경우 -> 그냥 삭제해주기! [이거 자동 저장 되었을 때 Ringtone/AlbumArt 부터 이것저것 매우 귀찮쓰..]
+            if(!alarm.isSaved) {
+                Log.d(TAG, "onBindViewHolder: \n XXXXXX [해당 알람 삭제!] alarm=$alarm, pos=$position, 현재 알람의 isSaved=${alarm.isSaved}!!")
+                alarms.delete(alarm) // 문제는 이게 되기전에 아래 sub 에서 한번 refresh 하고. 삭제되면 또 refresh 한다. 두번..
+                return
+            }
         //a) 알람 on/off 여부
             rowHolder.onOff.isChecked = alarm.isEnabled
         //b) set the alarm text
@@ -364,11 +369,19 @@ class AlarmsListFragment : Fragment() {
                         .observe()
                         .switchMap { uiStore.transitioningToNewAlarmDetails() }
                         .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
+            //todo: 여기서 alarmValue.isSaved=false 인 놈은 filter + 삭제?
                         .subscribe { alarms ->
                             Log.d(TAG, "(Line 368) onCreateView: alarmsSub~!! alarms=$alarms")
-                            val sorted = alarms
+                            val sorted = alarms //sorted = List<AlarmValue>
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())
+
+                            /*val unSavedAlarm = sorted.singleOrNull { alarmValue -> !alarmValue.isSaved }
+
+                            if(unSavedAlarm!=null) {
+                                // 리스트에서 삭제. 알람 자체를 삭제.
+                            }
+                            //val savedAlarmsOnlyList =*/
                             mAdapter.refreshAlarmList(sorted)
                             //mAdapter.notifyDataSetChanged() // 이거 넣으면 훨씬 빠르지만 일단은 안 쓰는것으로..
                         }

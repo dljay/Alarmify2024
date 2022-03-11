@@ -76,7 +76,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
         Log.d(TAG, "fromCursor: called! artFilePath=${c.getString(Columns.ALARM_ART_FILE_PATH)}")
         return AlarmValue(
                 id = c.getInt(Columns.ALARM_ID_INDEX),
-                isEnabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1,
+                isEnabled = c.getInt(Columns.ALARM_ENABLED_INDEX) == 1, // ==1 은 Column 이 존재한다면? 이라는 if 문인듯?
                 hour = c.getInt(Columns.ALARM_HOUR_INDEX),
                 minutes = c.getInt(Columns.ALARM_MINUTES_INDEX),
                 daysOfWeek = DaysOfWeek(c.getInt(Columns.ALARM_DAYS_OF_WEEK_INDEX)),
@@ -86,7 +86,8 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                 alarmtone = Alarmtone.fromString(c.getString(Columns.ALARM_ALERT_INDEX)),
                 state = c.getString(Columns.ALARM_STATE_INDEX),
                 nextTime = calendars.now().apply { timeInMillis = c.getLong(Columns.ALARM_TIME_INDEX) },
-                artFilePath = c.getString(Columns.ALARM_ART_FILE_PATH) ?: ""
+                artFilePath = c.getString(Columns.ALARM_ART_FILE_PATH) ?: "", // 내가 추가
+                isSaved = c.getInt(Columns.ALARM_ISSAVED_INDEX) == 1// 내가 추가
 
         )
     }
@@ -109,7 +110,8 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
                     alarmtone = Alarmtone.Default(),
                     state = "",
                     nextTime = now,
-                    artFilePath = null
+                    artFilePath = null, // 내가 추가
+                    isSaved = false // 내가 추가
             )
 
             //generate a new id
@@ -121,7 +123,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
 // DetailsFrag 에서 변경되는 내용 여기서 반영됨.
     private fun AlarmValue.createContentValues(): ContentValues {
         Log.d(TAG, "createContentValues: called")
-        return ContentValues(12).apply {
+        return ContentValues(13).apply { // Columns.isSaved 추가하며 12 -> 13 으로 변경
             // id
             put(Columns.ENABLED, isEnabled)
             put(Columns.HOUR, hour)
@@ -133,7 +135,9 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
             put(Columns.PREALARM, isPrealarm)
             put(Columns.ALARM_TIME, nextTime.timeInMillis)
             put(Columns.STATE, state)
-            put(Columns.ART_FILE_PATH, artFilePath)
+            put(Columns.ART_FILE_PATH, artFilePath) // 내가 추가
+            put(Columns.ISSAVED, isSaved) //내가 추가
+
         }
     }
 }

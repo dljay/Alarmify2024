@@ -224,7 +224,11 @@ class AlarmDetailsFragment : Fragment() {
 
     //TimePicker Spinner 로 시간 골랐을 때 시스템과 연결해주는 부분 <---
 
-        view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener { saveAlarm() }
+        view.findViewById<View>(R.id.details_activity_button_save).setOnClickListener {
+            Log.d(TAG, "onCreateView[OK btn Listener] : current alarm ID=${alarmId} , isSaved=${alarms.getAlarm(alarmId)?.data?.isSaved}")
+            modify("OkBtn-Clicked") {alarmValue -> alarmValue.copy(isSaved = true) } // 추후 ListFrag 에서 .isSaved 값이 False 면 삭제! [신규 알람 생성중 강제 종료시 자동Save 방지 위해]
+            saveAlarm()
+        }
         view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }
 
     //** 신규 알람 생성할때 TimePicker 보여주는 것. (기존에는 TimePickerDialogFragment.showxx() 였지만 -> myTimePickerJjong.. 으로 바꿈.)
@@ -313,6 +317,7 @@ class AlarmDetailsFragment : Fragment() {
 
     // DetailsFrag 에서 !!*** APP 설치 중 설정된 알람 파악 ->  -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
         val currentAlarms = alarms.getAlarm(alarmId)
+        Log.d(TAG, "onCreateView: **** [현재 알람 정보] ${currentAlarms?.data}, isSaved=${currentAlarms?.data?.isSaved}")
         //val currentAlarmsLabel= currentAlarms!!.labelOrDefault
         if(currentAlarms!!.labelOrDefault !="userCreated") {
 
@@ -321,7 +326,7 @@ class AlarmDetailsFragment : Fragment() {
             //todo: 아니면 mySharedPref 에 getRtaPathForFileName 으로 defrt01.rta 경로를 받는 function 만들고 바로 changeAlarmtone 으로 보내기?
             Log.d(TAG, "onCreateView: **MODIFYING ALARMS CREATED DURING APP INSTALLATION")
             // *인스톨시 생성된 알람 두개 관련: 이 시점에서는 이미 모든 DefRta/Art 파일이 폰에 Copy 되었다는 가정하에 -> 아래 modify 로 label, alertUri, artUri 를 각 def1,2 로 변경.
-            modify("Label") {prev -> prev.copy(label = "userCreated", isEnabled = true)}
+            modify("Label") {alarmValue -> alarmValue.copy(label = "userCreated", isEnabled = true)} // alarmValue= AlarmValue(Data Class) -> 여기의 .copy 기능을 사용.
 
         }
 
@@ -528,14 +533,12 @@ class AlarmDetailsFragment : Fragment() {
 //        }
 
     }
-
     private fun saveAlarm() {
         //var finalEditedVersion: AlarmValue
-        editor.firstOrError().subscribe { editorToSave ->
-            //finalEditedVersion = editorToSave
-            // alarm bool 값 변경 후 아래에서 저장 시도.
+        editor.firstOrError().subscribe { editedAlarmToSave ->
+            Log.d(TAG, "saveAlarm: \n*** editedAlarmToSave=$editedAlarmToSave. isSaved=${editedAlarmToSave.isSaved}")
             alarms.getAlarm(alarmId)?.run {
-                edit { withChangeData(editorToSave) }
+                edit { withChangeData(editedAlarmToSave) }
             }
             store.hideDetails(rowHolder)
         }.addToDisposables()
@@ -565,15 +568,14 @@ class AlarmDetailsFragment : Fragment() {
 
             }
             Log.d(TAG, "Picker consumer: inside..")
-
         }
-
     }
 
     private fun modify(reason: String, function: (AlarmValue) -> AlarmValue) {
         logger.debug { "Performing modification because of $reason" }
         store.editing().modify {
-            copy(value = value.map { function(it) })
+            copy(value = value.map { function(it) }) //  value: Optional<AlarmValue>
+
         }
     }
 

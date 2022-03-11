@@ -63,17 +63,16 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Y4 [FAB 로 신규 알람 생성중 (강제)종료시 저장되는 문제: AlarmValue.kt Data Class 에 항목[isSaved] 추가 전. 22/3/11 10:56]
+// 30708V1.17Y5 [FAB 로 신규 알람 생성중 (강제)종료시 저장되는 문제: AlarmValue.kt Data Class 에 항목[isSaved] 추가(O). 22/3/11 23:40]
 
 // Achievements:
-// 현재 해결책:
-// alarm ID 를 바꾸는건 에러나고 리스크 있음 => AlarmValue.kt(DataClass) 에 var isSaved: Boolean = false 넣고 -> DetailsFrag - saveAlarm() 에서 bool 값 변경 후 저장하기.
-// 단순히 AlarmValue.kt Data Class 에 항목 추가하는것을 떠나 SQL Columns.kt, PersistingContainerFactory.kt 등 관여
-// 이후 listFrag - bindViewHolder 에서 .isSaved=false 면 바로 삭제..
-// 관건은 saveAlarm 에서 값 modify 후 그 변경된 객체를 저장하는게 어렵네..
+// AlarmValue DataClass 에 .isSaved 는 만들었고 Fab 으로 신규 알람 생성시에는 false 였따 Save 되는 순간 true 로 변경 성공(O)
 
-//
 //TODOS:
+// 이제는 ListFrag 에서 .isSaved = false 인 놈들을 로딩시 삭제! 리스트에서 안 보여주기 필요!
+// ListFrag - line372 RxKotlin 으로 .isSaved=false 인 놈들 Filtering 하기
+
+
 //- 사실 API31 PendingIntent 수정 후 여기까지 옴. API 23~ API31 알람 잘 되는지 음악재생/DONATION/ 다운로드 및 구매 잘 되는지 확인 할것.
 
 // Todos :
@@ -300,8 +299,6 @@ class AlarmsListActivity : AppCompatActivity() {
             myPermHandler.permissionReadPhoneState()
 
         }
-
-
     // Toolbar & appbarLayout
         toolBar = findViewById(R.id.id_toolbar_Collapsable) // Collapsible toolBar
         setSupportActionBar(toolBar)
@@ -324,8 +321,6 @@ class AlarmsListActivity : AppCompatActivity() {
             drawerLayout.closeDrawers() // 메뉴 선택했으니 Drawer 닫아줄것.
             mActionBarHandler.onOptionsItemSelected(it)
         }
-
-
 
     // AppBaR Expand/Collapse Listener. AppBar 가 (72% 이상) 접혔을 때 'xHrxMn 후 울립니다' 표기하는 View 를 없애줌.
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -410,6 +405,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 BtmSheetPermission.removePermBtmSheetAndResume() // btmSheet 을 없애줌! Perm 허용 안되었으면 (Cancel 누를때까지) BtmSheet 유지!
             }
         }
+
         Log.d(TAG, "onResume: supportFrag.fragments=${supportFragmentManager.fragments}")
         //permission.SCHEDULE_EXACT_ALARM 퍼미션 됐는지 확인작업 + read_phone_storage permission 관련. =>MANIFEST 에 써놓았으니 생략 가능?
        /* val alarmManager: AlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -430,13 +426,6 @@ class AlarmsListActivity : AppCompatActivity() {
             val myCacherInstance = MyCacher(applicationContext, applicationContext.cacheDir, mediaPlayer_v2)
             myCacherInstance.initCacheVariables() // -> MediaPlayer(V2) Init
         }*/
-
-
-
-
-
-
-
     }
 
     override fun onStop() { //RtPickerActivity 갈 때 onStop() 불린다.
@@ -506,7 +495,6 @@ class AlarmsListActivity : AppCompatActivity() {
 // 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
     private fun showList() {
     //추가->
-
     Log.d(TAG, "(Line281)showList: jj-called")
     appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
 

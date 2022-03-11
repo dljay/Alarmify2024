@@ -74,13 +74,16 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
                 "alert TEXT, " + // alaert = raw 폴더에 있는 defrt1.rta 경로 저장될 예정
                 "prealarm INTEGER, " +
                 "state STRING," +
-                "artfilepath TEXT);"); // artfilePath= drawables 폴더에 있는 d1.jpg 경로 저장될 예정
+                "artfilepath TEXT, " +
+                "isalarmsaved INTEGER);"); // artfilePath= drawables 폴더에 있는 d1.jpg 경로 저장될 예정
+        //todo: 여기에서 TABLE 자체에 COLUMN 을 추가해야될듯.
+
         // @formatter:on
         // insert default alarms = ** APP 설치시 생성되는 두개!! **
         String insertMe = "INSERT INTO alarms " + "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, "
-                + "message, alert, prealarm, state, artfilepath) VALUES ";
-        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta01Path +"', 0, '', '" + defart01Path +"');"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
-        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta02Path +"', 0, '', '" + defart02Path +"');"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
+                + "message, alert, prealarm, state, artfilepath, isalarmsaved) VALUES ";
+        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta01Path +"', 0, '', '" + defart01Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
+        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta02Path +"', 0, '', '" + defart02Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
         //31: 주중 , 96 : 주말 only
 
 

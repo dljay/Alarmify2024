@@ -122,8 +122,17 @@ class Columns : BaseColumns {
          */
         const val ART_FILE_PATH = "artfilepath"
 
+        /**
+         * JJONG added. isSaved(Fab 으로 신규 알람 생성시 USER 가 완전히 "저장(okay)" 을 눌렀는지 여부 확인.
+         *
+         *
+         * Type: BOOLEAN
+         *
+         */
+        const val ISSAVED ="isalarmsaved"
+
         @JvmField
-        val ALARM_QUERY_COLUMNS = arrayOf(BaseColumns._ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE, MESSAGE, ALERT, PREALARM, STATE, ART_FILE_PATH)
+        val ALARM_QUERY_COLUMNS = arrayOf(BaseColumns._ID, HOUR, MINUTES, DAYS_OF_WEEK, ALARM_TIME, ENABLED, VIBRATE, MESSAGE, ALERT, PREALARM, STATE, ART_FILE_PATH, ISSAVED)
 
         /**
          * These save calls to cursor.getColumnIndexOrThrow() THEY MUST BE KEPT
@@ -141,5 +150,6 @@ class Columns : BaseColumns {
         const val ALARM_PREALARM_INDEX = 9
         const val ALARM_STATE_INDEX = 10
         const val ALARM_ART_FILE_PATH = 11
+        const val ALARM_ISSAVED_INDEX = 12
     }
 }

@@ -18,7 +18,8 @@ data class AlarmValue(
         val artFilePath: String?, // 내가 추가.
         val isVibrate: Boolean,
         val label: String,
-        val daysOfWeek: DaysOfWeek
+        val daysOfWeek: DaysOfWeek,
+        var isSaved:Boolean= false// 내가 추가 [FAB 으로 신규 알람 생성중 강제종료 했을 때 자동 SAVE 되는것 없애기 위해. 자동 Save 됐을 때 albumArtPath=null 되는 등 매우 귀찮음.. ]
 ) {
 
     val skipping = state.contentEquals("SkippingSetState")
@@ -90,11 +91,15 @@ data class AlarmValue(
             isVibrate = data.isVibrate,
             label = data.label,
             daysOfWeek = data.daysOfWeek,
-            artFilePath = data.artFilePath // 내가 추가.
+            artFilePath = data.artFilePath,
+            isSaved = data.isSaved// 내가 추가.
     )
 
     fun withLabel(label: String) = copy(label = label)
     fun withHour(hour: Int) = copy(hour = hour)
     fun withDaysOfWeek(daysOfWeek: DaysOfWeek) = copy(daysOfWeek = daysOfWeek)
     fun withIsPrealarm(isPrealarm: Boolean) = copy(isPrealarm = isPrealarm)
+    //내가 추가 [Fab 생성 후 알람 자동 SAVE 되는것 막기 위해]
+    fun withIsSaved(isSaved: Boolean) = copy(isSaved = isSaved)
+
 }

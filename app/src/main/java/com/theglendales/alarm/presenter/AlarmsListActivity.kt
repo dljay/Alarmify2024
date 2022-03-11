@@ -63,11 +63,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Y3 [FAB 로 신규 알람 생성중 (강제)종료시 저장되는 문제. 22/3/11 00:01]
+// 30708V1.17Y4 [FAB 로 신규 알람 생성중 (강제)종료시 저장되는 문제: AlarmValue.kt Data Class 에 항목[isSaved] 추가 전. 22/3/11 10:56]
 
 // Achievements:
 // 현재 해결책:
-// alarm ID 를 바꾸는건 에러나고 리스크 있음. 차라리 AlarmValue.kt(DataClass) 에 var isSaved: Boolean = false 넣고 -> DetailsFrag - saveAlarm() 에서 bool 값 변경 후 저장하기.
+// alarm ID 를 바꾸는건 에러나고 리스크 있음 => AlarmValue.kt(DataClass) 에 var isSaved: Boolean = false 넣고 -> DetailsFrag - saveAlarm() 에서 bool 값 변경 후 저장하기.
+// 단순히 AlarmValue.kt Data Class 에 항목 추가하는것을 떠나 SQL Columns.kt, PersistingContainerFactory.kt 등 관여
 // 이후 listFrag - bindViewHolder 에서 .isSaved=false 면 바로 삭제..
 // 관건은 saveAlarm 에서 값 modify 후 그 변경된 객체를 저장하는게 어렵네..
 
@@ -268,6 +269,7 @@ class AlarmsListActivity : AppCompatActivity() {
         setContentView(R.layout.list_activity)
 
         store.alarms().take(1).subscribe { alarms ->
+
                 Log.d(TAG, "onCreate: here before checkRtMissing from phone!!")
                 showAlertIfRtIsMissing(this, alarms.map { it.alarmtone })
                 //checkPermissions(this, alarms.map { it.alarmtone })

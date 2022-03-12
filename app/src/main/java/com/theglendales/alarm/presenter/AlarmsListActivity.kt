@@ -63,17 +63,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z1
+// 30708V1.17Z2
 
 // Achievements:
-// [FAB 로 신규 알람 생성중 (강제)종료시 저장되는 문제: AlarmValue.kt Data Class 에 항목[isSaved] 추가(O)]
-// AlarmValue.kt 에 .isSaved 항목 추가하면서 SQL 도 같이 저장해줘야 되서 살짝 귀찮았음 (관련 kt 파일: PersistingContainerFactory.kt/ Columns.kt/ AlarmDatabaseHelper.java ..)
-// Fab 누르고 알람 생성할 때 .isSaved 는 default 값이 false .. 유저가 생성 다 마치고 [OK] 누르는 순간 saveAlarm() 불리면서  .isSaved=true 가 된다.
-// [ListFrag 에서 로딩시 .isSaved=false 인 놈은 찾아서 삭제.] alarmList 받는 곳이 .subscribe 안에만 있어서 unSavedAlarm 찾기가 다소 번거로움
-// 추후 수정시 ListFrag > alarmsSub> subscribe 안은 save/deleteAlarm 시 모두 반응 한다는 사실에 유념. (따라서 여기서 알람 Delete 명령어를 넣었을 경우 FAB 으로 신규 생성시 DetailsFrag 가 null 값 되면서 뻑남)
-// AlarmValue DataClass 에 .isSaved 는 만들었고 Fab 으로 신규 알람 생성시에는 false 였따 Save 되는 순간 true 로 변경 성공(O)
+// Pref> PreAlarm Volume [Seekbar] 삭제.
 
-//TODOS:
+// TODOS:
 //- 사실 API31 PendingIntent 수정 후 여기까지 옴. API 23~ API31 알람 잘 되는지 음악재생/DONATION/ 다운로드 및 구매 잘 되는지 확인 할것.
 
 // Todos :

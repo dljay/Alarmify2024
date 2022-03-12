@@ -63,7 +63,7 @@ class VolumePreference(mContext: Context, attrs: AttributeSet) : Preference(mCon
     override fun onBindViewHolder(holder: PreferenceViewHolder) {
         super.onBindViewHolder(holder)
         holder.let { view ->
-            bindPrealarmSeekBar(view.findById(R.id.seekbar_dialog_seekbar_prealarm_volume))
+            //bindPrealarmSeekBar(view.findById(R.id.seekbar_dialog_seekbar_prealarm_volume))
             bindAudioManagerVolume(view.findById(R.id.seekbar_dialog_seekbar_master_volume))
 
             /*view.findById<View>(R.id.settings_ringtone).setOnClickListener {

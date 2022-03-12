@@ -63,7 +63,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z3 [Disabled Dark Mode -- AlarmApplication.kt > MODE_NIGHT_NO 로 설정]
+// 30708V1.17Z3 [Disabled Dark Mode -- AlarmApplication.kt > MODE_NIGHT_NO 로 설정/ Tools>Material Theme Chooser 쓰기 전!]
 
 // Achievements:
 // Pref> PreAlarm Volume [Seekbar] 삭제.

@@ -12,8 +12,8 @@ class DynamicThemeHandler(context: Context) {
     private val themeKey = "theme"
     private val sp: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-    private val synthwave = "synthwave"
-    private val light = "light"
+    private val synthwave = "synthwave" // 다 안 쓸 예정..
+    private val light = "light" // 이것도 안 쓸 예쩡..
     private val dark = "dark"
 
     init {

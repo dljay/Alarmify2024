@@ -17,6 +17,7 @@
     <!-- 내가 만든 Action Bar Transparent 테스트 22/2/13 -->
     <style name="JjTransParentActionBar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <item name="android:background">@null</item>
+
         <!-- Support library compatibility -->
         <item name="background">@null</item>
     </style>

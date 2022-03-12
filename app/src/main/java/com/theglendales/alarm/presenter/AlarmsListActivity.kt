@@ -63,7 +63,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z2
+// 30708V1.17Z2 [ABOUT TO DISABLE DARK THEME -- 이 앱 자체가 DARK THEME 이 필요 없는 어두운 색채일것이야]
 
 // Achievements:
 // Pref> PreAlarm Volume [Seekbar] 삭제.

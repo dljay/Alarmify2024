@@ -74,10 +74,6 @@ import java.util.Calendar
 // AlarmValue DataClass 에 .isSaved 는 만들었고 Fab 으로 신규 알람 생성시에는 false 였따 Save 되는 순간 true 로 변경 성공(O)
 
 //TODOS:
-// 이제는 ListFrag 에서 .isSaved = false 인 놈들을 로딩시 삭제! 리스트에서 안 보여주기 필요!
-// ListFrag - line372 RxKotlin 으로 .isSaved=false 인 놈들 Filtering 하기
-
-
 //- 사실 API31 PendingIntent 수정 후 여기까지 옴. API 23~ API31 알람 잘 되는지 음악재생/DONATION/ 다운로드 및 구매 잘 되는지 확인 할것.
 
 // Todos :

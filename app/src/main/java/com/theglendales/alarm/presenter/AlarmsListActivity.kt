@@ -63,13 +63,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z3 [Disabled Dark Mode -- AlarmApplication.kt > MODE_NIGHT_NO 로 설정/ Tools>Material Theme Chooser 쓰기 전!]
+// 30708V1.17Z4 [Disabled Dark Mode. UI 변경 진행중// Collapsing Toolbar 에 Transparent Vector PNG + 배경 색 변경 시도중.]
+//- ListActivity> Coordinator Layout -- City Night Vector 로 테스트중. 백그라운드 색 보라색인데 바꿔야되네..
+//- How to use Material Theme? [Youtube 동영상 보기]
+//- values.xml > colorprimary (Line 22xx) 정도에. // themes_dark.xml 에서 colorPrimary holo_blue_bright 으로 바꾸니 collapsing toolbar 배경색 바꼈네.
 
-// Achievements:
-// Pref> PreAlarm Volume [Seekbar] 삭제.
-
-// TODOS:
-//- 사실 API31 PendingIntent 수정 후 여기까지 옴. API 23~ API31 알람 잘 되는지 음악재생/DONATION/ 다운로드 및 구매 잘 되는지 확인 할것.
+// Todos: RcV 도 하나처럼 보이게끔..
 
 // Todos :
 

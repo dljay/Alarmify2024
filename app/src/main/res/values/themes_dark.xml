@@ -8,7 +8,7 @@
         <!--<item name="android:colorBackground">@color/jj_background_SkyBlue_1</item>-->
         <!-- textColor 는 Small to Medium TextViews.-->
         <!--<item name="android:textColor">@color/light_gray_brighter_jjong</item>-->
-        <!--<item name="colorPrimary">@android:color/transparent</item>-->
+        <item name="colorPrimary">@android:color/holo_blue_bright</item>
         <!-- 밑에거 넣으면 겹쳐서 나옴.-->
         <!--<item name="windowActionBarOverlay">true</item>-->
     </style>

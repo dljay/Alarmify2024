@@ -30,6 +30,7 @@
         android:id="@+id/info_fragment_base_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -41,7 +42,7 @@
                 android:id="@+id/id_collapsingToolBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/avocado"
+                android:background="@drawable/city_night_3"
                 app:contentScrim="@color/transparent"
                 app:title="Alarmify"
 

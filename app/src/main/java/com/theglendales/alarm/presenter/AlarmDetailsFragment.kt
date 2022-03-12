@@ -248,7 +248,7 @@ class AlarmDetailsFragment : Fragment() {
                         val randomRtaPath = DiskSearcher.finalRtArtPathList[rndRtPos].audioFilePath //todo: null error check or sharedPref 에서 꺼내오는게 낫지 않겠나? (sharedPref 는 항상..)
                         val randomArtPath = DiskSearcher.finalRtArtPathList[rndRtPos].artFilePathStr
 
-                        changeAlarmTone(randomRtaPath,randomArtPath)
+                        changeAlarmTone(randomRtaPath,randomArtPath) // 알람톤 변경.
 
                         store.transitioningToNewAlarmDetails().onNext(false)
                         disposableDialog =myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
@@ -434,7 +434,7 @@ class AlarmDetailsFragment : Fragment() {
         //checkPermissions(requireActivity(), listOf(alarmtone))
         showAlertIfRtIsMissing(requireActivity(), listOf(alarmtone))
 
-        modify("Ringtone picker") { prev ->prev.copy(alarmtone = alarmtone, artFilePath = artPath, isEnabled = true)}
+        modify("RTPicker[변경]") { prev ->prev.copy(alarmtone = alarmtone, artFilePath = artPath, isEnabled = true)}
     }
 
 
@@ -535,6 +535,7 @@ class AlarmDetailsFragment : Fragment() {
     }
     private fun saveAlarm() {
         //var finalEditedVersion: AlarmValue
+        Log.d(TAG, "saveAlarm: called.")
         editor.firstOrError().subscribe { editedAlarmToSave ->
             Log.d(TAG, "saveAlarm: \n*** editedAlarmToSave=$editedAlarmToSave. isSaved=${editedAlarmToSave.isSaved}")
             alarms.getAlarm(alarmId)?.run {
@@ -575,7 +576,6 @@ class AlarmDetailsFragment : Fragment() {
         logger.debug { "Performing modification because of $reason" }
         store.editing().modify {
             copy(value = value.map { function(it) }) //  value: Optional<AlarmValue>
-
         }
     }
 

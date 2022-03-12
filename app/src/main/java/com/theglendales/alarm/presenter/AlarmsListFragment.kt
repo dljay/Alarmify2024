@@ -75,6 +75,7 @@ class AlarmsListFragment : Fragment() {
     private var timePickerDialogDisposable = Disposables.disposed()
 
 // 내가 추가-->
+    private var unSavedAlarmsList = mutableListOf<AlarmValue>() // [Fab 버튼으로 신규 알람 생성중 APP '강제종료' 했을 때 -> Save 안된 알람이 담길 리스트 (아래 Subscribe 에서 찾아서 채워줄 예정)
     private val toastMessenger: ToastMessenger by globalInject() //ToastMessenger
     //lateinit var lottieAnimView: LottieAnimationView //Lottie Animation(Loading & Internet Error)
     lateinit var lottieDialogFrag: LottieDiskScanDialogFrag
@@ -127,22 +128,17 @@ class AlarmsListFragment : Fragment() {
             //CoroutineScope(Dispatchers.IO).launch { <== ** 일부러 코루틴에서 제외-> 그래야 여기서 update SharedPref 등이 끝나고나서 밑에 innerClass>getView 실행됨.
             //코루틴 안 쓰고 DiskScan 가동시에는 어떻게든 Animation 으로 시간 끌기?
                 //lottieAnimCtrl(SHOW_ANIM)
-                //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장 <trkId, ArtPath>
+            //1-a) /.AlbumArt 폴더 검색 -> art 파일 list up -> 경로를 onDiskArtMap 에 저장 <trkId, ArtPath>
                 myDiskSearcher.readAlbumArtOnDisk()
-                //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
+            //1-b-1) onDiskRtSearcher 를 시작-> search 끝나면 Default Rt(raw 폴더) 와 List Merge!
                 val resultList = myDiskSearcher.onDiskRtSearcher() // rtArtPathList Rebuilding 프로세스. resultList 는 RtWAlbumArt object 리스트고 각 Obj 에는 .trkId, .artPath, .audioFileUri 등의 정보가 있음.
-                //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
+            //** 1-b-2) 1-b-1) 과정에서 rtOnDisk object 의 "artFilePathStr" 이 비어잇으면-> extractArtFromSingleRta() & save image(.rta) on Disk
 
-                // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
+            // 1-c) Merge 된 리스트(rtWithAlbumArt obj 로 구성)를 얼른 Shared Pref 에다 저장! (즉 SharedPref 에는 art, rta 의 경로가 적혀있음)
                 mySharedPrefManager.saveRtOnThePhoneList(resultList)
-
-                // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
+            // 1-d) DiskSearcher.kt>finalRtArtPathList (Companion obj 메모리) 에 띄워놓음(갱신)
                 myDiskSearcher.updateList(resultList)
-
-
                 Log.d(TAG, "onCreate: --------------------------- DiskScan DONE..(Hopefully..)---------- \n\n resultList = $resultList!")
-
-
             //} // ** diskScan 종료 <--
 
         }
@@ -184,12 +180,6 @@ class AlarmsListFragment : Fragment() {
         /**
          * 위에서 받은 Position 별 알람의 정보로 각 Alarm 의 실 내용물 채워주기
          */
-        //0) 해당 알람이 신규 알람 생성 중(Fab 버튼 사용) 앱 강제종료로 Save 가 안된 경우 -> 그냥 삭제해주기! [이거 자동 저장 되었을 때 Ringtone/AlbumArt 부터 이것저것 매우 귀찮쓰..]
-            if(!alarm.isSaved) {
-                Log.d(TAG, "onBindViewHolder: \n XXXXXX [해당 알람 삭제!] alarm=$alarm, pos=$position, 현재 알람의 isSaved=${alarm.isSaved}!!")
-                alarms.delete(alarm) // 문제는 이게 되기전에 아래 sub 에서 한번 refresh 하고. 삭제되면 또 refresh 한다. 두번..
-                return
-            }
         //a) 알람 on/off 여부
             rowHolder.onOff.isChecked = alarm.isEnabled
         //b) set the alarm text
@@ -333,6 +323,7 @@ class AlarmsListFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
     //추가1) ->
         Log.d(TAG, "(Line330)onCreateView: jj-created")
+
     //<-추가1)
 
         logger.debug { "onCreateView $this" }
@@ -365,41 +356,44 @@ class AlarmsListFragment : Fragment() {
             (fab as FloatingActionButton).attachToListView(listView)
         }*/
 
-        alarmsSub = prefs.listRowLayout
-                        .observe()
-                        .switchMap { uiStore.transitioningToNewAlarmDetails() }
-                        .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
-            //todo: 여기서 alarmValue.isSaved=false 인 놈은 filter + 삭제?
-                        .subscribe { alarms ->
-                            Log.d(TAG, "(Line 368) onCreateView: alarmsSub~!! alarms=$alarms")
-                            val sorted = alarms //sorted = List<AlarmValue>
+
+        alarmsSub = prefs.listRowLayout.observe().switchMap { uiStore.transitioningToNewAlarmDetails() }
+            .switchMap { transitioning -> if (transitioning) Observable.never() else store.alarms() }
+            .subscribe { alarmsList ->
+                            Log.d(TAG, "(Line 363) onCreateView: alarmsSub~!! alarmsList=$alarmsList")
+                            val sorted = alarmsList // 참고: sorted = List<AlarmValue>
                                     .sortedWith(Comparators.MinuteComparator())
                                     .sortedWith(Comparators.HourComparator())
+//[1] UnSavedAlarm 찾아서 List 에 담아주기 [FAB 버튼으로 신규 생성 중 APP 강제 종료시 .isSaved 값은 false 임-- 오직 OK 눌러서 저장됐을때만 .isSaved=true]
+                            unSavedAlarmsList.clear()
+                            unSavedAlarmsList = sorted.filter { alarmValue -> !alarmValue.isSaved }.toMutableList()
 
-                            /*val unSavedAlarm = sorted.singleOrNull { alarmValue -> !alarmValue.isSaved }
-
-                            if(unSavedAlarm!=null) {
-                                // 리스트에서 삭제. 알람 자체를 삭제.
-                            }
-                            //val savedAlarmsOnlyList =*/
-                            mAdapter.refreshAlarmList(sorted)
+//[2] 위 [1] 과 무관하게 UnSavedAlarm "제외한 리스트"로 일단 rcV 업데이트 -- 아래 onResume() 에서 이제 UnSavedAlarmsList 에 있던 놈들 삭제 처리!
+                            val alarmListWithoutUnSaved = sorted.filter { alarmValue -> alarmValue.isSaved }
+                            mAdapter.refreshAlarmList(alarmListWithoutUnSaved)
                             //mAdapter.notifyDataSetChanged() // 이거 넣으면 훨씬 빠르지만 일단은 안 쓰는것으로..
-                        }
-
+            }
         return view
     }
 
     override fun onResume() {
         Log.d(TAG, "onResume: jj-OnResume() TOP line")
-
         super.onResume()
+//[3] 위의 .subscribe 에서 찾아줬던 unSaved Alarm 들 지워주기
+        if(unSavedAlarmsList.isNotEmpty()) {
+            for(i in unSavedAlarmsList.indices) {
+                Log.d(TAG, "alarmsSub(Line371): [Deleted Alarm: ${unSavedAlarmsList[i]}]")
+                alarms.delete(unSavedAlarmsList[i])    // 알람 자체를 삭제.
+            }
+        }
+
         backSub = uiStore.onBackPressed().subscribe { // .subscribe = livedata 의 observe 와 같음.  onBackPressed  var 를 return 하는 onBackPressed() 를 Subscribe.
             // 여기 onBackPressed -> ListActivity onBackPressed 가 실행됨.
             Log.d(TAG, "(Line267) onResume: jj-backsub=uiStore.xxx.. requireActivity()")
-            requireActivity().finish() }
+            requireActivity().finish()
+        }
 
         listRowLayout = prefs.layout()
-
         listRowLayoutId = R.layout.list_row_classic
         // [JJLAY] 기존 코드
         /*listRowLayoutId = when (listRowLayout) {
@@ -408,8 +402,6 @@ class AlarmsListFragment : Fragment() {
             else -> R.layout.list_row_bold
         }*/
         //Log.d(TAG, "onResume: listRowLayoutId= $listRowLayoutId, listRowLayout=$listRowLayout") // Layout.COMPACT 였음.
-
-
 
         // ListActivity 로 Fab 버튼을 옮긴 후 코드 (Fragment View 생성과 동시에 ListActivity 에 있는 Fab 을 찾아서 보여줌)
         val fabInListActivity = requireActivity().findViewById<FloatingActionButton>(R.id.fab_listActivity)
@@ -538,9 +530,9 @@ class AlarmsListFragment : Fragment() {
         if(activity!=null && isAdded) { // activity 가 존재하며, 현재 Fragment 가 attached 되있으면 Snackbar 를 표시.
             Log.d(TAG, "snackBarMessenger: Show Snackbar. Fragment isAdded=$isAdded, Activity=$activity")
             if(isShort) {
-                Snackbar.make(view, "$msg", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(view, msg, Snackbar.LENGTH_SHORT).show()
             }else {
-                Snackbar.make(view, "$msg", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(view, msg, Snackbar.LENGTH_LONG).show()
             }
         } else {
             Log.d(TAG, "snackBarDeliverer: Unable to Deliver Snackbar message!!")

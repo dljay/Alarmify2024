@@ -63,7 +63,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z2 [ABOUT TO DISABLE DARK THEME -- 이 앱 자체가 DARK THEME 이 필요 없는 어두운 색채일것이야]
+// 30708V1.17Z3 [Disabled Dark Mode -- AlarmApplication.kt > MODE_NIGHT_NO 로 설정]
 
 // Achievements:
 // Pref> PreAlarm Volume [Seekbar] 삭제.

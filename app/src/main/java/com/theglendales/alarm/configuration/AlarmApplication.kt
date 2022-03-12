@@ -5,6 +5,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.util.Log
 import android.view.ViewConfiguration
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 import com.theglendales.alarm.R
 import com.theglendales.alarm.alert.BackgroundNotifications
@@ -43,9 +44,9 @@ class AlarmApplication : Application() {
 
     override fun onCreate()
     {
-//        val packageName = applicationContext.packageName // todo: 이걸 STATIC 으로 저장? 아니면 ListFrag 에서 바로 받기?
-//        val heyho = "android.resource://" + packageName + R.raw.defrt1
-//        Log.d(TAG, "onCreate: !!AlarmApplication onCreate!!! heyho=$heyho, packageName=$packageName")
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) // System Setting 에서 DarkTheme 가동시켜도 무반응!
+
         jjPackageName = applicationContext.packageName
 
         runCatching {

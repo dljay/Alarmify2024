@@ -26,6 +26,7 @@ class DynamicThemeHandler(context: Context) {
     }
     fun defaultTheme(): Int { //dark 로 되있군 현재는 흐음..
         val prefStr = preference()
+
         var resultInt = -1
 
         when(prefStr) {

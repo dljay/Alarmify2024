@@ -23,11 +23,10 @@
     app:mode="normal"
     app:dragFromEdge="right">
 
-
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@color/transparent">
+        android:background="@color/mat_red">
         <LinearLayout
             android:id="@+id/ll_swipeDeleteContainer"
             android:layout_width="wrap_content"
@@ -64,11 +63,11 @@
     </FrameLayout>
 
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:background="@color/jj_background_DarkNavy_1">
 
             <com.theglendales.alarm.view.DontPressWithParentLayout
                 android:id="@+id/list_row_on_off_checkbox_container"
@@ -281,8 +280,6 @@
                     android:layout_marginTop="3dp"
                     android:layout_marginEnd="3dp"
                     android:gravity="center">
-
-
 
                     <!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
                     <ImageView

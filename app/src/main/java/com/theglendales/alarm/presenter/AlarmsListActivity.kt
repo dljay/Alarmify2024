@@ -63,12 +63,17 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z5[UI 변경 진행중// -- Sliding Panel 안보이게 했다 Slide 하면 나오게 하기 <시작전>]
-//- ListActivity> Coordinator Layout -- City Night Vector 로 테스트중. 백그라운드 색 보라색인데 바꿔야되네..
+// 30708V1.17Z7 [UI 변경 진행중]
+// ListFrag>RcV - Row 의 배경화면을 전체 배경화면과 동일하게 (jj_nav)
 //- How to use Material Theme? [Youtube 동영상 보기]
 //- values.xml > colorprimary (Line 22xx) 정도에. // themes_dark.xml 에서 colorPrimary holo_blue_bright 으로 바꾸니 collapsing toolbar 배경색 바꼈네.
 
-// Todos: RcV 도 하나처럼 보이게끔..
+// Todos:
+// BTM NAV: 1) SetAlarm/ SecondFrag 둘다 보이게 . Select 됐을 때 구분직섹.
+// BTM NAV: 2) FAB 을 그냥 + 버튼으로?
+// SwipeReveal - Delete 와 동일한 기능을 Xtreme 처럼 점점점(세로) 으로 만들어주기?
+// -- City Night Vector 다른 그림으로. 기기별로 늘어나는 것 어떻게 대처할지?
+
 
 // Todos :
 

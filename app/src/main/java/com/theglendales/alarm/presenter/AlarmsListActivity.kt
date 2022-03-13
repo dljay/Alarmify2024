@@ -63,7 +63,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z5[UI 변경 진행중// Text Color.]
+// 30708V1.17Z5[UI 변경 진행중// -- Sliding Panel 안보이게 했다 Slide 하면 나오게 하기 <시작전>]
 //- ListActivity> Coordinator Layout -- City Night Vector 로 테스트중. 백그라운드 색 보라색인데 바꿔야되네..
 //- How to use Material Theme? [Youtube 동영상 보기]
 //- values.xml > colorprimary (Line 22xx) 정도에. // themes_dark.xml 에서 colorPrimary holo_blue_bright 으로 바꾸니 collapsing toolbar 배경색 바꼈네.

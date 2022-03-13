@@ -118,10 +118,16 @@
             android:id="@+id/id_bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="16dp"
+
             android:layout_weight="1"
-            android:background="@color/secondaryColor"
-            app:itemTextColor="@color/bottom_nav_color"
-            app:itemIconTint="@color/bottom_nav_color"
+            android:background="@drawable/bottom_navigation_background_2"
+            android:elevation="8dp"
+            app:itemIconTint="@drawable/bottom_navigation_color_selector_2"
+            app:labelVisibilityMode="unlabeled"
             android:layout_gravity="bottom"
             app:menu="@menu/bottom_nav_menu"/>
 

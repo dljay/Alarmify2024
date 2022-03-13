@@ -246,9 +246,7 @@ class AlarmsListFragment : Fragment() {
                 //val currentAlarm = mAdapter.getItem(position) // 이전에는 getItem(position) 였는데 -> 삭제시 기존 Position 을 승계해서 밑에줄 아이템이 지워지는 문제
                 val currentAlarm = mAdapter.getItem(rowHolder.adapterPosition) //  => 삭제 순간의 Pos 을 반영한 getAdapterPosition() 으로 변경!
                 alarms.delete(currentAlarm) // 문제는 이게 되기전에 아래 sub 에서 한번 refresh 하고. 삭제되면 또 refresh 한다. 두번..
-                
                 Log.d(TAG, "onBindViewHolder: [DELETING ALARM] currentAlarm=$currentAlarm, position=$position")
-
             }
         // h) 흐음. 이건 쓸모 없는듯 (우리는 Layout 선택 못하게 할것이니..)
             //val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT

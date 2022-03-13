@@ -63,7 +63,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z7 [UI 변경 진행중]
+// 30708V1.17Z8 [UI 변경 진행중- Btm Nav Bar : Floating 스타일로 변경전]
 // ListFrag>RcV - Row 의 배경화면을 전체 배경화면과 동일하게 (jj_nav)
 //- How to use Material Theme? [Youtube 동영상 보기]
 //- values.xml > colorprimary (Line 22xx) 정도에. // themes_dark.xml 에서 colorPrimary holo_blue_bright 으로 바꾸니 collapsing toolbar 배경색 바꼈네.

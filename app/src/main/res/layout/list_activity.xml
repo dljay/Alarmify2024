@@ -96,7 +96,7 @@
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="28dp"
             android:elevation="175dp"
-            android:src="@drawable/ic_menu_add" />
+            android:src="@drawable/ic_baseline_add_24" />
 
         <LinearLayout
             android:id="@+id/listActivity_LinearLayout"

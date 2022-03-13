@@ -415,7 +415,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:focusable="true"
-            android:text="@android:string/cancel" />
+            android:text="@android:string/cancel"
+            android:textColor="@color/secondaryLightColor"/>
 
         <Button
             android:id="@+id/details_activity_button_save"
@@ -424,7 +425,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:focusable="true"
-            android:text="@android:string/ok" />
+            android:text="@android:string/ok"
+            android:textColor="@color/secondaryLightColor"/>
     </LinearLayout>
 
 </LinearLayout>

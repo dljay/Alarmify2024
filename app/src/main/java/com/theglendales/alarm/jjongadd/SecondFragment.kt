@@ -31,6 +31,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -109,6 +110,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     var shouldPanelBeVisible = false
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout    //findViewById(R.id.id_slidingUpPanel)  }
     lateinit var btmNavViewFromActivity: BottomNavigationView
+    lateinit var btmAppBarFromActivity: BottomAppBar
 
     //a) Sliding Panel: Upper Ui
 
@@ -759,6 +761,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         //Activity 에서 받은 BottomNavView (추후 SlidingPanel 이 EXPAND/COLLAPSE 될 때 VISIBLE/INVISIBLE 해준다.)
         btmNavViewFromActivity = requireActivity().findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) // todo: check
+        btmAppBarFromActivity = requireActivity().findViewById(R.id.bottomAppBar2)
+
 
     // RcV 를 감싸는 FrameLayout [RcV 마지막 칸이 짤리는 문제가 있어서 PaddingBottom 으로 해결중. 최초 SecondFrag 열었을때는 ]
         flRcView =v.findViewById(R.id.frameLayout_RcView)
@@ -855,11 +859,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             //1) 접힌상태-> 완전히 열리는 상태로 전환중(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행 (대략 0.4 초 소요)
             if(previousState== SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
-            btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f)
+                btmAppBarFromActivity.animate().translationY(btmAppBarFromActivity.height.toFloat()).alpha(0.0f)
+            //btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f) // 어차피 BtmAppBar 가 BtmNavView 의 Parent 여서 이것까지 해줄 필요 없음.
             }
             //2) 완전히 열린 상태 -> 접히는 상태로 전환 // // DRAGGING -> EXPANDED -> DRAGGING 으로 진행 (대략 0.4 초 소요)
             else if(previousState== SlidingUpPanelLayout.PanelState.EXPANDED && newState == SlidingUpPanelLayout.PanelState.DRAGGING){
-                btmNavViewFromActivity.animate().translationY(0F).alpha(1.0f) // '0F 까지!' View 를 올리는 것.
+                btmAppBarFromActivity.animate().translationY(0F).alpha(1.0f) // '0F 까지!' View 를 올리는 것.
+            //  btmNavViewFromActivity.animate().translationY(0F).alpha(1.0f) // '0F 까지!' View 를 올리는 것.
+
             }
 
 

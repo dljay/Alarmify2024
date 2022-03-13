@@ -64,17 +64,20 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z10 [UI 변경 진행중- Btm Nav Bar : Floating 스타일로 변경 성공/ FAB 가운데에 넣어주기-AppBar 사용성공.]
+// 30708V1.17Z12 [UI 변경 진행중- Btm Nav Bar : Floating 스타일로 변경 성공/ FAB 가운데에 넣어주기-AppBar 사용성공.]
+// 1) Achievements:
 // 흰색으로 Floating + Curve 성공. 굉장 깔끔 & Easy..
 // Fab 가 가운데에서 높낮이 안 맞았으나 -> Bottom AppBar 와 FAB (layout-anchor) 사용하여 높이 / Center 맞추는데 성공.
 // BottomAppBar 가운데 살짝 파진 모양을 시도해보자..
+//
 
-//- values.xml > colorprimary (Line 22xx) 정도에. // themes_dark.xml 에서 colorPrimary holo_blue_bright 으로 바꾸니 collapsing toolbar 배경색 바꼈네.
+// 2) Issues:
+// 공들여 만든 BtmNav+BtmAppBar 가 SecondFrag 가서 보면 흉칙함. 우선 SlidingPanel (mini player) 높이는 대략 맞춰줬음 (SecondFrag.xml>UmanoHeight)
+// 해결책: Divider 중간에 하나 넣고 "BtmNavView" 의 배경색과 "Umano Sliding Panel" 플레이어 배경색을 동일하게! 하여 Spotify 처럼 둘다 떠도 이질감 없게 만들기!!
 
 // Todos:
-// BTM NAV: 1) SetAlarm/ SecondFrag 둘다 보이게 . Select 됐을 때 구분직섹.
-// BTM NAV: 2) FAB 을 그냥 + 버튼으로?
-// SwipeReveal - Delete 와 동일한 기능을 Xtreme 처럼 점점점(세로) 으로 만들어주기?
+//- values.xml > colorprimary (Line 22xx) 정도에. // themes_dark.xml 에서 colorPrimary holo_blue_bright 으로 바꾸니 collapsing toolbar 배경색 바꼈네.
+
 // -- City Night Vector 다른 그림으로. 기기별로 늘어나는 것 어떻게 대처할지?
 
 

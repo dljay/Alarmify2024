@@ -127,16 +127,15 @@
                 android:id="@+id/id_bottomNavigationView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-
+                android:layout_marginTop="2dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="16dp"
 
-
                 android:background="@drawable/bottom_navigation_background_2"
                 android:elevation="8dp"
                 app:itemIconTint="@drawable/bottom_navigation_color_selector_2"
-                app:labelVisibilityMode="unlabeled"
+                app:labelVisibilityMode="labeled"
                 android:layout_gravity="bottom"
                 app:menu="@menu/bottom_nav_menu"/>
 

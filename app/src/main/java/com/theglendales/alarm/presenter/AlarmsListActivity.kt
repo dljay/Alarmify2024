@@ -28,6 +28,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.theglendales.alarm.configuration.EditedAlarm
 import com.theglendales.alarm.configuration.Store
 import com.theglendales.alarm.configuration.globalGet
@@ -63,8 +64,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z9 [UI 변경 진행중- Btm Nav Bar : Floating 스타일로 변경중- 일단 성공]
+// 30708V1.17Z10 [UI 변경 진행중- Btm Nav Bar : Floating 스타일로 변경 성공/ FAB 가운데에 넣어주기-AppBar 사용성공.]
 // 흰색으로 Floating + Curve 성공. 굉장 깔끔 & Easy..
+// Fab 가 가운데에서 높낮이 안 맞았으나 -> Bottom AppBar 와 FAB (layout-anchor) 사용하여 높이 / Center 맞추는데 성공.
+// BottomAppBar 가운데 살짝 파진 모양을 시도해보자..
 
 //- values.xml > colorprimary (Line 22xx) 정도에. // themes_dark.xml 에서 colorPrimary holo_blue_bright 으로 바꾸니 collapsing toolbar 배경색 바꼈네.
 
@@ -103,6 +106,8 @@ class AlarmsListActivity : AppCompatActivity() {
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
     private val myDiskSearcher: DiskSearcher by globalInject()
     private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
+    private val btmAppBar by lazy {findViewById(R.id.bottomAppBar2) as BottomAppBar}
+
     private val fab by lazy { findViewById<FloatingActionButton>(R.id.fab_listActivity) }
     private val myPermHandler = MyPermissionHandler(this)
     private val exoForUrl: ExoForUrl by globalInject() // 여기 적혀있지만 init 은 실제 사용되는 SecondFrag 가 열릴 때  자동으로 이뤄짐.
@@ -522,6 +527,7 @@ class AlarmsListActivity : AppCompatActivity() {
     //내가 추가->
     // a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
         btmNavView.visibility =View.VISIBLE
+        btmAppBar.visibility= View.VISIBLE
     // b) Fab 버튼 다시 보이게 하기.
         if(fab.visibility == View.GONE) { // B) 다른 Frag 갔다와서 Fab 이 안 보인다면 보여줄것! -- ListFrag 에서 Resume() 과 Destroyed() 에서 requiredActivity.findView..() 에서 해줄수도 있지만 그냥 이렇게.
             fab.visibility = View.VISIBLE
@@ -553,25 +559,7 @@ class AlarmsListActivity : AppCompatActivity() {
         Log.d(TAG, "showSecondFrag: ..... ")
 
     }
-   /* private fun showSecondFrag(secondFragReceived: Fragment) {
-       //A) ToolBar 포함된 넓은 부분 Expand 시키기
-        appBarLayout.setExpanded(false,true)
 
-       val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-
-       when(currentFragment) {
-           is SecondFragment -> {
-               logger.debug { "[jjadded] skipping frag transition, it's already shwoing $currentFragment" }
-           }
-           else -> {
-               logger.debug { "transition from: $currentFragment to SecondFrag" }
-               supportFragmentManager.beginTransaction().apply {
-
-               }.replace(R.id.main_fragment_container, secondFragReceived).commitAllowingStateLoss()
-           }
-       }
-
-    }*/
 
     private fun showDetails(@NonNull editedAlarm: EditedAlarm) {
         Log.d(TAG, "showDetails: called. ")
@@ -587,10 +575,11 @@ class AlarmsListActivity : AppCompatActivity() {
 
             val detailsFragment = AlarmDetailsFragment().apply {arguments = Bundle()}
             supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, detailsFragment).commitAllowingStateLoss()
-        //todo: [미봉책] .CommitNow() 로 하면 Synchronous 니까 일단 configureTransactions x2 -> showDetails() x2 되는것 해결은 된다.
+        //todo: [혹시 showDetails x2 뜨는것 방지 위해 ].CommitNow()(Synchronous) 가 나을것 같은데.. 느려질려나?
         }
         // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
         btmNavView.visibility =View.GONE
+        btmAppBar.visibility= View.GONE
         // Fab 없애주기
         if(fab.visibility == View.VISIBLE) { // B) Fab 버튼이 보인다면 없애줄것!
             fab.visibility = View.GONE

@@ -227,8 +227,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="N/A"
-                        android:textSize="15sp"
-                        android:textColor="@color/mat_red">
+                        android:textAppearance="?android:attr/textAppearanceSmall">
                     </TextView>
 
                 </LinearLayout>
@@ -266,13 +265,7 @@
                         android:src="@drawable/errordisplay">
 
                     </ImageView>
-
-
                 </LinearLayout>
-
-
-
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- Ringtone 메뉴 ******* -->
@@ -301,6 +294,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="N/A"/>
 
             </LinearLayout>

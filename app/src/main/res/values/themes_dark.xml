@@ -3,12 +3,28 @@
     <!-- A. Dark Theme -->
     <style name="DefaultDarkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 
-        <!--<item name="android:textColorPrimary">@color/mat_red</item>-->
-        <!--<item name="android:colorBackground">@color/jj_background_DarkNavy_1</item>-->
+    <!--colorPrimary: 당장 Collapsing ToolBar 배경색이 이것으로 결정.-->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+
+    <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. DetailsFrag>Repeat, About the Ringtone. 등 Titles-->
+        <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+    <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) ListFrag> CollapsingToolBar 의 남은 알람 시간 b) ListFrag> Row 의 설정된 시간 b) DetailsFrag>About the Ringtone 밑의 description-->
+        <item name="android:textColorTertiary">@color/tertiaryTextColor</item>
+
+        "
+        <item name="android:colorBackground">@color/jj_background_DarkNavy_1</item>
+    <!--colorActivatedHighlight= FAB 버튼 같은것 색 -->
+        <item name="android:colorActivatedHighlight">@color/secondaryColor</item>
         <!--<item name="android:colorBackground">@color/jj_background_SkyBlue_1</item>-->
         <!-- textColor 는 Small to Medium TextViews.-->
         <!--<item name="android:textColor">@color/light_gray_brighter_jjong</item>-->
-        <item name="colorPrimary">@android:color/holo_blue_bright</item>
+
         <!-- 밑에거 넣으면 겹쳐서 나옴.-->
         <!--<item name="windowActionBarOverlay">true</item>-->
     </style>

@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z12 [UI 변경 진행중- Btm Nav Bar : Floating 스타일로 변경 성공/ FAB 가운데에 넣어주기-AppBar 사용성공.]
+// 30708V1.17Z13 [SecondFrag - Player 와 BtmNav 조화 --- 작업 전]
 // 1) Achievements:
 // 흰색으로 Floating + Curve 성공. 굉장 깔끔 & Easy..
 // Fab 가 가운데에서 높낮이 안 맞았으나 -> Bottom AppBar 와 FAB (layout-anchor) 사용하여 높이 / Center 맞추는데 성공.

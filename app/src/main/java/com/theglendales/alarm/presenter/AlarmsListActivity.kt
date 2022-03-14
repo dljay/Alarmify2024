@@ -64,16 +64,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z13 [SecondFrag - Player 와 BtmNav 조화 --- 작업 전]
+// 30708V1.17Z14 [SecondFrag - Player 와 BtmNav 조화 --- 작업 중] 22/3/14 오후 11:25
 // 1) Achievements:
-// 흰색으로 Floating + Curve 성공. 굉장 깔끔 & Easy..
-// Fab 가 가운데에서 높낮이 안 맞았으나 -> Bottom AppBar 와 FAB (layout-anchor) 사용하여 높이 / Center 맞추는데 성공.
-// BottomAppBar 가운데 살짝 파진 모양을 시도해보자..
 //
-
 // 2) Issues:
-// 공들여 만든 BtmNav+BtmAppBar 가 SecondFrag 가서 보면 흉칙함. 우선 SlidingPanel (mini player) 높이는 대략 맞춰줬음 (SecondFrag.xml>UmanoHeight)
-// 해결책: Divider 중간에 하나 넣고 "BtmNavView" 의 배경색과 "Umano Sliding Panel" 플레이어 배경색을 동일하게! 하여 Spotify 처럼 둘다 떠도 이질감 없게 만들기!!
+// 해결책: 어쩔수없이 BtmNav 에 Border/Divider (위에 살짝) 넣는 느낌으로 해주고. 사실상 Spotify 스샷 clone + 카톡스샷(Medium) 느낌으로...?
+// 문제ㅐ는 SecondFrag 에서 MiniPlayer 나왔을 때 (모든 기기에서) 완벽하게 맞춰줄 수 있을지. layout_anchor 등 사용?
+
 
 // Todos:
 //- values.xml > colorprimary (Line 22xx) 정도에. // themes_dark.xml 에서 colorPrimary holo_blue_bright 으로 바꾸니 collapsing toolbar 배경색 바꼈네.

@@ -2,8 +2,8 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Color when the row is selected -->
     <item
-        android:drawable="@color/gray_light_highlight_1" android:state_pressed="false" android:state_selected="true"/>
+        android:drawable="@color/ampm_text_color" android:state_pressed="false" android:state_selected="true"/>
     <!-- Standard Background Color -->
     <item
-        android:drawable="@color/white" android:state_selected="false" />
+        android:drawable="@color/transparent" android:state_selected="false" />
 </selector>

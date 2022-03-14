@@ -21,6 +21,17 @@
     <color name="secondaryColor">#01579b</color>
     <color name="secondaryLightColor">#4f83cc</color>
     <color name="secondaryDarkColor">#002f6c</color>
+<!--여기저기 쓰일 BLUE/NAVY & 기타 색깔의 Variation -->
+    <color name="blue_var_1">#7991BD</color>
+    <color name="blue_var_2">#131B55</color>
+    <color name="blue_var_3">#212962</color>
+    <color name="blue_var_4">#041064</color>
+    <color name="skyblue_var_1">#1AA5CF</color>
+
+    <color name="other_var_3">#041064</color>
+    <color name="other_var_4">#041064</color>
+
+
 <!--primaryTextColor =  현재 a) Spinner TimePicker 결정-->
     <color name="primaryTextColor">#E8E8E8</color>
 <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. DetailsFrag>Repeat, About the Ringtone. 등 Titles-->

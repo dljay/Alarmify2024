@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,7 +17,8 @@
         <LinearLayout
             android:id="@+id/id_upperUi_ll"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="65dp"
+
             android:background="@drawable/roundstyle1_withcolor"
             android:clickable="true"
             android:gravity="center"
@@ -35,7 +37,7 @@
             <!--Thumbnail/Title/Play,Pause Button -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:id="@+id/id_upperUi_ConsLayout">
 
                 <!-- Click Arrow up(^)-->
@@ -45,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:padding="5dp"
-                    android:src="@drawable/clickarrow"
+                    android:src="@drawable/arrow_up_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -56,10 +58,10 @@
                 <ImageView
                     android:id="@+id/id_upperUi_iv_coverImage"
                     android:layout_width="55dp"
-                    android:layout_height="55dp"
+                    android:layout_height="50dp"
                     android:layout_marginBottom="5dp"
-                    android:padding="5dp"
-
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
 
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/id_upperUi_iv_clickarrowUp"
@@ -85,7 +87,10 @@
                     android:fontFamily="sans-serif-condensed-light"
                     android:gravity="center_horizontal"
                     android:marqueeRepeatLimit="marquee_forever"
-                    android:padding="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingBottom="20dp"
                     android:scrollHorizontally="true"
 
                     android:singleLine="true"
@@ -120,7 +125,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:scaleType="centerInside"
-                        android:src="@drawable/playbutton2" />
+                        android:src="@drawable/play_arrow_white" />
                     <ImageButton
                         android:id="@+id/id_imgbtn_upperUi_pause"
                         android:layout_width="50dp"
@@ -129,7 +134,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:scaleType="centerInside"
-                        android:src="@drawable/pausebutton_2"
+                        android:src="@drawable/pause_white"
                         android:visibility="gone"/>
 
                 </LinearLayout>
@@ -137,6 +142,12 @@
                 <!-- <<< Play/Stop Button Until Here <<<< -->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- 중간에 작은 Divider Border>>> -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:background="@color/mat_red">
+            </View>
 
         </LinearLayout>
 

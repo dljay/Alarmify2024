@@ -13,7 +13,7 @@
 
         android:gravity="bottom"
         app:umanoOverlay="false"
-        app:umanoPanelHeight="130dp"
+        app:umanoPanelHeight="135dp"
         app:umanoShadowHeight="0dp">
 
         <!--1st child - Chips+ 리싸이클뷰임!  -->

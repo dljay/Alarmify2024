@@ -64,10 +64,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z14 [SecondFrag - Player 와 BtmNav 조화 --- 작업 중] 22/3/14 오후 11:25
+// 30708V1.17Z14 [SecondFrag - Player 와 BtmNav 조화 --- 작업 중] 22/3/15 오후 2:31
 // 1) Achievements:
 //
 // 2) Issues:
+// 일단 흰색 BtmNav 로 원복=-> 다시 사각형으로 + border .. bottom padding 도 없애야겠지.
+// border - attr/windowBackground? 요건가? https://www.youtube.com/watch?v=Gmzk9kKA0WI
 // 해결책: 어쩔수없이 BtmNav 에 Border/Divider (위에 살짝) 넣는 느낌으로 해주고. 사실상 Spotify 스샷 clone + 카톡스샷(Medium) 느낌으로...?
 // 문제ㅐ는 SecondFrag 에서 MiniPlayer 나왔을 때 (모든 기기에서) 완벽하게 맞춰줄 수 있을지. layout_anchor 등 사용?
 

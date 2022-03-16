@@ -145,8 +145,8 @@
             <!-- 중간에 작은 Divider Border>>> -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="4dp"
-                android:background="@color/mat_red">
+                android:layout_height="2dp"
+                android:background="@color/jj_background_DarkNavy_1">
             </View>
 
         </LinearLayout>

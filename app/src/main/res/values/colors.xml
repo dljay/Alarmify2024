@@ -23,8 +23,8 @@
     <color name="secondaryDarkColor">#002f6c</color>
 <!--여기저기 쓰일 BLUE/NAVY & 기타 색깔의 Variation -->
     <color name="blue_var_1">#7991BD</color>
-    <color name="blue_var_2">#131B55</color>
-    <color name="blue_var_3">#212962</color>
+    <color name="blue_var_2">#0b1e38</color>
+    <color name="blue_var_3">#D40E2646</color>
     <color name="blue_var_4">#041064</color>
     <color name="skyblue_var_1">#1AA5CF</color>
 
@@ -37,7 +37,7 @@
 <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. DetailsFrag>Repeat, About the Ringtone. 등 Titles-->
     <color name="secondaryTextColor">#BBBBBB</color>
 <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) DetailsFrag>About the Ringtone 밑의 description, CollapsingToolbar 남은 시간.-->
-    <color name="tertiaryTextColor">#787878</color>
+    <color name="tertiaryTextColor">#626262</color>
     <!-- Material Palette 으로 만들어 본 것(Ends) -->
     <!-- JJONG added-->
     <color name="purple_200">#FFBB86FC</color>

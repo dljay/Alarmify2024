@@ -64,11 +64,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z14 [SecondFrag - Player 와 BtmNav 조화 --- 작업 중] 22/3/15 오후 2:31
+// 30708V1.17Z15 [SecondFrag - Player 와 BtmNav 조화 --- 작업 중] 22/3/16 오후 3:30
 // 1) Achievements:
-//
+// Bottom Nav 원래 스타일로 [직사각형] .
 // 2) Issues:
-// 일단 흰색 BtmNav 로 원복=-> 다시 사각형으로 + border .. bottom padding 도 없애야겠지.
+// Btm Nav 좀 더 이쁘게 바꿔보기.
 // border - attr/windowBackground? 요건가? https://www.youtube.com/watch?v=Gmzk9kKA0WI
 // 해결책: 어쩔수없이 BtmNav 에 Border/Divider (위에 살짝) 넣는 느낌으로 해주고. 사실상 Spotify 스샷 clone + 카톡스샷(Medium) 느낌으로...?
 // 문제ㅐ는 SecondFrag 에서 MiniPlayer 나왔을 때 (모든 기기에서) 완벽하게 맞춰줄 수 있을지. layout_anchor 등 사용?
@@ -245,7 +245,7 @@ class AlarmsListActivity : AppCompatActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
-
+        window.navigationBarColor = resources.getColor(R.color.blue_var_3)// todo: deprecate 된 것 수정. System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
 

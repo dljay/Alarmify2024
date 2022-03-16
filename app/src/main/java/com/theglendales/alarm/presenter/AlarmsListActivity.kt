@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.17Z15 [SecondFrag - Player 와 BtmNav 조화 --- 작업 중] 22/3/16 오후 3:30
+// 30708V1.18a [Bottom Nav-- FAB 대신 + 버튼 시도<전>] 22/3/16 오후 9:47
 // 1) Achievements:
 // Bottom Nav 원래 스타일로 [직사각형] .
 // 2) Issues:
@@ -245,7 +245,8 @@ class AlarmsListActivity : AppCompatActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
-        window.navigationBarColor = resources.getColor(R.color.blue_var_3)// todo: deprecate 된 것 수정. System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
+        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.blue_var_2)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
+
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
 

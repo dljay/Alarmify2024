@@ -115,7 +115,7 @@
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="58dp"
             android:layout_gravity="bottom"
             android:layout_weight="1"
             app:elevation="8dp"
@@ -128,6 +128,8 @@
                 android:layout_height="match_parent"
                 app:elevation="8dp"
                 android:background="@drawable/bottom_navigation_background_2"
+                app:itemIconSize="25dp"
+
                 app:itemTextColor="@drawable/btm_nav_selector_color"
                 app:itemIconTint="@drawable/bottom_navigation_color_selector_2"
                 app:labelVisibilityMode="labeled"

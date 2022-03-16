@@ -64,11 +64,15 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18a [Bottom Nav-- FAB 대신 + 버튼 시도<전>] 22/3/16 오후 9:47
+// 30708V1.18a [Bottom Nav-- FAB 대신 + 버튼 시도<전>] 22/3/16 오후 10:02
 // 1) Achievements:
-// Bottom Nav 원래 스타일로 [직사각형] .
-// 2) Issues:
-// Btm Nav 좀 더 이쁘게 바꿔보기.
+// --
+// 2) Issues: Bottom Nav 구린것
+//- fab 은 + 벡터아이콘으로 바꿀만함. (아이콘이 그래도 3개 이상여야 있어보이네.) [1순위!!]
+//- 전체 rcv 아이템이 안 차서 더 눈에 띄는게 크고.
+// 현재 구린 배경을 우선 바꿔야되고 전체 Font 를 바꿔줘야함.
+//- system navigation 은 살짝 다른색으로 할수도 있겠다.
+
 // border - attr/windowBackground? 요건가? https://www.youtube.com/watch?v=Gmzk9kKA0WI
 // 해결책: 어쩔수없이 BtmNav 에 Border/Divider (위에 살짝) 넣는 느낌으로 해주고. 사실상 Spotify 스샷 clone + 카톡스샷(Medium) 느낌으로...?
 // 문제ㅐ는 SecondFrag 에서 MiniPlayer 나왔을 때 (모든 기기에서) 완벽하게 맞춰줄 수 있을지. layout_anchor 등 사용?

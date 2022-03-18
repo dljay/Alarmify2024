@@ -64,7 +64,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18a [Bottom Nav-- FAB 대신 + 버튼 시도<전>] 22/3/16 오후 10:02
+// 30708V1.18b [Bottom Nav-- FAB 대신 + 버튼 시도<전>] 22/3/18(금) 오후 9:19
 // 1) Achievements:
 // --
 // 2) Issues: Bottom Nav 구린것
@@ -373,10 +373,9 @@ class AlarmsListActivity : AppCompatActivity() {
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
-    private fun showListOfFragsAdded() {
-
+    /*private fun showListOfFragsAdded() {
     Log.d(TAG, "showListOfFragsAdded: \n******************* \n${supportFragmentManager.fragments}\nbackStackEntry Count= ${supportFragmentManager.backStackEntryCount} \n****************")
-    }
+    }*/
 
     override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -429,8 +428,6 @@ class AlarmsListActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_PHONE_STATE), 8914)
             Log.d(TAG, "onCreate: read_phonestorage 체크..int=${ContextCompat.checkSelfPermission(this.applicationContext, android.Manifest.permission.READ_PHONE_STATE)}")
         }*/
-
-
         // Settings Fragment 갔다왔으면
 /*    // MyCacher Init() -> MediaPlayer(V2) Init [BackgroundThread] --- 원래 SecondFrag 에 있던것을 이쪽으로 옮겨옴 (ListFrag <-> SecondFrag 왔다리갔다리 무리없게 사용 위해.)
         lifecycleScope.launch {

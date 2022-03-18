@@ -10,4 +10,9 @@
         android:title="GET RINGTONE"
         android:icon="@drawable/ic_bell_holo_dark"/>
 
+    <!--<item
+        android:id="@+id/id_BtmNav_AddAlarm"
+        android:title=""
+        android:icon="@drawable/add_circle_white_24"/>-->
+
 </menu>

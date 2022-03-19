@@ -130,8 +130,11 @@
                     app:fab_colorNormal="?android:attr/colorActivatedHighlight"
                     app:fab_colorPressed="?android:attr/colorActivatedHighlight"
                     android:backgroundTint="?android:attr/colorActivatedHighlight"
+
                     android:backgroundTintMode="src_atop"
-                    
+
+                    android:scaleType="fitXY"
+                    android:padding="0dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

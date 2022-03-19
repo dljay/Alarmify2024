@@ -125,21 +125,21 @@
                 app:menu="@menu/bottom_nav_menu"
                 android:clipChildren="false">
 
-                <com.melnykov.fab.FloatingActionButton
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/fab_listActivity"
                     app:fab_colorNormal="?android:attr/colorActivatedHighlight"
                     app:fab_colorPressed="?android:attr/colorActivatedHighlight"
-                    android:backgroundTint="?android:attr/colorActivatedHighlight"
-
-                    android:backgroundTintMode="src_atop"
+                    android:backgroundTint="@color/transparent"
+                    app:tint="@color/primaryTextColor"
+                    app:fabSize="mini"
 
                     android:scaleType="fitXY"
                     android:padding="0dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_baseline_add_24" />
-
+                    app:maxImageSize="40dp"
+                    android:src="@drawable/ic_baseline_add_48"/>
 
             </com.google.android.material.bottomnavigation.BottomNavigationView>
 

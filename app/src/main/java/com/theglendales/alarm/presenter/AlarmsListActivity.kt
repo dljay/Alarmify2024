@@ -43,7 +43,7 @@ import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import com.melnykov.fab.FloatingActionButton
+
 import com.theglendales.alarm.*
 import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
 import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
@@ -119,7 +119,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
     private val btmAppBar by lazy {findViewById(R.id.bottomAppBar2) as BottomAppBar}
 
-    private val fab by lazy { findViewById<FloatingActionButton>(R.id.fab_listActivity) }
+    private val fab by lazy { findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fab_listActivity) }
     private val myPermHandler = MyPermissionHandler(this)
     private val exoForUrl: ExoForUrl by globalInject() // 여기 적혀있지만 init 은 실제 사용되는 SecondFrag 가 열릴 때  자동으로 이뤄짐.
     // AppBarLayout & ToolBar 관련

@@ -111,6 +111,7 @@
             app:contentInsetStart="0dp"
             app:backgroundTint="@color/blue_var_3">
 
+
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/id_bottomNavigationView"
                 android:layout_width="match_parent"

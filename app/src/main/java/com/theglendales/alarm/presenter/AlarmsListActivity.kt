@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18c [Bottom Nav-- FAB 대신 + 버튼 시도<전>] 22/3/18(금) 오후 10:19
+// 30708V1.18c5 [Bottom Nav-- FAB -> ImageBtn 으로 Youtube Red 스타일+ Reddit 스타일(선택된것만 흰색)] 22/3/19(금) 오후 11:02
 // 1) Achievements:
 // BtmNav YoutubeRed 따라하기: BtmNavView 에 ICon 추가가 아니라 FAB 버튼을 BtmNav 안에 넣는것으로 결론!
 // 2) todos:

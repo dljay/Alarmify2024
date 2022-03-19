@@ -5,6 +5,13 @@
         android:id="@+id/id_BtmNav_SetAlarm"
         android:title="SET ALARM"
         android:icon="@drawable/ic_time_holo_dark"/>
+
+    <item
+        android:id="@+id/id_emptySpace"
+        android:title=""
+        android:icon="@drawable/transparent_opacity_0"
+        android:enabled="false"/>
+
     <item
         android:id="@+id/id_BtmNav_RingTone"
         android:title="GET RINGTONE"

@@ -124,22 +124,7 @@
                 android:layout_gravity="bottom"
                 app:menu="@menu/bottom_nav_menu"
                 android:clipChildren="false">
-            <!--Fab 원 안의 색은 Secondary Color 를 따라감. -->
-              <!--  <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab_listActivity"
-                    android:background="@drawable/fab_design_1"
-                    android:backgroundTint="@color/transparent"
-                    app:tint="@color/primaryTextColor"
 
-                    app:fabSize="mini"
-                    app:borderWidth="2dp"
-                    android:scaleType="fitXY"
-                    android:padding="0dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    app:maxImageSize="40dp"
-                    android:src="@drawable/ic_baseline_add_48"/>-->
                 <ImageButton
                     android:id="@+id/imgBtn_Add_BtmNav"
                     android:background="@drawable/fab_design_1"

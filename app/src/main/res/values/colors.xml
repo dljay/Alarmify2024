@@ -18,6 +18,7 @@
     <color name="primaryColor">#11194f</color>
     <color name="primaryLightColor">#413f7c</color>
     <color name="primaryDarkColor">#000027</color>
+    <!-- Secondary: 똑딱이 (On/OFF 에 쓰임)-->
     <color name="secondaryColor">#01579b</color>
     <color name="secondaryLightColor">#4f83cc</color>
     <color name="secondaryDarkColor">#002f6c</color>

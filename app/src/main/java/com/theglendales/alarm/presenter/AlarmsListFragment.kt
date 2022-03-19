@@ -22,7 +22,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.snackbar.Snackbar
-import com.melnykov.fab.FloatingActionButton
+
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
 import com.theglendales.alarm.configuration.Prefs
@@ -402,10 +402,7 @@ class AlarmsListFragment : Fragment() {
         //Log.d(TAG, "onResume: listRowLayoutId= $listRowLayoutId, listRowLayout=$listRowLayout") // Layout.COMPACT 였음.
 
         // ListActivity 로 Fab 버튼을 옮긴 후 코드 (Fragment View 생성과 동시에 ListActivity 에 있는 Fab 을 찾아서 보여줌)
-        val fabInListActivity = requireActivity().findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fab_listActivity)
-        if(fabInListActivity!=null && fabInListActivity.visibility == View.GONE) {
-            fabInListActivity.visibility = View.VISIBLE
-        }
+
     }
 
     override fun onPause() {

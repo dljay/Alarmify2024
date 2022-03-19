@@ -18,6 +18,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
+import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 
@@ -119,7 +120,8 @@ class AlarmsListActivity : AppCompatActivity() {
     private val btmNavView by lazy { findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) as BottomNavigationView }
     private val btmAppBar by lazy {findViewById(R.id.bottomAppBar2) as BottomAppBar}
 
-    private val fab by lazy { findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fab_listActivity) }
+
+    private val addBtn by lazy {findViewById<ImageButton>(R.id.imgBtn_Add_BtmNav)}
     private val myPermHandler = MyPermissionHandler(this)
     private val exoForUrl: ExoForUrl by globalInject() // 여기 적혀있지만 init 은 실제 사용되는 SecondFrag 가 열릴 때  자동으로 이뤄짐.
     // AppBarLayout & ToolBar 관련
@@ -300,7 +302,7 @@ class AlarmsListActivity : AppCompatActivity() {
         //val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
         btmNavView.setOnItemSelectedListener {
             when(it.itemId) {
-                R.id.id_BtmNav_SetAlarm -> showList()
+                R.id.id_BtmNav_SetAlarm -> showList(isCreateNewClicked = false)
                 R.id.id_BtmNav_RingTone -> showSecondFrag(secondFrag)
             }
             Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener -> before hitting true!")
@@ -370,17 +372,11 @@ class AlarmsListActivity : AppCompatActivity() {
 
         })
 
-    // Fab_listActivity 22_02_19 FAB 버튼: v21\list_fragment.xml 과 AlarmslistFragment.kt 에 있는 놈 없애고 -> 여기에 심음. 일단 잘되서 둔다!
-        fab.setOnClickListener {
-            uiStore.createNewAlarm()
-            //showListOfFragsAdded()
-        }
+        addBtn.setOnClickListener { showList(isCreateNewClicked = true) }
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
-    /*private fun showListOfFragsAdded() {
-    Log.d(TAG, "showListOfFragsAdded: \n******************* \n${supportFragmentManager.fragments}\nbackStackEntry Count= ${supportFragmentManager.backStackEntryCount} \n****************")
-    }*/
+
 
     override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -501,13 +497,13 @@ class AlarmsListActivity : AppCompatActivity() {
                         editedAlarm.isEdited -> showDetails(editedAlarm)
                         else -> {
                             Log.d(TAG, "[SUB] (line490)configureTransactions: else->showList() 안!! editedAlarm=$editedAlarm")
-                            showList()}
+                            showList(isCreateNewClicked = false)}
                     }
                 })
     }
 
 // 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
-    private fun showList() {
+    private fun showList(isCreateNewClicked: Boolean) {
     //추가->
     Log.d(TAG, "(Line281)showList: jj-called")
     appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
@@ -528,7 +524,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction().apply {
                         this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
                         Log.d(TAG, "showList: not lollipop()")
-                    }.replace(R.id.main_fragment_container, listFragment).commitAllowingStateLoss()
+                    }.replace(R.id.main_fragment_container, listFragment).commitNowAllowingStateLoss()
 
             }
         }
@@ -537,15 +533,17 @@ class AlarmsListActivity : AppCompatActivity() {
     // a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
         btmNavView.visibility =View.VISIBLE
         btmAppBar.visibility= View.VISIBLE
-    // b) Fab 버튼 다시 보이게 하기.
-        if(fab.visibility == View.GONE) { // B) 다른 Frag 갔다와서 Fab 이 안 보인다면 보여줄것! -- ListFrag 에서 Resume() 과 Destroyed() 에서 requiredActivity.findView..() 에서 해줄수도 있지만 그냥 이렇게.
-            fab.visibility = View.VISIBLE
-        }
-    // C) AppBarLayout 설정변경 -> ToolBar 보여주는데까지 Collapse 시키기(O)
+
+    // b) AppBarLayout 설정변경 -> ToolBar 보여주는데까지 Collapse 시키기(O)
         //if(supportActionBar != null) {supportActionBar?.show()}
         val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-    // % 참고: Java 에서는 params.setScrollFlags(xxx SCROLL | FLAG_EXIT ... ) 이런식으로 '|' 파이프라인을 쓰는데. 그게 Kotlin 에서는 or 임. bitwise INT... 흐음.
+        // % 참고: Java 에서는 params.setScrollFlags(xxx SCROLL | FLAG_EXIT ... ) 이런식으로 '|' 파이프라인을 쓰는데. 그게 Kotlin 에서는 or 임. bitwise INT... 흐음.
+    // c) 만약 (+) 버튼 눌러서 여기로 온거면 바로 새 알람 생성(->DetailsFrag)
+        if(isCreateNewClicked) {
+            uiStore.createNewAlarm()
+        }
+
 
     }
     private fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
@@ -557,10 +555,7 @@ class AlarmsListActivity : AppCompatActivity() {
     // B) SecondFrag 로딩
         replace(R.id.main_fragment_container, secondFragReceived)
         commit() //현재 상태에서 특별히 쓸 이유 안 보임. CommitAllowingStateLoss 해도 detailsFrag 두번 켜지는 문제는 해결 안됨.
-    // C) Fab 버튼이 보인다면 없애줄것!
-        if(fab.visibility == View.VISIBLE) {
-            fab.visibility = View.GONE
-        }
+
     // D) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
         val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
@@ -589,10 +584,7 @@ class AlarmsListActivity : AppCompatActivity() {
         // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
         btmNavView.visibility =View.GONE
         btmAppBar.visibility= View.GONE
-        // Fab 없애주기
-        if(fab.visibility == View.VISIBLE) { // B) Fab 버튼이 보인다면 없애줄것!
-            fab.visibility = View.GONE
-        }
+
         // C) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
         val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways

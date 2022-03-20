@@ -65,16 +65,16 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18c5 [Bottom Nav-- FAB -> ImageBtn 으로 Youtube Red 스타일+ Reddit 스타일(선택된것만 흰색)] 22/3/19(금) 오후 11:02
+// 30708V1.18c9 [BtmNav_클릭에 따라 아이콘 변경(fill 된것도 추가했음)] 22/3/20(일) 오후 11:40
 // 1) Achievements:
-// BtmNav YoutubeRed 따라하기: BtmNavView 에 ICon 추가가 아니라 FAB 버튼을 BtmNav 안에 넣는것으로 결론!
+// BtmNav 하이라이트 포기하고 그냥 선택했을 때 Filled 된 Icon 으로 변경되는 방식으로.
 // 2) todos:
-//fab : 일단 Youtube Red 처럼
-//a) 위아래 간격 (아이콘 사이즈?)
-//b) 색깔 transparent 에 배경 테두리만.
-//c) SecondFrag 오갈 때 굳이 없앨 필요 없음.
-//d) fab.setOnClickListener() 를 -> showList(isFabClicked=true) 로 showList 안에서 commitNowAllowingStateLoss() 후 ..
-//-> if(isFabClicked) { uiStore.createNewAlarmValue() } 이런식으로.
+
+// .isChecked 가 왜 false 인지 밝혀내기 ( => SecondFrag 에서 (+) 눌렀을 때 아이콘 변경 문제없게)
+// Flaticon 도 그렇고 공짜 Android icon svg vector 찾아서 a) 좀 이쁜놈들로(컬러풀한것도 괜춘) filled/outline 등도 구분 가능한지 알아볼것.
+// drawable 등 안 쓰는 asset 지우기 (백업하고)
+// SecondFrag Spotify 디자인 제발 이제는 하자..
+
 //e) 전체적으로 살짝 더 간격 벌리기.
 // 현재 구린 배경을 우선 바꿔야되고 전체 Font 를 바꿔줘야함.
 //- system navigation 은 살짝 다른색으로 할수도 있겠다.
@@ -121,7 +121,7 @@ class AlarmsListActivity : AppCompatActivity() {
     private val btmAppBar by lazy {findViewById(R.id.bottomAppBar2) as BottomAppBar}
 
 
-    private val addBtn by lazy {findViewById<ImageButton>(R.id.imgBtn_Add_BtmNav)}
+    private val addNewAlarmBtn by lazy {findViewById<ImageButton>(R.id.imgBtn_Add_BtmNav)}
     private val myPermHandler = MyPermissionHandler(this)
     private val exoForUrl: ExoForUrl by globalInject() // 여기 적혀있지만 init 은 실제 사용되는 SecondFrag 가 열릴 때  자동으로 이뤄짐.
     // AppBarLayout & ToolBar 관련
@@ -300,14 +300,17 @@ class AlarmsListActivity : AppCompatActivity() {
 
         val secondFrag = SecondFragment()
         //val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
+
         btmNavView.setOnItemSelectedListener {
+
             when(it.itemId) {
                 R.id.id_BtmNav_SetAlarm -> showList(isCreateNewClicked = false)
                 R.id.id_BtmNav_RingTone -> showSecondFrag(secondFrag)
             }
-            Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener -> before hitting true!")
+            Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener \n   -> it.title=${it.title}, it.isEnabled=${it.isEnabled}, it.isChecked=${it.isChecked}")
             true // we don't write return true in the lambda function, it will always return the last line of that function
         }
+        //btmNavView.itemIconTintList = null
     // 추가: Permission 검사 (App 최초 설치시 반드시 거치며, no 했을때는 벤치휭~ BtmSheet 계속 뜬다. yes 하면 그다음부터는 안 뜸.)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 Write, DOWNLOAD 에 특별한 Permission 필요 없는듯?
             Log.d(TAG, "onCreate: Permission Check. Build Ver=${Build.VERSION.SDK_INT}")
@@ -372,7 +375,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
         })
 
-        addBtn.setOnClickListener { showList(isCreateNewClicked = true) }
+        addNewAlarmBtn.setOnClickListener { showList(isCreateNewClicked = true) }
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
@@ -507,6 +510,11 @@ class AlarmsListActivity : AppCompatActivity() {
     //추가->
     Log.d(TAG, "(Line281)showList: jj-called")
     appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
+
+    // 혹시나 Btm Nav> Set ALARM 의 메뉴 아이콘이 회색처리가(TertiaryTextColor) 되있는 경우 '흰색' 으로 바꿔주기(Color>PrimaryTextColor)(Ex. SecondFrag 에서 (+) 누른 경우
+    /*btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm).isChecked = true
+    btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked = false*/
+    Log.d(TAG, "showList: BtmNav_SetAlarm.isChecked=${btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm).isChecked} , BtmNav_RingTone.isChecked=${btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked}")
 
     //<-추가
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container) // first searches through fragments that are currently added to the manager's activity

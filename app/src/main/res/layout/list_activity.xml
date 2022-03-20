@@ -119,8 +119,8 @@
                 app:elevation="8dp"
                 android:background="@drawable/bottom_navigation_background_2"
                 app:itemIconSize="25dp"
-                app:itemTextColor="@drawable/btm_nav_selector_color"
-                app:itemIconTint="@drawable/bottom_navigation_color_selector_2"
+                app:itemTextColor="@drawable/btm_nav_text_color_selector"
+                app:itemIconTint="@drawable/btm_nav_icon_color_selector"
                 app:labelVisibilityMode="labeled"
                 android:layout_gravity="bottom"
                 app:menu="@menu/bottom_nav_menu"
@@ -128,7 +128,7 @@
 
                 <ImageButton
                     android:id="@+id/imgBtn_Add_BtmNav"
-                    android:background="@drawable/fab_design_1"
+                    android:background="@drawable/plus_btn_selector"
 
                     android:padding="3dp"
                     android:layout_width="wrap_content"
@@ -136,6 +136,7 @@
                     android:layout_gravity="center"
 
                     app:maxImageSize="35dp"
+                    app:tint="@color/plus_btn_click_selector"
                     android:src="@drawable/ic_baseline_add_32"/>
 
             </com.google.android.material.bottomnavigation.BottomNavigationView>

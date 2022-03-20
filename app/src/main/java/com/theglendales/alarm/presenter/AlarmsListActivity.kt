@@ -68,6 +68,7 @@ import java.util.Calendar
 // 30708V1.18c9 [BtmNav_클릭에 따라 아이콘 변경(fill 된것도 추가했음)] 22/3/20(일) 오후 11:40
 // 1) Achievements:
 // BtmNav 하이라이트 포기하고 그냥 선택했을 때 Filled 된 Icon 으로 변경되는 방식으로.
+// BtmNav_menu.xml 에서 각각의 icon 에 -> selector 연결했음.
 // 2) todos:
 
 // .isChecked 가 왜 false 인지 밝혀내기 ( => SecondFrag 에서 (+) 눌렀을 때 아이콘 변경 문제없게)

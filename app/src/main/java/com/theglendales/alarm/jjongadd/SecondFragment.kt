@@ -860,10 +860,17 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //Log.d(TAG, "onPanelStateChanged: btmNavView.height=  ${btmNavViewFromActivity.height}")
 
             //1) 접힌상태-> 완전히 열리는 상태로 전환중(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행 (대략 0.4 초 소요)
-            if(previousState== SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
+            /*if(previousState== SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
                 btmAppBarFromActivity.animate().translationY(btmAppBarFromActivity.height.toFloat()).alpha(0.0f)
             //btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f) // 어차피 BtmAppBar 가 BtmNavView 의 Parent 여서 이것까지 해줄 필요 없음.
+            }*/
+
+            //1) Drag 해서 -> 완전히 열렸을 때(Dragging -> Expanded)
+            if(previousState== SlidingUpPanelLayout.PanelState.DRAGGING && newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
+                btmAppBarFromActivity.animate().translationY(btmAppBarFromActivity.height.toFloat()).alpha(0.0f)
+                //btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f) // 어차피 BtmAppBar 가 BtmNavView 의 Parent 여서 이것까지 해줄 필요 없음.
             }
+
             //2) 완전히 열린 상태 -> 접히는 상태로 전환 // // DRAGGING -> EXPANDED -> DRAGGING 으로 진행 (대략 0.4 초 소요)
             else if(previousState== SlidingUpPanelLayout.PanelState.EXPANDED && newState == SlidingUpPanelLayout.PanelState.DRAGGING){
                 btmAppBarFromActivity.animate().translationY(0F).alpha(1.0f) // '0F 까지!' View 를 올리는 것.

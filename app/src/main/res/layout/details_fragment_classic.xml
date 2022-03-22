@@ -39,7 +39,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone">
-        <include layout="@layout/list_row_classic"></include>
+        <include layout="@layout/list_row_classic" />
     </LinearLayout>
 
     <include layout="@layout/details_fragment_lower"></include>

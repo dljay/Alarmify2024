@@ -65,7 +65,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18d2 [BtmNav_클릭에 따라 아이콘 변경(정상)(O)] 22/3/22(화) 오후 2:49
+// 30708V1.18d3 [Font - Nunito 로 변경 전- 참고 사이트: https://waynestalk.com/en/android-app-set-default-font-family-en/] 22/3/22(화) 오후 9:59
+// ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
 // SecondFrag -> MiniPlayer 드래그 해서 올릴 때 밑에 창 alpha 값 투명으로 바뀌는 것 해결 (아예 열릴 때 BtmAppBar 사라지는것으로 변경)
 // BtmNav_menu.xml 에서 각각의 icon 에 -> selector 연결했음.

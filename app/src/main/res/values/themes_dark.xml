@@ -27,6 +27,9 @@
 
         <!-- 밑에거 넣으면 겹쳐서 나옴.-->
         <!--<item name="windowActionBarOverlay">true</item>-->
+
+        <!-- FONT TEST-->
+        <!--<item name="android:fontFamily">monospace</item>-->
     </style>
 
     <!-- B. 기타 -->

@@ -135,10 +135,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
                     app:maxImageSize="35dp"
                     app:tint="@color/plus_btn_click_selector"
-                    android:src="@drawable/ic_baseline_add_32"/>
+                    android:src="@drawable/imgbtn_ripple_with_source_drawable"/>
 
             </com.google.android.material.bottomnavigation.BottomNavigationView>
 

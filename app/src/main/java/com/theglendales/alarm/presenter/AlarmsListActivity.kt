@@ -65,20 +65,21 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18c9 [BtmNav_클릭에 따라 아이콘 변경(fill 된것도 추가했음)] 22/3/20(일) 오후 11:40
+// 30708V1.18d [BtmNav_클릭에 따라 아이콘 변경(정상)(O)] 22/3/22(화) 오전 11:06
 // 1) Achievements:
-// BtmNav 하이라이트 포기하고 그냥 선택했을 때 Filled 된 Icon 으로 변경되는 방식으로.
 // BtmNav_menu.xml 에서 각각의 icon 에 -> selector 연결했음.
-// 2) todos:
+// SecondFrag 에서 (+) 클릭했을 때 ListFrag> CreateAlarm(DetailsFrag) 해주고 SecondFrag 아이콘 색 회색처리.
 
-// .isChecked 가 왜 false 인지 밝혀내기 ( => SecondFrag 에서 (+) 눌렀을 때 아이콘 변경 문제없게)
+// 2) todos:
 // Flaticon 도 그렇고 공짜 Android icon svg vector 찾아서 a) 좀 이쁜놈들로(컬러풀한것도 괜춘) filled/outline 등도 구분 가능한지 알아볼것.
 // drawable 등 안 쓰는 asset 지우기 (백업하고)
 // SecondFrag Spotify 디자인 제발 이제는 하자..
-
-//e) 전체적으로 살짝 더 간격 벌리기.
 // 현재 구린 배경을 우선 바꿔야되고 전체 Font 를 바꿔줘야함.
 //- system navigation 은 살짝 다른색으로 할수도 있겠다.
+
+//3) Issues:
+// 테스트 중 ListFrag <-> SecondFrag<-> CreateNewAlarm(+) 왔다갔다 하던중 화면 로딩이 멈췄고 재실행시 crash 났음 (listFrag 에서 삭제 logd 에서 listindex error..)
+// 이후 재현 불가지만 추후 면밀히 테스트 해볼것.
 
 // border - attr/windowBackground? 요건가? https://www.youtube.com/watch?v=Gmzk9kKA0WI
 // 해결책: 어쩔수없이 BtmNav 에 Border/Divider (위에 살짝) 넣는 느낌으로 해주고. 사실상 Spotify 스샷 clone + 카톡스샷(Medium) 느낌으로...?
@@ -303,12 +304,19 @@ class AlarmsListActivity : AppCompatActivity() {
         //val btmNavView = findViewById<BottomNavigationView>(R.id.id_bottomNavigationView)
 
         btmNavView.setOnItemSelectedListener {
-
+            //btmNavView.menu.setGroupCheckable(0, true, true)
             when(it.itemId) {
-                R.id.id_BtmNav_SetAlarm -> showList(isCreateNewClicked = false)
-                R.id.id_BtmNav_RingTone -> showSecondFrag(secondFrag)
+                R.id.id_BtmNav_SetAlarm -> {showList(isCreateNewClicked = false)
+                    it.isChecked = true
+                    btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked = false
+                }
+                R.id.id_BtmNav_RingTone -> {showSecondFrag(secondFrag)
+                    btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm).isChecked = false
+                    it.isChecked = true
+
+                }
             }
-            Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener \n   -> it.title=${it.title}, it.isEnabled=${it.isEnabled}, it.isChecked=${it.isChecked}")
+            Log.d(TAG, "onCreate: btmNavView.setOnNavigationItemListener \n   -> it.title=${it.title}, it.isChecked=${it.isChecked}")
             true // we don't write return true in the lambda function, it will always return the last line of that function
         }
         //btmNavView.itemIconTintList = null
@@ -376,7 +384,9 @@ class AlarmsListActivity : AppCompatActivity() {
 
         })
 
-        addNewAlarmBtn.setOnClickListener { showList(isCreateNewClicked = true) }
+        addNewAlarmBtn.setOnClickListener { showList(isCreateNewClicked = true)
+
+        }
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
@@ -512,168 +522,178 @@ class AlarmsListActivity : AppCompatActivity() {
     Log.d(TAG, "(Line281)showList: jj-called")
     appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
 
-    // 혹시나 Btm Nav> Set ALARM 의 메뉴 아이콘이 회색처리가(TertiaryTextColor) 되있는 경우 '흰색' 으로 바꿔주기(Color>PrimaryTextColor)(Ex. SecondFrag 에서 (+) 누른 경우
-    /*btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm).isChecked = true
-    btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked = false*/
+
+    // 혹시나 Btm Nav> Set ALARM 의 메뉴 아이콘이 isChecked bool 값이 틀린 경우 바꿔주기(회색 -> 흰색)(Ex. SecondFrag 에서 (+) 누른 경우
+    // Mystery..  : 여기서 if 문을 안해주고 그냥 .isChecked=true 해주면 오히려 결과값이 반대(false) 가 된다 .. ?? 그래서 if 문 붙여줬음.
+    val listFragMenuItem = btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm)
+    val secondFragMenuItem = btmNavView.menu.findItem(R.id.id_BtmNav_RingTone)
+    if(!listFragMenuItem.isChecked) {
+        listFragMenuItem.isChecked = true
+    }
+    if(secondFragMenuItem.isChecked) {
+        secondFragMenuItem.isChecked = false
+    }
+
+
+
+//<-추가
+    val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container) // first searches through fragments that are currently added to the manager's activity
+
+    when(currentFragment)
+    {
+        is AlarmsListFragment -> { // listFrag 보고 있다 홈 버튼 눌러서 Background 로 앱 갔다 들어왓을 때. (암것도 로딩 안함. 그대로..)
+            logger.debug { "skipping fragment transition, because already showing $currentFragment" }
+            }
+        else -> {
+            //logger.debug { "transition from: $currentFragment to show list, editedAlarm.hashCode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
+            // ListFrag 를 로딩>
+                val listFragment = AlarmsListFragment()
+            Log.d(TAG, "showList: created New ListFrag = $listFragment, ListFrag.hashCode= ${listFragment.hashCode()}")
+                supportFragmentManager.beginTransaction().apply {
+                    this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
+                    Log.d(TAG, "showList: not lollipop()")
+                }.replace(R.id.main_fragment_container, listFragment).commitNowAllowingStateLoss()
+
+        }
+    }
+
+//내가 추가->
+// a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
+    btmNavView.visibility =View.VISIBLE
+    btmAppBar.visibility= View.VISIBLE
+
+// b) AppBarLayout 설정변경 -> ToolBar 보여주는데까지 Collapse 시키기(O)
+    //if(supportActionBar != null) {supportActionBar?.show()}
+    val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+    params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+    // % 참고: Java 에서는 params.setScrollFlags(xxx SCROLL | FLAG_EXIT ... ) 이런식으로 '|' 파이프라인을 쓰는데. 그게 Kotlin 에서는 or 임. bitwise INT... 흐음.
+// c) 만약 (+) 버튼 눌러서 여기로 온거면 바로 새 알람 생성(->DetailsFrag)
+    if(isCreateNewClicked) {
+        uiStore.createNewAlarm()
+    }
     Log.d(TAG, "showList: BtmNav_SetAlarm.isChecked=${btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm).isChecked} , BtmNav_RingTone.isChecked=${btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked}")
 
-    //<-추가
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container) // first searches through fragments that are currently added to the manager's activity
 
-        when(currentFragment)
-        {
-            is AlarmsListFragment -> { // listFrag 보고 있다 홈 버튼 눌러서 Background 로 앱 갔다 들어왓을 때. (암것도 로딩 안함. 그대로..)
-                logger.debug { "skipping fragment transition, because already showing $currentFragment" }
-                }
-            else -> {
-                //logger.debug { "transition from: $currentFragment to show list, editedAlarm.hashCode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
-                // ListFrag 를 로딩>
-                    val listFragment = AlarmsListFragment()
-                Log.d(TAG, "showList: created New ListFrag = $listFragment, ListFrag.hashCode= ${listFragment.hashCode()}")
-                    supportFragmentManager.beginTransaction().apply {
-                        this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
-                        Log.d(TAG, "showList: not lollipop()")
-                    }.replace(R.id.main_fragment_container, listFragment).commitNowAllowingStateLoss()
+}
+private fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
+// ListFrag 나 DetailsFrag 는 서로 이동시에는 subscription 으로 EditeAlarm 받아서 이동하지만, BtmNav 로 오갈때  열릴 때 configureTransActions() 함수가 불리면서 계속 subscribe 함.
+    //subscriptions.dispose() // todo: 추후 a) 신규알람생성(createNewAlarm-FAB 버튼)시 TimePicker 가 Spinner TimePicker 에 반영 안되는문제 발생 or
+    //todo: b) Second Frag N번 왔다갔다 한 후 Details Frag 열 때 log 에  '다수의 ListFrag 로부터의 이동' 이 뜨면. 해당 subscriptions.dispose 다시 활성화해보기.
+// A) ToolBar 포함된 넓은 부분 Collapse 시키기!
+    appBarLayout.setExpanded(false,true)
+// B) SecondFrag 로딩
+    replace(R.id.main_fragment_container, secondFragReceived)
+    commit() //현재 상태에서 특별히 쓸 이유 안 보임.
 
+// D) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
+    val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+    params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
+
+    Log.d(TAG, "showSecondFrag: ..... ")
+
+}
+
+
+private fun showDetails(@NonNull editedAlarm: EditedAlarm) {
+    Log.d(TAG, "showDetails: called. ")
+    appBarLayout.setExpanded(false,true) // A)ToolBar 포함된 넓은 부분 Collapse 시키기!
+
+    val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+
+    if (currentFragment is AlarmDetailsFragment) {
+        logger.debug { "skipping fragment transition, because already showing $currentFragment" }
+    } else
+    {
+        logger.debug { "transition from: $currentFragment to show details, editedAlarm.Hashcode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
+
+        val detailsFragment = AlarmDetailsFragment().apply {arguments = Bundle()}
+        supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, detailsFragment).commitAllowingStateLoss()
+    //todo: [혹시 showDetails x2 뜨는것 방지 위해 ].CommitNow()(Synchronous) 가 나을것 같은데.. 느려질려나?
+    }
+    // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
+    btmNavView.visibility =View.GONE
+    btmAppBar.visibility= View.GONE
+
+    // C) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
+    val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+    params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
+
+
+}
+
+@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+private fun moveTransition(): TransitionSet {
+    return TransitionSet().apply {
+        ordering = TransitionSet.ORDERING_TOGETHER
+        addTransition(ChangeBounds())
+        addTransition(ChangeTransform())
+    }
+}
+
+private fun RowHolder.addSharedElementsToTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction) {
+    fragmentTransaction.addSharedElement(digitalClock, "clock" + alarmId)
+    fragmentTransaction.addSharedElement(container, "onOff" + alarmId)
+    fragmentTransaction.addSharedElement(detailsButton, "detailsButton" + alarmId)
+
+}
+
+/**
+ * restores an [EditedAlarm] from SavedInstanceState. Counterpart of [EditedAlarm.writeInto].
+ */
+private fun editedAlarmFromSavedInstanceState(savedInstanceState: Bundle): EditedAlarm {
+    Log.d(TAG, "editedAlarmFromSavedInstanceState: jj- artFilePath= ${savedInstanceState.getString("artFilePath")}")
+    return EditedAlarm(
+            isNew = savedInstanceState.getBoolean("isNew"),
+            id = savedInstanceState.getInt("id"),
+            value = if (savedInstanceState.getBoolean("isEdited")) {
+                Optional.of(
+                        AlarmValue(
+                                id = savedInstanceState.getInt("id"),
+                                isEnabled = savedInstanceState.getBoolean("isEnabled"),
+                                hour = savedInstanceState.getInt("hour"),
+                                minutes = savedInstanceState.getInt("minutes"),
+                                daysOfWeek = DaysOfWeek(savedInstanceState.getInt("daysOfWeek")),
+                                isPrealarm = savedInstanceState.getBoolean("isPrealarm"),
+                                alarmtone = Alarmtone.fromString(savedInstanceState.getString("alarmtone")),
+                                label = savedInstanceState.getString("label") ?: "",
+                                isVibrate = true,
+                                state = savedInstanceState.getString("state") ?: "",
+                                nextTime = Calendar.getInstance(),
+                                artFilePath = savedInstanceState.getString("artFilePath") ?: ""
+                        )
+                )
+            } else {
+                Optional.absent()
             }
+    )
+}
+
+/**
+ * Saves EditedAlarm into SavedInstanceState. Counterpart of [editedAlarmFromSavedInstanceState]
+ */
+private fun EditedAlarm.writeInto(outState: Bundle?) {
+    val toWrite: EditedAlarm = this
+    outState?.run {
+        putBoolean("isNew", isNew)
+        putInt("id", id)
+        putBoolean("isEdited", isEdited)
+
+        value.getOrNull()?.let { edited ->
+            putInt("id", edited.id)
+            putBoolean("isEnabled", edited.isEnabled)
+            putInt("hour", edited.hour)
+            putInt("minutes", edited.minutes)
+            putInt("daysOfWeek", edited.daysOfWeek.coded)
+            putString("label", edited.label)
+            putBoolean("isPrealarm", edited.isPrealarm)
+            putBoolean("isVibrate", edited.isVibrate)
+            putString("alarmtone", edited.alarmtone.persistedString)
+            putBoolean("skipping", edited.skipping)
+            putString("state", edited.state)
+            putString("artFilePath", edited.artFilePath)
         }
 
-    //내가 추가->
-    // a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
-        btmNavView.visibility =View.VISIBLE
-        btmAppBar.visibility= View.VISIBLE
-
-    // b) AppBarLayout 설정변경 -> ToolBar 보여주는데까지 Collapse 시키기(O)
-        //if(supportActionBar != null) {supportActionBar?.show()}
-        val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
-        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-        // % 참고: Java 에서는 params.setScrollFlags(xxx SCROLL | FLAG_EXIT ... ) 이런식으로 '|' 파이프라인을 쓰는데. 그게 Kotlin 에서는 or 임. bitwise INT... 흐음.
-    // c) 만약 (+) 버튼 눌러서 여기로 온거면 바로 새 알람 생성(->DetailsFrag)
-        if(isCreateNewClicked) {
-            uiStore.createNewAlarm()
-        }
-
-
+        logger.debug { "Saved state $toWrite" }
     }
-    private fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
-    // ListFrag 나 DetailsFrag 는 서로 이동시에는 subscription 으로 EditeAlarm 받아서 이동하지만, BtmNav 로 오갈때  열릴 때 configureTransActions() 함수가 불리면서 계속 subscribe 함.
-        //subscriptions.dispose() // todo: 추후 a) 신규알람생성(createNewAlarm-FAB 버튼)시 TimePicker 가 Spinner TimePicker 에 반영 안되는문제 발생 or
-        //todo: b) Second Frag N번 왔다갔다 한 후 Details Frag 열 때 log 에  '다수의 ListFrag 로부터의 이동' 이 뜨면. 해당 subscriptions.dispose 다시 활성화해보기.
-    // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
-        appBarLayout.setExpanded(false,true)
-    // B) SecondFrag 로딩
-        replace(R.id.main_fragment_container, secondFragReceived)
-        commit() //현재 상태에서 특별히 쓸 이유 안 보임. CommitAllowingStateLoss 해도 detailsFrag 두번 켜지는 문제는 해결 안됨.
-
-    // D) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
-        val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
-        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
-
-        Log.d(TAG, "showSecondFrag: ..... ")
-
-    }
-
-
-    private fun showDetails(@NonNull editedAlarm: EditedAlarm) {
-        Log.d(TAG, "showDetails: called. ")
-        appBarLayout.setExpanded(false,true) // A)ToolBar 포함된 넓은 부분 Collapse 시키기!
-
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-
-        if (currentFragment is AlarmDetailsFragment) {
-            logger.debug { "skipping fragment transition, because already showing $currentFragment" }
-        } else
-        {
-            logger.debug { "transition from: $currentFragment to show details, editedAlarm.Hashcode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
-
-            val detailsFragment = AlarmDetailsFragment().apply {arguments = Bundle()}
-            supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, detailsFragment).commitAllowingStateLoss()
-        //todo: [혹시 showDetails x2 뜨는것 방지 위해 ].CommitNow()(Synchronous) 가 나을것 같은데.. 느려질려나?
-        }
-        // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
-        btmNavView.visibility =View.GONE
-        btmAppBar.visibility= View.GONE
-
-        // C) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
-        val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
-        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
-
-
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun moveTransition(): TransitionSet {
-        return TransitionSet().apply {
-            ordering = TransitionSet.ORDERING_TOGETHER
-            addTransition(ChangeBounds())
-            addTransition(ChangeTransform())
-        }
-    }
-
-    private fun RowHolder.addSharedElementsToTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction) {
-        fragmentTransaction.addSharedElement(digitalClock, "clock" + alarmId)
-        fragmentTransaction.addSharedElement(container, "onOff" + alarmId)
-        fragmentTransaction.addSharedElement(detailsButton, "detailsButton" + alarmId)
-
-    }
-
-    /**
-     * restores an [EditedAlarm] from SavedInstanceState. Counterpart of [EditedAlarm.writeInto].
-     */
-    private fun editedAlarmFromSavedInstanceState(savedInstanceState: Bundle): EditedAlarm {
-        Log.d(TAG, "editedAlarmFromSavedInstanceState: jj- artFilePath= ${savedInstanceState.getString("artFilePath")}")
-        return EditedAlarm(
-                isNew = savedInstanceState.getBoolean("isNew"),
-                id = savedInstanceState.getInt("id"),
-                value = if (savedInstanceState.getBoolean("isEdited")) {
-                    Optional.of(
-                            AlarmValue(
-                                    id = savedInstanceState.getInt("id"),
-                                    isEnabled = savedInstanceState.getBoolean("isEnabled"),
-                                    hour = savedInstanceState.getInt("hour"),
-                                    minutes = savedInstanceState.getInt("minutes"),
-                                    daysOfWeek = DaysOfWeek(savedInstanceState.getInt("daysOfWeek")),
-                                    isPrealarm = savedInstanceState.getBoolean("isPrealarm"),
-                                    alarmtone = Alarmtone.fromString(savedInstanceState.getString("alarmtone")),
-                                    label = savedInstanceState.getString("label") ?: "",
-                                    isVibrate = true,
-                                    state = savedInstanceState.getString("state") ?: "",
-                                    nextTime = Calendar.getInstance(),
-                                    artFilePath = savedInstanceState.getString("artFilePath") ?: ""
-                            )
-                    )
-                } else {
-                    Optional.absent()
-                }
-        )
-    }
-
-    /**
-     * Saves EditedAlarm into SavedInstanceState. Counterpart of [editedAlarmFromSavedInstanceState]
-     */
-    private fun EditedAlarm.writeInto(outState: Bundle?) {
-        val toWrite: EditedAlarm = this
-        outState?.run {
-            putBoolean("isNew", isNew)
-            putInt("id", id)
-            putBoolean("isEdited", isEdited)
-
-            value.getOrNull()?.let { edited ->
-                putInt("id", edited.id)
-                putBoolean("isEnabled", edited.isEnabled)
-                putInt("hour", edited.hour)
-                putInt("minutes", edited.minutes)
-                putInt("daysOfWeek", edited.daysOfWeek.coded)
-                putString("label", edited.label)
-                putBoolean("isPrealarm", edited.isPrealarm)
-                putBoolean("isVibrate", edited.isVibrate)
-                putString("alarmtone", edited.alarmtone.persistedString)
-                putBoolean("skipping", edited.skipping)
-                putString("state", edited.state)
-                putString("artFilePath", edited.artFilePath)
-            }
-
-            logger.debug { "Saved state $toWrite" }
-        }
-    }
+}
 }

@@ -64,8 +64,6 @@
                         android:layout_height="wrap_content"
                         android:checkable="true"
                         android:checked="false"
-
-
                         android:text="S"
                         android:textColor="@color/mat_red"
                         style="@style/customChipStyle"/>

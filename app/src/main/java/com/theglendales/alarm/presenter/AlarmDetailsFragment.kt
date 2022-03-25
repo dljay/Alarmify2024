@@ -38,6 +38,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -459,7 +460,7 @@ class AlarmDetailsFragment : Fragment() {
                 // Local 언어 때문에 when(요일이름) 을 작성할수 없어. Int 로 된 Str 을 받는 방법으로 바꿈  ex. [0,3,4] (=월,목,금)
                 //  일 = 1 월 = 2 화 = 3 수 = 4  목 = 5 금 = 6 토 = 7
                     val alarmSetDaysIntList = editor.daysOfWeek.summaryInNumber(requireContext()) // 내가 만든 summaryInNumber !
-                    CoroutineScope(IO).launch {
+                    viewLifecycleOwner.lifecycleScope.launch {
                         Log.d(TAG, "onResume: 코루틴 alarmSetDaysIntList=$alarmSetDaysIntList")
                         activateChipFromIntList(alarmSetDaysIntList)
                     }
@@ -639,6 +640,8 @@ class AlarmDetailsFragment : Fragment() {
     }
     // 기존에 알람이 설정된 요일을 IntList 로 받음. ex. 월, 수 알람이라면 [2,5] // 토=0, 일=1 ..... 금= 6
     private fun activateChipFromIntList(alarmSetDaysIntList: List<Int>) {
+        Log.d(TAG, "activateChipFromIntList: -- alarmSetDaysIntList=$alarmSetDaysIntList")
+        
         for(i in alarmSetDaysIntList.indices) {
             when(alarmSetDaysIntList[i]) 
             {

@@ -65,18 +65,24 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e1 [Font - Source SansPro_ SemiBold 로 일단 통일] 22/3/25(금) 오후 10:32
+// 30708V1.18e2 [Font - Source SansPro_ SemiBold 로 일단 통일] 22/3/25(금) 오후 11:02
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
-// SecondFrag -> MiniPlayer 드래그 해서 올릴 때 밑에 창 alpha 값 투명으로 바뀌는 것 해결 (아예 열릴 때 BtmAppBar 사라지는것으로 변경)
-// BtmNav_menu.xml 에서 각각의 icon 에 -> selector 연결했음.
-// SecondFrag 에서 (+) 클릭했을 때 ListFrag> CreateAlarm(DetailsFrag) 해주고 SecondFrag 아이콘 색 회색처리.
+
 
 // 2) todos:
+//Details Frag
+//0) !!! 칩 대체 왜 이러는지 껐는데도 다시 선택되는..
+//1) 칩 색깔.
+//2) spinning time picker 디자인.
+//
+//Second Frag>
+//1) Row 글자색
+//2) Mini Player: spotify 스타일로.
+//
+//font.. textAppearance 스타일별?
 // Flaticon 도 그렇고 공짜 Android icon svg vector 찾아서 a) 좀 이쁜놈들로(컬러풀한것도 괜춘) filled/outline 등도 구분 가능한지 알아볼것.
 // drawable 등 안 쓰는 asset 지우기 (백업하고)
-// SecondFrag Spotify 디자인 제발 이제는 하자..
-// 현재 구린 배경을 우선 바꿔야되고 전체 Font 를 바꿔줘야함.
 //- system navigation 은 살짝 다른색으로 할수도 있겠다.
 
 //3) Issues:

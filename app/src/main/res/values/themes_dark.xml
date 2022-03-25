@@ -10,12 +10,15 @@
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
 
+    <!--primaryTextColor =  현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
         <item name="android:textColorPrimary">@color/primaryTextColor</item>
 
     <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. DetailsFrag>Repeat, About the Ringtone. 등 Titles-->
         <item name="android:textColorSecondary">@color/secondaryTextColor</item>
     <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) ListFrag> CollapsingToolBar 의 남은 알람 시간 b) ListFrag> Row 의 설정된 시간 b) DetailsFrag>About the Ringtone 밑의 description-->
         <item name="android:textColorTertiary">@color/tertiaryTextColor</item>
+
+
 
         "
         <item name="android:colorBackground">@color/jj_background_DarkNavy_1</item>
@@ -29,7 +32,7 @@
         <!--<item name="windowActionBarOverlay">true</item>-->
 
         <!-- FONT TEST-->
-        <!--<item name="android:fontFamily">monospace</item>-->
+        <item name="android:fontFamily">@font/sourcesanspro_semibold</item>
     </style>
 
     <!-- B. 기타 -->

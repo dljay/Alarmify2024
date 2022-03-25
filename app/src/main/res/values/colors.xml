@@ -32,15 +32,18 @@
     <color name="other_var_3">#041064</color>
     <color name="other_var_4">#041064</color>
 
+<!-- TEXT 관련 -->
 
-<!--primaryTextColor =  현재 a) Spinner TimePicker 결정-->
-    <color name="primaryTextColor">#E8E8E8</color>
-<!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. DetailsFrag>Repeat, About the Ringtone. 등 Titles-->
-    <color name="secondaryTextColor">#BBBBBB</color>
-<!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) DetailsFrag>About the Ringtone 밑의 description, CollapsingToolbar 남은 시간.-->
-    <color name="tertiaryTextColor">#626262</color>
-    <!-- Material Palette 으로 만들어 본 것(Ends) -->
-    <!-- JJONG added-->
+    <!--primaryTextColor =  현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
+        <color name="primaryTextColor">#FFFFFF</color>
+    <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. DetailsFrag>Repeat, About the Ringtone. 등 Titles-->
+        <color name="secondaryTextColor">#DDDDDD</color>
+    <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) DetailsFrag>About the Ringtone 밑의 description, CollapsingToolbar 남은 시간.-->
+        <color name="tertiaryTextColor">#B3B3B3</color>
+    <color name="textColorBakHaSaTangYo">#A2FCF7</color>
+
+
+<!-- JJONG added-->
     <color name="purple_200">#FFBB86FC</color>
     <color name="gray_light_highlight_1">#ECECEC</color>
     <color name="light_gray_jjong">#AEABAB</color>

@@ -44,7 +44,7 @@
                     android:layout_gravity="center|left"
                     android:layout_weight="1"
                     android:layout_marginBottom="2dp"
-                    android:text="Repeat"
+                    android:text="@string/alarm_repeat"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <com.google.android.material.chip.ChipGroup
@@ -289,12 +289,13 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/alert_about"/>
 
+            <!-- 박학 사탕 색으로 이놈만 예외적으로 적용해봤음!! 테스트! -->
                 <TextView
                     android:id="@+id/tv_rt_description_detailsFrag"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/textColorBakHaSaTangYo"
                     android:text="N/A"/>
 
             </LinearLayout>

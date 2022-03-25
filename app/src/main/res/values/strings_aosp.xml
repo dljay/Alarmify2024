@@ -63,13 +63,13 @@
     <string name="alarm_vibrate">Vibrate</string>
 
     <!-- Setting labels on Set alarm screen: Repeat -->
-    <string name="alarm_repeat">Repeat</string>
+    <string name="alarm_repeat">REPEAT</string>
 
     <!-- 내가 심음. jj - Setting labels on Set alarm screen: Repeat Chip -->
     <string name="alarm_repeatChip">Repeat Chip</string>
 
     <!-- Setting labels on Set alarm screen: Select alarm ringtone -->
-    <string name="alert">Ringtone</string>
+    <string name="alert">RINGTONE</string>
 
     <!-- 내가 심은. jj- 현재 설정된 알람의 Ringtone 파일이 삭제되었을 때-->
     <string name="alert_missing_file">Missing Ringtone</string>
@@ -78,10 +78,10 @@
     <string name="alert_ps_unavailable">Play Store Unavailable</string>
 
     <!-- 내가 심은. jj- About the Ringtone  -->
-    <string name="alert_about">About the Ringtone</string>
+    <string name="alert_about">ABOUT THE RINGTONE</string>
 
     <!-- 내가 심은. Badge 위 글자 jj-->
-    <string name="alert_information">Information</string>
+    <string name="alert_information">INFORMATION</string>
 
     <!-- Setting labels on Set alarm screen: Set time -->
     <string name="time">Time</string>

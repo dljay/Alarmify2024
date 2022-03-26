@@ -109,7 +109,7 @@
             android:layout_weight="1"
             app:elevation="8dp"
             app:contentInsetStart="0dp"
-            app:backgroundTint="@color/jj_background_MouseGray_1">
+            app:backgroundTint="@color/jj_background_MouseGray_2">
 
 
             <com.google.android.material.bottomnavigation.BottomNavigationView

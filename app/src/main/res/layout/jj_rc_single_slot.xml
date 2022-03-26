@@ -81,6 +81,7 @@
 
 
             <!--Title text -->
+            <!-- 아래 textAppearance 는 오직 색 때문에 사용..그냥 color 해도 된다. -->
             <TextView
                 android:id="@+id/id_tvTitle"
                 android:layout_width="wrap_content"
@@ -90,9 +91,10 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
-
+                android:textSize="16sp"
+                android:fontFamily="@font/sourcesanspro_semibold"
                 android:text="Flight Announcement"
-                android:textAppearance="?android:attr/textAppearanceMedium">
+                android:textAppearance="?android:attr/textAppearanceLarge">
 
             </TextView>
 
@@ -107,7 +109,7 @@
                 android:layout_marginEnd="2dp"
                 android:layout_marginBottom="2dp"
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
-                android:text="An Announcement inside"
+                android:text="#Travel #Flight"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="italic">
 

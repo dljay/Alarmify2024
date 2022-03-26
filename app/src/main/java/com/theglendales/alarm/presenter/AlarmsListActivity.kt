@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e5 [SecondFrag 수정 시작!] 22/3/26(Sat) 오전 11:25
+// 30708V1.18e5 [SecondFrag 수정 시작!-- 잠시 Custom Switch Btn] 22/3/26(Sat) 오전 11:25
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
 // 요일 -> 배경색 변화(O)
@@ -268,7 +268,7 @@ class AlarmsListActivity : AppCompatActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
-        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_background_MouseGray_1)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
+        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_background_MouseGray_2)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)

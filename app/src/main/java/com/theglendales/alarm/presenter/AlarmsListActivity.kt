@@ -65,9 +65,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e5 [SecondFrag 수정 시작!-- 잠시 Custom Switch Btn] 22/3/26(Sat) 오전 11:25
+// 30708V1.18e6 [SecondFrag 수정 시작!-- 잠시 Custom Switch Btn] 22/3/26(Sat) 오후 11:41
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
+// Switch Btn 색 맞추기 너무 힘드네. 그냥 쉐이킷 알람 처럼 Button + State 로 해볼까? Checkable =true 가 의미가 있는듯..
 // 요일 -> 배경색 변화(O)
 // 요일 -> 선택 안 된놈 하이라이트 되는 것 방지 (if 기존alarmsDaysList != .. ) 이거 없앴음 (O)
 

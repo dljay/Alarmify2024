@@ -264,8 +264,7 @@ class AlarmDetailsFragment : Fragment() {
 //        }
     // 설정된 알람(Repeat) ChipGroup 안에서 요일을 선택 -> DaysOfWeek.onChipDayClicked() -> rxjava Single<DaysOfWeek> 을 만들고 -> 그것을 editor 가 subscribe!
         chipGroupDays = fragmentView.findViewById(R.id._chipGroupDays)
-        
-        
+
         CoroutineScope(IO).launch {
             for(i in 0 until chipGroupDays.childCount)
             {
@@ -279,18 +278,17 @@ class AlarmDetailsFragment : Fragment() {
 
                     val subscribe = editor.firstOrError().flatMap { alarmValue -> alarmValue.daysOfWeek.onChipDayClicked(whichInt, isChecked) }
                         .subscribe { daysOfWeek ->
-                            // daysOfWeek 에 변화가 없을때도 굳이 modify->ActionBarHandler.kt 계속 불려져서. 아래 if(alarms.get ... daysOfWeek) 넣어줬음. 면밀한 확인 필요.
+                            // daysOfWeek 에 변화가 없을때도 굳이 modify->ActionBarHandler.kt 계속 불려지는지 확인 필요.
+                            //Log.d(TAG, "onCreateView: 0 daysOfWeek = $daysOfWeek")
                             val thisAlarm = alarms.getAlarm(alarmId)
                             if(thisAlarm!=null) {
-                                if(alarms.getAlarm(alarmId)!!.data.daysOfWeek != daysOfWeek) {
-                                    Log.d(TAG, "onCreateView: [daysOfWeek] 요일 정보가 바꼈음. modify 실행하겠음!!")
-                                    modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
-                                }
+                                //Log.d(TAG, "onCreateView: 1 thisAlarm!=null")
+                                //Log.d(TAG, "onCreateView: 2 [daysOfWeek] 요일 정보가 바꼈음. modify 실행하겠음!!")
+                                modify("Repeat dialog") { prev ->prev.copy(daysOfWeek = daysOfWeek,isEnabled = true)}
+
                             }
-
-
                             Log.d(TAG,"onCreateView: daysOfWeekJJ_new=$daysOfWeek, whichInt=$whichInt, isChecked=$isChecked")
-                        }//.addToDisposables() 이거 추가? 원문에는 없으나 바뀐 yuriv Github 의 DetailsFrag.kt 에는 있네.
+                        }.addToDisposables() // 원문에서 추가되어서 넣었음. 잘 작동하는지 면밀한 확인 필요.
 
 
                 }
@@ -457,8 +455,9 @@ class AlarmDetailsFragment : Fragment() {
                     //mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
                     //val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
 
-                // Local 언어 때문에 when(요일이름) 을 작성할수 없어. Int 로 된 Str 을 받는 방법으로 바꿈  ex. [0,3,4] (=월,목,금)
-                //  일 = 1 월 = 2 화 = 3 수 = 4  목 = 5 금 = 6 토 = 7
+                // Local 언어 때문에 when(요일이름) 을 작성할수 없어. Int 로 된 Str 을 받는 방법으로 바꿈 whichInt 는 ->   [0,3,4] (=월,목,금)
+                // whichInt (칩 선택시 어떤 칩 클릭했는지 확인 용도):  월 = 0 화 = 1 수 = 2  목 = 3 금 = 4 토 = 5 일 = 6
+                // intList  일 = 1 월 = 2 화 = 3 수 = 4  목 = 5 금 = 6 토 = 7
                     val alarmSetDaysIntList = editor.daysOfWeek.summaryInNumber(requireContext()) // 내가 만든 summaryInNumber !
                     viewLifecycleOwner.lifecycleScope.launch {
                         Log.d(TAG, "onResume: 코루틴 alarmSetDaysIntList=$alarmSetDaysIntList")

@@ -50,7 +50,8 @@
     <color name="light_gray_brighter_jjong">#BFBFBF</color>
     <color name="dark_gray_jjong">#3D3D3D</color>
     <color name="myDividerColor">#CFCDCD</color>
-    <color name="jj_background_DarkNavy_1">#0E2646</color>
+    <!--<color name="jj_background_DarkNavy_1">#0E2646</color>-->
+    <color name="jj_background_MouseGray_1">#19232b</color>
     <color name="jj_background_SkyBlue_1">#3D88EC</color>
 
     <!-- JJONG added-->

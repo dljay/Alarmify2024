@@ -52,7 +52,7 @@ class RcViewAdapter(
 
     var isRVClicked: Boolean = false // 혹시나 미리 클릭되었을 경우를 대비하여 만든 boolean value. 이거 안 쓰이나?
 // 하이라이트시 background 에 적용될 색
-    val highlightColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.jj_background_DarkNavy_1) //todo: 선택 됐을 때 그냥 색 변화 안되는걸로 바꾸기
+    val highlightColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.jj_background_MouseGray_1) //todo: 선택 됐을 때 그냥 색 변화 안되는걸로 바꾸기
     //val plainColor = Color.WHITE
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -181,7 +181,7 @@ class RcViewAdapter(
         private fun disableHL(unselectedHolder: MyViewHolder?) {
             Log.d(TAG, "disableHL: called for unselectedHolder=$unselectedHolder")
             if (unselectedHolder != null) {
-                unselectedHolder.tv1_Title.setTextColor(Color.BLACK)
+                //unselectedHolder.tv1_Title.setTextColor(Color.BLACK)
                 unselectedHolder.ll_entire_singleSlot.setBackgroundColor(Color.TRANSPARENT)
             }
 

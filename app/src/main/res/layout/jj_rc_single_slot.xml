@@ -91,9 +91,8 @@
                 android:layout_marginBottom="8dp"
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
 
-                android:text="Flight Annoucement"
-                android:textSize="14sp"
-                android:textStyle="bold">
+                android:text="Flight Announcement"
+                android:textAppearance="?android:attr/textAppearanceMedium">
 
             </TextView>
 
@@ -109,7 +108,7 @@
                 android:layout_marginBottom="2dp"
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
                 android:text="An Announcement inside"
-                android:textSize="12sp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textStyle="italic">
 
             </TextView>

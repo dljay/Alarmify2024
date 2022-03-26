@@ -37,7 +37,7 @@
             android:id="@+id/id_appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@color/jj_background_DarkNavy_1">
+            android:background="@color/jj_background_MouseGray_1">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/id_collapsingToolBarLayout"
@@ -109,7 +109,7 @@
             android:layout_weight="1"
             app:elevation="8dp"
             app:contentInsetStart="0dp"
-            app:backgroundTint="@color/blue_var_3">
+            app:backgroundTint="@color/jj_background_MouseGray_1">
 
 
             <com.google.android.material.bottomnavigation.BottomNavigationView

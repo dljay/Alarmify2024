@@ -76,8 +76,7 @@
                         android:checked="false"
 
                         android:text="M"
-
-                        android:textColor="@color/blackish"
+                        android:textColor="@color/secondaryTextColor"
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
@@ -88,7 +87,7 @@
                         android:checked="false"
 
                         android:text="T"
-                        android:textColor="@color/blackish"
+                        android:textColor="@color/secondaryTextColor"
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
@@ -99,7 +98,7 @@
                         android:checked="false"
 
                         android:text="W"
-                        android:textColor="@color/blackish"
+                        android:textColor="@color/secondaryTextColor"
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
@@ -110,7 +109,7 @@
                         android:checked="false"
 
                         android:text="T"
-                        android:textColor="@color/blackish"
+                        android:textColor="@color/secondaryTextColor"
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
@@ -121,7 +120,7 @@
                         android:checked="false"
 
                         android:text="F"
-                        android:textColor="@color/blackish"
+                        android:textColor="@color/secondaryTextColor"
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip

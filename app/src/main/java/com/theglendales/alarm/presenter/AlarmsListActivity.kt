@@ -65,9 +65,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e2 [Font - Source SansPro_ SemiBold 로 일단 통일] 22/3/25(금) 오후 11:02
+// 30708V1.18e3 [요일 -> 배경색 변화 / 요일 막 선택 코드 변경 전] 22/3/26(Sat) 오전 09:43
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
+// 요일 -> 배경색 변화
 
 
 // 2) todos:

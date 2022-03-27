@@ -91,8 +91,10 @@
 
                     android:scaleX="0.8"
                     android:scaleY="0.8"
+
+
                     app:track="@drawable/switch_track_v1"
-                    android:thumb="@drawable/switch_thumb"
+
                     android:clickable="false"
                     android:focusable="false" />
 

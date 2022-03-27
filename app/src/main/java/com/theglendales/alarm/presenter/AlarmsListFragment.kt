@@ -192,7 +192,7 @@ class AlarmsListFragment : Fragment() {
             val alarmtoneList: List<Alarmtone> = listOf<Alarmtone>(alarm.alarmtone) // 사실 alarmtone 한개인데 checkIfRtIsMissing 이 List<Alarmtone> 을 받게끔 디자인되어있어서.
         //c-2) Glide 로 이미지 보여주기->
             context?.let {
-                GlideApp.with(it).load(artPathFromAlarmValue).circleCrop() //
+                GlideApp.with(it).load(artPathFromAlarmValue).centerCrop() //
                     .error(R.drawable.errordisplay).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .placeholder(R.drawable.placeholder).listener(object :
                         RequestListener<Drawable> {

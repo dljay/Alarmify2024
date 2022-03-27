@@ -65,24 +65,23 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e7 [SecondFrag 수정 시작!-- 잠시 Custom Switch Btn] 22/3/27(Sun) 오후 1:56
-//-- Spotify Light 따라하기 중반.
+// 30708V1.18e8 [SecondFrag 수정중 -- Spotify Light 따라하기 중반.] 22/3/27(Sun) 오후 10:32
+
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
-// Switch Btn 색 맞추기 너무 힘드네. 그냥 쉐이킷 알람 처럼 Button + State 로 해볼까? Checkable =true 가 의미가 있는듯..
-// 요일 -> 배경색 변화(O)
-// 요일 -> 선택 안 된놈 하이라이트 되는 것 방지 (if 기존alarmsDaysList != .. ) 이거 없앴음 (O)
-
+// SecondFrag> MiniPlayer - Thumb 없애는 것 성공.
 
 // 2) todos:
-//Details Frag
-//0) !!! 칩 대체 왜 이러는지 껐는데도 다시 선택되는..
-//1) 칩 색깔.
-//2) spinning time picker 디자인.
+// Mini Player 재생 부분 아래로 옮기기? ^ (Up Arrow 색 변화 or 아이콘 약간 차이 있어 보이기는 함.. 아닌가 기분탓인가?)
+// Spotify Light 따라하기 (포인트 색 만들어서 아예 똑같이) + 재생시 포인트 색으로. Eq Meter? Rubik's Cube 에서 'Purchased' (Owned?) 로 글자로 표기?
+// Font 찾아서 적용. $39 인데.. 음 분명 찾으면 있을것 같긴 함.
+// 제일 윗칸 Chip 색.
+
+
+//DetailsFrag> spinning time picker 디자인.
 //
-//Second Frag>
-//1) Row 글자색
-//2) Mini Player: spotify 스타일로.
+
+
 //
 //font.. textAppearance 스타일별?
 // Flaticon 도 그렇고 공짜 Android icon svg vector 찾아서 a) 좀 이쁜놈들로(컬러풀한것도 괜춘) filled/outline 등도 구분 가능한지 알아볼것.

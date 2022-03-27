@@ -48,7 +48,7 @@
                     android:id="@+id/id_ivThumbnail"
                     android:layout_width="63dp"
                     android:layout_height="63dp"
-                    android:padding="3dp"
+                    android:padding="6dp"
                     android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

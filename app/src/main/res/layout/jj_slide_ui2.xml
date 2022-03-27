@@ -29,9 +29,10 @@
                 android:id="@+id/id_upperUi_Seekbar"
                 android:layout_width="match_parent"
                 android:layout_height="10dp"
+
+                android:thumbTint="@color/transparent"
                 android:max="0"
                 android:progress="0">
-
 
             </SeekBar>
             <!--Thumbnail/Title/Play,Pause Button -->
@@ -55,20 +56,21 @@
                 </ImageView>
 
                 <!-- RingTone Cover Image -->
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/id_upperUi_iv_coverImage"
                     android:layout_width="55dp"
                     android:layout_height="50dp"
                     android:layout_marginBottom="5dp"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
+                    app:shapeAppearanceOverlay="@style/roundedCornersImageView"
 
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/id_upperUi_iv_clickarrowUp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintHorizontal_bias="0.0">
 
-                </ImageView>
+                </com.google.android.material.imageview.ShapeableImageView>
 
                 <!-- RingTone Title_Loop1 -->
                 <TextView
@@ -159,18 +161,18 @@
             android:layout_height="250dp"
             android:layout_margin="10dp">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/id_lowerUi_iv_bigThumbnail"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-
+                app:shapeAppearanceOverlay="@style/roundedCornersImageView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
 
-            </ImageView>
+            </com.google.android.material.imageview.ShapeableImageView>
 
             <TextView
                 android:id="@+id/textView"

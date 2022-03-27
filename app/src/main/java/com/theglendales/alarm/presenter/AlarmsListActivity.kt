@@ -65,8 +65,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e6 [SecondFrag 수정 시작!-- 잠시 Custom Switch Btn] 22/3/27(Sun) 오후 12:34
-//-- Spotify Light 따라하기 전
+// 30708V1.18e7 [SecondFrag 수정 시작!-- 잠시 Custom Switch Btn] 22/3/27(Sun) 오후 1:56
+//-- Spotify Light 따라하기 중반.
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
 // Switch Btn 색 맞추기 너무 힘드네. 그냥 쉐이킷 알람 처럼 Button + State 로 해볼까? Checkable =true 가 의미가 있는듯..

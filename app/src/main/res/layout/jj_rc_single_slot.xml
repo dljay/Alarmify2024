@@ -11,11 +11,20 @@
 
     <LinearLayout
         android:id="@+id/id_singleSlot_ll"
-        android:background="@drawable/background_selector_2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="63dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/background_selector_2"
+        android:baselineAligned="false"
         android:orientation="horizontal"
-        android:weightSum="5">
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <!--thumbnail/title/description -->
         <RelativeLayout
@@ -27,55 +36,58 @@
             <!--thumbnail -->
             <FrameLayout
                 android:id="@+id/id_frameL_thumbnail"
-                android:layout_width="75dp"
-                android:layout_height="75dp"
-                android:layout_margin="4dp"
+                android:layout_width="63dp"
+                android:layout_height="63dp"
+                android:layout_marginStart="4dp"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <ImageView
+                <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/id_ivThumbnail"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
+                    android:layout_width="63dp"
+                    android:layout_height="63dp"
+                    android:padding="3dp"
                     android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:srcCompat="@tools:sample/avatars"/>
+                    app:shapeAppearanceOverlay="@style/roundedCornersImageView"
+                    tools:srcCompat="@tools:sample/avatars" />
 
                 <!--Progress Circle -->
                 <ProgressBar
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    style="?android:attr/progressBarStyle"
                     android:id="@+id/id_progressCircle"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="63dp"
+                    android:layout_height="63dp"
                     android:paddingStart="8dp"
                     android:paddingTop="1dp"
                     android:paddingRight="8dp"
                     android:visibility="gone">
+
                 </ProgressBar>
 
 
                 <!--vuMeter -->
                 <io.gresse.hugo.vumeterlibrary.VuMeterView
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-
                     android:id="@+id/id_vumeter"
+                    android:layout_width="63dp"
+
+                    android:layout_height="63dp"
+                    android:layout_marginTop="20dp"
+                    android:alpha="0.8"
                     android:paddingStart="8dp"
                     android:paddingTop="1dp"
-                    android:layout_marginTop="20dp"
                     android:paddingRight="8dp"
-                    vumeter:vumeter_stopSize="5dp"
-                    vumeter:vumeter_speed="10"
+                    android:visibility="gone"
+                    vumeter:vumeter_backgroundColor="#433F3F"
                     vumeter:vumeter_blockNumber="3"
                     vumeter:vumeter_blockSpacing="10dp"
-                    vumeter:vumeter_backgroundColor="#433F3F"
+                    vumeter:vumeter_speed="10"
                     vumeter:vumeter_startOff="false"
-                    android:alpha="0.8"
-                    android:visibility="gone"/>
+                    vumeter:vumeter_stopSize="5dp" />
 
             </FrameLayout>
 
@@ -87,14 +99,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="4dp"
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
                 android:fontFamily="@font/roundo_regular"
                 android:text="Flight Announcement"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="16sp">
+                android:textSize="13sp">
 
             </TextView>
 
@@ -105,12 +117,13 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/id_tvTitle"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="0dp"
+                android:layout_marginTop="2dp"
                 android:layout_marginEnd="2dp"
-                android:layout_marginBottom="2dp"
+
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
                 android:text="#Travel #Flight"
                 android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="13sp"
                 android:textStyle="italic">
 
             </TextView>
@@ -123,7 +136,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/id_cl_entire_Purchase"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="60dp"
             android:layout_weight="1">
 
             <TextView
@@ -138,13 +151,13 @@
 
             <ImageView
                 android:id="@+id/id_ivPurchased_False"
-                android:layout_width="70dp"
-                android:layout_height="25dp"
+                android:layout_width="60dp"
+                android:layout_height="20dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/purchased_false_1"
                 android:visibility="visible"
-                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -152,8 +165,8 @@
 
             <ImageView
                 android:id="@+id/id_ivPurchased_True"
-                android:layout_width="70dp"
-                android:layout_height="25dp"
+                android:layout_width="60dp"
+                android:layout_height="20dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:src="@drawable/purchased_true_2_rubiks"
@@ -162,8 +175,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/id_tvPrice" />
-
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

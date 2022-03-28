@@ -24,22 +24,11 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <!-- 상단 seek bar-->
-            <SeekBar
-                android:id="@+id/id_upperUi_Seekbar"
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
 
-                android:thumbTint="@color/transparent"
-                android:splitTrack="false"
-                android:max="0"
-                android:progress="0">
-
-            </SeekBar>
             <!--Thumbnail/Title/Play,Pause Button -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="match_parent"
                 android:id="@+id/id_upperUi_ConsLayout">
 
                 <!-- Click Arrow up(^)-->
@@ -73,39 +62,56 @@
 
                 </com.google.android.material.imageview.ShapeableImageView>
 
-                <!-- RingTone Title_Loop1 -->
-                <TextView
-                    android:id="@+id/id_upperUi_tv_title"
+                <!-- SeekBar & RingTone Title_Loop1 -->
+                <LinearLayout
+                    android:layout_width="220dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
 
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:ellipsize="marquee"
-
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:fontFamily="sans-serif-condensed-light"
-                    android:gravity="center_horizontal"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:paddingTop="5dp"
-                    android:paddingLeft="5dp"
-                    android:paddingRight="5dp"
-                    android:paddingBottom="20dp"
-                    android:scrollHorizontally="true"
-
-                    android:singleLine="true"
-                    android:text="Always a long title for marquee fx but will be replaced from Firebase!"
-                    android:textColor="@color/white"
-
-                    android:textSize="15sp"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/id_upperUi_iv_coverImage"
                     app:layout_constraintTop_toTopOf="parent">
 
-                </TextView>
+                    <TextView
+                        android:id="@+id/id_upperUi_tv_title"
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:fontFamily="sans-serif-condensed-light"
+                        android:gravity="center_horizontal"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:paddingTop="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingBottom="20dp"
+                        android:scrollHorizontally="true"
+
+                        android:singleLine="true"
+                        android:text="Always a long title for marquee fx but will be replaced from Firebase!"
+                        android:textColor="@color/white"
+
+                        android:textSize="15sp">
+                    </TextView>
+
+                    <!-- 상단 seek bar-->
+                    <SeekBar
+                        android:id="@+id/id_upperUi_Seekbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:thumbTint="@color/transparent"
+                        android:splitTrack="false"
+                        android:max="0"
+                        android:progress="0">
+
+                    </SeekBar>
+
+                </LinearLayout>
+
 
                 <!-- Play/Stop Button From Here>>>>> -->
                 <LinearLayout
@@ -149,7 +155,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/jj_background_MouseGray_1">
+                android:background="@color/clock_gray">
             </View>
 
         </LinearLayout>

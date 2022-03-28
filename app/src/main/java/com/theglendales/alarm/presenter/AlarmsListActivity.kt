@@ -72,8 +72,8 @@ import java.util.Calendar
 // SecondFrag> MiniPlayer - Thumb 없애는 것 성공.
 
 // 2) todos:
-// Mini Player 재생 부분 아래로 옮기기? ^ (Up Arrow 색 변화 or 아이콘 약간 차이 있어 보이기는 함.. 아닌가 기분탓인가?)
-// Spotify Light 따라하기 (포인트 색 만들어서 아예 똑같이) + 재생시 포인트 색으로. Eq Meter? Rubik's Cube 에서 'Purchased' (Owned?) 로 글자로 표기?
+// Mini Player 재생 부분 아래로 옮기기? -> a) 이미지 칸 짤리는 것. b) ^ (Up Arrow 색 변화 or 아이콘 약간 차이 있어 보이기는 함.. 아닌가 기분탓인가?)
+// Spotify Light 따라하기 (포인트 색 만들어서 아예 똑같이) + 재생시 a) 포인트 색으로. Eq Meter? Rubik's Cube 에서 'Purchased' (Owned?) 로 글자로 표기?
 // Font 찾아서 적용. $39 인데.. 음 분명 찾으면 있을것 같긴 함.
 // 제일 윗칸 Chip 색.
 

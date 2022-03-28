@@ -64,7 +64,7 @@
 
                 <!-- SeekBar & RingTone Title_Loop1 -->
                 <LinearLayout
-                    android:layout_width="220dp"
+                    android:layout_width="210dp"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
 
@@ -106,6 +106,7 @@
                         android:thumbTint="@color/transparent"
                         android:splitTrack="false"
                         android:max="0"
+                        android:progressTint="@color/jj_accentColor_1"
                         android:progress="0">
 
                     </SeekBar>

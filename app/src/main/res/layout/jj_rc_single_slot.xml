@@ -37,7 +37,7 @@
             <FrameLayout
                 android:id="@+id/id_frameL_thumbnail"
                 android:layout_width="63dp"
-                android:layout_height="63dp"
+                android:layout_height="match_parent"
                 android:layout_marginStart="4dp"
 
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -47,7 +47,7 @@
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/id_ivThumbnail"
                     android:layout_width="63dp"
-                    android:layout_height="63dp"
+                    android:layout_height="match_parent"
                     android:padding="6dp"
                     android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -65,6 +65,7 @@
                     android:paddingStart="8dp"
                     android:paddingTop="1dp"
                     android:paddingRight="8dp"
+                    android:paddingBottom="6dp"
                     android:visibility="gone">
 
                 </ProgressBar>
@@ -76,12 +77,14 @@
                     android:layout_width="63dp"
 
                     android:layout_height="63dp"
-                    android:layout_marginTop="20dp"
+                    android:scaleY="0.6"
+                    android:scaleX="0.7"
                     android:alpha="0.8"
                     android:paddingStart="8dp"
                     android:paddingTop="1dp"
                     android:paddingRight="8dp"
-                    android:visibility="gone"
+                    android:paddingBottom="6dp"
+                    android:visibility="visible"
                     vumeter:vumeter_backgroundColor="#433F3F"
                     vumeter:vumeter_blockNumber="3"
                     vumeter:vumeter_blockSpacing="10dp"

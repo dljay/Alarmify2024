@@ -65,13 +65,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e8 [SecondFrag 수정중 -- Spotify Light 따라하기 중반.] 22/3/27(Sun) 오후 10:32
+// 30708V1.18e9 [SecondFrag 수정중 -- Spotify Light 따라하기 중반.] 22/3/28(Mon) 오후 3:02
 
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
 // SecondFrag> MiniPlayer - Thumb 없애는 것 성공.
 
 // 2) todos:
+// -- BtmNav 와 SecondFrag Player 사이 View 회색 Line Border 제대로 넣기 (전체 height 을 최대한 덜 바꾸면서..뭐..기타 등등)
 // Mini Player 재생 부분 아래로 옮기기? -> a) 이미지 칸 짤리는 것. b) ^ (Up Arrow 색 변화 or 아이콘 약간 차이 있어 보이기는 함.. 아닌가 기분탓인가?)
 // Spotify Light 따라하기 (포인트 색 만들어서 아예 똑같이) + 재생시 a) 포인트 색으로. Eq Meter? Rubik's Cube 에서 'Purchased' (Owned?) 로 글자로 표기?
 // Font 찾아서 적용. $39 인데.. 음 분명 찾으면 있을것 같긴 함.

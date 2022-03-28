@@ -117,33 +117,36 @@
                 <LinearLayout
                     android:id="@+id/id_upperUi_ll_playpause"
                     android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="7dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="7dp"
                     android:gravity="center"
+                    android:orientation="horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <ImageButton
                         android:id="@+id/id_imgbtn_upperUi_play"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/play_arrow_white" />
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/play_circle_filled_24"/>
                     <ImageButton
                         android:id="@+id/id_imgbtn_upperUi_pause"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/pause_white"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/pause_circle_filled_24"
                         android:visibility="gone"/>
 
                 </LinearLayout>

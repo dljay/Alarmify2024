@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/roundstyle3_white"
+
     android:orientation="vertical">
 
     <!-- upper part aka mini player 여기서부터>>> -->
@@ -61,7 +62,7 @@
 
             <!-- SeekBar & RingTone Title_Loop1 -->
             <LinearLayout
-                android:layout_width="200dp"
+                android:layout_width="190dp"
                 android:layout_height="match_parent"
                 android:layout_marginStart="3dp"
                 android:layout_marginTop="5dp"
@@ -162,8 +163,8 @@
         <!-- 중간에 작은 Divider Border>>> -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/mat_red">
+            android:layout_height="3dp"
+            android:background="@color/jj_background_Gray_1">
 
         </View>
 

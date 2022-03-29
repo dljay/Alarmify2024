@@ -16,6 +16,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.chip.Chip
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.GlbVars
@@ -94,18 +95,20 @@ class RcViewAdapter(
         //todo: 당분간 이상하게 뜰것임. JjMainViewModel 에서 GSON 으로 저장해주기? 어떤 의미가 있을지 흐음..
         //IAP 관련 A) 가격 표시
         if(currentRt.itemPrice.isNotEmpty()) {
-            holder.btn_Price.text = currentRt.itemPrice
+            holder.tv_Price.text = currentRt.itemPrice
         }
         //IAP 관련 B) Purchase Stat True or False
         when(currentRt.purchaseBool) {
             true -> {// Show "Check Circle(v)" icon
-                holder.iv_PurchasedTrue.visibility = View.VISIBLE
-                holder.btn_Price.visibility = View.GONE
+                holder.iv_PurchasedCheckedIcon.visibility = View.VISIBLE
+                holder.tv_Price.visibility = View.GONE
+                holder.downloadIcon.visibility = View.GONE
 
             }
-            false -> {// Show "Price Btn" icon
-                holder.iv_PurchasedTrue.visibility = View.GONE
-                holder.btn_Price.visibility = View.VISIBLE
+            false -> {// Show "Price (TextView) & Download Icon"
+                holder.iv_PurchasedCheckedIcon.visibility = View.GONE
+                holder.tv_Price.visibility = View.VISIBLE
+                holder.downloadIcon.visibility = View.VISIBLE
             }
         }
 
@@ -307,9 +310,11 @@ class RcViewAdapter(
 
         // 4) 오른쪽 FREE,GET THIS 칸
         val cl_entire_purchase: FrameLayout = myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
-        val btn_Price: Button = myXmlToViewObject.findViewById(R.id.id_btnPrice)
+        val tv_Price: TextView = myXmlToViewObject.findViewById(R.id.id_tvPrice)
+
+        val downloadIcon: ImageButton = myXmlToViewObject.findViewById(R.id.id_download_icon)
         //val iv_PurchasedFalse: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_False)
-        val iv_PurchasedTrue: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_True)
+        val iv_PurchasedCheckedIcon: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_Checked)
         //var tv4_GetThis: TextView = myXmlToViewObject.findViewById(R.id.id_tvGetThis)
         var holderTrId: Int = -10 // 처음엔 의미없는 -10 값을 갖지만, onBindView 에서 제대로 holder.id 로 설정됨.
 

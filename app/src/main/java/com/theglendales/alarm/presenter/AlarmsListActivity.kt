@@ -65,14 +65,16 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e13 [SecondFrag 수정중 -- RcV: Price/Purchased 수정 전] 22/3/29(Tue) 오후 2:17
-
+// 30708V1.18e15 [SecondFrag 수정중 -- RcV: Price/Purchased 수정 증-TextView 더 예쁘게 해볼것.] 22/3/29(Tue) 오후 2:17
+//
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
 // SecondFrag> MiniPlayer - Thumb 없애는 것 성공.
 
 // 2) todos:
-// SecondFrag Button 고치기!!
+// SecondFrag TextView 고치기 (만약 단위 커졌을 때 ellipsize 잘 되는지도 테스트.. 타원 어떻게 해야 안정적으로 보여줄지.. )
+// 클릭 투과 해결!
+
 // 전체 색!!!! 결정해야 Divider 색도 결정!!!
 // play 할 때 텍스트 색/ AlbuMArt 회색빛 변하는 것.
 // -- BtmNav 와 SecondFrag Player 사이 View 회색 Line Border 제대로 넣기 (Umano 에서 보이는 범위를 height dp 말고 '이 View 까지' 는 없을까?)

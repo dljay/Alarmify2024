@@ -139,25 +139,47 @@
         <FrameLayout
             android:id="@+id/id_cl_entire_Purchase"
             android:layout_width="0dp"
-            android:layout_height="60dp"
+            android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <Button
-                android:id="@+id/id_btnPrice"
-                android:scaleX="0.8"
-                android:scaleY="0.8"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                android:id="@+id/id_tvPrice"
+                android:background="@drawable/textview_border"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:fontFamily="@font/roboto_medium_numbers"
+                android:textColor="@color/blue_var_1"
+
                 android:layout_gravity="center"
-                style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored."
                 android:maxLines="1"
                 android:ellipsize="marquee"
                 android:text="N/A"/>
 
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5"/>
+
+                <ImageButton
+                android:id="@+id/id_download_icon"
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/transparent"
+                android:src="@drawable/ic_baseline_file_download_24"/>
+        </LinearLayout>
+
             <ImageView
-                android:id="@+id/id_ivPurchased_True"
+                android:id="@+id/id_ivPurchased_Checked"
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
@@ -166,44 +188,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/id_btnPrice" />
-
-           <!-- <TextView
-                android:id="@+id/id_tvPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="N/A"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/id_ivPurchased_False"
-                android:layout_width="60dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/purchased_false_1"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/id_tvPrice" />
-
-            <ImageView
-                android:id="@+id/id_ivPurchased_True"
-                android:layout_width="60dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:src="@drawable/purchased_true_2_rubiks"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/id_tvPrice" />-->
 
 
         </FrameLayout>

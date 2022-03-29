@@ -30,6 +30,8 @@
         <item name="checkedIcon">@null</item>
 
     </style>
+
+
     <!-- 내가　만든　BottomSheet Rounded Corner style! (1-a)-->
     <style name="BottomSheetDialogStyle" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/bottomSheetBackground</item>
@@ -228,10 +230,7 @@
         <item name="cornerSize">8dp</item>
     </style>
 
-    <!-- Custom 버튼 .. 이거 없으면 그냥 전체 theme 스타일 (남색 바탕 흰색 글씨 적용되는듯)-->
-    <style name="Base.TextAppearance.AppCompat.Widget.Button.Colored." parent="Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">@color/blue_var_1</item>
-        <item name="android:textColor">@color/primaryTextColor</item>
-    </style>
+
+
 
 </resources>

@@ -136,13 +136,39 @@
 
         <!--Free/GET THIS -->
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <FrameLayout
             android:id="@+id/id_cl_entire_Purchase"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="1">
 
-            <TextView
+            <Button
+                android:id="@+id/id_btnPrice"
+                android:scaleX="0.8"
+                android:scaleY="0.8"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                style="@style/Base.TextAppearance.AppCompat.Widget.Button.Colored."
+                android:maxLines="1"
+                android:ellipsize="marquee"
+                android:text="N/A"/>
+
+            <ImageView
+                android:id="@+id/id_ivPurchased_True"
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_check_circle_24"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/id_btnPrice" />
+
+           <!-- <TextView
                 android:id="@+id/id_tvPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -177,10 +203,10 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/id_tvPrice" />
+                app:layout_constraintTop_toBottomOf="@+id/id_tvPrice" />-->
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
 
 
     </LinearLayout>

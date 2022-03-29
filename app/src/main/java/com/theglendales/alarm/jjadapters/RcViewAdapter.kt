@@ -1,6 +1,5 @@
 package com.theglendales.alarm.jjadapters
 
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Handler
 import android.os.Looper
@@ -9,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
@@ -96,17 +94,18 @@ class RcViewAdapter(
         //todo: 당분간 이상하게 뜰것임. JjMainViewModel 에서 GSON 으로 저장해주기? 어떤 의미가 있을지 흐음..
         //IAP 관련 A) 가격 표시
         if(currentRt.itemPrice.isNotEmpty()) {
-            holder.tv3_Price.text = currentRt.itemPrice
+            holder.btn_Price.text = currentRt.itemPrice
         }
         //IAP 관련 B) Purchase Stat True or False
         when(currentRt.purchaseBool) {
-            true -> {// Show "Purchased" icon
+            true -> {// Show "Check Circle(v)" icon
                 holder.iv_PurchasedTrue.visibility = View.VISIBLE
-                holder.iv_PurchasedFalse.visibility = View.GONE
+                holder.btn_Price.visibility = View.GONE
+
             }
-            false -> {// Show "GET THIS" icon
+            false -> {// Show "Price Btn" icon
                 holder.iv_PurchasedTrue.visibility = View.GONE
-                holder.iv_PurchasedFalse.visibility = View.VISIBLE
+                holder.btn_Price.visibility = View.VISIBLE
             }
         }
 
@@ -307,9 +306,9 @@ class RcViewAdapter(
         val loadingCircle: ProgressBar = myXmlToViewObject.findViewById(R.id.id_progressCircle)
 
         // 4) 오른쪽 FREE,GET THIS 칸
-        val cl_entire_purchase: ConstraintLayout =myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
-        val tv3_Price: TextView = myXmlToViewObject.findViewById(R.id.id_tvPrice)
-        val iv_PurchasedFalse: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_False)
+        val cl_entire_purchase: FrameLayout = myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
+        val btn_Price: Button = myXmlToViewObject.findViewById(R.id.id_btnPrice)
+        //val iv_PurchasedFalse: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_False)
         val iv_PurchasedTrue: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_True)
         //var tv4_GetThis: TextView = myXmlToViewObject.findViewById(R.id.id_tvGetThis)
         var holderTrId: Int = -10 // 처음엔 의미없는 -10 값을 갖지만, onBindView 에서 제대로 holder.id 로 설정됨.

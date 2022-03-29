@@ -85,9 +85,9 @@
                     android:paddingRight="8dp"
                     android:paddingBottom="6dp"
                     android:visibility="visible"
-                    vumeter:vumeter_backgroundColor="#433F3F"
+                    vumeter:vumeter_backgroundColor="@color/white"
                     vumeter:vumeter_blockNumber="3"
-                    vumeter:vumeter_blockSpacing="10dp"
+                    vumeter:vumeter_blockSpacing="7dp"
                     vumeter:vumeter_speed="10"
                     vumeter:vumeter_startOff="false"
                     vumeter:vumeter_stopSize="5dp" />

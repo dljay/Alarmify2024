@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e11 [SecondFrag 수정중 -- Spotify Light 따라하기 중반.] 22/3/29(Tue) 오전 11:03
+// 30708V1.18e12 [SecondFrag 수정중 -- RcV: Price/Purchased 수정 전] 22/3/29(Tue) 오후 2:17
 
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:

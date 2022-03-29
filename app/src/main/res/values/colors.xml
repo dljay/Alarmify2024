@@ -17,7 +17,7 @@
     <!-- 실제 사용하는 Color 들 여기부터 정리해볼것(시작) -->
         <!-- SecondFrag -->
         <color name="jj_accentColor_1">#FF9B8B</color>
-        <color name="jj_background_Gray_1">#3D3D3D</color>
+        <color name="jj_background_Gray_1">#646464</color>
     <!-- 실제 사용하는 Color 들 여기부터 정리해볼것(끝) -->
     <!-- Material Palette 으로 만들어 본 것 (Begins)-->
     <color name="primaryColor">#11194f</color>
@@ -40,7 +40,7 @@
 
 <!-- TEXT 관련 -->
 
-    <!--primaryTextColor =  현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
+    <!--primaryTextColor =  알람 시간 숫자 색!, 현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
         <color name="primaryTextColor">#FFFFFF</color>
     <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. DetailsFrag>Repeat, About the Ringtone. 등 Titles-->
         <color name="secondaryTextColor">#DDDDDD</color>

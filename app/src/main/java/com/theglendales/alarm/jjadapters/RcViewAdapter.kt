@@ -151,7 +151,7 @@ class RcViewAdapter(
                         }
                         // 2) 새로 Click 된 Holder 의 UI 업데이트
                         clickedHolder!!.loadingCircle.visibility = View.VISIBLE
-                        clickedHolder!!.iv_Thumbnail.alpha = 0.3f
+                        clickedHolder!!.iv_Thumbnail.alpha = 0.7f
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.GONE
                     }
                     StatusMp.READY -> {
@@ -163,7 +163,7 @@ class RcViewAdapter(
                         clickedHolder!!.vuMeterView.pause()
                     }
                     StatusMp.PLAY -> {
-                        clickedHolder!!.iv_Thumbnail.alpha = 0.3f
+                        clickedHolder!!.iv_Thumbnail.alpha = 0.7f
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.VISIBLE
                         clickedHolder!!.vuMeterView.resume(true)
                     }
@@ -174,15 +174,21 @@ class RcViewAdapter(
         private fun enableHL(selectedHolder: MyViewHolder?) {
             Log.d(TAG, "enableHL: called for selectedHolder = $selectedHolder")
             if (selectedHolder != null) {
-                selectedHolder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
+                // selectedHolder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
+                val highlightTextColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.jj_accentColor_1)
+                selectedHolder.tv1_Title.setTextColor(highlightTextColor)
+                selectedHolder.tv2_ShortDescription.setTextColor(highlightTextColor)
             }
         }
 
         private fun disableHL(unselectedHolder: MyViewHolder?) {
             Log.d(TAG, "disableHL: called for unselectedHolder=$unselectedHolder")
             if (unselectedHolder != null) {
+                val normalTextColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.primaryTextColor)
+                unselectedHolder.tv1_Title.setTextColor(normalTextColor)
+                unselectedHolder.tv2_ShortDescription.setTextColor(normalTextColor)
                 //unselectedHolder.tv1_Title.setTextColor(Color.BLACK)
-                unselectedHolder.ll_entire_singleSlot.setBackgroundColor(Color.TRANSPARENT)
+                //unselectedHolder.ll_entire_singleSlot.setBackgroundColor(Color.TRANSPARENT)
             }
 
         }
@@ -192,13 +198,13 @@ class RcViewAdapter(
 
             when(currentPlayStatus) {
                 StatusMp.PLAY -> {
-                    selectedHolder.iv_Thumbnail.alpha = 0.3f // 어둡게
+                    selectedHolder.iv_Thumbnail.alpha = 0.7f // 어둡게
                     selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
                 }
                 StatusMp.PAUSED -> {
                     Log.d(TAG, "enableVM: .PAUSED called for holder.hashCode= ${selectedHolder.hashCode()}")
                     selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
-                    selectedHolder.iv_Thumbnail.alpha = 0.3f // 어둡게
+                    selectedHolder.iv_Thumbnail.alpha = 0.7f // 어둡게
                     Handler(Looper.getMainLooper()).postDelayed({
                         selectedHolder.vuMeterView.pause() // EQ 막대기를 보여줘야하는데 바로 vuMeterView.pause() 때리면 아무것도 안 보임. 따라서 0.1 초 Delay 후 Pause 때림.
                     }, 100)

@@ -107,16 +107,18 @@
             <!-- 아래 textAppearance 는 오직 색 때문에 사용..그냥 color 해도 된다. -->
             <TextView
                 android:id="@+id/id_tvTitle"
+                style="@style/jjTextMediumBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="4dp"
-                android:layout_toRightOf="@+id/id_frameL_thumbnail"
 
-                android:text="Flight Announcement"
-                style="@style/jjTextMedium">
+                android:layout_toRightOf="@+id/id_frameL_thumbnail"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Flight Announcement">
 
             </TextView>
 
@@ -131,7 +133,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="2dp"
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
-                android:ellipsize="marquee"
+                android:ellipsize="end"
                 android:maxLines="1"
 
 
@@ -167,7 +169,7 @@
                 <!-- background 는 Style 에 넣었을 때 적용 X 여기서 다시 써줌 -->
                 <TextView
                 android:id="@+id/id_tvPrice"
-                android:layout_width="50dp"
+                android:layout_width="52dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"

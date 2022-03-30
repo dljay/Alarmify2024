@@ -125,6 +125,8 @@
 
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
                 android:text="#Travel #Flight"
+                android:maxLines="1"
+                android:ellipsize="marquee"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textSize="13sp"
                 android:textStyle="italic">
@@ -149,33 +151,44 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp">
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <!--가격  여섯 Character 까지 표기 가능 ex) $19.99 -->
                 <TextView
                 android:id="@+id/id_tvPrice"
                 android:background="@drawable/textview_border"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_medium_numbers"
                 android:textColor="@color/blue_var_1"
-
                 android:layout_gravity="center"
+                android:gravity="center"
+
                 android:maxLines="1"
-                android:ellipsize="marquee"
+                android:ellipsize="end"
+                android:textSize="11sp"
                 android:text="N/A"/>
 
                 <View
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="0.5"/>
+                    android:layout_weight="1"/>
 
-                <ImageButton
+
+
+              <!--  <ImageButton
                 android:id="@+id/id_download_icon"
                 android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_gravity="center"
+
                 android:backgroundTint="@color/transparent"
-                android:src="@drawable/ic_baseline_file_download_24"/>
+                android:src="@drawable/ic_baseline_file_download_24"/>-->
         </LinearLayout>
 
             <ImageView
@@ -183,7 +196,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_check_circle_24"
+                android:src="@drawable/ic_baseline_check_circle_outline_24"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -96,19 +96,20 @@ class RcViewAdapter(
         //IAP 관련 A) 가격 표시
         if(currentRt.itemPrice.isNotEmpty()) {
             holder.tv_Price.text = currentRt.itemPrice
+
         }
         //IAP 관련 B) Purchase Stat True or False
         when(currentRt.purchaseBool) {
             true -> {// Show "Check Circle(v)" icon
                 holder.iv_PurchasedCheckedIcon.visibility = View.VISIBLE
                 holder.tv_Price.visibility = View.GONE
-                holder.downloadIcon.visibility = View.GONE
+                //holder.downloadIcon.visibility = View.GONE
 
             }
             false -> {// Show "Price (TextView) & Download Icon"
                 holder.iv_PurchasedCheckedIcon.visibility = View.GONE
                 holder.tv_Price.visibility = View.VISIBLE
-                holder.downloadIcon.visibility = View.VISIBLE
+                //holder.downloadIcon.visibility = View.VISIBLE
             }
         }
 
@@ -153,7 +154,7 @@ class RcViewAdapter(
                         }
                         // 2) 새로 Click 된 Holder 의 UI 업데이트
                         clickedHolder!!.loadingCircle.visibility = View.VISIBLE
-                        clickedHolder!!.iv_Thumbnail.alpha = 0.7f
+                        clickedHolder!!.iv_Thumbnail.alpha = 0.6f
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.GONE
                     }
                     StatusMp.READY -> {
@@ -165,7 +166,7 @@ class RcViewAdapter(
                         clickedHolder!!.vuMeterView.pause()
                     }
                     StatusMp.PLAY -> {
-                        clickedHolder!!.iv_Thumbnail.alpha = 0.7f
+                        clickedHolder!!.iv_Thumbnail.alpha = 0.6f
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.VISIBLE
                         clickedHolder!!.vuMeterView.resume(true)
                     }
@@ -200,13 +201,13 @@ class RcViewAdapter(
 
             when(currentPlayStatus) {
                 StatusMp.PLAY -> {
-                    selectedHolder.iv_Thumbnail.alpha = 0.7f // 어둡게
+                    selectedHolder.iv_Thumbnail.alpha = 0.6f // 어둡게
                     selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
                 }
                 StatusMp.PAUSED -> {
                     Log.d(TAG, "enableVM: .PAUSED called for holder.hashCode= ${selectedHolder.hashCode()}")
                     selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
-                    selectedHolder.iv_Thumbnail.alpha = 0.7f // 어둡게
+                    selectedHolder.iv_Thumbnail.alpha = 0.6f // 어둡게
                     Handler(Looper.getMainLooper()).postDelayed({
                         selectedHolder.vuMeterView.pause() // EQ 막대기를 보여줘야하는데 바로 vuMeterView.pause() 때리면 아무것도 안 보임. 따라서 0.1 초 Delay 후 Pause 때림.
                     }, 100)
@@ -312,7 +313,7 @@ class RcViewAdapter(
         val cl_entire_purchase: FrameLayout = myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
         val tv_Price: TextView = myXmlToViewObject.findViewById(R.id.id_tvPrice)
 
-        val downloadIcon: ImageButton = myXmlToViewObject.findViewById(R.id.id_download_icon)
+        //val downloadIcon: ImageButton = myXmlToViewObject.findViewById(R.id.id_download_icon)
         //val iv_PurchasedFalse: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_False)
         val iv_PurchasedCheckedIcon: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_Checked)
         //var tv4_GetThis: TextView = myXmlToViewObject.findViewById(R.id.id_tvGetThis)

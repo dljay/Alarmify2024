@@ -47,6 +47,8 @@
         <color name="secondaryTextColor">#DDDDDD</color>
     <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) DetailsFrag>About the Ringtone 밑의 description, CollapsingToolbar 남은 시간.-->
         <color name="tertiaryTextColor">#B3B3B3</color>
+    <!--FourthTextColor -->
+        <color name="fourthTextColor">#727272</color>
     <color name="textColorBakHaSaTangYo">#A2FCF7</color>
 
 

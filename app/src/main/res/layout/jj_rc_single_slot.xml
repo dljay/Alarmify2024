@@ -127,8 +127,8 @@
                 android:text="#Travel #Flight"
                 android:maxLines="1"
                 android:ellipsize="marquee"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textSize="13sp"
+                style="@style/jjTextMedium_Dark"
+
                 android:textStyle="italic">
 
             </TextView>

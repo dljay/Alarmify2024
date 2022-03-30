@@ -65,15 +65,18 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e17 [SecondFrag 수정중 -- Price 수정 완료. Font 수정 전.] 22/3/30(Wed) 오후 2:34
+// 30708V1.18e19 [SecondFrag Spotify Light 따라하기 -- Price 수정 완료. Font 수정 전.] 22/3/30(Wed) 오후 3:23
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
-// SecondFrag> MiniPlayer - Thumb 없애는 것 성공.
+// SecondFrag> Price 및 여백 조절. / Vector (완료) 는 Check Circle 사용
 
 // 2) todos:
-// SecondFrag TextView 고치기 (만약 단위 커졌을 때 ellipsize 잘 되는지도 테스트.. 타원 어떻게 해야 안정적으로 보여줄지.. )
-// 클릭 투과 해결!
+//a) 클릭 투과 해결 필요!
+//b) Font : Spotify Light: https://dribbble.com/shots/14270294-Spotify-Light-mode
+//c) p1005  -> free 로? Price Template 안 만들어지네.
+//d) Chip --- DetailsFrag 요일 Chip 도 염두.
+
 
 // 전체 색!!!! 결정해야 Divider 색도 결정!!!
 // play 할 때 텍스트 색/ AlbuMArt 회색빛 변하는 것.

@@ -9,6 +9,14 @@
     android:layout_height="wrap_content"
     android:padding="4dp">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/id_singleSlot_ll"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/id_singleSlot_ll"
         android:layout_width="match_parent"
@@ -155,21 +163,20 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"/>
 
-                <!--가격  여섯 Character 까지 표기 가능 ex) $19.99 -->
+                <!--가격  여섯 Character 까지 표기 가능 ex) $19.99 // -->
+                <!-- background 는 Style 에 넣었을 때 적용 X 여기서 다시 써줌 -->
                 <TextView
                 android:id="@+id/id_tvPrice"
-                android:background="@drawable/textview_border"
-
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_medium_numbers"
-                android:textColor="@color/blue_var_1"
                 android:layout_gravity="center"
                 android:gravity="center"
-
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:textSize="11sp"
+
+                style="@style/jjTextSmall_PriceTag"
+                android:background="@drawable/textview_border"
+
                 android:text="N/A"/>
 
                 <View
@@ -177,17 +184,6 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"/>
 
-
-
-              <!--  <ImageButton
-                android:id="@+id/id_download_icon"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_gravity="center"
-
-                android:backgroundTint="@color/transparent"
-                android:src="@drawable/ic_baseline_file_download_24"/>-->
         </LinearLayout>
 
             <ImageView
@@ -207,5 +203,13 @@
 
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/id_singleSlot_ll" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -240,13 +240,13 @@
         <style name="jjTextMedium">
             <item name="fontFamily">@font/sourcesanspro_regular</item>
             <item name="android:textColor">@color/primaryTextColor</item>
-            <item name="android:textSize">13sp</item>
+            <item name="android:textSize">12sp</item>
         </style>
 
     <style name="jjTextMedium_Dark">
         <item name="fontFamily">@font/sourcesanspro_regular</item>
         <item name="android:textColor">@color/tertiaryTextColor</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">12sp</item>
     </style>
 
         <style name="jjTextSmall">
@@ -259,6 +259,13 @@
             <item name="fontFamily">@font/sourcesanspro_regular</item>
             <item name="android:textColor">@color/tertiaryTextColor</item>
             <item name="android:textSize">11sp</item>
+        </style>
+
+        <style name="jjTextSmall_PriceTag">
+            <item name="fontFamily">@font/roboto_medium_numbers</item>
+            <item name="android:textColor">@color/blue_var_1</item>
+            <item name="android:textSize">11sp</item>
+            <item name="background">@drawable/textview_border</item>
         </style>
 
 

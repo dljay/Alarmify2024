@@ -65,17 +65,17 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e19 [SecondFrag Spotify Light 따라하기 -- Price 수정 완료. Font 수정 전.] 22/3/30(Wed) 오후 3:23
+// 30708V1.18e20 [SecondFrag Spotify Light 따라하기] 22/3/30(Wed) 오후 11:29
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
-// SecondFrag> Price 및 여백 조절. / Vector (완료) 는 Check Circle 사용
+// SecondFrag> Font- Circular_Std 괜춘해 보임!!
+// 클릭 투과 해결.
 
 // 2) todos:
-//a) 클릭 투과 해결 필요!
-//b) Font : Spotify Light: https://dribbble.com/shots/14270294-Spotify-Light-mode
-//c) p1005  -> free 로? Price Template 안 만들어지네.
-//d) Chip --- DetailsFrag 요일 Chip 도 염두.
+//a) Btmnav 모서리 코너 round edge / FONT / 아이콘. 왜이리 못생겼는지.. 아이콘 크기 좀 작게? Youtube Red 와 비교.
+//b) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
+//c) Chip --- DetailsFrag 요일 Chip 도 염두해서 색 변화.
 
 
 // 전체 색!!!! 결정해야 Divider 색도 결정!!!

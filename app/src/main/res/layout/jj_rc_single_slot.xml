@@ -106,29 +106,28 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="4dp"
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
-                android:fontFamily="@font/roundo_regular"
+
                 android:text="Flight Announcement"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="13sp">
+                style="@style/jjTextMedium">
 
             </TextView>
 
             <!--Description text -->
             <TextView
                 android:id="@+id/id_tvTags"
+                style="@style/jjTextMedium_Dark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/id_tvTitle"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="2dp"
-
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
-                android:text="#Travel #Flight"
-                android:maxLines="1"
                 android:ellipsize="marquee"
-                style="@style/jjTextMedium_Dark"
+                android:maxLines="1"
 
+
+                android:text="#Travel #Flight"
                 android:textStyle="italic">
 
             </TextView>

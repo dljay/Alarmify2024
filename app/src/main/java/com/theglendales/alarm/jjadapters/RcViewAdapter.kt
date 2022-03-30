@@ -41,7 +41,11 @@ class RcViewAdapter(
     private val secondFragListener: RcCommInterface) : RecyclerView.Adapter<RcViewAdapter.MyViewHolder>() {
 
 
-
+// 하이라이트 전후로 쓸 색
+    val primaryTextColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.primaryTextColor)
+    val secondaryTextColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.secondaryTextColor)
+    val tertiaryTextColor =  ContextCompat.getColor(receivedActivity.applicationContext,R.color.tertiaryTextColor)
+    val accentTextColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.jj_accentColor_1)
 // 현재 click 된 ViewHolder 를 여기에 저장.
     var prevClickedHolder: MyViewHolder? = null
     var clickedHolder: MyViewHolder? = null
@@ -51,8 +55,6 @@ class RcViewAdapter(
 
     var isRVClicked: Boolean = false // 혹시나 미리 클릭되었을 경우를 대비하여 만든 boolean value. 이거 안 쓰이나?
 // 하이라이트시 background 에 적용될 색
-    val highlightColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.jj_background_MouseGray_1) //todo: 선택 됐을 때 그냥 색 변화 안되는걸로 바꾸기
-    //val plainColor = Color.WHITE
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         Log.d(TAG, "(Line44)onCreateViewHolder: jj- RcV! viewType=$viewType.")
@@ -177,21 +179,19 @@ class RcViewAdapter(
         private fun enableHL(selectedHolder: MyViewHolder?) {
             Log.d(TAG, "enableHL: called for selectedHolder = $selectedHolder")
             if (selectedHolder != null) {
-                // selectedHolder.ll_entire_singleSlot?.setBackgroundColor(highlightColor)
-                val highlightTextColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.jj_accentColor_1)
-                selectedHolder.tv1_Title.setTextColor(highlightTextColor)
-                selectedHolder.tv2_ShortDescription.setTextColor(highlightTextColor)
+
+                selectedHolder.tv1_Title.setTextColor(accentTextColor)
+                selectedHolder.tv2_ShortDescription.setTextColor(accentTextColor)
             }
         }
 
         private fun disableHL(unselectedHolder: MyViewHolder?) {
             Log.d(TAG, "disableHL: called for unselectedHolder=$unselectedHolder")
             if (unselectedHolder != null) {
-                val normalTextColor = ContextCompat.getColor(receivedActivity.applicationContext,R.color.primaryTextColor)
-                unselectedHolder.tv1_Title.setTextColor(normalTextColor)
-                unselectedHolder.tv2_ShortDescription.setTextColor(normalTextColor)
-                //unselectedHolder.tv1_Title.setTextColor(Color.BLACK)
-                //unselectedHolder.ll_entire_singleSlot.setBackgroundColor(Color.TRANSPARENT)
+
+                unselectedHolder.tv1_Title.setTextColor(primaryTextColor)
+                unselectedHolder.tv2_ShortDescription.setTextColor(tertiaryTextColor)
+
             }
 
         }

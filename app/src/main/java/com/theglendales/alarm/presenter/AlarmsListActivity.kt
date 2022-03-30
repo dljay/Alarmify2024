@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e16 [SecondFrag 수정중 -- RcV: Price/Purchased 수정 증-TextView 더 예쁘게 해볼것.] 22/3/30(Wed) 오후 1:50
+// 30708V1.18e17 [SecondFrag 수정중 -- Price 수정 완료. Font 수정 전.] 22/3/30(Wed) 오후 2:34
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:

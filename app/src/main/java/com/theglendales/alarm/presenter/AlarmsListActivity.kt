@@ -65,20 +65,20 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e22 [SecondFrag Spotify Light 따라하기] 22/3/31(Wed) 오후 10:30
+// 30708V1.18e23 [SecondFrag Spotify Light 따라하기] 22/3/31(Wed) 오후 10:30
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
 //a) Btmnav 모서리 코너 round edge / FONT / 아이콘. 왜이리 못생겼는지.. 아이콘 크기 좀 작게? Youtube 와 비교: 다 흰색으로! 선택되었을 때 accent Color / 아이콘 좀 예쁜 놈들로?
-//b) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
+
 
 
 // 2) todos:
+// **** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
 //a) Btmnav 모서리 코너 round edge / FONT / 아이콘. 왜이리 못생겼는지.. 아이콘 크기 좀 작게? Youtube 와 비교: 다 흰색으로! 선택되었을 때 accent Color / 아이콘 좀 예쁜 놈들로?
-//음악 재생될 때 BtmNav 곡선 없애기.
-//miniplayer design: 폰트 등. 열었을 때도!
+//b) miniplayer design: 폰트 등. 열었을 때도!
 //b) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
-// Details Frag- Spinner Time Picker
+//c) Details Frag- Spinner Time Picker
 
 
 

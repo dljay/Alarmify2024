@@ -32,7 +32,7 @@
         <!--<item name="windowActionBarOverlay">true</item>-->
 
         <!-- FONT TEST-->
-        <item name="android:fontFamily">@font/sourcesanspro_semibold</item>
+        <item name="android:fontFamily">@font/circular_std_medium</item>
     </style>
 
     <!-- B. 기타 -->

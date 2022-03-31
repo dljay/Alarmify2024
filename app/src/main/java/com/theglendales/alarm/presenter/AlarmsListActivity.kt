@@ -73,7 +73,7 @@ import java.util.Calendar
 // 클릭 투과 해결.
 
 // 2) todos:
-//a) Btmnav 모서리 코너 round edge / FONT / 아이콘. 왜이리 못생겼는지.. 아이콘 크기 좀 작게? Youtube Red 와 비교.
+//a) Btmnav 모서리 코너 round edge / FONT / 아이콘. 왜이리 못생겼는지.. 아이콘 크기 좀 작게? Youtube 와 비교: 다 흰색으로! 선택되었을 때 accent Color / 아이콘 좀 예쁜 놈들로?
 //b) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
 //c) Chip --- DetailsFrag 요일 Chip 도 염두해서 색 변화.
 

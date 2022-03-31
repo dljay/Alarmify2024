@@ -44,7 +44,7 @@
     <!-- [SecondFrag] TAG Chip style: (2) TEXT 관련 -->
     <style name="rtTagChipTextStyle" parent="TextAppearance.MaterialComponents.Chip">
 
-        <item name="fontFamily">@font/circular_std_light</item>
+        <item name="fontFamily">@font/circular_std_medium</item>
 <!--        <item name="android:textStyle">bold</item>-->
     </style>
 

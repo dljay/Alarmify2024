@@ -544,7 +544,7 @@ class AlarmsListActivity : AppCompatActivity() {
     //추가->
     Log.d(TAG, "(Line281)showList: jj-called")
     appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
-
+    btmAppBar.setBackgroundResource(R.drawable.btm_nav_bg_round_corner) // SecondFrag 에서 돌아왔을 때 Corner 가 직사각형 -> Round Corner 로 다시 변경.
 
     // 혹시나 Btm Nav> Set ALARM 의 메뉴 아이콘이 isChecked bool 값이 틀린 경우 바꿔주기(회색 -> 흰색)(Ex. SecondFrag 에서 (+) 누른 경우
     // Mystery..  : 여기서 if 문을 안해주고 그냥 .isChecked=true 해주면 오히려 결과값이 반대(false) 가 된다 .. ?? 그래서 if 문 붙여줬음.

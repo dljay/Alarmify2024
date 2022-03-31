@@ -16,8 +16,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -763,6 +761,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //Activity 에서 받은 BottomNavView (추후 SlidingPanel 이 EXPAND/COLLAPSE 될 때 VISIBLE/INVISIBLE 해준다.)
         btmNavViewFromActivity = requireActivity().findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) // todo: check
         btmAppBarFromActivity = requireActivity().findViewById(R.id.bottomAppBar2)
+
         //btmAppBarFromActivity.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.blue_var_1)) // 테스트. Spotify 처럼 배경색 일치.
 
 
@@ -809,6 +808,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         // A. 기존에 클릭 후 다른 Frag 갔다 돌아온 경우. (Panel 은 Collapsed 아니면 Expanded 상태 유지중임.)
         if (shouldPanelBeVisible) {
             Log.d(TAG, "setUpSlidingPanel: HEY isInitialPanelSetup=$shouldPanelBeVisible")
+            btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_rectangle_corner)
             //collapseSlidingPanel()
 
             // 만약 확장된 상태였다면 초기화가 안되어있어서 모퉁이 허옇고 & arrow(↑)가 위로 가있음. 아래에서 해결.
@@ -826,7 +826,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.ANCHORED // 위치를 60%로 초기 시작
         slidingUpPanelLayout.addPanelSlideListener(object :SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View?, slideOffset: Float) {
-                //Log.d(TAG, "onPanelSlide: Panel State=${slidingUpPanelLayout.panelState}")
+                Log.d(TAG, "onPanelSlide: Panel State=${slidingUpPanelLayout.panelState}")
                 shouldPanelBeVisible = true // 이제 Panel 이 열렸으니깐. todo: 이거 bool 값에 의존하는게 괜찮을지..
                 upperUiHolder.alpha = 1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
 
@@ -856,7 +856,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             @SuppressLint("ClickableViewAccessibility") // 아래 constLayout_entire.setxx... 이거 장애인 warning 없애기
             override fun onPanelStateChanged(panel: View?,previousState: SlidingUpPanelLayout.PanelState?,newState: SlidingUpPanelLayout.PanelState?) {
-                Log.d(TAG, "onPanelStateChanged: previousState= $previousState -> newState=$newState, isActivated= ${slidingUpPanelLayout.isActivated}")
+                //Log.d(TAG, "onPanelStateChanged: previousState= $previousState -> newState=$newState, isActivated= ${slidingUpPanelLayout.isActivated}")
                 //Log.d(TAG, "onPanelStateChanged: btmNavView.height=  ${btmNavViewFromActivity.height}")
 
             //1) 접힌상태-> 완전히 열리는 상태로 전환중(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행 (대략 0.4 초 소요)
@@ -865,13 +865,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             //btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f) // 어차피 BtmAppBar 가 BtmNavView 의 Parent 여서 이것까지 해줄 필요 없음.
             }*/
 
-            //1) Drag 해서 -> 완전히 열렸을 때(Dragging -> Expanded)
+            //1) Bottom App Bar 코너 Round -> Rectangle 로. (최초 트랙 클릭 으로 Hidden -> Dragging 상태) 이후 Collapsed 가 되는것임
+            if(previousState== SlidingUpPanelLayout.PanelState.HIDDEN && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
+                btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_rectangle_corner)
+
+            }
+
+            //2) Drag 해서 -> 완전히 열렸을 때(Dragging -> Expanded)
             if(previousState== SlidingUpPanelLayout.PanelState.DRAGGING && newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
                 btmAppBarFromActivity.animate().translationY(btmAppBarFromActivity.height.toFloat()).alpha(0.0f)
                 //btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f) // 어차피 BtmAppBar 가 BtmNavView 의 Parent 여서 이것까지 해줄 필요 없음.
             }
 
-            //2) 완전히 열린 상태 -> 접히는 상태로 전환 // // DRAGGING -> EXPANDED -> DRAGGING 으로 진행 (대략 0.4 초 소요)
+            //3) 완전히 열린 상태 -> 접히는 상태로 전환 // // DRAGGING -> EXPANDED -> DRAGGING 으로 진행 (대략 0.4 초 소요)
             else if(previousState== SlidingUpPanelLayout.PanelState.EXPANDED && newState == SlidingUpPanelLayout.PanelState.DRAGGING){
                 btmAppBarFromActivity.animate().translationY(0F).alpha(1.0f) // '0F 까지!' View 를 올리는 것.
             //  btmNavViewFromActivity.animate().translationY(0F).alpha(1.0f) // '0F 까지!' View 를 올리는 것.
@@ -894,6 +900,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.arrow_up_white)// ↑ arrow 전환 visibility }
                         slidingUpPanelLayout.isOverlayed = false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
                         flRcView.setPadding(0,0,0,0)
+
                     }
                     SlidingUpPanelLayout.PanelState.HIDDEN -> {
                         Log.d(TAG, "onPanelStateChanged: Sliding Panel = HIDDEN")

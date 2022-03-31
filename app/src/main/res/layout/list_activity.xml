@@ -112,7 +112,7 @@
             app:contentInsetStart="0dp"
             app:contentInsetEnd="0dp"
 
-            android:background="@drawable/bottom_navigation_background_2"
+            android:background="@drawable/btm_nav_bg_round_corner"
             app:backgroundTint="@color/transparent">
 
 
@@ -123,7 +123,7 @@
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
 
-                android:background="@drawable/bottom_navigation_background_2"
+                android:background="@drawable/btm_nav_bg_round_corner"
                 app:itemTextColor="@drawable/btm_nav_text_color_selector"
                 app:itemIconTint="@drawable/btm_nav_icon_color_selector"
                 app:itemIconSize="22dp"

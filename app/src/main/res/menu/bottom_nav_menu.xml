@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/id_BtmNav_SetAlarm"
-        android:title="SET ALARM"
+        android:title="Set Alarm"
         android:icon="@drawable/btmnav_setalarm_selector"/>
 
     <item
@@ -14,7 +14,7 @@
 
     <item
         android:id="@+id/id_BtmNav_RingTone"
-        android:title="GET RINGTONE"
+        android:title="Get Ringtone"
         android:icon="@drawable/btmnav_get_ringtone_selector"/>
 
     <!--<item

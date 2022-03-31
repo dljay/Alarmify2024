@@ -22,7 +22,7 @@
         <item name="background">@null</item>
     </style>
 
-    <!-- 내가 만든 chip 용 style  -->
+    <!-- 내가 만든 [요일] Chip style  -->
     <style name="customChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_background_color</item>
         <item name="android:textColor">@color/chip_text_color</item>
@@ -30,6 +30,25 @@
         <item name="checkedIcon">@null</item>
 
     </style>
+
+    <!-- [SecondFrag] TAG Chip style: (1) BG 색, Text 색 , Icon 관련 [왜그런지 TextColor 는 아래 rtTagChipTextStyle 에 넣어도 안 먹힘..]-->
+    <style name="rtTagChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/chip_background_color</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="checkedIconEnabled">false</item>
+        <item name="checkedIcon">@null</item>
+
+
+    </style>
+
+    <!-- [SecondFrag] TAG Chip style: (2) TEXT 관련 -->
+    <style name="rtTagChipTextStyle" parent="TextAppearance.MaterialComponents.Chip">
+
+        <item name="fontFamily">@font/circular_std_light</item>
+<!--        <item name="android:textStyle">bold</item>-->
+    </style>
+
+
 
 
     <!-- 내가　만든　BottomSheet Rounded Corner style! (1-a)-->

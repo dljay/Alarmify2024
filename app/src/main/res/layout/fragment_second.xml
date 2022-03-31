@@ -29,7 +29,8 @@
                 android:id="@+id/id_ll_ChipGroupWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/cardview_dark_background"
+                android:layout_marginBottom="5dp"
+                android:background="@color/jj_background_MouseGray_1"
                 android:paddingTop="2dp"
                 android:scrollbars="none"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -39,6 +40,7 @@
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/id_chipGroup"
+
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginStart="0dp"
@@ -51,7 +53,11 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/id_chip1_intense"
-                        style="@style/customChipStyle"
+                        style="@style/rtTagChipStyle"
+                        android:textAppearance="@style/rtTagChipTextStyle"
+                        app:chipStrokeColor="@color/blue_var_1"
+                        app:chipStrokeWidth="1dp"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -59,7 +65,7 @@
                         android:checkable="true"
                         android:checked="false"
                         android:text="@string/chip1_intense"
-                        app:checkedIcon="@drawable/chip_check_empty_background"
+                        app:checkedIcon="@drawable/chip1_intense"
                         app:chipIcon="@drawable/chip1_intense"
                         app:chipIconVisible="true">
 
@@ -67,7 +73,12 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/id_chip2_gentle"
-                        style="@style/customChipStyle"
+                        style="@style/rtTagChipStyle"
+                        android:textAppearance="@style/rtTagChipTextStyle"
+
+                        app:chipStrokeColor="@color/blue_var_1"
+                        app:chipStrokeWidth="1dp"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -85,7 +96,12 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/id_chip3_nature"
-                        style="@style/customChipStyle"
+                        style="@style/rtTagChipStyle"
+                        android:textAppearance="@style/rtTagChipTextStyle"
+
+                        app:chipStrokeColor="@color/blue_var_1"
+                        app:chipStrokeWidth="1dp"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -102,7 +118,12 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/id_chip4_location"
-                        style="@style/customChipStyle"
+                        style="@style/rtTagChipStyle"
+                        android:textAppearance="@style/rtTagChipTextStyle"
+
+                        app:chipStrokeColor="@color/blue_var_1"
+                        app:chipStrokeWidth="1dp"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -118,7 +139,12 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/id_chip5_popular"
-                        style="@style/customChipStyle"
+                        style="@style/rtTagChipStyle"
+                        android:textAppearance="@style/rtTagChipTextStyle"
+
+                        app:chipStrokeColor="@color/blue_var_1"
+                        app:chipStrokeWidth="1dp"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -134,7 +160,13 @@
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/id_chip6_misc"
-                        style="@style/customChipStyle"
+                        style="@style/rtTagChipStyle"
+                        android:textAppearance="@style/rtTagChipTextStyle"
+
+                        app:chipStrokeColor="@color/blue_var_1"
+                        app:chipStrokeWidth="1dp"
+
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"

@@ -65,17 +65,21 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e20 [SecondFrag Spotify Light 따라하기] 22/3/30(Wed) 오후 11:29
+// 30708V1.18e21 [SecondFrag Spotify Light 따라하기] 22/3/30(Wed) 오후 11:29
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
-// SecondFrag> Font- Circular_Std 괜춘해 보임!!
-// 클릭 투과 해결.
+//a) Btmnav 모서리 코너 round edge / FONT / 아이콘. 왜이리 못생겼는지.. 아이콘 크기 좀 작게? Youtube 와 비교: 다 흰색으로! 선택되었을 때 accent Color / 아이콘 좀 예쁜 놈들로?
+//b) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
+
 
 // 2) todos:
 //a) Btmnav 모서리 코너 round edge / FONT / 아이콘. 왜이리 못생겼는지.. 아이콘 크기 좀 작게? Youtube 와 비교: 다 흰색으로! 선택되었을 때 accent Color / 아이콘 좀 예쁜 놈들로?
+//음악 재생될 때 BtmNav 곡선 없애기.
+//miniplayer design: 폰트 등. 열었을 때도!
 //b) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
-//c) Chip --- DetailsFrag 요일 Chip 도 염두해서 색 변화.
+// Details Frag- Spinner Time Picker
+
 
 
 // 전체 색!!!! 결정해야 Divider 색도 결정!!!

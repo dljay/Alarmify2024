@@ -126,7 +126,7 @@
                 android:background="@drawable/btm_nav_bg_round_corner"
                 app:itemTextColor="@drawable/btm_nav_text_color_selector"
                 app:itemIconTint="@drawable/btm_nav_icon_color_selector"
-                app:itemIconSize="26dp"
+                app:itemIconSize="27dp"
                 app:labelVisibilityMode="labeled"
                 android:layout_gravity="bottom"
                 app:menu="@menu/bottom_nav_menu"

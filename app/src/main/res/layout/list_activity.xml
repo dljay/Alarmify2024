@@ -84,8 +84,6 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-
-
         <LinearLayout
             android:id="@+id/listActivity_LinearLayout"
             android:layout_width="match_parent"
@@ -134,6 +132,18 @@
 
                 <ImageButton
                     android:id="@+id/imgBtn_Add_BtmNav"
+                    android:background="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+
+                    app:maxImageSize="35dp"
+                    app:tint="@color/jj_accentColor_1"
+                    android:src="@drawable/ic_baseline_add_circle_32"/>
+
+            <!-- 기존 (+) 흑백 스타일 -->
+                <!--<ImageButton
+                    android:id="@+id/imgBtn_Add_BtmNav"
                     android:background="@drawable/plus_btn_background_selector"
 
                     android:padding="2dp"
@@ -143,7 +153,7 @@
                     android:foreground="?attr/selectableItemBackgroundBorderless"
                     app:maxImageSize="35dp"
                     app:tint="@color/plus_btn_click_selector"
-                    android:src="@drawable/imgbtn_ripple_with_source_drawable"/>
+                    android:src="@drawable/imgbtn_ripple_with_source_drawable"/>-->
 
             </com.google.android.material.bottomnavigation.BottomNavigationView>
 

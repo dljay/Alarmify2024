@@ -52,9 +52,9 @@
 
 <!-- TEXT 관련 -->
 
-    <!--primaryTextColor =  알람 시간 숫자 색!, 현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
-        <color name="primaryTextColor">#FFFFFF</color>
-    <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. DetailsFrag>Repeat, About the Ringtone. 등 Titles-->
+    <!--primaryTextColor =   현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
+        <color name="primaryTextColor">#D6D6D6</color>
+    <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. 알람 시간 숫자 색!, DetailsFrag>Repeat, About the Ringtone. SecondFrag>Chip 색, SecondFrag>SeekBar Prgrs  등 Titles-->
         <color name="secondaryTextColor">#DDDDDD</color>
     <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) DetailsFrag>About the Ringtone 밑의 description, CollapsingToolbar 남은 시간.-->
         <color name="tertiaryTextColor">#B3B3B3</color>

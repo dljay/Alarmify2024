@@ -65,20 +65,20 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e24 [SecondFrag Spotify Light 따라하기] 22/4/1(Thu) 오후 12:25
+// 30708V1.18e25 [SecondFrag Spotify Light 따라하기] 22/4/1(Thu) 오후 11:58
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
-// 스샷으로 PNG 확인/ 색 변경 (bg_main, bg_2 현재 왔다리갔다리)
+// Fab 다시 장착 (ImgBtn 이지만 Fab 느낌과 비슷하게)
 
 // 2) todos:
-
+// 0) ListFrag 요일 수정 -> Sun, Sat 빨간색, 파란색 없애고 다 한가지 색으로 통일, -> 선택되었을 때 네모 감싸기 말고 그냥 text 색 변화+Bold. 아님 위에 점. 로 (폰트 다 바꾸기. Listfrag 에서 Programatically 되고있네.)
+// Switch 제발 바꾸자.. ㅅㅂ
 //1) PNG 더 찾아보고 -> 여기에 맞춰서 색 설정하기. -> Png 적용 스샷으로 테스트 하고 구입/License 받기.
 //https://www.vecteezy.com/vector-art/5437953-coniferous-night-forest-landscape-vector-illustration
-//2) BtmNav 아이콘 크기(Bigger) 텍스트 크기 (그대로 또는 약간 작게) // BtmNav 와 SecondFrag 상단(Chip) 에 미약하나마 Gradient 시도 가능함. Gradient Style 을 몇가지 만들어볼것?
+
 //3) SecondFrag 포인트 색도 1) PNG 로 최대한 맞춰서 쓰기.
 //4) miniplayer design: 폰트 등. 열었을 때도!
-//design- blue navy app design / android glossy button?
 //5) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
 //6) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
 //7) Details Frag- Spinner Time Picker

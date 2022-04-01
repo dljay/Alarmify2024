@@ -21,6 +21,7 @@
 
 
         "
+
         <item name="android:colorBackground">@color/jj_background_MouseGray_1</item>
     <!--colorActivatedHighlight= FAB 버튼 같은것 색 -->
         <item name="android:colorActivatedHighlight">@color/secondaryColor</item>

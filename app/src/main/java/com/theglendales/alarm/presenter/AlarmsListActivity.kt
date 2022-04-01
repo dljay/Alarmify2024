@@ -72,6 +72,7 @@ import java.util.Calendar
 // Fab 다시 장착 (ImgBtn 이지만 Fab 느낌과 비슷하게)
 
 // 2) todos:
+// Fab 좀 더 키우고 + baseline 일치?? or 약간 위로 보내기?
 // 0) ListFrag 요일 수정 -> Sun, Sat 빨간색, 파란색 없애고 다 한가지 색으로 통일, -> 선택되었을 때 네모 감싸기 말고 그냥 text 색 변화+Bold. 아님 위에 점. 로 (폰트 다 바꾸기. Listfrag 에서 Programatically 되고있네.)
 // Switch 제발 바꾸자.. ㅅㅂ
 //1) PNG 더 찾아보고 -> 여기에 맞춰서 색 설정하기. -> Png 적용 스샷으로 테스트 하고 구입/License 받기.

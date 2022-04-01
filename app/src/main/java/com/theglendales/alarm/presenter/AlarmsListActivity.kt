@@ -65,20 +65,23 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e23 [SecondFrag Spotify Light 따라하기] 22/3/31(Thu) 오후 11:31
+// 30708V1.18e24 [SecondFrag Spotify Light 따라하기] 22/4/1(Thu) 오후 12:25
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
-//a) Btmnav 모서리 코너 round edge / FONT / 아이콘. 왜이리 못생겼는지.. 아이콘 크기 좀 작게? Youtube 와 비교: 다 흰색으로! 선택되었을 때 accent Color / 아이콘 좀 예쁜 놈들로?
-
-
+// 스샷으로 PNG 확인/ 색 변경 (bg_main, bg_2 현재 왔다리갔다리)
 
 // 2) todos:
-// **** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
-//a) Btmnav 모서리 코너 round edge / FONT / 아이콘. 왜이리 못생겼는지.. 아이콘 크기 좀 작게? Youtube 와 비교: 다 흰색으로! 선택되었을 때 accent Color / 아이콘 좀 예쁜 놈들로?
-//b) miniplayer design: 폰트 등. 열었을 때도!
-//b) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
-//c) Details Frag- Spinner Time Picker
+
+//1) PNG 더 찾아보고 -> 여기에 맞춰서 색 설정하기. -> Png 적용 스샷으로 테스트 하고 구입/License 받기.
+//https://www.vecteezy.com/vector-art/5437953-coniferous-night-forest-landscape-vector-illustration
+//2) BtmNav 아이콘 크기(Bigger) 텍스트 크기 (그대로 또는 약간 작게).
+//3) SecondFrag 포인트 색도 1) PNG 로 최대한 맞춰서 쓰기.
+//4) miniplayer design: 폰트 등. 열었을 때도!
+//design- blue navy app design / android glossy button?
+//5) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
+//6) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
+//7) Details Frag- Spinner Time Picker
 
 
 
@@ -281,7 +284,7 @@ class AlarmsListActivity : AppCompatActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
-        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_background_MouseGray_2)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
+        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_2)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)

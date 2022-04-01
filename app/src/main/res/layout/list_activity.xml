@@ -30,7 +30,7 @@
         android:id="@+id/info_fragment_base_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/jj_background_MouseGray_1"
+        android:background="@color/jj_main_bg_color"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
@@ -43,7 +43,7 @@
                 android:id="@+id/id_collapsingToolBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/night_3"
+                android:background="@drawable/test_screenshot"
 
                 app:contentScrim="@color/transparent"
                 app:title="Alarmify"

@@ -68,7 +68,7 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:baselineAligned="true"
-            android:background="@color/jj_background_MouseGray_1">
+            android:background="@color/jj_main_bg_color">
 
             <com.theglendales.alarm.view.DontPressWithParentLayout
                 android:id="@+id/list_row_on_off_checkbox_container"

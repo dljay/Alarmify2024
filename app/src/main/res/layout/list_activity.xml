@@ -105,7 +105,7 @@
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar2"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_weight="1"
 
@@ -120,13 +120,13 @@
                 android:id="@+id/id_bottomNavigationView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
-
                 android:background="@drawable/btm_nav_bg_round_corner"
                 app:itemTextColor="@drawable/btm_nav_text_color_selector"
                 app:itemIconTint="@drawable/btm_nav_icon_color_selector"
-                app:itemIconSize="27dp"
+                app:itemIconSize="24dp"
                 app:labelVisibilityMode="labeled"
                 android:layout_gravity="bottom"
                 app:menu="@menu/bottom_nav_menu"

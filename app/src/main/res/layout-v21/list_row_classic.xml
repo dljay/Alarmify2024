@@ -45,7 +45,6 @@
                 android:text="DELETE"
                 android:gravity="center"
                 android:layout_margin="3dp"
-
                 android:layout_weight="2"/>
 
             <ImageView
@@ -281,13 +280,14 @@
             <LinearLayout
                 android:id="@+id/ll_albumArt_Container"
                 style="@style/alarm_list_albumArt_Container"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_weight="1">
 
                 <LinearLayout
                     android:id="@+id/details_button_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="3dp"
                     android:layout_marginEnd="3dp"
                     android:gravity="center">
@@ -300,8 +300,7 @@
                         android:clickable="false"
                         android:focusable="false"
                         app:shapeAppearanceOverlay="@style/roundedCornersImageView"
-                        android:padding="3dp"
-                        />
+                        android:padding="8dp"/>
 
                     <!--            <TextView-->
                     <!--                android:layout_width="wrap_content"-->

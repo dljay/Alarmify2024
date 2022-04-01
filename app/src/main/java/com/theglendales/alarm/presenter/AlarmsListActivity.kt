@@ -75,7 +75,7 @@ import java.util.Calendar
 
 //1) PNG 더 찾아보고 -> 여기에 맞춰서 색 설정하기. -> Png 적용 스샷으로 테스트 하고 구입/License 받기.
 //https://www.vecteezy.com/vector-art/5437953-coniferous-night-forest-landscape-vector-illustration
-//2) BtmNav 아이콘 크기(Bigger) 텍스트 크기 (그대로 또는 약간 작게).
+//2) BtmNav 아이콘 크기(Bigger) 텍스트 크기 (그대로 또는 약간 작게) // BtmNav 와 SecondFrag 상단(Chip) 에 미약하나마 Gradient 시도 가능함. Gradient Style 을 몇가지 만들어볼것?
 //3) SecondFrag 포인트 색도 1) PNG 로 최대한 맞춰서 쓰기.
 //4) miniplayer design: 폰트 등. 열었을 때도!
 //design- blue navy app design / android glossy button?

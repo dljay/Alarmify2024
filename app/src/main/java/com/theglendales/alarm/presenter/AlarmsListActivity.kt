@@ -78,7 +78,7 @@ import java.util.Calendar
 //1) PNG 더 찾아보고 -> 여기에 맞춰서 색 설정하기. -> Png 적용 스샷으로 테스트 하고 구입/License 받기.
 //https://www.vecteezy.com/vector-art/5437953-coniferous-night-forest-landscape-vector-illustration
 
-//3) SecondFrag 포인트 색도 1) PNG 로 최대한 맞춰서 쓰기.
+//3) SecondFrag 칩 깔쌈하게 해보기.. 흐음.. 연구해볼것. 폰트 색 (회색->흰색으로?) 흐음..포인트 색도 1) PNG 로 최대한 맞춰서 쓰기.
 //4) miniplayer design: 폰트 등. 열었을 때도!
 //5) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
 //6) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!

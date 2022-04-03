@@ -57,7 +57,7 @@
     <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. 알람 시간 숫자 색!, DetailsFrag>Repeat, About the Ringtone. SecondFrag>Chip 색, SecondFrag>SeekBar Prgrs  등 Titles-->
         <color name="secondaryTextColor">#DDDDDD</color>
     <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) DetailsFrag>About the Ringtone 밑의 description, CollapsingToolbar 남은 시간.-->
-        <color name="tertiaryTextColor">#B3B3B3</color>
+        <color name="tertiaryTextColor">#979797</color>
     <!--FourthTextColor -->
         <color name="fourthTextColor">#727272</color>
     <color name="textColorBakHaSaTangYo">#A2FCF7</color>

@@ -160,10 +160,10 @@
                         android:id="@+id/_tvSun"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="@font/circular_std"
                         android:text="S"
                         android:textSize="13sp"
-                        android:textColor="@color/mat_red"
+                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
                         android:layout_weight="1"/>
 
@@ -176,10 +176,10 @@
                         android:id="@+id/_tvMon"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="@font/circular_std"
                         android:text="M"
                         android:textSize="13sp"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
                         android:layout_weight="1"/>
 
@@ -192,10 +192,10 @@
                         android:id="@+id/_tvTue"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="@font/circular_std"
                         android:text="T"
                         android:textSize="13sp"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
                         android:layout_weight="1"/>
 
@@ -208,10 +208,10 @@
                         android:id="@+id/_tvWed"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="@font/circular_std"
                         android:text="W"
                         android:textSize="13sp"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
                         android:layout_weight="1"/>
 
@@ -224,10 +224,10 @@
                         android:id="@+id/_tvThu"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="@font/circular_std"
                         android:text="T"
                         android:textSize="13sp"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
                         android:layout_weight="1"/>
 
@@ -240,10 +240,10 @@
                         android:id="@+id/_tvFri"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="@font/circular_std"
                         android:text="F"
                         android:textSize="13sp"
-                        android:textColor="@color/grey"
+                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
                         android:layout_weight="1"/>
 
@@ -256,10 +256,10 @@
                         android:id="@+id/_tvSat"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:fontFamily="sans-serif"
+                        android:fontFamily="@font/circular_std"
                         android:text="S"
                         android:textSize="13sp"
-                        android:textColor="@color/mat_blue"
+                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
                         android:layout_weight="1"/>
 

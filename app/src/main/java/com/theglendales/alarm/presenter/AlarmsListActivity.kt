@@ -65,11 +65,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e25 [SecondFrag Spotify Light 따라하기] 22/4/1(Thu) 오후 11:58
+// 30708V1.18e28 [ListFrag- 요일 색 변경 전] 22/4/3 (Sun) 오후 10:44
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:
-// Fab 다시 장착 (ImgBtn 이지만 Fab 느낌과 비슷하게)
+// 요일 단순 Bold + accent Color + Font 변경
 
 // 2) todos:
 // Fab 좀 더 키우고 + baseline 일치?? or 약간 위로 보내기?

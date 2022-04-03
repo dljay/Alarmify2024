@@ -11,6 +11,8 @@ import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.AdapterView.AdapterContextMenuInfo
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -86,15 +88,6 @@ class AlarmsListFragment : Fragment() {
     private val myTimePickerJjong: TimePickerJjong by globalInject()
 
     //lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
-
-    //"알람 선택된 요일" 표시용 동그래미 Text Drawable
-    private val yesAlarmSun = getYesAlarmDayDrawable("Sun")
-    private val yesAlarmMon = getYesAlarmDayDrawable("M")
-    private val yesAlarmTue = getYesAlarmDayDrawable("T")
-    private val yesAlarmWed = getYesAlarmDayDrawable("W")
-    private val yesAlarmThu = getYesAlarmDayDrawable("T")
-    private val yesAlarmFri = getYesAlarmDayDrawable("F")
-    private val yesAlarmSat = getYesAlarmDayDrawable("Sat")
 
     private var isLottiePlayedOnce = false // DiskScan 에서 한번이라도 Lottie 애니메이션이 재생됐는지 확인( -> recoverMissingPurchasedFiles() 때도 틀어줘야될수도 있거덩)
 //내가 추가<-
@@ -252,7 +245,10 @@ class AlarmsListFragment : Fragment() {
             //val removeEmptyView: Boolean = listRowLayout == Layout.CLASSIC || listRowLayout == Layout.COMPACT
 
         // i)  내가 추가:: 요일 표시--> (단순화 버전)
-            //todo: Dark Mode 관련..
+            //추후 Bright/Dark 할 때 신경쓸것.
+            //val currentFontUsed = rowHolder.tvSun.typeface // 현재 쓰이고 있는 Font Type (일-월화.. 토) 모두 동일한 font  가 쓰였을것이기에 그냥 일욜에서 뽑았음. 별뜻없음.
+            val fontCircularStd = ResourcesCompat.getFont(requireContext(), R.font.circular_std) // circular_std font 를 사용.
+
             val daysOfWeekStr = alarm.daysOfWeek.toString() // 설정된 요일 ex) _tw___s (화/목/일 알람 repeat 설정된 상태)
             for(i in daysOfWeekStr.indices) {
                 if(daysOfWeekStr[i] == '_') { // 알파벳 없는 빈칸이면
@@ -260,20 +256,20 @@ class AlarmsListFragment : Fragment() {
                 }  else { // 알파벳이 있으면
                     when(i) {
 
-                        0 ->{rowHolder.tvMon.text=""
-                            rowHolder.tvMon.background=yesAlarmMon}
-                        1 ->{rowHolder.tvTue.text=""
-                            rowHolder.tvTue.background=yesAlarmTue}
-                        2 ->{rowHolder.tvWed.text=""
-                            rowHolder.tvWed.background=yesAlarmWed}
-                        3 ->{rowHolder.tvThu.text=""
-                            rowHolder.tvThu.background=yesAlarmThu}
-                        4 ->{rowHolder.tvFri.text=""
-                            rowHolder.tvFri.background=yesAlarmFri}
-                        5 ->{rowHolder.tvSat.text=""
-                            rowHolder.tvSat.background=yesAlarmSat}
-                        6-> {rowHolder.tvSun.text=""
-                            rowHolder.tvSun.background=yesAlarmSun}
+                        0 ->{rowHolder.tvMon.setTextColor(ContextCompat.getColor(requireActivity().applicationContext,R.color.jj_accentColor_1))
+                            rowHolder.tvMon.setTypeface(fontCircularStd, Typeface.BOLD)}
+                        1 ->{rowHolder.tvTue.setTextColor(ContextCompat.getColor(requireActivity().applicationContext,R.color.jj_accentColor_1))
+                            rowHolder.tvTue.setTypeface(fontCircularStd, Typeface.BOLD)}
+                        2 ->{rowHolder.tvWed.setTextColor(ContextCompat.getColor(requireActivity().applicationContext,R.color.jj_accentColor_1))
+                            rowHolder.tvWed.setTypeface(fontCircularStd, Typeface.BOLD)}
+                        3 ->{rowHolder.tvThu.setTextColor(ContextCompat.getColor(requireActivity().applicationContext,R.color.jj_accentColor_1))
+                            rowHolder.tvThu.setTypeface(fontCircularStd, Typeface.BOLD)}
+                        4 ->{rowHolder.tvFri.setTextColor(ContextCompat.getColor(requireActivity().applicationContext,R.color.jj_accentColor_1))
+                            rowHolder.tvFri.setTypeface(fontCircularStd, Typeface.BOLD)}
+                        5 ->{rowHolder.tvSat.setTextColor(ContextCompat.getColor(requireActivity().applicationContext,R.color.jj_accentColor_1))
+                            rowHolder.tvSat.setTypeface(fontCircularStd, Typeface.BOLD)}
+                        6-> {rowHolder.tvSun.setTextColor(ContextCompat.getColor(requireActivity().applicationContext,R.color.jj_accentColor_1))
+                            rowHolder.tvSun.setTypeface(fontCircularStd, Typeface.BOLD)}
                     }
                 }
             } // 요일추가 for loop 여기까지
@@ -493,33 +489,8 @@ class AlarmsListFragment : Fragment() {
 
     }*/
 
-    // ImageView 에 주입할 Circle (text) Drawable Builder: https://github.com/amulyakhare/TextDrawable
-    // 기본 1주일 전체 알람 없는 날 표시용 drawable [회색 배경, 흰 글씨]
-    private fun getYesAlarmDayDrawable(day: String): TextDrawable {
-    //amulyakhare 라이브러리에서 color builder 는 유저에 따라 key 값을 다른 색 부여하는것일 뿐. 내가 쓸만한 것은 아님: https://github.com/amulyakhare/TextDrawable
-    // 추후에 Color.xx 에 다양한 색 넣는것으로 해보자. Color Class: https://developer.android.com/reference/android/graphics/Color
 
-    return when (day) {
-        "Sun" -> {
-            TextDrawable.builder().beginConfig().textColor(Color.RED).useFont(Typeface.SANS_SERIF)
-                .fontSize(31).endConfig()
-                .buildRoundRect("S",Color.LTGRAY,10)
-                //.buildRound("S", Color.LTGRAY)
-        }
-        "Sat" -> {
-            TextDrawable.builder().beginConfig().textColor(Color.BLUE).useFont(Typeface.SANS_SERIF)
-                .fontSize(31).endConfig()
-                .buildRoundRect("S",Color.LTGRAY,10)
-                //.buildRound("S", Color.LTGRAY)
-        }
-        else -> {
-            TextDrawable.builder().beginConfig().textColor(Color.WHITE).useFont(Typeface.SANS_SERIF)
-                .fontSize(31).endConfig()
-                .buildRoundRect(day,Color.LTGRAY,10)
-                //.buildRound(day, Color.LTGRAY)
-            }
-        }
-    }
+
 // 추가 5) SnackBar 대신 전달 (view & fragment 문제없는지도 확인)
     private fun snackBarDeliverer(view: View, msg: String, isShort: Boolean) {
         if(activity!=null && isAdded) { // activity 가 존재하며, 현재 Fragment 가 attached 되있으면 Snackbar 를 표시.

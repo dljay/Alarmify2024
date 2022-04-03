@@ -24,6 +24,8 @@
 
         <!-- SecondFrag -->
         <color name="jj_accentColor_1">#FF9B8B</color>
+<!--        <color name="jj_accentColor_1">#fe730c</color>-->
+
         <!-- Background Gradient 시작/종료 색 -->
         <color name="bg_gradient_start_color">#061623</color>
         <color name="bg_gradient_end_color">#0e3b48</color>
@@ -58,8 +60,8 @@
         <color name="secondaryTextColor">#DDDDDD</color>
     <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) DetailsFrag>About the Ringtone 밑의 description, CollapsingToolbar 남은 시간.-->
         <color name="tertiaryTextColor">#979797</color>
-    <!--FourthTextColor -->
-        <color name="fourthTextColor">#727272</color>
+    <!--FourthTextColor 쓰임새) S M T .. 요일 표기 안된 날들. BtmNav Icon 선택 안 되었을 때.-->
+        <color name="fourthTextColor">#626262</color>
     <color name="textColorBakHaSaTangYo">#A2FCF7</color>
 
 

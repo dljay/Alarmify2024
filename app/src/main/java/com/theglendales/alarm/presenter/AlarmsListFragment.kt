@@ -175,6 +175,7 @@ class AlarmsListFragment : Fragment() {
          */
         //a) 알람 on/off 여부
             rowHolder.onOff.isChecked = alarm.isEnabled
+            Log.d(TAG, "onBindViewHolder: onOff Check:rowHolder.onOff.isChecked=${rowHolder.onOff.isChecked}")
         //b) set the alarm text
             val c = Calendar.getInstance()
             c.set(Calendar.HOUR_OF_DAY, alarm.hour)
@@ -212,7 +213,7 @@ class AlarmsListFragment : Fragment() {
 
         // e-1) Delete add, skip animation
             if (rowHolder.idHasChanged) {rowHolder.onOff.jumpDrawablesToCurrentState()}
-        //e-2) onOff
+        //e-2) onOff [알람 껐다 켰다 하는 스위치]
             rowHolder.container.setOnClickListener {
                     val enable = !alarm.isEnabled
                     logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }

@@ -120,6 +120,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:layout_gravity="center"
 
                 android:longClickable="false"
                 android:orientation="vertical">
@@ -130,7 +131,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
                     android:layout_marginTop="2dp"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginStart="5dp"
+
                     android:layout_gravity="center_horizontal"
 
                     android:gravity="center"
@@ -160,12 +162,13 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="10dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_gravity="center_horizontal"
 
-                    android:gravity="center_horizontal"
                     android:orientation="horizontal"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginEnd="10dp"
+
+
                     android:weightSum="14">
 
                     <TextView
@@ -180,7 +183,7 @@
                         android:layout_weight="1"/>
 
                     <View
-                        android:layout_width="3dp"
+                        android:layout_width="2dp"
                         android:layout_height="20dp"
                         android:layout_weight="1" />
 
@@ -196,7 +199,7 @@
                         android:layout_weight="1"/>
 
                     <View
-                        android:layout_width="3dp"
+                        android:layout_width="2dp"
                         android:layout_height="20dp"
                         android:layout_weight="1" />
 
@@ -212,7 +215,7 @@
                         android:layout_weight="1"/>
 
                     <View
-                        android:layout_width="3dp"
+                        android:layout_width="2dp"
                         android:layout_height="20dp"
                         android:layout_weight="1" />
 
@@ -228,7 +231,7 @@
                         android:layout_weight="1"/>
 
                     <View
-                        android:layout_width="3dp"
+                        android:layout_width="2dp"
                         android:layout_height="20dp"
                         android:layout_weight="1" />
 
@@ -244,7 +247,7 @@
                         android:layout_weight="1"/>
 
                     <View
-                        android:layout_width="3dp"
+                        android:layout_width="2dp"
                         android:layout_height="20dp"
                         android:layout_weight="1" />
 
@@ -260,7 +263,7 @@
                         android:layout_weight="1"/>
 
                     <View
-                        android:layout_width="3dp"
+                        android:layout_width="2dp"
                         android:layout_height="20dp"
                         android:layout_weight="1" />
 
@@ -289,8 +292,7 @@
                     android:id="@+id/details_button_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="3dp"
-                    android:layout_marginEnd="3dp"
+
                     android:gravity="center">
 
                     <!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
@@ -298,6 +300,7 @@
                         android:id="@+id/id_row_albumArt"
                         android:layout_width="63dp"
                         android:layout_height="63dp"
+                        android:layout_marginStart="8dp"
                         android:clickable="false"
                         android:focusable="false"
                         app:shapeAppearanceOverlay="@style/roundedCornersImageView"

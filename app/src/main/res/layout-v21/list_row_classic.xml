@@ -24,8 +24,8 @@
     app:mode="normal"
 
     android:paddingStart="10dp"
-    android:layout_marginTop="11dp"
-    android:layout_marginBottom="11dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     app:dragFromEdge="right">
 
     <FrameLayout
@@ -74,7 +74,7 @@
             android:baselineAligned="true"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:background="@drawable/bg_gradient_style_1">
+            android:background="@drawable/bg_gradient_style_2">
 
             <com.theglendales.alarm.view.DontPressWithParentLayout
                 android:id="@+id/list_row_on_off_checkbox_container"

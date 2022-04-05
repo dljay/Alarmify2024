@@ -30,14 +30,14 @@
         android:id="@+id/info_fragment_base_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/jj_main_bg_color"
+        android:background="@drawable/bg_gradient_style_1"
         android:orientation="vertical">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/id_appBarLayout"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@drawable/bg_gradient_style_1">
+            android:background="@color/transparent">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/id_collapsingToolBarLayout"

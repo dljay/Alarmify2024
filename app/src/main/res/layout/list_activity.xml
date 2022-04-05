@@ -43,7 +43,7 @@
                 android:id="@+id/id_collapsingToolBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/test_screenshot"
+                android:background="@drawable/night_town"
 
                 app:contentScrim="@color/transparent"
                 app:title="Alarmify"

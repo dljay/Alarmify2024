@@ -72,17 +72,15 @@ import java.util.Calendar
 // 요일 단순 Bold + accent Color + Font 변경
 
 // 2) todos:
+//1. 메인 사진 진짜로 고르기 -> 캡쳐 시도. -> 색 Palette 완성. .
+//2. Time Picker Spinner 디자인.
+//3. SecondFrag Btm MiniPlayer UI 제작.
+//
 // Fab 좀 더 키우고 + baseline 일치?? or 약간 위로 보내기?
-// 0) ListFrag 요일 수정 -> Sun, Sat 빨간색, 파란색 없애고 다 한가지 색으로 통일, -> 선택되었을 때 네모 감싸기 말고 그냥 text 색 변화+Bold. 아님 위에 점. 로 (폰트 다 바꾸기. Listfrag 에서 Programatically 되고있네.)
-// Switch 제발 바꾸자.. ㅅㅂ
-//1) PNG 더 찾아보고 -> 여기에 맞춰서 색 설정하기. -> Png 적용 스샷으로 테스트 하고 구입/License 받기.
-//https://www.vecteezy.com/vector-art/5437953-coniferous-night-forest-landscape-vector-illustration
-
-//3) SecondFrag 칩 깔쌈하게 해보기.. 흐음.. 연구해볼것. 폰트 색 (회색->흰색으로?) 흐음..포인트 색도 1) PNG 로 최대한 맞춰서 쓰기.
-//4) miniplayer design: 폰트 등. 열었을 때도!
+//
 //5) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
 //6) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
-//7) Details Frag- Spinner Time Picker
+//7) Details Frag- Chip!
 
 
 

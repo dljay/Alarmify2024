@@ -21,8 +21,8 @@
 
 
         "
-
-        <item name="android:colorBackground">@color/jj_bg_color_1</item>
+    <!-- 여기 colorBackground 가 App 전체의 Default 칼라인데. 현재 다 다른색으로 뒤엎어서 딱히 쓰이는곳은 없음. -->
+        <item name="android:colorBackground">@color/jj_bg_color_2</item>
     <!--colorActivatedHighlight= FAB 버튼 같은것 색 -->
         <item name="android:colorActivatedHighlight">@color/secondaryColor</item>
         <!--<item name="android:colorBackground">@color/jj_background_SkyBlue_1</item>-->

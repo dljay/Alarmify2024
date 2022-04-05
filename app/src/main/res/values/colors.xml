@@ -18,8 +18,12 @@
 
         <!-- 대표 배경색 -->
         <color name="jj_main_bg_color">#020f18</color>
-        <color name="jj_bg_color_1">#19232b</color>
-        <color name="jj_bg_color_2">#071925</color>
+
+
+        <!-- bg_color_1 Btm Nav 색/SecondFrag 윗 부분 배경색 -->
+        <color name="jj_bg_color_1">#071925</color>
+        <!-- bg_color_2 SecondFrag 칩 색 등. bg_color_1 보다 살짝 밝은 톤. -->
+        <color name="jj_bg_color_2">#253e50</color>
 <!--        <color name="jj_bg_color_2">#072F4C</color>-->
 
         <!-- SecondFrag -->

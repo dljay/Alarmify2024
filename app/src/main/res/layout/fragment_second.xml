@@ -56,8 +56,6 @@
                         android:id="@+id/id_chip1_intense"
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
-                        app:chipStrokeColor="@color/blue_var_1"
-                        app:chipStrokeWidth="1dp"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -76,9 +74,6 @@
                         android:id="@+id/id_chip2_gentle"
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
-
-                        app:chipStrokeColor="@color/blue_var_1"
-                        app:chipStrokeWidth="1dp"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -100,9 +95,6 @@
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
 
-                        app:chipStrokeColor="@color/blue_var_1"
-                        app:chipStrokeWidth="1dp"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -122,9 +114,6 @@
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
 
-                        app:chipStrokeColor="@color/blue_var_1"
-                        app:chipStrokeWidth="1dp"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -143,9 +132,6 @@
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
 
-                        app:chipStrokeColor="@color/blue_var_1"
-                        app:chipStrokeWidth="1dp"
-
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -163,10 +149,6 @@
                         android:id="@+id/id_chip6_misc"
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
-
-                        app:chipStrokeColor="@color/blue_var_1"
-                        app:chipStrokeWidth="1dp"
-
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

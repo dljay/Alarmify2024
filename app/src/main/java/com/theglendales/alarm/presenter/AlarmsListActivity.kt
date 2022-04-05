@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e29 [ListFrag- Constraint Layout 으로 바꾸기 전] 22/4/5 (화) 오후 2:52
+// 30708V1.18e30 [ListFrag- 시계/요일 탑재 부분 Constraint Layout 으로 바꿨음!] 22/4/5 (화) 오후 3:08
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:

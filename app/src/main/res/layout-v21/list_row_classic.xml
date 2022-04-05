@@ -16,6 +16,7 @@
 
 <com.theglendales.alarm.jjongadd.SwipeRevealLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="75dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -115,12 +116,12 @@
                     android:layout_weight="1" />
             </com.theglendales.alarm.view.DontPressWithParentLayout>
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/list_row_digital_clock_container"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_gravity="center"
+                android:layout_weight="1"
 
                 android:longClickable="false"
                 android:orientation="vertical">
@@ -129,58 +130,64 @@
                     android:id="@+id/list_row_digital_clock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginStart="5dp"
-
                     android:layout_gravity="center_horizontal"
 
+                    android:layout_marginStart="16dp"
                     android:gravity="center"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
                         android:id="@+id/digital_clock_time"
+                        style="@style/jjTextLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="2dp"
                         android:layout_marginTop="2dp"
 
-                        android:textSize="30sp"
-                        style="@style/jjTextLarge"/>
+                        android:layout_marginBottom="2dp"
+                        android:textSize="30sp" />
 
 
                     <TextView
                         android:id="@+id/digital_clock_am_pm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="2dp"
-                        android:layout_marginTop="2dp"
                         android:layout_gravity="bottom"
-                        android:textAppearance="?android:attr/textAppearanceSmall"/>
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
                 </com.theglendales.alarm.view.DigitalClock>
 
                 <LinearLayout
+
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
+
                     android:layout_gravity="center_horizontal"
 
+
+                    android:layout_marginStart="16dp"
                     android:orientation="horizontal"
-                    android:layout_marginBottom="5dp"
-
-
-                    android:weightSum="14">
+                    android:weightSum="14"
+                    app:layout_constraintBottom_toBottomOf="@id/list_row_digital_clock_container"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/list_row_digital_clock">
 
                     <TextView
                         android:id="@+id/_tvSun"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_weight="1"
                         android:fontFamily="@font/circular_std"
-                        android:text="S"
-                        android:textSize="13sp"
-                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
-                        android:layout_weight="1"/>
+                        android:text="S"
+                        android:textColor="@color/fourthTextColor"
+                        android:textSize="13sp" />
 
                     <View
                         android:layout_width="2dp"
@@ -191,12 +198,12 @@
                         android:id="@+id/_tvMon"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_weight="1"
                         android:fontFamily="@font/circular_std"
-                        android:text="M"
-                        android:textSize="13sp"
-                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
-                        android:layout_weight="1"/>
+                        android:text="M"
+                        android:textColor="@color/fourthTextColor"
+                        android:textSize="13sp" />
 
                     <View
                         android:layout_width="2dp"
@@ -207,12 +214,12 @@
                         android:id="@+id/_tvTue"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_weight="1"
                         android:fontFamily="@font/circular_std"
-                        android:text="T"
-                        android:textSize="13sp"
-                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
-                        android:layout_weight="1"/>
+                        android:text="T"
+                        android:textColor="@color/fourthTextColor"
+                        android:textSize="13sp" />
 
                     <View
                         android:layout_width="2dp"
@@ -223,12 +230,12 @@
                         android:id="@+id/_tvWed"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_weight="1"
                         android:fontFamily="@font/circular_std"
-                        android:text="W"
-                        android:textSize="13sp"
-                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
-                        android:layout_weight="1"/>
+                        android:text="W"
+                        android:textColor="@color/fourthTextColor"
+                        android:textSize="13sp" />
 
                     <View
                         android:layout_width="2dp"
@@ -239,12 +246,12 @@
                         android:id="@+id/_tvThu"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_weight="1"
                         android:fontFamily="@font/circular_std"
-                        android:text="T"
-                        android:textSize="13sp"
-                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
-                        android:layout_weight="1"/>
+                        android:text="T"
+                        android:textColor="@color/fourthTextColor"
+                        android:textSize="13sp" />
 
                     <View
                         android:layout_width="2dp"
@@ -255,12 +262,12 @@
                         android:id="@+id/_tvFri"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_weight="1"
                         android:fontFamily="@font/circular_std"
-                        android:text="F"
-                        android:textSize="13sp"
-                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
-                        android:layout_weight="1"/>
+                        android:text="F"
+                        android:textColor="@color/fourthTextColor"
+                        android:textSize="13sp" />
 
                     <View
                         android:layout_width="2dp"
@@ -271,15 +278,16 @@
                         android:id="@+id/_tvSat"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_weight="1"
                         android:fontFamily="@font/circular_std"
-                        android:text="S"
-                        android:textSize="13sp"
-                        android:textColor="@color/fourthTextColor"
                         android:gravity="center"
-                        android:layout_weight="1"/>
+                        android:text="S"
+                        android:textColor="@color/fourthTextColor"
+                        android:textSize="13sp" />
 
                 </LinearLayout>
-            </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/ll_albumArt_Container"

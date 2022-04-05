@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e31 [ListFrag- 구글 알람스타일(CardView 느낌) 시도 전.] 22/4/5 (화) 오후 10:01
+// 30708V1.18e31b [ListFrag- 구글 알람스타일(CardView 느낌) 시도 중.생각보다 괘않음..] 22/4/5 (화) 오후 10:21
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:

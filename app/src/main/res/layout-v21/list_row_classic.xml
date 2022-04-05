@@ -18,16 +18,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="75dp"
+    android:layout_height="76dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center_vertical"
     app:mode="normal"
+
+    android:paddingStart="10dp"
+    android:layout_marginTop="11dp"
+    android:layout_marginBottom="11dp"
     app:dragFromEdge="right">
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@color/mat_red">
+        android:background="@drawable/swipe_reveal_round_corner_and_color">
         <LinearLayout
             android:id="@+id/ll_swipeDeleteContainer"
             android:layout_width="wrap_content"
@@ -62,13 +66,15 @@
         </LinearLayout>
     </FrameLayout>
 
-
+    <!-- 아래 android:background="@color/jj_main_bg_color" 이거였음.-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:baselineAligned="true"
-            android:background="@color/jj_main_bg_color">
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="@drawable/bg_gradient_style_1">
 
             <com.theglendales.alarm.view.DontPressWithParentLayout
                 android:id="@+id/list_row_on_off_checkbox_container"

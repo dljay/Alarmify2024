@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e30 [ListFrag- 시계/요일 탑재 부분 Constraint Layout 으로 바꿨음!] 22/4/5 (화) 오후 3:08
+// 30708V1.18e31 [ListFrag- 구글 알람스타일(CardView 느낌) 시도 전.] 22/4/5 (화) 오후 10:01
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:

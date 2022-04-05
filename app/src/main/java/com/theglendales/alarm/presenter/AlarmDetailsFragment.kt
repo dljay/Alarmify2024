@@ -449,11 +449,9 @@ class AlarmDetailsFragment : Fragment() {
                         timePickerSpinner.hour = editor.hour
                         timePickerSpinner.minute = editor.minutes
                     })
-                rowHolder.onOff.isChecked = editor.isEnabled
-                    //mPreAlarmCheckBox.isChecked = editor.isPrealarm
-            //****알람 repeat 설정된 요일을 Chip 으로 표시해주는 것!!
-                    //mRepeatSummary.text = editor.daysOfWeek.summary(requireContext()) // 기존 Repeat 요일 메뉴에 쓰이던 것. 지워도 됨.
-                    //val alarmSetDaysStr = editor.daysOfWeek.summary(requireContext()) // 여기서 'Str 리스트로 기존에 설정된 요일들 받음' -> ex. [Tue, Thu, Sat, Sun]
+                rowHolder.onOff.isChecked = editor.isEnabled //todo: 여기부터 22/4/4 11:07
+
+
 
                 // Local 언어 때문에 when(요일이름) 을 작성할수 없어. Int 로 된 Str 을 받는 방법으로 바꿈 whichInt 는 ->   [0,3,4] (=월,목,금)
                 // whichInt (칩 선택시 어떤 칩 클릭했는지 확인 용도):  월 = 0 화 = 1 수 = 2  목 = 3 금 = 4 토 = 5 일 = 6

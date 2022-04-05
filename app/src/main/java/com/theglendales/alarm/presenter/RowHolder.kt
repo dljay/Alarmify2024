@@ -3,6 +3,7 @@ package com.theglendales.alarm.presenter
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
 import com.theglendales.alarm.view.DigitalClock
@@ -15,6 +16,8 @@ class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : Recycler
     val digitalClockContainer: View
     val rowView: View = view
     val onOff: CompoundButton
+    //val onOff: MaterialButton
+
     val container: View
     val alarmId: Int = alarmIdReceived
     val detailsButton: View
@@ -36,6 +39,9 @@ class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : Recycler
         digitalClock = find(R.id.list_row_digital_clock) as DigitalClock
         digitalClockContainer = find(R.id.list_row_digital_clock_container)
         onOff = find(R.id.list_row_on_off_switch) as CompoundButton
+        //onOff = find(R.id.list_row_on_off_switch) as MaterialButton
+
+
         container = find(R.id.list_row_on_off_checkbox_container)
         detailsButton = find(R.id.details_button_container) // ' ... ' 이렇게 생긴 놈. -> 지금은 album art 로 대체되어 있음.
         val prev: RowHolder? = rowView.tag as RowHolder?

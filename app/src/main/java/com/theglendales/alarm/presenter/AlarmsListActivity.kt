@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e28 [ListFrag- 요일 색 변경 전] 22/4/3 (Sun) 오후 10:44
+// 30708V1.18e28 [ListFrag- OnOffContainer LinearLayout 으로 바꾸기 전] 22/4/5 (화) 오전 11:06
 //
 // ** 하위 API (26 이하) 테스트 해볼것.
 // 1) Achievements:

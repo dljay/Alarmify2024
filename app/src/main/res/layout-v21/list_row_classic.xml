@@ -71,7 +71,7 @@
 
             <com.theglendales.alarm.view.DontPressWithParentLayout
                 android:id="@+id/list_row_on_off_checkbox_container"
-
+                android:layout_marginStart="20dp"
                 android:layout_width="68dp"
                 android:layout_height="match_parent"
                 android:gravity="center">
@@ -93,9 +93,21 @@
 
 
                     app:track="@drawable/switch_track_v1"
-
+                    android:thumb="@drawable/switch_thumb"
                     android:clickable="false"
                     android:focusable="false" />
+
+              <!--  <com.google.android.material.button.MaterialButton
+                    android:id="@+id/list_row_on_off_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:checkable="true"
+                    app:iconGravity="end"
+                    app:iconTint="@null"
+                    app:backgroundTint="@color/transparent"
+                    app:icon="@drawable/ic_alarm_on_2"/>-->
 
                 <View
                     android:layout_width="0dp"
@@ -120,7 +132,7 @@
                     android:layout_marginTop="2dp"
                     android:layout_marginEnd="10dp"
                     android:layout_gravity="center_horizontal"
-                    android:paddingStart="30dp"
+
                     android:gravity="center"
                     android:orientation="horizontal">
 
@@ -148,7 +160,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="30dp"
+                    android:paddingStart="10dp"
 
                     android:gravity="center_horizontal"
                     android:orientation="horizontal"
@@ -262,18 +274,6 @@
                         android:textColor="@color/fourthTextColor"
                         android:gravity="center"
                         android:layout_weight="1"/>
-
-                    <!--            <TextView-->
-                    <!--                android:id="@+id/list_row_daysOfWeek"-->
-                    <!--                android:layout_width="wrap_content"-->
-                    <!--                android:layout_height="wrap_content"-->
-                    <!--                android:layout_marginRight="5dp"-->
-                    <!--                android:text="Weekdays"-->
-                    <!--                android:textAppearance="?android:attr/textAppearanceSmall"-->
-                    <!--                android:textColor="?android:attr/colorAccent"-->
-
-                    <!--                android:focusableInTouchMode="false"/>-->
-
 
                 </LinearLayout>
             </LinearLayout>

@@ -22,7 +22,7 @@
 
         "
     <!-- 여기 colorBackground 가 App 전체의 Default 칼라. [현재 ListFrag 뒤의 배경색으로 섞여서 나오는 중!!] -->
-        <item name="android:colorBackground">@color/jj_bg_color_1</item>
+        <item name="android:colorBackground">@color/jj_layered_bg_color</item>
     <!--colorActivatedHighlight= FAB 버튼 같은것 색 -->
         <item name="android:colorActivatedHighlight">@color/secondaryColor</item>
         <!--<item name="android:colorBackground">@color/jj_background_SkyBlue_1</item>-->

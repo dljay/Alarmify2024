@@ -65,16 +65,16 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e31b [ListFrag- 구글 알람스타일(CardView 느낌) 시도 중.생각보다 괘않음..] 22/4/5 (화) 오후 10:21
+// 30708V1.18e33a [전체 UI 수정중] 22/4/5 (화) 오후 12:24
 //
-// ** 하위 API (26 이하) 테스트 해볼것.
+
 // 1) Achievements:
-// 요일 단순 Bold + accent Color + Font 변경
 
 // 2) todos:
-//1. 메인 사진 진짜로 고르기 -> 캡쳐 시도. -> 색 Palette 완성. .
-//2. Time Picker Spinner 디자인.
+//1. Time Picker Spinner 디자인 -> 이거 끝나는대로 전체 UI 수정 계속 진행! 색이 정해지지 않으면 아무것도 할 수 없음!
+//2. Status Bar 투명+ Collapsing Toolbar 의 사진이 보이게. (Alarm Extreme 처럼).
 //3. SecondFrag Btm MiniPlayer UI 제작.
+// 4. Fab 뭔가 해줄것. accentColor 도 좀 더 생각해보기.
 //
 // Fab 좀 더 키우고 + baseline 일치?? or 약간 위로 보내기?
 //

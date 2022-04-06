@@ -75,7 +75,8 @@
                         android:id="@+id/id_chip2_gentle"
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
-
+                        app:chipStrokeColor="@color/jj_bg_color_1"
+                        app:chipStrokeWidth="1dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -95,6 +96,8 @@
                         android:id="@+id/id_chip3_nature"
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
+                        app:chipStrokeColor="@color/jj_bg_color_1"
+                        app:chipStrokeWidth="1dp"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -114,6 +117,8 @@
                         android:id="@+id/id_chip4_location"
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
+                        app:chipStrokeColor="@color/jj_bg_color_1"
+                        app:chipStrokeWidth="1dp"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -132,6 +137,8 @@
                         android:id="@+id/id_chip5_popular"
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
+                        app:chipStrokeColor="@color/jj_bg_color_1"
+                        app:chipStrokeWidth="1dp"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -150,6 +157,8 @@
                         android:id="@+id/id_chip6_misc"
                         style="@style/rtTagChipStyle"
                         android:textAppearance="@style/rtTagChipTextStyle"
+                        app:chipStrokeColor="@color/jj_bg_color_1"
+                        app:chipStrokeWidth="1dp"
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

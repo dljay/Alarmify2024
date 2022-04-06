@@ -17,14 +17,14 @@
     <!-- 실제 사용하는 Color 들 여기부터 정리해볼것(시작) -->
 
         <!-- 대표 배경색 -->
-        <color name="jj_layered_bg_color">#495468</color>
-        <color name="jj_main_bg_color">#091627</color>
+            <color name="jj_layered_bg_color">#495468</color>
+            <color name="jj_main_bg_color">#091627</color>
 
 
         <!-- bg_color_1 Btm Nav 색/SecondFrag 윗 부분 배경색 -->
-        <color name="jj_bg_color_1">#425878</color>
+            <color name="jj_bg_color_1">#425878</color>
         <!-- bg_color_2 SecondFrag 칩 색 등. bg_color_1 보다 살짝 밝은 톤. -->
-        <color name="jj_bg_color_2">#334661</color>
+            <color name="jj_bg_color_2">#334661</color>
 <!--        <color name="jj_bg_color_2">#072F4C</color>-->
 
         <!-- SecondFrag -->
@@ -32,8 +32,10 @@
             <color name="jj_accentColor_1">#FF9C25</color>
 
         <!-- Background Gradient 시작/종료 색 -->
-        <color name="bg_gradient_start_color">#061623</color>
-        <color name="bg_gradient_end_color">#0e3b48</color>
+            <color name="bg_gradient_start_color">#061623</color>
+            <color name="bg_gradient_end_color">#0e3b48</color>
+        <!-- 경계선 색! -->
+            <color name="border_color_1">#050B14</color>
 
 
     <!-- 실제 사용하는 Color 들 여기부터 정리해볼것(끝) -->

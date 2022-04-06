@@ -143,7 +143,7 @@
 
                     app:maxImageSize="35dp"
                     app:tint="@color/jj_accentColor_1"
-                    android:src="@drawable/ic_baseline_add_circle_32"/>
+                    android:src="@drawable/ic_add_bell_24"/>
 
             <!-- 기존 (+) 흑백 스타일 -->
                 <!--<ImageButton

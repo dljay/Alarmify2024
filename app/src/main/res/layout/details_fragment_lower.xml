@@ -49,12 +49,10 @@
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/_chipGroupDays"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="2"
                     android:layout_gravity="center|left"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginEnd="0dp"
                     app:chipSpacingHorizontal="0dp"
                     app:singleLine="true">
 
@@ -62,77 +60,94 @@
                         android:id="@+id/_chipSun"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        app:chipSurfaceColor="@color/transparent"
+                        android:backgroundTint="@color/transparent"
                         android:checkable="true"
                         android:checked="false"
-                        android:text="S"
-                        android:textColor="@color/mat_red"
+                        android:text="Sun"
+                        android:textAppearance="@style/rtTagChipTextStyle"
+
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/_chipMon"
+                        app:chipSurfaceColor="@color/transparent"
+                        android:backgroundTint="@color/transparent"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checkable="true"
                         android:checked="false"
 
                         android:text="M"
-                        android:textColor="@color/secondaryTextColor"
+                        android:textAppearance="@style/rtTagChipTextStyle"
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/_chipTue"
+                        app:chipSurfaceColor="@color/transparent"
+                        android:backgroundTint="@color/transparent"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checkable="true"
                         android:checked="false"
 
                         android:text="T"
-                        android:textColor="@color/secondaryTextColor"
+                        android:textAppearance="@style/rtTagChipTextStyle"
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/_chipWed"
+                        app:chipSurfaceColor="@color/transparent"
+                        android:backgroundTint="@color/transparent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checkable="true"
                         android:checked="false"
 
                         android:text="W"
-                        android:textColor="@color/secondaryTextColor"
+                        android:textAppearance="@style/rtTagChipTextStyle"
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/_chipThu"
+                        app:chipSurfaceColor="@color/transparent"
+                        android:backgroundTint="@color/transparent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checkable="true"
                         android:checked="false"
 
                         android:text="T"
-                        android:textColor="@color/secondaryTextColor"
+                        android:textAppearance="@style/rtTagChipTextStyle"
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/_chipFri"
+                        app:chipSurfaceColor="@color/transparent"
+                        android:backgroundTint="@color/transparent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checkable="true"
                         android:checked="false"
-
+                        android:textAppearance="@style/rtTagChipTextStyle"
                         android:text="F"
-                        android:textColor="@color/secondaryTextColor"
+
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/_chipSat"
+                        app:chipSurfaceColor="@color/transparent"
+                        android:backgroundTint="@color/transparent"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checkable="true"
                         android:checked="false"
 
-                        android:layout_marginEnd="3dp"
-                        android:text="S"
-                        android:textColor="@color/mat_blue"
+                        android:text="Sat"
+                        android:textAppearance="@style/rtTagChipTextStyle"
                         style="@style/customChipStyle"/>
 
 

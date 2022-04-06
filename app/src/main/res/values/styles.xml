@@ -22,7 +22,7 @@
         <item name="background">@null</item>
     </style>
 
-    <!-- 내가 만든 [요일] Chip style  -->
+    <!-- 1) DetailsFrag [요일] Chip style  -->
     <style name="customChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_background_color</item>
         <item name="android:textColor">@color/chip_text_color</item>
@@ -31,7 +31,7 @@
 
     </style>
 
-    <!-- [SecondFrag] TAG Chip style: (1) BG 색, Text 색 , Icon 관련 [왜그런지 TextColor 는 아래 rtTagChipTextStyle 에 넣어도 안 먹힘..]-->
+    <!-- 2) [SecondFrag] TAG Chip style: (1) BG 색, Text 색 , Icon 관련 [왜그런지 TextColor 는 아래 rtTagChipTextStyle 에 넣어도 안 먹힘..]-->
     <style name="rtTagChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="chipBackgroundColor">@color/chip_background_color</item>
         <item name="android:textColor">@color/secondaryTextColor</item>

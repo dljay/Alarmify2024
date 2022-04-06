@@ -32,7 +32,9 @@
         <!-- 밑에거 넣으면 겹쳐서 나옴.-->
         <!--<item name="windowActionBarOverlay">true</item>-->
 
-
+<!--        <item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
+<!--        <item name="android:windowTranslucentStatus">false</item>-->
+<!--        <item name="android:statusBarColor">#00000000</item>-->
 
         <!-- FONT TEST-->
         <item name="android:fontFamily">@font/circular_std_medium</item>

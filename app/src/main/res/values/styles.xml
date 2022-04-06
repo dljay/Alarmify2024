@@ -250,6 +250,11 @@
     </style>
 
     <!-- Font Style [TEST] attr.. textAppearance 넘 짜증나서 그냥 이걸로 쓰기 -->
+        <style name="jjTextLarge2">
+            <item name="fontFamily">@font/circular_std_medium</item>
+            <item name="android:textColor">@color/primaryTextColor</item>
+            <item name="android:textSize">18sp</item>
+        </style>
         <style name="jjTextLarge">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryTextColor</item>

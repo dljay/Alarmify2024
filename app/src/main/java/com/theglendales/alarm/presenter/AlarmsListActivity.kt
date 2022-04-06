@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e33a [전체 UI 수정중] 22/4/5 (화) 오후 12:24
+// 30708V1.18e33d [전체 UI 수정중-Border 라인..] 22/4/5 (화) 오후 11:52
 //
 
 // 1) Achievements:

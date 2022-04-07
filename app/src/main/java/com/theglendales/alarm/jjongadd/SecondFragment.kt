@@ -857,7 +857,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             @SuppressLint("ClickableViewAccessibility") // 아래 constLayout_entire.setxx... 이거 장애인 warning 없애기
             override fun onPanelStateChanged(panel: View?,previousState: SlidingUpPanelLayout.PanelState?,newState: SlidingUpPanelLayout.PanelState?) {
                 //Log.d(TAG, "onPanelStateChanged: previousState= $previousState -> newState=$newState, isActivated= ${slidingUpPanelLayout.isActivated}")
-                //Log.d(TAG, "onPanelStateChanged: btmNavView.height=  ${btmNavViewFromActivity.height}")
+                Log.d(TAG, "onPanelStateChanged: btmNavView.height=${btmNavViewFromActivity.height}, umanoHeight?인듯=${panel!!.height}")
 
             //1) 접힌상태-> 완전히 열리는 상태로 전환중(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행 (대략 0.4 초 소요)
             /*if(previousState== SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {

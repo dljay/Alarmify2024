@@ -162,12 +162,12 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <!-- 중간에 작은 Divider Border>>> -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:background="@color/jj_background_Gray_1">
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="3dp"-->
+<!--            android:background="@color/border_color_1">-->
 
-        </View>
+<!--        </View>-->
 
     </LinearLayout>
 

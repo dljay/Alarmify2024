@@ -13,8 +13,8 @@
 
         android:gravity="bottom"
         app:umanoOverlay="false"
-        app:umanoPanelHeight="124dp"
-        app:umanoShadowHeight="0dp">
+        app:umanoPanelHeight="122dp"
+        app:umanoShadowHeight="2dp">
 
         <!--1st child - Chips+ 리싸이클뷰임!  -->
         <LinearLayout
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/chipgroup_round_corner"
-
+                android:orientation="vertical"
                 android:paddingTop="2dp"
                 android:scrollbars="none"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -172,10 +172,13 @@
                         app:chipIconVisible="true">
 
                     </com.google.android.material.chip.Chip>
-
-
-
                 </com.google.android.material.chip.ChipGroup>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:background="@color/border_color_1">
+                </View>
 
             </LinearLayout>
 

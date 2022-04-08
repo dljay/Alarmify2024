@@ -65,8 +65,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e33d [전체 UI 수정중-Border 라인..] 22/4/5 (화) 오후 2:19
-// ** Spinner- TimePicker: A) 위아래 Margin 해결-> 그냥 180dp -> 200dp로? B) DetailsFrag> Information 아래 여백 없애기. C)DetailsFrag 기존 배경색/Round Corner 없을때랑 비교 (현재 폰트 사이즈에서)
+// 30708V1.18e33f [전체 UI 수정중-Border 라인..] 22/4/5 (화) 오후 3:39
+// ** Spinner- TimePicker:  B) DetailsFrag> Information 아래 여백 처리... C)DetailsFrag 기존 배경색/Round Corner 없을때랑 비교 (현재 폰트 사이즈에서)
 
 // 1) Achievements:
 

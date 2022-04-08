@@ -14,7 +14,7 @@
 
         android:timePickerMode="spinner"
 
-        android:background="@color/alarm_selected_color"
+        android:background="@color/jj_main_bg_color"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

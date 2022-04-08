@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/btm_nav_bg_round_corner"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,7 +11,7 @@
     열리거나 Collapse 되지 않도록 nestedScrollingEnabled=false 로 해두었음. 22/2/21-->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:nestedScrollingEnabled="false"
         android:orientation="vertical">
@@ -32,7 +33,7 @@
             <LinearLayout
                 android:id="@+id/details_repeat_chipRow"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="77dp"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="12dp"
                 android:orientation="vertical">
@@ -195,7 +196,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_RtPicker_Container"
                 android:layout_width="match_parent"
-                android:layout_height="80dp">
+                android:layout_height="77dp">
                 <!-- A) Ringtone Text + Spinner-->
 
 

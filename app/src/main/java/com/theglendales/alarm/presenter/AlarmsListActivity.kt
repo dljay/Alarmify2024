@@ -66,7 +66,7 @@ import java.util.Calendar
 
 
 // 30708V1.18e33f [전체 UI 수정중-Border 라인..] 22/4/5 (화) 오후 3:39
-// ** Spinner- TimePicker:  B) DetailsFrag> Information 아래 여백 처리... C)DetailsFrag 기존 배경색/Round Corner 없을때랑 비교 (현재 폰트 사이즈에서)
+// ** Spinner- TimePicker:  B) DetailsFrag> Information 아래 여백 처리... => Description 이 4줄이 돠야 얼추 맞는것 참조. C)DetailsFrag 기존 배경색/Round Corner 없을때랑 비교 (현재 폰트 사이즈에서)
 
 // 1) Achievements:
 

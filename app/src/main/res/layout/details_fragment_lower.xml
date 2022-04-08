@@ -73,7 +73,6 @@
                         android:checked="false"
                         android:text="Sun"
                         android:textAppearance="@style/rtTagChipTextStyle"
-
                         style="@style/customChipStyle"/>
 
                     <com.google.android.material.chip.Chip
@@ -196,6 +195,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
+                android:layout_marginBottom="3dp"
                 android:background="?android:attr/dividerHorizontal" />
 
         <!-- Ringtone 메뉴 ******* -->
@@ -247,6 +247,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="N/A"
+                        android:textColor="@color/primaryTextColor"
                         android:textAppearance="?android:attr/textAppearanceSmall">
                     </TextView>
 
@@ -291,6 +292,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
                 android:background="?android:attr/dividerHorizontal" />
             <!--About the Ringtone -->
             <LinearLayout
@@ -313,6 +315,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="5dp"
+                    android:textColor="@color/primaryTextColor"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="N/A"/>
 
@@ -322,6 +325,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
                 android:layout_marginTop="6dp"
+                android:layout_marginBottom="3dp"
                 android:background="?android:attr/dividerHorizontal" />
 
             <!--Information [TextView] -->
@@ -437,7 +441,7 @@
             android:layout_weight="1"
             android:focusable="true"
             android:text="@android:string/cancel"
-            android:textColor="@color/mat_red"/>
+            android:textColor="@color/primaryTextColor"/>
 
         <Button
             android:id="@+id/details_activity_button_save"
@@ -447,7 +451,7 @@
             android:layout_weight="1"
             android:focusable="true"
             android:text="@android:string/ok"
-            android:textColor="@color/secondaryLightColor"/>
+            android:textColor="@color/primaryTextColor"/>
     </LinearLayout>
 
 </LinearLayout>

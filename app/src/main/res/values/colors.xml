@@ -63,11 +63,11 @@
 <!-- TEXT 관련 -->
 
     <!--primaryTextColor =   현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
-        <color name="primaryTextColor">#D6D6D6</color>
+        <color name="primaryTextColor">#ECECEC</color>
     <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. 알람 시간 숫자 색!, DetailsFrag>Repeat, About the Ringtone. SecondFrag>Chip 색, SecondFrag>SeekBar Prgrs  등 Titles-->
         <color name="secondaryTextColor">#DDDDDD</color>
-    <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) DetailsFrag>About the Ringtone 밑의 description, CollapsingToolbar 남은 시간.-->
-        <color name="tertiaryTextColor">#979797</color>
+    <!--tertiaryTextColor =  [attrs/textAppearanceSmall] 을 결정함. (ex. a) DetailsFrag>About the Ringtone 밑의 description, CollapsingToolbar 남은 시간. AM/PM .. -->
+        <color name="tertiaryTextColor">#B5B5B5</color>
     <!--FourthTextColor 쓰임새) S M T .. 요일 표기 안된 날들. BtmNav Icon 선택 안 되었을 때.-->
         <color name="fourthTextColor">#626262</color>
     <color name="textColorBakHaSaTangYo">#A2FCF7</color>

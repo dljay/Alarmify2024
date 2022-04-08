@@ -252,8 +252,8 @@
     <!-- Font Style [TEST] attr.. textAppearance 넘 짜증나서 그냥 이걸로 쓰기 -->
         <style name="jjText_TimePicker_Spinner">
             <item name="fontFamily">@font/circular_std_bold</item>
-            <item name="android:textColor">@color/primaryTextColor</item>
-            <item name="android:textSize">20sp</item>
+            <item name="android:textColor">@color/secondaryTextColor</item>
+            <item name="android:textSize">35sp</item>
             <item name="android:textStyle">bold</item>
         </style>
 

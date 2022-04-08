@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+    <!-- SPinner Time Picker 가 답답해 보여서 아래 Margintop=15dp 를 넣어줬음. 더블체크..-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/btm_nav_bg_round_corner"
     android:orientation="vertical"
+
+
+    android:layout_marginTop="15dp"
+
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -348,6 +354,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="5dp"
                         android:src="@drawable/badge_1_intense"
+
                         android:visibility="gone"/>
 
                     <ImageView

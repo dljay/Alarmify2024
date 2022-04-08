@@ -7,10 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".presenter.AlarmsListActivity">
 
+
     <TimePicker
         android:id="@+id/_tPicker_jj_Spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="@style/jjText_TimePicker_Spinner"
 
         android:timePickerMode="spinner"
 

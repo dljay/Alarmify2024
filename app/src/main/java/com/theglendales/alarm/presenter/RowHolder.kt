@@ -3,7 +3,6 @@ package com.theglendales.alarm.presenter
 import android.view.View
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.button.MaterialButton
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
 import com.theglendales.alarm.view.DigitalClock
@@ -13,6 +12,8 @@ import com.theglendales.alarm.view.DigitalClock
  */
 class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : RecyclerView.ViewHolder(view) {
     val digitalClock: DigitalClock
+    val digitalClockTime: TextView // [시간 표시되는 곳] Gray Out 위해 내가 추가.
+    val digitalClockAmPm: TextView // [시간 표시되는 곳] Gray Out 위해 내가 추가.
     val digitalClockContainer: View
     val rowView: View = view
     val onOff: CompoundButton
@@ -37,6 +38,9 @@ class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : Recycler
 
     init {
         digitalClock = find(R.id.list_row_digital_clock) as DigitalClock
+        digitalClockTime = find(R.id.digital_clock_time) as TextView // Grey out 위해 내가 추가
+        digitalClockAmPm = find(R.id.digital_clock_am_pm) as TextView  // Grey out 위해 내가 추가
+
         digitalClockContainer = find(R.id.list_row_digital_clock_container)
         onOff = find(R.id.list_row_on_off_switch) as CompoundButton
         //onOff = find(R.id.list_row_on_off_switch) as MaterialButton

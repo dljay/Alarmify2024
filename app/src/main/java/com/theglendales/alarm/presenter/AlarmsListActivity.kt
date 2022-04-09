@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e33f [전체 UI 수정중-Border 라인..] 22/4/5 (화) 오후 9:42
+// 30708V1.18e34a [ListFrag 알람 on/off 상태에 따라 alpha 값 변경.] 22/4/9 (토) 정오
 
 
 // 1) Achievements:

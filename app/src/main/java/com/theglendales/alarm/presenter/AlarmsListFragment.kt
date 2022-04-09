@@ -175,12 +175,23 @@ class AlarmsListFragment : Fragment() {
          */
         //a) 알람 on/off 여부
             rowHolder.onOff.isChecked = alarm.isEnabled
-            Log.d(TAG, "onBindViewHolder: onOff Check:rowHolder.onOff.isChecked=${rowHolder.onOff.isChecked}")
-        //b) set the alarm text
+
+            when(alarm.isEnabled) { // 초기 로딩시 시계,Am/Pm, 요일 있는 부분 알파 값 변경.
+                true -> {rowHolder.digitalClockContainer.alpha=1.0f
+                        rowHolder.albumArt.alpha = 1.0f
+                }
+                false -> {rowHolder.digitalClockContainer.alpha=0.2f
+                        rowHolder.albumArt.alpha = 0.2f
+                }
+            }
+
+
+        //b) set the alarm text - 설정된 시간 보여주기.
             val c = Calendar.getInstance()
             c.set(Calendar.HOUR_OF_DAY, alarm.hour)
             c.set(Calendar.MINUTE, alarm.minutes)
             rowHolder.digitalClock.updateTime(c)
+
         //c-1) Row 의 AlbumArt 에 쓰일 아트 Path 읽고
             var artPathFromAlarmValue: String? = alarm.artFilePath // +++
             val alarmtoneList: List<Alarmtone> = listOf<Alarmtone>(alarm.alarmtone) // 사실 alarmtone 한개인데 checkIfRtIsMissing 이 List<Alarmtone> 을 받게끔 디자인되어있어서.
@@ -213,11 +224,20 @@ class AlarmsListFragment : Fragment() {
 
         // e-1) Delete add, skip animation
             if (rowHolder.idHasChanged) {rowHolder.onOff.jumpDrawablesToCurrentState()}
-        //e-2) onOff [알람 껐다 켰다 하는 스위치]
+        //e-2) onOff [알람 껐다 켰다 하는 스위치] Listener
             rowHolder.container.setOnClickListener {
                     val enable = !alarm.isEnabled
                     logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
                     alarms.enable(alarm, enable)
+
+                    when(alarm.isEnabled) { // 꺼지고 켜짐에 따라 시계,Am/Pm, 요일 있는 부분 알파 값 변경.
+                        true -> {rowHolder.digitalClockContainer.alpha=1.0f
+                            rowHolder.albumArt.alpha = 1.0f
+                        }
+                        false -> {rowHolder.digitalClockContainer.alpha=0.2f
+                            rowHolder.albumArt.alpha = 0.2f
+                        }
+                    }
                 }
 
             //Log.d(TAG, "onBindViewHolder: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
@@ -251,6 +271,7 @@ class AlarmsListFragment : Fragment() {
             val fontCircularStd = ResourcesCompat.getFont(requireContext(), R.font.circular_std) // circular_std font 를 사용.
 
             val daysOfWeekStr = alarm.daysOfWeek.toString() // 설정된 요일 ex) _tw___s (화/목/일 알람 repeat 설정된 상태)
+
             for(i in daysOfWeekStr.indices) {
                 if(daysOfWeekStr[i] == '_') { // 알파벳 없는 빈칸이면
                     // do nothing

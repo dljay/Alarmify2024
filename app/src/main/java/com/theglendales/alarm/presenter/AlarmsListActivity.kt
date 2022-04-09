@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34a [ListFrag 알람 on/off 상태에 따라 alpha 값 변경.] 22/4/9 (토) 정오
+// 30708V1.18e34b [ListFrag 알람 on/off 상태에 따라 alpha 값 변경.] 22/4/9 (토) 오후 2:25
 
 
 // 1) Achievements:

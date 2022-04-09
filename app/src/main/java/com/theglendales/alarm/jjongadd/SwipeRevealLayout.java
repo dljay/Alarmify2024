@@ -25,8 +25,8 @@ public class SwipeRevealLayout extends ViewGroup {
     private static final String TAG="SwipeRevealLayout.java";
     private static final String SUPER_INSTANCE_STATE = "saved_instance_state_parcelable";
 
-    private static final int DEFAULT_MIN_FLING_VELOCITY = 300; // dp per second
-    private static final int DEFAULT_MIN_DIST_REQUEST_DISALLOW_PARENT = 1; // dp
+    private static final int DEFAULT_MIN_FLING_VELOCITY = 200; // Originally 200
+    private static final int DEFAULT_MIN_DIST_REQUEST_DISALLOW_PARENT = 1; // Originally 1
 
     public static final int DRAG_EDGE_LEFT =   0x1;
     public static final int DRAG_EDGE_RIGHT =  0x1 << 1;
@@ -564,6 +564,7 @@ public class SwipeRevealLayout extends ViewGroup {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            //Log.d(TAG, "onScroll: e1=" +e1);
             mIsScrolling = true;
 
             if (getParent() != null) {

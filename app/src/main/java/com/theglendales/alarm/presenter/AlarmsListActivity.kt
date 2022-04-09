@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34b [ListFrag 알람 on/off 상태에 따라 alpha 값 변경.] 22/4/9 (토) 오후 2:25
+// 30708V1.18e34c [Multiple Screen size support 시험 전! Constraint Layout 으로 변경전.] 22/4/9 (토) 오후 9:34
 
 
 // 1) Achievements:

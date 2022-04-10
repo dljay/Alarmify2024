@@ -49,7 +49,7 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
     fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater, toolBarAsActionBar: ActionBar): Boolean {
 
         Log.d(TAG, "onCreateOptionsMenu: jj-called")
-        inflater.inflate(R.menu.menu_action_bar, menu)
+        inflater.inflate(R.menu.menu_nav_drawer, menu)
 
         // APP Share 하기 :  GooglePlay Store 링크를 메일이나 그 외 건으로 발송.
         val intent = Intent(Intent.ACTION_SEND).apply {

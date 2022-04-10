@@ -34,18 +34,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentTop="true"
+
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="5dp"
+
             android:divider="#B1B1B1"
             android:dividerHeight="10dp"
             android:paddingBottom="65dp"
             tools:layout="@layout/list_fragment"
             tools:listitem="@layout/list_row_classic"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize" />
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="?android:attr/actionBarSize" />-->
 
 
     </RelativeLayout>
@@ -55,22 +57,6 @@
         android:layout_height="match_parent"
         android:background="#00000000"
         android:elevation="1dp">
-
-       <!-- <com.melnykov.fab.FloatingActionButton
-            android:id="@+id/fab"
-            app:fab_colorNormal="?android:attr/colorAccent"
-            app:fab_colorPressed="?android:attr/colorAccent"
-            android:backgroundTint="?android:attr/colorAccent"
-            android:backgroundTintMode="src_atop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom|right"
-            android:layout_marginEnd="28dp"
-            android:layout_marginBottom="28dp"
-            android:elevation="175dp"
-            android:src="@drawable/ic_menu_add" />-->
     </RelativeLayout>
 
 </RelativeLayout>

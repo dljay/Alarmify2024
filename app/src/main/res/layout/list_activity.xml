@@ -142,7 +142,7 @@
                     android:layout_gravity="center"
 
                     app:maxImageSize="35dp"
-                    app:tint="@color/jj_accentColor_1"
+                    app:tint="@color/white"
                     android:src="@drawable/ic_add_bell_24"/>
 
             <!-- 기존 (+) 흑백 스타일 -->

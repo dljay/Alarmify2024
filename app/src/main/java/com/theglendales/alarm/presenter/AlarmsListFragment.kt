@@ -154,10 +154,12 @@ class AlarmsListFragment : Fragment() {
 
         override fun onCreateViewHolder(parent: ViewGroup,viewType: Int): RowHolder {
             // <1> 여기서 RowHolder 를 담을 View 를 기제작된 xml 을 통해 제공
+            Log.d(TAG, "onCreateViewHolder: parent=$parent, parentFrag=$parentFragment")
             val view = LayoutInflater.from(parent.context).inflate(listRowLayoutId, parent, false) // 선택 상황에 따라 -> R.layout.list_row_classic or else..
 
             // <2> RowHolder() Instance 생성: 위에서 받은 View 에 원래 딸려있는 button, textView 등을 findViewById() 로 찾아주고 -> 그것을 RowHolder 형태로 onBindViewHolder() 에 제공.
             val rowHolder = RowHolder(view,0,prefs.layout()) // 기존에 Yuriv 가 작성해놓은 코드가 RowHolder 제작시 alarmId 를 넣게되어있음. (ListView 사용했을 때는 가능했지)
+            
             // 하지만 우리는 ListView 를 RcView 로 교체를 했고 여기서는 position 정보가 없어서 alarmId 를 알 수 없으니 그냥 '0' 으로 제공.
             // 중요한것은 ViewHolder 인터페이스를 승계한 RowHolder instance를 onBindViewHolder 에 넘긴다는 것. 추후 onBindViewHolder 에서 position 통해 alarmId 찾아서 채워줄 예정.
             rowHolder.apply { digitalClock.setLive(false) } // .setLive 는 현재 시간을 보여줌! 우리는

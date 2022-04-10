@@ -8,10 +8,12 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/night_field" />
+        android:scaleType="centerCrop"
+        android:src="@drawable/night_lake" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/nav_drawer_logo_img"
+
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
@@ -23,7 +25,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/vertical_guideline_1"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:shapeAppearanceOverlay="@style/CircleImageView"/>
 
         <TextView
             android:layout_width="wrap_content"

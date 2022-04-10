@@ -46,13 +46,20 @@
                 android:id="@+id/id_collapsingToolBarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/city_street_fo_south_163049_op60"
+
+
 
                 app:contentScrim="@color/transparent"
                 app:title="Alarmify"
 
                 app:expandedTitleMarginStart="64dp"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/city_street_fo_south_163049_op60"
+                    android:scaleType="centerCrop"/>
 
                 <!-- 실제 ToolBar-->
                 <androidx.appcompat.widget.Toolbar

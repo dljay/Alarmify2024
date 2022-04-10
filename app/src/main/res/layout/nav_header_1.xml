@@ -5,49 +5,51 @@
     android:layout_height="150dp"
     android:background="@drawable/bg_drawer_header_1">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/night_field" />
+
     <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/nav_drawer_logo_img"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="13dp"
 
         android:scaleType="centerCrop"
         android:src="@mipmap/ic_main2"
-        app:layout_constraintBottom_toTopOf="@id/horizontal_guideline"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@id/vertical_guideline_1"
+        app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="7dp"
+            android:layout_marginBottom="13dp"
+
+            android:text="ALARMIFY"
+            android:theme="@style/jjText_nav_drawer_logo_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/vertical_guideline_1"/>
+
+
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/vertical_guideline"
+        android:id="@+id/vertical_guideline_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.30" />
+        app:layout_constraintGuide_percent="0.20" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontal_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.60" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
 
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
 
-        android:text="Alarmify"
-        android:theme="@style/jjText_TimePicker_Spinner"
-        app:layout_constraintBottom_toBottomOf="parent"
 
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/horizontal_guideline" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

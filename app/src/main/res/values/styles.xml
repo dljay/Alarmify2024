@@ -257,6 +257,13 @@
             <item name="android:textStyle">bold</item>
         </style>
 
+        <style name="jjText_nav_drawer_logo_text">
+            <item name="fontFamily">@font/circular_std_bold</item>
+            <item name="android:textColor">@color/secondaryTextColor</item>
+            <item name="android:textSize">20sp</item>
+            <item name="android:textStyle">bold</item>
+        </style>
+
         <style name="jjTextLarge2">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryTextColor</item>

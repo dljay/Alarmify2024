@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34g [Multiple Screen size support 시험 중! Constraint Layout 으로 변경중.] 22/4/10 (일) 오전 10:27
+// 30708V1.18e34g [ScreenSize - 일부 수정 완료. 일단 보기 괜춘.] 22/4/10 (일) 오전 10:45
 
 
 // 1) Achievements:

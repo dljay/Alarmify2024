@@ -68,22 +68,27 @@
     </FrameLayout>
 
     <!-- 아래 android:background="@color/jj_main_bg_color" 이거였음.-->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
+        android:background="@drawable/bg_gradient_rowholder_background"
         android:baselineAligned="true"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-
-        android:background="@drawable/bg_gradient_rowholder_background">
+        android:orientation="horizontal"
+        >
 
         <com.theglendales.alarm.view.DontPressWithParentLayout
             android:id="@+id/list_row_on_off_checkbox_container"
-            android:layout_marginStart="20dp"
             android:layout_width="68dp"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/list_row_digital_clock_container"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <View
                 android:layout_width="0dp"
@@ -97,14 +102,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
 
+                android:clickable="false"
+                android:focusable="false"
+
+
                 android:scaleX="0.8"
                 android:scaleY="0.8"
-
-
-                app:track="@drawable/switch_track_v1"
                 android:thumb="@drawable/switch_thumb"
-                android:clickable="false"
-                android:focusable="false" />
+                app:track="@drawable/switch_track_v1" />
 
 
             <View
@@ -118,10 +123,17 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_weight="1"
+            android:layout_marginTop="10dp"
 
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
             android:longClickable="false"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.theglendales.alarm.view.DigitalClock
                 android:id="@+id/list_row_digital_clock"
@@ -290,8 +302,16 @@
             android:id="@+id/ll_albumArt_Container"
             style="@style/alarm_list_albumArt_Container"
             android:layout_height="match_parent"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="26dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_weight="1">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/list_row_digital_clock_container"
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
                 android:id="@+id/details_button_container"
@@ -305,16 +325,16 @@
                     android:id="@+id/id_row_albumArt"
                     android:layout_width="63dp"
                     android:layout_height="63dp"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="2dp"
                     android:clickable="false"
                     android:focusable="false"
-                    app:shapeAppearanceOverlay="@style/roundedCornersImageView"
-                    android:padding="8dp"/>
+                    android:padding="8dp"
+                    app:shapeAppearanceOverlay="@style/roundedCornersImageView" />
 
 
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.theglendales.alarm.jjongadd.SwipeRevealLayout>
 

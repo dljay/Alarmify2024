@@ -2,6 +2,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    android:background="@color/jj_background_SkyBlue_1">
+    android:background="@drawable/bg_drawer_header_1">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

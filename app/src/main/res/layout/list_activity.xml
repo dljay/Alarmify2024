@@ -20,11 +20,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
-
-
     android:id="@+id/id_drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:clickable="true"
     android:focusableInTouchMode="true">
 
@@ -173,6 +172,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+
         app:headerLayout="@layout/nav_header_1"
         app:menu="@menu/menu_action_bar">
 

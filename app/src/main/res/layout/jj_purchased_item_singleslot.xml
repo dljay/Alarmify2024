@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="5dp"
     android:layout_marginBottom="10dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
@@ -13,6 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +24,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
-            android:theme="@style/jjTextMediumBold"
+            android:theme="@style/jjPurchHistoryDate"
             app:layout_constraintBottom_toTopOf="@id/purch_item_guideline_horizontal_1"
             app:layout_constraintStart_toStartOf="@id/purch_item_guideline_vertical_1"
             app:layout_constraintTop_toTopOf="parent"
@@ -33,7 +34,8 @@
             android:id="@+id/iv_purchased_albumArt"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:padding="8dp"
+            android:layout_marginTop="5dp"
+            android:padding="2dp"
             android:scaleType="centerCrop"
 
 
@@ -46,26 +48,31 @@
 
         <TextView
             android:id="@+id/tv_purchased_rtTitle"
-
-            android:layout_width="wrap_content"
+            android:paddingStart="8dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="8dp"
             android:text="Ringtone Title P1001"
-            android:theme="@style/jjTextSmall"
-
-
+            android:theme="@style/jjPurchHistoryTitle"
+            android:ellipsize="end"
+            android:maxLines="1"
             app:layout_constraintBottom_toTopOf="@+id/tv_purchased_orderId"
             app:layout_constraintStart_toEndOf="@id/purch_item_guideline_vertical_2"
+            app:layout_constraintEnd_toStartOf="@id/purch_item_guideline_vertical_3"
             app:layout_constraintTop_toTopOf="@id/purch_item_guideline_horizontal_1" />
 
         <TextView
             android:id="@+id/tv_purchased_orderId"
+            android:paddingStart="8dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="FakeOrderId-12345657689"
-            android:theme="@style/jjTextSmall"
+            android:theme="@style/jjPurchHistoryOrderId"
             app:layout_constraintStart_toEndOf="@id/purch_item_guideline_vertical_2"
+            app:layout_constraintEnd_toStartOf="@id/purch_item_guideline_vertical_3"
             app:layout_constraintTop_toBottomOf="@+id/tv_purchased_rtTitle" />
 
         <TextView
@@ -73,8 +80,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="7dp"
+            android:layout_marginEnd="10dp"
             android:text="$19.99"
             android:textSize="13sp"
+            android:theme="@style/jjPurchHistoryTitle"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/purch_item_guideline_vertical_3"
@@ -83,9 +92,13 @@
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
+            android:layout_marginTop="15dp"
+            android:paddingStart="8dp"
+
             app:layout_constraintStart_toStartOf="@id/purch_item_guideline_vertical_2"
+            app:layout_constraintTop_toBottomOf="@id/tv_purchased_orderId"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/tv_purchased_price_paid"
             android:background="@color/border_purchase_history"/>
 
         <androidx.constraintlayout.widget.Guideline
@@ -93,7 +106,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.02" />
+            app:layout_constraintGuide_percent="0.04" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/purch_item_guideline_vertical_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.17" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/purch_item_guideline_vertical_3"
@@ -102,12 +122,7 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.8" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/purch_item_guideline_vertical_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.15" />
+
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/purch_item_guideline_horizontal_1"

@@ -59,6 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:layout_marginLeft="16dp"
+        android:textAppearance="@style/jjTextLarge"
         android:text="@string/alarm_volume_title" />
 
     <LinearLayout

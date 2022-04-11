@@ -148,7 +148,7 @@
                     android:layout_gravity="center"
 
                     app:maxImageSize="35dp"
-                    app:tint="@color/white"
+                    app:tint="@color/tertiaryTextColor"
                     android:src="@drawable/ic_add_bell_24"/>
 
             <!-- 기존 (+) 흑백 스타일 -->
@@ -179,7 +179,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:backgroundTint="@color/light_gray_brighter_jjong"
+        android:backgroundTint="@color/gray_light_highlight_1"
         app:headerLayout="@layout/nav_header_1"
         app:menu="@menu/menu_nav_drawer">
 

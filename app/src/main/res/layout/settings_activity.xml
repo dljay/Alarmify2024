@@ -16,7 +16,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:title="Preferences"
-        app:titleTextColor="@color/mat_red"/>
+        app:titleTextColor="@color/primaryTextColor"/>
 
     <!-- 실 Preferences 메뉴들- 스크롤 뷰 -->
     <ScrollView

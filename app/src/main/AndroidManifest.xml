@@ -52,7 +52,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Application Settings -->
+        </activity>
         <!-- RtPicker Activity 외 -->
         <activity
             android:name=".presenter.RtPickerActivity"
@@ -74,6 +74,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/DefaultDarkTheme" />
 
+        <!-- Preference Settings -->
         <activity
             android:name=".presenter.SettingsActivity"
             android:excludeFromRecents="true"

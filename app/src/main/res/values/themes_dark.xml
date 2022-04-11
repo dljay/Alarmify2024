@@ -8,6 +8,7 @@
         <item name="colorPrimaryVariant">@color/primaryLightColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorSecondary">@color/secondaryColor</item>
+
         <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
 
     <!--primaryTextColor =  현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->

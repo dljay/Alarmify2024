@@ -69,7 +69,6 @@ class PurchasedItemsActivity : AppCompatActivity() {
 
     //6) Refresh RcV or Show Lottie (구매내역 없음!)
 
-
         if(purchaseBoolTrueList.isEmpty()) {
             lottieAnimHandler.animController(LottieENUM.PURCHASED_ITEM_EMPTY)
             tvNoPurchase.visibility = View.VISIBLE

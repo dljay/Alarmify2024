@@ -37,6 +37,7 @@
         <!-- 경계선 색! -->
             <color name="border_secondFrag_Top">#09161E</color>
             <color name="border_mp_btmNav">#4D678C</color>
+            <color name="border_purchase_history">#4D678C</color>
         <!-- secondaryColor: Navigation Drawer>Preference-->
             <color name="secondaryColor">#7991BD</color>
 

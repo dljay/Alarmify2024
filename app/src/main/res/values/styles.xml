@@ -286,6 +286,8 @@
             <item name="android:textSize">12.5sp</item>
         </style>
 
+
+
         <style name="jjTextMediumBold">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryTextColor</item>

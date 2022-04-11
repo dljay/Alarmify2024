@@ -14,7 +14,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:title="@string/dialog_purchased_items"
-        app:titleTextColor="@color/mat_red"/>
+        app:titleTextColor="@color/primaryTextColor"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -54,7 +54,8 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/purch_items_rcView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            tools:listitem="@layout/jj_purchased_item_singleslot"/>
 
     </FrameLayout>
 

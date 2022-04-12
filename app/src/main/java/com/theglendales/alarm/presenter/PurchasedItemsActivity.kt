@@ -49,7 +49,7 @@ class PurchasedItemsActivity : AppCompatActivity() {
         val entireList = mySharedPrefManager.getRtInTheCloudList() // 현재 Firebase 에 등록된 모든 Ringtone 들
         val purchaseBoolTrueList = entireList.filter { rtInTheCloud -> rtInTheCloud.purchaseBool } // 그 중에서 purchaseBool=true 인 놈만 받기.
         //val purchaseBoolTrueList = listOf<RtInTheCloud>() // Lottie TEST 위해 : 강제로 list==0 으로..
-        Log.d(TAG, "onCreate: purchaseBoolTrueList=$purchaseBoolTrueList") //todo:  [*Purchase Date], [Art URL], [RT_NAME], [ORDER_ID],  [PRICE]
+        Log.d(TAG, "onCreate: purchaseBoolTrueList=$purchaseBoolTrueList") //  [*Purchase Date], [Art URL], [RT_NAME], [ORDER_ID],  [PRICE]
 
     //3) RcView 셋업
         rcView = findViewById(R.id.purch_items_rcView)

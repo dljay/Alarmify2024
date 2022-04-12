@@ -214,7 +214,7 @@
    </string>
 
     <!--JJ 추가 Purchase Empty -->
-    <string name="purchase_item_empty"><b>HEY, TIME TO PUT SOME SUGAR IN! </b></string>
+    <string name="purchase_item_empty"><b>NO PURCHASE RECORD FOUND.</b></string>
     <!--JJ 추가 Contact Us -->
     <string name="dialog_contact_us">
     Have any issues? Reach out to our support team for immediate assistance at ssibal@gmail.com

@@ -83,7 +83,7 @@
             android:layout_marginEnd="10dp"
             android:text="$19.99"
             android:textSize="13sp"
-            android:theme="@style/jjPurchHistoryTitle"
+            android:theme="@style/jjPurchHistoryPrice"
 
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/purch_item_guideline_vertical_3"

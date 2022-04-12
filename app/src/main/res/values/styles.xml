@@ -342,5 +342,12 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="jjPurchHistoryPrice">
+        <item name="fontFamily">@font/circular_std_medium</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
 
 </resources>

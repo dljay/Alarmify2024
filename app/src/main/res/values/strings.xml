@@ -268,5 +268,9 @@
        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="donation_thankyou_text">Thank you for chiming in. Either it\'s just a penny or a loadsome of money. Each donation helps our developers shine.
+Your donation may buy us a cup of coffee to stay awake and keep this app clean or buy us a sandwich to keep us moving. We will be able to ..</string>
+
+    <string name="donation_googletakes_thirty">*Google Takes 30% ssibal fix this.</string>
 
 </resources>

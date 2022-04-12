@@ -65,9 +65,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34p [0av Drawer>Pref, PurchHistory 수정 완료. Donation UI 수정 전] 22/4/10 (Tue) 11:08am
-// Purchase History = Date .. TITLE/ORDER ID .. PRICE 이렇게 최상단에 테이블 한개만 넣는것 (색깔은 SECONDARY..가급적 새로 만드는게 나을것도 같고.) 가능할지 시도.
-// 왜 계속 Put Some Sugar In 뜨는지 알아볼것.
+// 30708V1.18e34q [0av Drawer>Pref, PurchHistory 수정 완료. Donation UI 수정 전] 22/4/10 (Tue) 3:27 pm
+// Pref 부터 시작해서 전체 Navigation Drawer 에서 선택되는 메뉴 색 고르기.
+//HelpOurTeam- Image 고르기
+//HelpOurTeam- 배경 색(gradient. Ring gradient?) Chip 색
+//영문 제대로 넣기 (Google 30% commission// non taxable?)
+
 
 
 // 1) Achievements:

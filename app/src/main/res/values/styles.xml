@@ -349,5 +349,22 @@
         <item name="android:textSize">13sp</item>
     </style>
 
+    <!-- Purchase History Text Font-->
+
+
+    <style name="jjDonationThankyouText">
+        <item name="fontFamily">@font/circular_std_medium</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="jjDonationGoogleCommissionText">
+        <item name="fontFamily">@font/circular_std_light</item>
+        <item name="android:textColor">@color/tertiaryTextColor</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
 
 </resources>

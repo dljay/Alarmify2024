@@ -11,7 +11,7 @@
         android:id="@+id/id_toolbar_help_our_team"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/jj_main_bg_color"
         android:minHeight="?attr/actionBarSize"
         app:title="@string/dialog_help_our_team"
         app:titleTextColor="@color/primaryTextColor"/>
@@ -20,109 +20,180 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Chips -->
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/blackish_trans"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_gradient_listfrag_background"
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/id_chipGroup_HelpOurTeam"
+            android:padding="10dp">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/helpourteam_guideline_horiz_1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="0dp"
-                app:chipSpacingHorizontal="2dp"
-                app:chipSpacingVertical="0dp"
+                android:layout_height="match_parent"
+                app:layout_constraintGuide_percent="0.8" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:singleSelection="true"
-                app:singleLine="false">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/helpourteam_guideline_horiz_1"
+                app:cardCornerRadius="15dp">
 
-                <!-- Chip 마다 붙인 태그 = Play Console 에 등록된 Product id 와 일치해야함!-->
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/donation_chip_1"
-                    style="@style/customChipStyle"
-                    android:tag="@string/donation_iapName_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:checkable="true"
-                    android:checked="false"
-                    android:text="@string/chip1_donation"
-                    app:checkedIcon="@drawable/chip_check_empty_background"
-                    app:chipIcon="@drawable/donation_chip1_coffee_24"
-                    app:chipIconVisible="true"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/gradient1">
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/donation_chip_2"
-                    style="@style/customChipStyle"
-                    android:tag="@string/donation_iapName_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:checkable="true"
-                    android:checked="false"
-                    android:text="@string/chip2_donation"
-                    app:checkedIcon="@drawable/chip_check_empty_background"
-                    app:chipIcon="@drawable/donation_chip2_lunch_24"
-                    app:chipIconVisible="true"/>
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/iv_bg_donation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:src="@drawable/night_field"/>
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/donation_chip_3"
-                    style="@style/customChipStyle"
-                    android:tag="@string/donation_iapName_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:checkable="true"
-                    android:checked="false"
-                    android:text="@string/chip3_donation"
-                    app:checkedIcon="@drawable/chip_check_empty_background"
-                    app:chipIcon="@drawable/donation_chip3_wine_24"
-                    app:chipIconVisible="true"/>
+                    <!-- Chips -->
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/id_chipGroup_HelpOurTeam"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="2dp"
+                        app:chipSpacingVertical="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/iv_bg_donation"
+                        app:singleLine="false"
+                        app:singleSelection="true">
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/donation_chip_4"
-                    style="@style/customChipStyle"
-                    android:tag="@string/donation_iapName_4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
-                    android:checkable="true"
-                    android:checked="false"
-                    android:text="@string/chip4_donation"
-                    app:checkedIcon="@drawable/chip_check_empty_background"
-                    app:chipIcon="@drawable/donation_chip4_book_24"
-                    app:chipIconVisible="true"/>
+                        <!-- Chip 마다 붙인 태그 = Play Console 에 등록된 Product id 와 일치해야함!-->
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/donation_chip_1"
+                            style="@style/customChipStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:checkable="true"
+                            android:checked="false"
+                            android:tag="@string/donation_iapName_1"
+                            android:text="@string/chip1_donation"
+                            app:checkedIcon="@drawable/chip_check_empty_background"
+                            app:chipIcon="@drawable/donation_chip1_coffee_24"
+                            app:chipIconVisible="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/donation_chip_2"
+                            style="@style/customChipStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:checkable="true"
+                            android:checked="false"
+                            android:tag="@string/donation_iapName_2"
+                            android:text="@string/chip2_donation"
+                            app:checkedIcon="@drawable/chip_check_empty_background"
+                            app:chipIcon="@drawable/donation_chip2_lunch_24"
+                            app:chipIconVisible="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/donation_chip_3"
+                            style="@style/customChipStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:checkable="true"
+                            android:checked="false"
+                            android:tag="@string/donation_iapName_3"
+                            android:text="@string/chip3_donation"
+                            app:checkedIcon="@drawable/chip_check_empty_background"
+                            app:chipIcon="@drawable/donation_chip3_wine_24"
+                            app:chipIconVisible="true" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/donation_chip_4"
+                            style="@style/customChipStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="8dp"
+                            android:checkable="true"
+                            android:checked="false"
+                            android:tag="@string/donation_iapName_4"
+                            android:text="@string/chip4_donation"
+                            app:checkedIcon="@drawable/chip_check_empty_background"
+                            app:chipIcon="@drawable/donation_chip4_book_24"
+                            app:chipIconVisible="true" />
 
 
-            </com.google.android.material.chip.ChipGroup>
+                    </com.google.android.material.chip.ChipGroup>
 
-            <Button
-                android:id="@+id/id_btn_donateNow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/btnText_donate"
-                android:gravity="center"/>
+                    <TextView
+                        android:id="@+id/tv_donation_thanks_msg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:text="@string/donation_thankyou_text"
+                        android:theme="@style/jjDonationThankyouText"
+                        app:layout_constraintTop_toBottomOf="@id/id_chipGroup_HelpOurTeam"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:textColor="@color/clock_blue"
-                android:text="넣을 내용: Google 이 30퍼센트 먹음. Thank you. Tax? 이건 가격에 포함되게 했지만 확인 필요.\n Perks?"/>
+                   <TextView
+                       android:id="@+id/tv_donation_google_takes_thirty"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="5dp"
 
-        </LinearLayout>
+                       android:paddingStart="20dp"
+                       android:paddingEnd="20dp"
+                       android:theme="@style/jjDonationGoogleCommissionText"
+                       android:text="@string/donation_googletakes_thirty"
+                       app:layout_constraintTop_toBottomOf="@id/tv_donation_thanks_msg"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintStart_toStartOf="parent"/>
+
+                    <Button
+                        android:id="@+id/id_btn_donateNow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/btnText_donate"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="20dp"
+
+                        app:layout_constraintTop_toBottomOf="@id/tv_donation_google_takes_thirty"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <include
+                        layout="@layout/loadingcircle_overlay_1"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!--Loading Circle: 마지막 View will simply overlay everything else. -->
-        <include layout="@layout/loadingcircle_overlay_1"/>
 
     </FrameLayout>
 

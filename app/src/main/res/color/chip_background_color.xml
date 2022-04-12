@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 <!--    <item android:color="@color/light_gray_jjong" android:state_checked="false"/>-->
-    <item android:color="@color/jj_main_bg_color" android:state_checked="false"/>
+    <item android:color="@color/jj_bg_color_2" android:state_checked="false"/>
 
     <item android:color="@color/blue_var_1" android:state_checked="true"/>
 

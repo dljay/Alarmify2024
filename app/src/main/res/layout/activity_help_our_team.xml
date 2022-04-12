@@ -25,18 +25,23 @@
             android:layout_height="match_parent"
             android:background="@drawable/bg_gradient_listfrag_background"
 
-            android:padding="10dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="15dp"
+            android:paddingTop="10dp">
 
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="20dp"
                 app:cardBackgroundColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+
                 app:cardCornerRadius="15dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -62,81 +67,98 @@
                         android:src="@drawable/mt_sunrise"/>
 
                     <!-- Chips -->
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/id_chipGroup_HelpOurTeam"
+                    <HorizontalScrollView
+                        android:id="@+id/chipgroup_scroll_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:chipSpacingHorizontal="2dp"
-                        app:chipSpacingVertical="0dp"
+                        android:paddingStart="15dp"
+                        android:paddingEnd="10dp"
+                        android:layout_marginTop="5dp"
+                        android:scrollbars="none"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/iv_bg_donation"
-                        app:singleLine="false"
-                        app:singleSelection="true">
+                        app:layout_constraintTop_toBottomOf="@id/iv_bg_donation">
 
-                        <!-- Chip 마다 붙인 태그 = Play Console 에 등록된 Product id 와 일치해야함!-->
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/donation_chip_1"
-                            style="@style/customChipStyle"
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/id_chipGroup_HelpOurTeam"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:checkable="true"
-                            android:checked="false"
-                            android:tag="@string/donation_iapName_1"
-                            android:text="@string/chip1_donation"
-                            app:checkedIcon="@drawable/chip_check_empty_background"
-                            app:chipIcon="@drawable/donation_chip1_coffee_24"
-                            app:chipIconVisible="true" />
+                            app:chipSpacingHorizontal="3dp"
+                            app:chipSpacingVertical="0dp"
+                            app:singleLine="true"
+                            app:singleSelection="true">
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/donation_chip_2"
-                            style="@style/customChipStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:checkable="true"
-                            android:checked="false"
-                            android:tag="@string/donation_iapName_2"
-                            android:text="@string/chip2_donation"
-                            app:checkedIcon="@drawable/chip_check_empty_background"
-                            app:chipIcon="@drawable/donation_chip2_lunch_24"
-                            app:chipIconVisible="true" />
+                            <!-- Chip 마다 붙인 태그 = Play Console 에 등록된 Product id 와 일치해야함!-->
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/donation_chip_1"
+                                style="@style/rtTagChipStyle"
+                                android:textAppearance="@style/rtTagChipTextStyle"
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/donation_chip_3"
-                            style="@style/customChipStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:checkable="true"
-                            android:checked="false"
-                            android:tag="@string/donation_iapName_3"
-                            android:text="@string/chip3_donation"
-                            app:checkedIcon="@drawable/chip_check_empty_background"
-                            app:chipIcon="@drawable/donation_chip3_wine_24"
-                            app:chipIconVisible="true" />
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/donation_chip_4"
-                            style="@style/customChipStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:checkable="true"
-                            android:checked="false"
-                            android:tag="@string/donation_iapName_4"
-                            android:text="@string/chip4_donation"
-                            app:checkedIcon="@drawable/chip_check_empty_background"
-                            app:chipIcon="@drawable/donation_chip4_book_24"
-                            app:chipIconVisible="true" />
+                                android:checkable="true"
+                                android:checked="false"
+                                android:tag="@string/donation_iapName_1"
+                                android:text="@string/chip1_donation"
+                                app:checkedIcon="@drawable/chip_check_empty_background"
+                                app:chipIcon="@drawable/donation_chip1_coffee_24"
+                                app:chipIconVisible="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/donation_chip_2"
+                                style="@style/rtTagChipStyle"
+                                android:textAppearance="@style/rtTagChipTextStyle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
 
 
-                    </com.google.android.material.chip.ChipGroup>
+                                android:checkable="true"
+                                android:checked="false"
+                                android:tag="@string/donation_iapName_2"
+                                android:text="@string/chip2_donation"
+                                app:checkedIcon="@drawable/chip_check_empty_background"
+                                app:chipIcon="@drawable/donation_chip2_lunch_24"
+                                app:chipIconVisible="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/donation_chip_3"
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/rtTagChipStyle"
+                                android:textAppearance="@style/rtTagChipTextStyle"
+
+
+                                android:checkable="true"
+                                android:checked="false"
+                                android:tag="@string/donation_iapName_3"
+                                android:text="@string/chip3_donation"
+                                app:checkedIcon="@drawable/chip_check_empty_background"
+                                app:chipIcon="@drawable/donation_chip3_wine_24"
+                                app:chipIconVisible="true" />
+
+                            <com.google.android.material.chip.Chip
+                                android:id="@+id/donation_chip_4"
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/rtTagChipStyle"
+                                android:textAppearance="@style/rtTagChipTextStyle"
+
+                                android:checkable="true"
+                                android:checked="false"
+                                android:tag="@string/donation_iapName_4"
+                                android:text="@string/chip4_donation"
+                                app:checkedIcon="@drawable/chip_check_empty_background"
+                                app:chipIcon="@drawable/donation_chip4_book_24"
+                                app:chipIconVisible="true" />
+
+
+                        </com.google.android.material.chip.ChipGroup>
+
+                    </HorizontalScrollView>
+
 
                     <TextView
                         android:id="@+id/tv_donation_thanks_msg"
@@ -147,7 +169,7 @@
                         android:paddingEnd="20dp"
                         android:text="@string/donation_thankyou_text"
                         android:theme="@style/jjDonationThankyouText"
-                        app:layout_constraintTop_toBottomOf="@id/id_chipGroup_HelpOurTeam"
+                        app:layout_constraintTop_toBottomOf="@id/chipgroup_scroll_view"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -169,8 +191,10 @@
                         android:id="@+id/id_btn_donateNow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal"
                         android:text="@string/btnText_donate"
+                        android:backgroundTint="@color/jj_bg_color_2"
+                        android:textAppearance="@style/rtTagChipTextStyle"
+
                         android:layout_marginTop="20dp"
                         android:layout_marginBottom="20dp"
 

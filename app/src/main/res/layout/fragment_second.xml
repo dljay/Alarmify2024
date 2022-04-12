@@ -65,7 +65,7 @@
                         android:checkable="true"
                         android:checked="false"
                         android:text="@string/chip1_intense"
-                        app:checkedIcon="@drawable/chip1_intense"
+                        app:checkedIcon="@drawable/chip_check_empty_background"
                         app:chipIcon="@drawable/chip1_intense"
                         app:chipIconVisible="true">
 

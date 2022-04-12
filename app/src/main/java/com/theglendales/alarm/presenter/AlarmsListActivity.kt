@@ -65,11 +65,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34q [0av Drawer>Pref, PurchHistory 수정 완료. Donation UI 수정 전] 22/4/10 (Tue) 3:27 pm
-// Pref 부터 시작해서 전체 Navigation Drawer 에서 선택되는 메뉴 색 고르기.
-//HelpOurTeam- Image 고르기
-//HelpOurTeam- 배경 색(gradient. Ring gradient?) Chip 색
+// 30708V1.18e34r [0av Drawer>Pref, PurchHistory 수정 완료. Donation UI 수정 전] 22/4/10 (Tue) 11:16 pm
+// Pref, Purch History (CardView 한번 다시..?) 색 고르기. Donation 메뉴는 매우 예쁘네..
 //영문 제대로 넣기 (Google 30% commission// non taxable?)
+
 
 
 

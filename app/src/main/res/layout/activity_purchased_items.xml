@@ -19,7 +19,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_gradient_listfrag_background">
+        android:background="@color/jj_bg_color_1">
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -14,7 +14,7 @@
         android:background="?attr/colorPrimary"
         android:minHeight="?attr/actionBarSize"
         app:title="@string/dialog_help_our_team"
-        app:titleTextColor="@color/mat_red"/>
+        app:titleTextColor="@color/primaryTextColor"/>
 
     <FrameLayout
         android:layout_width="match_parent"

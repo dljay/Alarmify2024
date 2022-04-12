@@ -28,7 +28,7 @@
 <!--        <color name="jj_bg_color_2">#072F4C</color>-->
 
         <!-- SecondFrag -->
-<!--        <color name="jj_accentColor_1">#FF9B8B</color>-->
+<!--            <color name="jj_accentColor_1">#fff696</color>-->
             <color name="jj_accentColor_1">#FF9C25</color>
 
         <!-- Background Gradient 시작/종료 색 -->

@@ -27,36 +27,39 @@
 
             android:padding="10dp">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/helpourteam_guideline_horiz_1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintGuide_percent="0.8" />
 
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
+                app:cardBackgroundColor="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/helpourteam_guideline_horiz_1"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:cardCornerRadius="15dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/gradient1">
+                    android:layout_height="match_parent">
+
+                    <androidx.constraintlayout.widget.Guideline
+                        android:id="@+id/don_guide_hor_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        app:layout_constraintGuide_percent="0.3"/>
 
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_bg_donation"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="0dp"
                         android:scaleType="centerCrop"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        android:src="@drawable/night_field"/>
+                        app:layout_constraintBottom_toTopOf="@+id/don_guide_hor_1"
+                        android:src="@drawable/mt_sunrise"/>
 
                     <!-- Chips -->
                     <com.google.android.material.chip.ChipGroup

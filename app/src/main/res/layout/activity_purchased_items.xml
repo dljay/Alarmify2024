@@ -11,7 +11,7 @@
         android:id="@+id/id_toolBar_PurchasedItems"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_gradient_listfrag_background"
+        android:background="@color/jj_main_bg_color"
         android:minHeight="?attr/actionBarSize"
         app:title="@string/dialog_purchased_items"
         app:titleTextColor="@color/primaryTextColor"/>

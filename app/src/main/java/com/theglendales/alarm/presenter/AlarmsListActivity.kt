@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34o [Nav Drawer>Pref 수정 완료. Purchase History UI 수정 전] 22/4/10 (월) 오후 11:19
+// 30708V1.18e34p [0av Drawer>Pref, PurchHistory 수정 완료. Donation UI 수정 전] 22/4/10 (Tue) 11:08am
 // Purchase History = Date .. TITLE/ORDER ID .. PRICE 이렇게 최상단에 테이블 한개만 넣는것 (색깔은 SECONDARY..가급적 새로 만드는게 나을것도 같고.) 가능할지 시도.
 // 왜 계속 Put Some Sugar In 뜨는지 알아볼것.
 

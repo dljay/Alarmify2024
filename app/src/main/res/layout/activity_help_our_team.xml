@@ -41,6 +41,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:cardElevation="@dimen/cardview_default_elevation"
 
                 app:cardCornerRadius="15dp">
 
@@ -64,7 +65,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintBottom_toTopOf="@+id/don_guide_hor_1"
-                        android:src="@drawable/mt_sunrise"/>
+                        android:src="@drawable/mt_forest_lake_1"/>
 
                     <!-- Chips -->
                     <HorizontalScrollView
@@ -72,8 +73,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingStart="15dp"
-                        android:paddingEnd="10dp"
-                        android:layout_marginTop="5dp"
+                        android:paddingEnd="22dp"
+                        android:layout_marginTop="10dp"
                         android:scrollbars="none"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +84,7 @@
                             android:id="@+id/id_chipGroup_HelpOurTeam"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            app:chipSpacingHorizontal="3dp"
+                            app:chipSpacingHorizontal="4dp"
                             app:chipSpacingVertical="0dp"
                             app:singleLine="true"
                             app:singleSelection="true">
@@ -177,7 +178,7 @@
                        android:id="@+id/tv_donation_google_takes_thirty"
                        android:layout_width="match_parent"
                        android:layout_height="wrap_content"
-                       android:layout_marginTop="5dp"
+                       android:layout_marginTop="15dp"
 
                        android:paddingStart="20dp"
                        android:paddingEnd="20dp"
@@ -195,8 +196,8 @@
                         android:backgroundTint="@color/jj_bg_color_2"
                         android:textAppearance="@style/rtTagChipTextStyle"
 
-                        android:layout_marginTop="20dp"
-                        android:layout_marginBottom="20dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginBottom="10dp"
 
                         app:layout_constraintTop_toBottomOf="@id/tv_donation_google_takes_thirty"
                         app:layout_constraintEnd_toEndOf="parent"

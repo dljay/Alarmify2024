@@ -72,7 +72,10 @@
         <color name="tertiaryTextColor">#B5B5B5</color>
     <!--FourthTextColor 쓰임새) S M T .. 요일 표기 안된 날들. BtmNav Icon 선택 안 되었을 때.-->
         <color name="fourthTextColor">#626262</color>
-    <color name="textColorBakHaSaTangYo">#A2FCF7</color>
+
+    <!--primaryDarkTextColor =   현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
+        <color name="primaryDarkTextColor">#1E1E1E</color>
+        <color name="textColorBakHaSaTangYo">#A2FCF7</color>
 
 
 <!-- JJONG added-->

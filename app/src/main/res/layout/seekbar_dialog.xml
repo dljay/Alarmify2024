@@ -15,6 +15,7 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="10dp"
@@ -58,8 +59,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:layout_marginLeft="16dp"
-        android:textAppearance="@style/jjTextLarge"
+        android:layout_marginStart="16dp"
+        android:textAppearance="@style/jjPrefBigTitle"
         android:text="@string/alarm_volume_title" />
 
     <LinearLayout
@@ -72,7 +73,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="16dp"
-            android:src="@android:drawable/ic_lock_idle_alarm" />
+            android:src="@android:drawable/ic_lock_idle_alarm"
+            app:tint="@color/black" />
 
         <SeekBar
             android:id="@+id/seekbar_dialog_seekbar_master_volume"

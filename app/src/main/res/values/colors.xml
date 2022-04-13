@@ -38,7 +38,7 @@
             <color name="border_secondFrag_Top">#09161E</color>
             <color name="border_mp_btmNav">#4D678C</color>
             <color name="border_purchase_history">#4D678C</color>
-        <!-- secondaryColor: Navigation Drawer>Preference-->
+        <!-- secondaryColor: Navigation Drawer>Preference>check box 등 -->
             <color name="secondaryColor">#7991BD</color>
 
     <!-- 실제 사용하는 Color 들 여기부터 정리해볼것(끝) -->
@@ -64,7 +64,7 @@
 
 <!-- TEXT 관련 -->
 
-    <!--primaryTextColor =   현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
+    <!--primaryTextColor =   현재 a) Spinner TimePicker, b) BottomNav View, c) Preferences  에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
         <color name="primaryTextColor">#ECECEC</color>
     <!--secondaryTextColor =  [attrs/textAppearanceMedium] 을 결정함. (ex. 알람 시간 숫자 색!, DetailsFrag>Repeat, About the Ringtone. SecondFrag>Chip 색, SecondFrag>SeekBar Prgrs  등 Titles-->
         <color name="secondaryTextColor">#DDDDDD</color>
@@ -75,6 +75,7 @@
 
     <!--primaryDarkTextColor =   현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
         <color name="primaryDarkTextColor">#1E1E1E</color>
+        <color name="secondaryDarkTextColor">#2B2B2B</color>
         <color name="textColorBakHaSaTangYo">#A2FCF7</color>
 
 

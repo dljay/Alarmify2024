@@ -13,23 +13,45 @@
         android:id="@+id/id_toolbar_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/jj_main_bg_color"
         android:minHeight="?attr/actionBarSize"
         app:title="Preferences"
         app:titleTextColor="@color/primaryTextColor"/>
 
     <!-- 실 Preferences 메뉴들- 스크롤 뷰 -->
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:paddingStart="15dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="15dp"
+        android:background="@drawable/bg_gradient_listfrag_background">
 
-        <fragment
-            android:id="@+id/settings_activity_fragment"
-            android:name="com.theglendales.alarm.presenter.SettingsFragment"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:layout="@android:layout/preference_category" />
-    </ScrollView>
+            android:layout_height="match_parent"
+            app:cardCornerRadius="10dp"
+            android:theme="@style/jjDonationThankyouText">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <fragment
+                    android:id="@+id/settings_activity_fragment"
+                    android:name="com.theglendales.alarm.presenter.SettingsFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    tools:layout="@android:layout/preference_category" />
+            </ScrollView>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </RelativeLayout>
+
+
 </LinearLayout>
 

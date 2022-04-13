@@ -350,8 +350,6 @@
     </style>
 
     <!-- Purchase History Text Font-->
-
-
     <style name="jjDonationThankyouText">
         <item name="fontFamily">@font/circular_std_medium</item>
         <item name="android:textColor">@color/primaryDarkTextColor</item>
@@ -367,5 +365,19 @@
         <item name="android:textStyle">italic</item>
     </style>
 
+    <!-- Pref Text Font-->
+    <style name="jjPrefBigTitle">
+        <item name="fontFamily">@font/circular_std_medium</item>
+        <item name="android:textColor">@color/primaryDarkTextColor</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="jjPrefSmallTitle">
+        <item name="fontFamily">@font/circular_std_light</item>
+        <item name="android:textColor">@color/fourthTextColor</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 
 </resources>

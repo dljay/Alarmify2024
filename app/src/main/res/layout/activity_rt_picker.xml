@@ -12,10 +12,10 @@
         android:id="@+id/id_toolBar_RtPicker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/jj_main_bg_color"
         android:minHeight="?attr/actionBarSize"
-        app:title="Ringtone Picker"
-        app:titleTextColor="@color/mat_red"/>
+        app:title="Alarm Tone Picker"
+        app:titleTextColor="@color/primaryTextColor"/>
 
 
     <FrameLayout
@@ -39,7 +39,8 @@
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcV_RtPicker"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/jj_rtpicker_singleslot"/>
 
             </LinearLayout>
 

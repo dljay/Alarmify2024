@@ -363,7 +363,7 @@
     <style name="jjDonationGoogleCommissionText">
         <item name="fontFamily">@font/circular_std_light</item>
         <item name="android:textColor">@color/tertiaryTextColor</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textStyle">italic</item>
     </style>
 

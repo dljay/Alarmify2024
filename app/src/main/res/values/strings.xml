@@ -268,9 +268,9 @@
        \n\nIronically, you should set the sound to "none" in advanced settings.</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="donation_thankyou_text">Thank you for chiming in. Either it\'s just a penny or a loadsome of money. Each donation helps our developers shine.
-Your donation may buy us a cup of coffee to stay awake and keep this app clean or buy us a sandwich to keep us moving. We will be able to ..</string>
+    <string name="donation_thankyou_text">Thank you for even visiting this tab. We hope your experience with our app has been nothing but pleasant. Big or small, your donation really means a lot to all of us. You can get us a nice cup of morning coffee to jump-start our day or help us buying good textbooks for studying.
+On our side, we will do our best to improve the app and provide the best experience to you. Thank you!</string>
 
-    <string name="donation_googletakes_thirty">*Google Takes 30% ssibal fix this.</string>
+    <string name="donation_googletakes_thirty">*All donations are made through Google\'s billing system and non tax-deductible.</string>
 
 </resources>

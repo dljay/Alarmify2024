@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.DataSource
@@ -60,7 +60,7 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
 
         }
     //B. (앞으로 유저가 클릭하게 될) 전체를 감싸는 linear Layout 에 대한 onClickListener => (참고: 얼마든지 rcView 를 recycle 해도 클릭하지 앟는 이상 RadioBtn 의 값은 변하지 않음!)
-        holder.llEntireRow.setOnClickListener {
+        holder.clEntireRow.setOnClickListener {
             Log.d(TAG, "onBindViewHolder: lastuserCheckedPos=$lastUserCheckedPos")
             // <0> lastUserCheckedPos 을 업데이트 (이제는 더 이상 -1 이 아니다!!)
                 lastUserCheckedPos = position
@@ -139,7 +139,7 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
 // ViewHolder
 
     inner class RtPickerVHolder(xmlToView: View) : RecyclerView.ViewHolder(xmlToView) {
-        val llEntireRow: LinearLayout = xmlToView.findViewById(R.id.ll_entireSingleSlot) // Row 전체를 감싸는 LinearLayout
+        val clEntireRow: ConstraintLayout = xmlToView.findViewById(R.id.cl_entireSingleSlot) // Row 전체를 감싸는 LinearLayout
         val tvRtTitle: TextView = xmlToView.findViewById(R.id.tv_singleSlot_rtPicker)
         val ivRtAlbumArt: ImageView = xmlToView.findViewById(R.id.iv_singleSlot_albumArt)
         val radioBtn: RadioButton = xmlToView.findViewById(R.id.rb_singleSlot_selector)

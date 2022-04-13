@@ -380,4 +380,19 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <!-- Details Frag> RtPicker Font-->
+    <style name="jjRtPickerBig">
+        <item name="fontFamily">@font/circular_std_medium</item>
+        <item name="android:textColor">@color/primaryDarkTextColor</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="jjRtPickerSmall">
+        <item name="fontFamily">@font/circular_std_light</item>
+        <item name="android:textColor">@color/fourthTextColor</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
 </resources>

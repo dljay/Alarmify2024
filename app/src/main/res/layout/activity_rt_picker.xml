@@ -34,7 +34,8 @@
             <!--1st Child RcView [Song Selector] -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_gradient_listfrag_background">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcV_RtPicker"

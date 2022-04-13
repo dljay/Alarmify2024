@@ -65,9 +65,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34s2 [Nav Drawer 어느정도 정리 완료. RtPicker Layout 만드는중.] 22/4/13 (wed) 10:33 pm
+// 30708V1.18e34s2 [Nav Drawer 어느정도 정리 완료. RtPicker Layout 만드는중.] 22/4/13 (wed) 11:20 pm
 // 그냥 SecondFrag 와 최대한 동일하게 만들어보기.
-// Pref
+// --> RtPicker - RcView : 화면에 최소한 몇개는 보여주자 ! Phillip Lackner 영상 다시 보기.
+
 
 // 1) Achievements:
 

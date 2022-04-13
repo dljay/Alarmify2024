@@ -1,37 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:cardElevation="10dp"
-    app:cardCornerRadius="10dp"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp"
+
+    android:id="@+id/cl_entireSingleSlot"
+    android:background="@color/transparent"
     android:layout_marginTop="10dp"
-    android:layout_marginBottom="5dp"
-
-    app:strokeWidth="1dp"
-    app:strokeColor="@color/dark_gray_jjong"
+    android:layout_marginBottom="10dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_entireSingleSlot"
-        android:background="@drawable/bg_gradient_rowholder_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:weightSum="10">
+
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guide_vertical_rtpicker_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.15"/>
+            app:layout_constraintGuide_percent="0.1"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guide_vertical_rtpicker_2"
@@ -55,18 +45,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <TextView
-            android:id="@+id/tv_singleSlot_rtPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="RTA TITLE"
-            android:theme="@style/jjRtPickerBig"
-            android:focusable="false"
-            android:clickable="false"
-            android:layout_margin="10dp"
-            app:layout_constraintStart_toStartOf="@id/guide_vertical_rtpicker_1"
-            app:layout_constraintTop_toTopOf="parent"/>
-
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/iv_singleSlot_albumArt"
             android:layout_width="0dp"
@@ -75,8 +53,7 @@
 
             android:focusable="false"
             android:clickable="false"
-            app:layout_constraintStart_toStartOf="@id/guide_vertical_rtpicker_2"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/guide_vertical_rtpicker_1"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
@@ -84,17 +61,34 @@
             tools:src="@drawable/dollar_48px"
             android:padding="10dp"/>
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+        <TextView
+            android:id="@+id/tv_singleSlot_rtPicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RTA TITLE"
+            android:theme="@style/jjTextMediumBold"
+            android:focusable="false"
+            android:clickable="false"
+            android:ellipsize="end"
             android:layout_margin="10dp"
-            app:layout_constraintStart_toStartOf="@id/guide_vertical_rtpicker_1"
+            app:layout_constraintStart_toEndOf="@id/iv_singleSlot_albumArt"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="#Intense, Guita DeungDeung, Hoo hoo"
+            android:ellipsize="end"
+            android:theme="@style/jjTextMedium_Dark"
+            app:layout_constraintStart_toEndOf="@id/iv_singleSlot_albumArt"
             app:layout_constraintEnd_toEndOf="@id/guide_vertical_rtpicker_2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_singleSlot_rtPicker">
 
-        </LinearLayout>
+        </TextView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

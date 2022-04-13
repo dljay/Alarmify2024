@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34r [PREF CardView 에 넣기 전.] 22/4/13 (wed) 11:04 am
+// 30708V1.18e34s [Nav Drawer 어느정도 정리 완료.] 22/4/13 (wed) 09:45 pm
 // Pref
 
 // 1) Achievements:

@@ -86,12 +86,14 @@
                             android:layout_height="wrap_content"
                             app:chipSpacingHorizontal="4dp"
                             app:chipSpacingVertical="0dp"
+
                             app:singleLine="true"
                             app:singleSelection="true">
 
                             <!-- Chip 마다 붙인 태그 = Play Console 에 등록된 Product id 와 일치해야함!-->
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/donation_chip_1"
+                                app:chipIconSize="20dp"
                                 style="@style/rtTagChipStyle"
                                 android:textAppearance="@style/rtTagChipTextStyle"
 
@@ -108,6 +110,7 @@
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/donation_chip_2"
+                                app:chipIconSize="20dp"
                                 style="@style/rtTagChipStyle"
                                 android:textAppearance="@style/rtTagChipTextStyle"
                                 android:layout_width="wrap_content"
@@ -124,7 +127,7 @@
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/donation_chip_3"
-
+                                app:chipIconSize="20dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 style="@style/rtTagChipStyle"
@@ -141,7 +144,7 @@
 
                             <com.google.android.material.chip.Chip
                                 android:id="@+id/donation_chip_4"
-
+                                app:chipIconSize="20dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 style="@style/rtTagChipStyle"

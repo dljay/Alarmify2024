@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
 
-    android:layout_marginTop="5dp"
+    android:layout_marginTop="10dp"
     android:layout_marginBottom="10dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -14,7 +14,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,7 +24,8 @@
             android:id="@+id/tv_purchased_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="6dp"
+
+            android:layout_marginBottom="3dp"
             android:theme="@style/jjPurchHistoryDate"
             app:layout_constraintBottom_toTopOf="@id/purch_item_guideline_horizontal_1"
             app:layout_constraintStart_toStartOf="@id/purch_item_guideline_vertical_1"
@@ -36,7 +37,10 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="5dp"
-            android:padding="2dp"
+
+            android:paddingTop="2dp"
+            android:paddingEnd="2dp"
+            android:paddingBottom="2dp"
             android:scaleType="centerCrop"
 
 
@@ -44,7 +48,7 @@
             app:layout_constraintEnd_toEndOf="@id/purch_item_guideline_vertical_2"
             app:layout_constraintStart_toStartOf="@id/purch_item_guideline_vertical_1"
             app:layout_constraintTop_toTopOf="@id/purch_item_guideline_horizontal_1"
-            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView"
             tools:src="@drawable/night_field" />
 
         <TextView

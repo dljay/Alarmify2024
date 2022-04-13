@@ -19,7 +19,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/jj_bg_color_1">
+        android:paddingStart="15dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="15dp"
+
+        android:background="@drawable/bg_gradient_listfrag_background">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -51,13 +56,20 @@
 
 
         </LinearLayout>
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/purch_items_rcView"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:listitem="@layout/jj_purchased_item_singleslot"/>
+            app:cardCornerRadius="10dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/purch_items_rcView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/jj_purchased_item_singleslot"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+
 
     </FrameLayout>
 

@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -95,6 +96,7 @@ class RtPickerActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rt_picker)
+        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_1)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 
     //1) Activity 화면 Initialize (ActionBar 등..)
         // 화면 위에 뜨는 타이틀
@@ -336,7 +338,7 @@ private fun setUpSlidingPanel() {
             when (newState) {
                 SlidingUpPanelLayout.PanelState.EXPANDED -> {
                     //Log.d(TAG, "onPanelStateChanged: Sliding Panel Expanded")
-                    iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow_down)// ↓ arrow 전환 visibility }
+                    iv_upperUi_ClickArrow.setImageResource(R.drawable.arrow_down_white)// ↓ arrow 전환 visibility }
 
                     // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
                     constLayout_entire.setOnTouchListener { _, _ -> true }
@@ -344,7 +346,7 @@ private fun setUpSlidingPanel() {
                 }
                 SlidingUpPanelLayout.PanelState.COLLAPSED -> {
                     //Log.d(TAG, "onPanelStateChanged: Sliding Panel Collapsed")
-                    iv_upperUi_ClickArrow.setImageResource(R.drawable.clickarrow)// ↑ arrow 전환 visibility }
+                    iv_upperUi_ClickArrow.setImageResource(R.drawable.arrow_up_white)// ↑ arrow 전환 visibility }
                     slidingUpPanelLayout.isOverlayed =false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
                     }
                 }

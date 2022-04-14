@@ -281,6 +281,12 @@
         </style>
 
         <style name="jjTextLarge_black">
+            <item name="fontFamily">@font/circular_std_medium</item>
+            <item name="android:textColor">@color/primaryDarkTextColor</item>
+            <item name="android:textSize">15sp</item>
+        </style>
+
+        <style name="jjTextLarge_other_font">
             <item name="fontFamily">@font/circular_std_black</item>
             <item name="android:textColor">@color/primaryTextColor</item>
             <item name="android:textSize">15sp</item>
@@ -308,6 +314,13 @@
         <style name="jjTextMedium_tertiaryColor">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/tertiaryTextColor</item>
+            <item name="android:lineSpacingExtra">2sp</item>
+            <item name="android:textSize">12.5sp</item>
+        </style>
+
+        <style name="jjTextMedium_fourthColor">
+            <item name="fontFamily">@font/circular_std_medium</item>
+            <item name="android:textColor">@color/fourthTextColor</item>
             <item name="android:lineSpacingExtra">2sp</item>
             <item name="android:textSize">12.5sp</item>
         </style>

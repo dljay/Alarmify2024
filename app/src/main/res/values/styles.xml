@@ -280,15 +280,35 @@
             <item name="android:textSize">15sp</item>
         </style>
 
+        <style name="jjTextLarge_black">
+            <item name="fontFamily">@font/circular_std_black</item>
+            <item name="android:textColor">@color/primaryTextColor</item>
+            <item name="android:textSize">15sp</item>
+        </style>
+
         <style name="jjTextMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryTextColor</item>
             <item name="android:textSize">12.5sp</item>
         </style>
 
+        <style name="jjTextMedium_Black">
+            <item name="fontFamily">@font/circular_std_medium</item>
+            <item name="android:textColor">@color/primaryDarkTextColor</item>
+            <item name="android:textSize">12.5sp</item>
+        </style>
+
         <style name="jjTextMedium_secondaryColor">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/secondaryTextColor</item>
+            <item name="android:lineSpacingExtra">2sp</item>
+            <item name="android:textSize">12.5sp</item>
+        </style>
+
+        <style name="jjTextMedium_tertiaryColor">
+            <item name="fontFamily">@font/circular_std_medium</item>
+            <item name="android:textColor">@color/tertiaryTextColor</item>
+            <item name="android:lineSpacingExtra">2sp</item>
             <item name="android:textSize">12.5sp</item>
         </style>
 

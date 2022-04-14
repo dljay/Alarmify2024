@@ -6,10 +6,10 @@
 
     android:id="@+id/cl_entireSingleSlot"
     android:background="@color/transparent"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
+    android:layout_marginTop="15dp"
+    android:layout_marginBottom="15dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="63dp"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent">
@@ -38,8 +38,8 @@
             android:layout_margin="5dp"
             android:clickable="false"
             android:focusable="false"
+            android:gravity="center"
 
-            android:gravity="center_vertical|start"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/guide_vertical_rtpicker_1"
             app:layout_constraintTop_toTopOf="parent"
@@ -63,26 +63,34 @@
 
         <TextView
             android:id="@+id/tv_singleSlot_rtPicker"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="RTA TITLE"
             android:theme="@style/jjTextMediumBold"
             android:focusable="false"
             android:clickable="false"
             android:ellipsize="end"
-            android:layout_margin="10dp"
+            android:maxLines="1"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="5dp"
             app:layout_constraintStart_toEndOf="@id/iv_singleSlot_albumArt"
+            app:layout_constraintEnd_toEndOf="@id/guide_vertical_rtpicker_2"
             app:layout_constraintTop_toTopOf="parent"/>
 
 
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="10dp"
             android:text="#Intense, Guita DeungDeung, Hoo hoo"
             android:ellipsize="end"
             android:theme="@style/jjTextMedium_Dark"
+            android:maxLines="1"
             app:layout_constraintStart_toEndOf="@id/iv_singleSlot_albumArt"
             app:layout_constraintEnd_toEndOf="@id/guide_vertical_rtpicker_2"
             app:layout_constraintBottom_toBottomOf="parent"

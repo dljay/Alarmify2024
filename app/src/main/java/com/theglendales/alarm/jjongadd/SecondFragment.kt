@@ -847,9 +847,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 if (!slidingUpPanelLayout.isOverlayed && slideOffset > 0.2f) { //안겹치게 설정된 상태에서 panel 이 열리는 중 (20%만 열리면 바로 모퉁이 감추기!)
                     //Log.d(TAG, "onPanelSlide: Hiding 모퉁이! yo! ")
                     slidingUpPanelLayout.isOverlayed = true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
-
-
-
                 }
 
             }

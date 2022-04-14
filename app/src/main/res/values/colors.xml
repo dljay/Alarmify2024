@@ -23,6 +23,7 @@
 
         <!-- bg_color_1 Btm Nav 색/DetailsFrag 하단 색 -->
             <color name="jj_bg_color_1">#425878</color>
+
         <!-- bg_color_2 SecondFrag 칩 색 등. bg_color_1 보다 살짝 밝은 톤. -->
             <color name="jj_bg_color_2">#334661</color>
 <!--        <color name="jj_bg_color_2">#072F4C</color>-->

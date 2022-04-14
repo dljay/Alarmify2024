@@ -23,6 +23,7 @@
         <!--Thumbnail/Title/Play,Pause Button -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/id_upperUi_ConsLayout"
+            android:background="@color/transparent"
             android:layout_width="match_parent"
             android:layout_height="63dp">
 

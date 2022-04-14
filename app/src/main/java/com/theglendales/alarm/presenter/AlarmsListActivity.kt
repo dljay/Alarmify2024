@@ -287,6 +287,7 @@ class AlarmsListActivity : AppCompatActivity() {
         Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
         window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_1)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 
+
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))
         super.onCreate(savedInstanceState)
 

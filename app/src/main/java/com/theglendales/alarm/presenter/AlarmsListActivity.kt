@@ -65,10 +65,9 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34s2 [Nav Drawer 어느정도 정리 완료. RtPicker Layout 만드는중.] 22/4/13 (wed) 11:20 pm
-// 그냥 SecondFrag 와 최대한 동일하게 만들어보기.
-// --> RtPicker - RcView : 화면에 최소한 몇개는 보여주자 ! Phillip Lackner 영상 다시 보기.
-
+// 30708V1.18e34t1 [SecondFrag>MiniPlayer 하단부 UI 만드는중] 22/4/14 (wed) 11:55 pm
+// 현재 나름 괜춘. CardView - Main (남색) 으로 할지 더 밝은 색 (jj_bg_3 혹은 더 쩅한 파란색?) 고민해보기.
+// issue: 최초에 설정된 알람 건의 경우 RtPicker 에서 잡히지 않는 문제.
 
 // 1) Achievements:
 

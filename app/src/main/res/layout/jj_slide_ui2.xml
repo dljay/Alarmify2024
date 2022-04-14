@@ -53,11 +53,13 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:padding="5dp"
+                android:padding="6dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/id_upperUi_iv_clickarrowUp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/roundedCornersImageView">
+                app:shapeAppearanceOverlay="@style/roundedCornersImageView"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/night_lake">
 
             </com.google.android.material.imageview.ShapeableImageView>
 
@@ -176,13 +178,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/id_lowerUI_entireConsLayout"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
         android:layout_margin="10dp">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/id_lowerUi_iv_bigThumbnail"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -199,14 +201,15 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
             android:text="About the Ringtone"
-            android:textSize="15sp"
-            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:theme="@style/jjTextLarge"
             app:layout_constraintStart_toEndOf="@+id/id_lowerUi_iv_bigThumbnail"
             app:layout_constraintTop_toTopOf="parent">
 
         </TextView>
 
-        <!-- About the Ringtone-->
+        <!-- About the Ringtone [Description] -->
         <TextView
             android:id="@+id/id_lowerUi_tv_Description"
             android:layout_width="240dp"
@@ -214,7 +217,9 @@
             android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
             android:text="This is a placeholder text."
-            android:textSize="12sp"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:theme="@style/jjTextMedium_secondaryColor"
             app:layout_constraintStart_toEndOf="@+id/id_lowerUi_iv_bigThumbnail"
             app:layout_constraintTop_toBottomOf="@+id/textView">
 
@@ -228,13 +233,12 @@
             android:layout_height="wrap_content"
 
             android:layout_marginStart="10dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="0dp"
             android:text="Information"
-            android:textSize="15sp"
-            android:textStyle="bold"
+            android:theme="@style/jjTextLarge"
 
-            app:layout_constraintBottom_toTopOf="@id/ll_badgeHolder"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/id_lowerUi_iv_bigThumbnail" />
 
@@ -244,18 +248,21 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="27dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_info_badgeTitle">
+            app:layout_constraintTop_toBottomOf="@id/tv_info_badgeTitle"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageView
                 android:id="@+id/mPlayer_badge1_Intense"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/badge_1_intense" />
 
@@ -263,7 +270,7 @@
                 android:id="@+id/mPlayer_badge2_Gentle"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/badge_2_gentle" />
 
@@ -271,7 +278,7 @@
                 android:id="@+id/mPlayer_badge3_Nature"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/badge_3_nature" />
 
@@ -279,7 +286,7 @@
                 android:id="@+id/mPlayer_badge_4_Location"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/badge_4_location" />
 
@@ -287,7 +294,7 @@
                 android:id="@+id/mPlayer_badge_5_Popular"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/badge_5_popular" />
 
@@ -295,7 +302,7 @@
                 android:id="@+id/mPlayer_badge_6_Misc"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="5dp"
                 android:src="@drawable/badge_6_misc" />
 

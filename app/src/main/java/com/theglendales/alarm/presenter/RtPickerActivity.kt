@@ -193,7 +193,6 @@ class RtPickerActivity : AppCompatActivity() {
                     rtWithAlbumArt.badgeStr // ex. "INT,NAT,POP" -> Intense, Nature, Popular 뭔 이런식.
                 val badgeStrList = BadgeSortHelper.getBadgesListFromStr(badgeStrRaw)
                 showOrHideBadges(badgeStrList)
-
             }
         //(나) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & ExoForLocal 그대로 사용 예정. [** 현재 SecondFrag 에서는 MpVModel X MainVModel 로 통합되었음**]
         // (음악 재생 상태에 따른 플레이어 UI 업데이트) (RT 선택시 음악 재생은 RtPickerAdapter 에서 바로함.)
@@ -202,10 +201,10 @@ class RtPickerActivity : AppCompatActivity() {
 
             //B) Observe
                 //B-1) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
-        rtPickerVModel.getMpStatusLiveData().observe(this) { StatusEnum ->
-            Log.d(TAG,"onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $StatusEnum")
+        rtPickerVModel.getMpStatusLiveData().observe(this) { statusEnum ->
+            Log.d(TAG,"onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $statusEnum")
             // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
-            when (StatusEnum) {
+            when (statusEnum) {
                 StatusMp.PLAY -> {
                     showMiniPlayerPauseBtn()
                 } // 최초의 ▶,⏸ 아이콘 변경을 위하여 사용. 그후에는 해당버튼 Click -> showMiniPlayerPause/Play 실행됨.
@@ -219,7 +218,8 @@ class RtPickerActivity : AppCompatActivity() {
                     showMiniPlayerPlayBtn()
                 }
             }
-            // b) VuMeter/Loading Circle 등 UI 컨트롤? 여기서는 필요없을듯..
+            // b) VuMeter 컨트롤? 여기서는 필요없을듯..
+            rtPickerRcvAdapter.vumeterControl(statusEnum)
         }
 
         //VHolderUiHandler.LcVmIvController(StatusEnum)
@@ -445,10 +445,10 @@ private fun setUpSlidingPanel() {
         Log.d(TAG, "onDestroy: called")
         super.onDestroy()
         exoForLocal.removeHandler()
-        exoForLocal.releaseExoPlayer()
+        exoForLocal.releaseExoPlayer() // 여기서 EXO LiveData 를 IDLE 로 해주는데. 차라리 강제로 모든 LiveData observe 종료시키는것도 방법일듯?
+        rtPickerRcvAdapter.initVariables()
+
+
         //System.gc() todo: 이거 별 역할 못 하는듯..
-
-
-
     }
 }

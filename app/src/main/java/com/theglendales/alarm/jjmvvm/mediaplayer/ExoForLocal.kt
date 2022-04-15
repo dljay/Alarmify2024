@@ -34,7 +34,7 @@ class ExoForLocal(val context: Context) : Player.Listener {
     companion object {
         val mp3UrlMap: HashMap<Int, String> = HashMap()
     //Current Status 모니터링
-        var currentPlayStatus: StatusMp = StatusMp.IDLE
+        var currentPlayStatus: StatusMp = StatusMp.IDLE // 현재 상태 저장. RtPickerAdapter 에서 쓰임.
     // 다른 fragment 갔다 왔을 떄 대비해서 currentSongPosition(INT), clickedTrackID(INT) 등이 필요함.
     }
 
@@ -42,6 +42,7 @@ class ExoForLocal(val context: Context) : Player.Listener {
     //1) StatusMp ENUM 클래스 정보 갖고 있음.
     private val _mpStatus = MutableLiveData<StatusMp>() // Private & Mutable
     val mpStatus: LiveData<StatusMp> = _mpStatus
+
 
     //2-A) 재생할 곡 길이 (exoPlayer.duration)
     private val _songDuration = MutableLiveData<Long>()
@@ -115,6 +116,9 @@ class ExoForLocal(val context: Context) : Player.Listener {
     }
     fun releaseExoPlayer() { //todo: 후에 activity ? fragment? onDestroy 에 넣어야 할듯..
         playbackPosition = exoPlayer.currentPosition
+        onExoIdle() // 현재의 상태를 IDLE 로 강제 집행 (RtPickerAdapter 에 재진입했을 때 EQ(vumeter) 안 보이게 하기 위해)
+        _songDuration.value = 0L
+        _currentPosition.value = 0L
         exoPlayer.release()
     }
 
@@ -237,7 +241,10 @@ class ExoForLocal(val context: Context) : Player.Listener {
         }
 
     }
-
+    private fun onExoIdle() {
+        currentPlayStatus = StatusMp.IDLE
+        updateStatusMpLiveData(StatusMp.IDLE)
+    }
     private fun onExoBuffering() {
         currentPlayStatus = StatusMp.BUFFERING
         updateStatusMpLiveData(StatusMp.BUFFERING)}

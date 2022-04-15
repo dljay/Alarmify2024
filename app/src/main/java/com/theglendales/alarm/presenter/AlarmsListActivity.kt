@@ -65,10 +65,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34t3 [RtPicker> RadioBtn 못 잡아주는것 해결.] 22/4/14 (Fri) 2:09 pm
+// 30708V1.18e34t5 [RtPicker> RadioBtn / EQ(VUMETER) 삽입 완료. 22/4/14 (Fri) 11:49 pm
 
-// CardView Elevation ? 갖고 테스트해보기?
-// issue: 최초에 설정된 알람 건의 경우 RtPicker 에서 잡히지 않는 문제.
+// issue: RtPickerActivity / JjRtPickerVModel . clear 관련해서 과연 .idle 로 바꾼게 최선일까? 왜 Activity 종료 후 들어왔는데도 계속 observe 하고 있었는지 확인 필요.
+// why livedata keeps observing even activty is destroyed.
 
 // 1) Achievements:
 

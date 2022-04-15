@@ -115,7 +115,7 @@
 
                 <!--vuMeter -->
                 <io.gresse.hugo.vumeterlibrary.VuMeterView
-                    android:id="@+id/id_vumeter"
+                    android:id="@+id/rtPicker_vumeter"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleX="0.3"
@@ -123,7 +123,7 @@
                     android:alpha="0.8"
                     android:paddingStart="8dp"
                     android:paddingRight="8dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     vumeter:vumeter_backgroundColor="@color/jj_accentColor_1"
                     vumeter:vumeter_blockNumber="3"
                     vumeter:vumeter_blockSpacing="7dp"

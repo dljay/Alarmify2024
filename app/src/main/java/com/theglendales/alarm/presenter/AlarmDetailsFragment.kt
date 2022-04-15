@@ -477,8 +477,13 @@ class AlarmDetailsFragment : Fragment() {
 
 
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
-                    Log.d(TAG, "onResume: [RT 변경] 설정된 알람톤 파일이름=$selectedRtFileName, alarmId=$alarmId") // ex) p1009.rta, alarmId=1
+
                     detailFragDisplayedRtFileName = selectedRtFileName.toString()
+                    if(!detailFragDisplayedRtFileName.contains(".rta")) {
+                        detailFragDisplayedRtFileName = "$detailFragDisplayedRtFileName.rta"
+                    }
+                    Log.d(TAG, "onResume: [RT 변경] 설정된 알람톤 파일이름=$selectedRtFileName, detailFragDisplayedRtFileName=${detailFragDisplayedRtFileName}, alarmId=$alarmId") // ex) p1009.rta, alarmId=1
+
                     updateUisForRt(selectedRtFileName.toString())
 
                 })

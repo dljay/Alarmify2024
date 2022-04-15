@@ -55,12 +55,15 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
 
         String defart01Path = AlarmApplication.Companion.getDefArtPathStr("d1"); // d1.jpg -> d1 으로 확장자 제외.
-        String defrta01Path = AlarmApplication.Companion.getDefRtaPathStr("defrt01"); // defrt01.mp3 -> 폰에는 .rta 로 저장!
+        String defrta01Path = AlarmApplication.Companion.getDefRtaPathStr("defrt01");//  +".rta" <- 를 넣을수가 없음.
+        // .rta 를 넣을 경우 알람 재생시 raw/defrt01.rta 를 찾게된다. (mp3가 아니고) 따라서 -> 아무소리가 안난다!
+        // 여기 .rta 를 안 넣었을 때 DetailsFrag>RtPicker 로 고를 때 RadioBtn 이 자동 표시 안되는 문제가 있음 => 해결책: a) DetailsFrag 에서 확장자가 없는 파일명에 강제로 .rta 를 붙이면
+        // ->b) RtPickerAdapter 에서 BindView 에서 잡아줌.
 
         String defart02Path = AlarmApplication.Companion.getDefArtPathStr("d2"); // d1.jpg -> d1 으로 확장자 제외.
-        String defrta02Path = AlarmApplication.Companion.getDefRtaPathStr("defrt02"); // .mp3 아니면 Notification 에서 소리 안난다!
+        String defrta02Path = AlarmApplication.Companion.getDefRtaPathStr("defrt02"); //  + ".rta";
 
-        Log.d(TAG, "onCreate: (2)SQL creator's onCreate called-jj. d1.jpg Path="+ defart01Path);
+        Log.d(TAG, "onCreate: (2)SQL creator's onCreate called-jj. d1.jpg Path="+ defart01Path+"defrta01Path="+ defrta01Path);
         // @formatter:off
         db.execSQL("CREATE TABLE alarms (" +
                 "_id INTEGER PRIMARY KEY," +
@@ -83,8 +86,8 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
         String insertMe = "INSERT INTO alarms " + "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, "
                 + "message, alert, prealarm, state, artfilepath, isalarmsaved) VALUES ";
         // insert default alarms = ** APP 설치시 생성되는 두개!! **
-        db.execSQL(insertMe + "(8, 30, 31, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta01Path +"', 0, '', '" + defart01Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
-        db.execSQL(insertMe + "(9, 00, 96, 0, 0, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta02Path +"', 0, '', '" + defart02Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
+        db.execSQL(insertMe + "(8, 30, 31, 0, 1, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta01Path +"', 0, '', '" + defart01Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
+        db.execSQL(insertMe + "(9, 00, 96, 0, 1, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta02Path +"', 0, '', '" + defart02Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
         //31: 주중 , 96 : 주말 only
 
 

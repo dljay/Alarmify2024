@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34t2 [하단부 UI 어느정도 정리됐음.] 22/4/14 (Fri) 10:58 am
+// 30708V1.18e34t3 [RtPicker> RadioBtn 못 잡아주는것 해결.] 22/4/14 (Fri) 2:09 pm
 
 // CardView Elevation ? 갖고 테스트해보기?
 // issue: 최초에 설정된 알람 건의 경우 RtPicker 에서 잡히지 않는 문제.

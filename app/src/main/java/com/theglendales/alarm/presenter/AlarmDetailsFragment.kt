@@ -479,7 +479,7 @@ class AlarmDetailsFragment : Fragment() {
 //***DetailsFrag 에서 설정된 rt를 Spinner 에 보여주기   //mRingtoneSummary.text = it ..
 
                     detailFragDisplayedRtFileName = selectedRtFileName.toString()
-                    if(!detailFragDisplayedRtFileName.contains(".rta")) {
+                    if(!detailFragDisplayedRtFileName.contains(".rta")) { // 인스톨 알람( d1,d2) 의 경우 ".rta" 없이 RtPickerAdapter> BindView if 문에서 캐치 못함-> RadioBtn 작동 안된다.
                         detailFragDisplayedRtFileName = "$detailFragDisplayedRtFileName.rta"
                     }
                     Log.d(TAG, "onResume: [RT 변경] 설정된 알람톤 파일이름=$selectedRtFileName, detailFragDisplayedRtFileName=${detailFragDisplayedRtFileName}, alarmId=$alarmId") // ex) p1009.rta, alarmId=1

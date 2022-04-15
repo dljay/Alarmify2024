@@ -65,8 +65,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34t1 [SecondFrag>MiniPlayer 하단부 UI 만드는중] 22/4/14 (Thu) 11:55 pm
-// 현재 나름 괜춘. CardView - Main (남색) 으로 할지 더 밝은 색 (jj_bg_3 혹은 더 쩅한 파란색?) 고민해보기.
+// 30708V1.18e34t2 [하단부 UI 어느정도 정리됐음.] 22/4/14 (Fri) 10:58 am
+
 // CardView Elevation ? 갖고 테스트해보기?
 // issue: 최초에 설정된 알람 건의 경우 RtPicker 에서 잡히지 않는 문제.
 

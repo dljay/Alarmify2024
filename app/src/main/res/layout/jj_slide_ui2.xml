@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/roundstyle3_white"
+    android:background="@drawable/roundstyle3_top_only"
 
     android:orientation="vertical">
 
@@ -182,8 +182,8 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="12dp"
-        android:alpha="0.8"
-        app:cardBackgroundColor="@color/jj_main_bg_color">
+
+        app:cardBackgroundColor="@color/jj_bg_color_1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/id_lowerUI_entireConsLayout"
@@ -219,7 +219,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="15dp"
-                android:text="About the Ringtone"
+                android:text="About the Alarm Tone"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:theme="@style/jjTextLarge"
@@ -251,14 +251,14 @@
                 android:layout_height="wrap_content"
 
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginBottom="0dp"
                 android:text="Information"
                 android:theme="@style/jjTextLarge"
 
 
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/id_lowerUi_iv_bigThumbnail" />
+                app:layout_constraintTop_toBottomOf="@+id/id_lowerUi_tv_Description" />
 
             <LinearLayout
                 android:id="@+id/ll_badgeHolder"

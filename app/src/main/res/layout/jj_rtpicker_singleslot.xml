@@ -62,7 +62,7 @@
             android:padding="10dp"/>
 
         <TextView
-            android:id="@+id/tv_singleSlot_rtPicker"
+            android:id="@+id/tv_rtPicker_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="RTA TITLE"
@@ -81,6 +81,7 @@
 
 
         <TextView
+            android:id="@+id/tv_rtPicker_description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
 
@@ -94,7 +95,7 @@
             app:layout_constraintStart_toEndOf="@id/iv_singleSlot_albumArt"
             app:layout_constraintEnd_toEndOf="@id/guide_vertical_rtpicker_2"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_singleSlot_rtPicker">
+            app:layout_constraintTop_toBottomOf="@+id/tv_rtPicker_title">
 
         </TextView>
 

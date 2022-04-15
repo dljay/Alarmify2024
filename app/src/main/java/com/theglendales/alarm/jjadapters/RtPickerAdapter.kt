@@ -44,6 +44,7 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
         val currentRtItem = rtOnThePhoneList[position]
         val currentRtTitle = rtOnThePhoneList[position].rtTitle
         val currentRtFileName = rtOnThePhoneList[position].fileNameWithExt
+        val currentRtDescription = rtOnThePhoneList[position].rtDescription
         val holderRadioBtn = holder.radioBtn
         Log.d(TAG, "onBindViewHolder: pos=$position, rtFileName=$currentRtFileName, rtTitle=$currentRtTitle,")
 
@@ -91,7 +92,9 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
 
         }
 
-    //C.AlbumArt 보여주기
+    //C. Description (Intense, Gentle.. 등) 채워주기
+        holder.tvRtDescription.text = currentRtDescription
+    //D.AlbumArt 보여주기
         GlideApp.with(receivedActivity).load(currentRtItem.artFilePathStr).centerCrop().error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
@@ -141,7 +144,8 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
 
     inner class RtPickerVHolder(xmlToView: View) : RecyclerView.ViewHolder(xmlToView) {
         val clEntireRow: ConstraintLayout = xmlToView.findViewById(R.id.cl_entireSingleSlot) // Row 전체를 감싸는 LinearLayout
-        val tvRtTitle: TextView = xmlToView.findViewById(R.id.tv_singleSlot_rtPicker)
+        val tvRtTitle: TextView = xmlToView.findViewById(R.id.tv_rtPicker_title)
+        val tvRtDescription: TextView = xmlToView.findViewById(R.id.tv_rtPicker_description)
         val ivRtAlbumArt: ImageView = xmlToView.findViewById(R.id.iv_singleSlot_albumArt)
         val radioBtn: RadioButton = xmlToView.findViewById(R.id.rb_singleSlot_selector)
         // selector

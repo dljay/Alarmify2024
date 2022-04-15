@@ -74,6 +74,7 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
                 }
                 //b) (이제) User 가 클릭한 놈의 isRadioBtnChecked = true 로 변경 (클릭한 position 에 기반)
                 rtOnThePhoneList.get(lastUserCheckedPos).isRadioBtnChecked = true
+
                 //c) 만약 현재 클릭하는 llEntireRow 안의 'Radio Button' 이 기존에 선택해놨던 Radio Button 과 '다른 놈'이라면  (기존에 선택되어있던 Radio Btn 의 선택을 해제)
                 // selectedRadioButton = 기존 선택되있던 놈으로 지정되어 있겠지..
                 if(selectedRadioBtn != null && !holderRadioBtn.equals(selectedRadioBtn)) {

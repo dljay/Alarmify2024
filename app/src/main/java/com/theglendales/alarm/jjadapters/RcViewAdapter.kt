@@ -291,8 +291,8 @@ class RcViewAdapter(
     }
 
     // MyViewHolder class
-    inner class MyViewHolder(myXmlToViewObject: View) : RecyclerView.ViewHolder(myXmlToViewObject),
-        View.OnClickListener {
+    inner class MyViewHolder(myXmlToViewObject: View) : RecyclerView.ViewHolder(myXmlToViewObject),View.OnClickListener
+    {
 
         //1) 전체 Slot 을 감싸는 Linear Layout
         val ll_entire_singleSlot: LinearLayout =

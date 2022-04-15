@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:vumeter="http://schemas.android.com/apk/res-auto"
 
     android:id="@+id/cl_entireSingleSlot"
     android:background="@color/transparent"
@@ -36,6 +37,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="5dp"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
             android:clickable="false"
             android:focusable="false"
             android:gravity="center"
@@ -71,7 +74,7 @@
             android:clickable="false"
             android:ellipsize="end"
             android:maxLines="1"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="15dp"
             android:layout_marginEnd="5dp"
             app:layout_constraintStart_toEndOf="@id/iv_singleSlot_albumArt"
@@ -85,7 +88,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
 
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="4dp"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="10dp"
             android:text="#Intense, Guita DeungDeung, Hoo hoo"
@@ -98,6 +101,38 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_rtPicker_title">
 
         </TextView>
+
+        <!-- Vumeter(EQ) + LoadingCircle -->
+        <FrameLayout
+            android:id="@+id/rtpicker_fl_vumeter"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="@id/guide_vertical_rtpicker_2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+                <!--vuMeter -->
+                <io.gresse.hugo.vumeterlibrary.VuMeterView
+                    android:id="@+id/id_vumeter"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleX="0.3"
+                    android:scaleY="0.3"
+                    android:alpha="0.8"
+                    android:paddingStart="8dp"
+                    android:paddingRight="8dp"
+                    android:visibility="visible"
+                    vumeter:vumeter_backgroundColor="@color/jj_accentColor_1"
+                    vumeter:vumeter_blockNumber="3"
+                    vumeter:vumeter_blockSpacing="7dp"
+                    vumeter:vumeter_speed="10"
+                    vumeter:vumeter_startOff="false"
+                    vumeter:vumeter_stopSize="5dp" />
+
+
+        </FrameLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

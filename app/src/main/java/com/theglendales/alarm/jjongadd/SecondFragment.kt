@@ -795,7 +795,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
         //모퉁이 흰색 없애주고 & 불투명으로
           slidingUpPanelLayout.isOverlayed =true // 모퉁이 edge 없애기 위해. Default 는 안 겹치게 false 값.
-          upperUiHolder.alpha = 0.5f // +0.3 은 살짝~ 보이게끔
+          //upperUiHolder.alpha = 0.5f // +0.3 은 살짝~ 보이게끔
           //↓ arrow 전환 visibility
           iv_upperUi_ClickArrow.setImageResource(R.drawable.arrow_down_white)
     }
@@ -828,7 +828,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             override fun onPanelSlide(panel: View?, slideOffset: Float) {
                 Log.d(TAG, "onPanelSlide: Panel State=${slidingUpPanelLayout.panelState}")
                 shouldPanelBeVisible = true // 이제 Panel 이 열렸으니깐. todo: 이거 bool 값에 의존하는게 괜찮을지..
-                upperUiHolder.alpha = 1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
+                //upperUiHolder.alpha = 1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 //
 
                 // 트랙 클릭-> 미니플레이어가 등장! (그 이전에는 offset = -xxx 값임.)
                 //Log.d(TAG, "onPanelSlide: slideOffset= $slideOffset, rcvAdapterInstance.itemCount=${rcvAdapterInstance.itemCount}")

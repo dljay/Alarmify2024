@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -53,6 +54,8 @@ class HelpOurTeamActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_help_our_team)
+
+        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_1)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 
     //1) Activity 화면 및 UI Initialize (ActionBar 등..)
         toolBar = findViewById(R.id.id_toolbar_help_our_team)

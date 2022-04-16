@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/roundstyle3_top_only"
 
     android:orientation="vertical">
@@ -167,173 +167,181 @@
         <!-- 중간에 작은 Divider Border>>> -->
         <View
             android:layout_width="match_parent"
-            android:layout_height="3dp"
+            android:layout_height="2dp"
+            android:alpha="0.5"
             android:background="@color/border_mp_btmNav">
         </View>
 
     </LinearLayout>
 
     <!-- bottom part 여기서부터>>> -->
+    <!-- Card View 사용시에는 제일 상단 ConstraintLayout > height : match_parent 로-->
 
-    <com.google.android.material.card.MaterialCardView
+<!--    <com.google.android.material.card.MaterialCardView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:cardCornerRadius="12dp"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:layout_marginEnd="10dp"-->
+<!--        android:layout_marginTop="14dp"-->
+
+<!--        app:cardBackgroundColor="@color/jj_bg_color_1">-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/id_lowerUI_entireConsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginTop="14dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="@color/jj_bg_color_1">
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="10dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/id_lowerUI_entireConsLayout"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/miniplayer_v_guide_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.7"/>
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/id_lowerUi_iv_bigThumbnail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:padding="5dp"
+            app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
+            app:layout_constraintTop_toTopOf="@id/tv_AboutTheRingTone"
+            app:layout_constraintBottom_toTopOf="@id/tv_info_badgeTitle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView"
+            tools:src="@drawable/night_lake"/>
+
+        <TextView
+            android:id="@+id/tv_AboutTheRingTone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="15dp"
+            android:text="About the Alarm Tone"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:theme="@style/jjTextLarge"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/miniplayer_v_guide_1"/>
+
+        <!-- About the Ringtone [Description] -->
+        <TextView
+            android:id="@+id/id_lowerUi_tv_Description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="15dp"
+            android:text="This is a placeholder text."
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:theme="@style/jjTextMedium_tertiaryColor"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/miniplayer_v_guide_1"
+            app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"/>
+
+        <!-- badges-->
+
+        <TextView
+            android:id="@+id/tv_info_badgeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="4dp"
+            android:text="Information"
+            android:theme="@style/jjTextLarge"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/id_lowerUi_tv_Description"/>
+
+        <LinearLayout
+            android:id="@+id/ll_badgeHolder"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/miniplayer_v_guide_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.8"/>
+            android:orientation="horizontal"
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/id_lowerUi_iv_bigThumbnail"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_info_badgeTitle"
+            app:layout_constraintBottom_toBottomOf="parent">
 
+            <ImageView
+                android:id="@+id/mPlayer_badge1_Intense"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/badge_1_intense" />
 
-                android:scaleType="centerCrop"
-                app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
-                app:layout_constraintTop_toBottomOf="@id/tv_AboutTheRingTone"
-                app:layout_constraintBottom_toTopOf="@id/tv_info_badgeTitle"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintDimensionRatio="1:1"
-                app:shapeAppearanceOverlay="@style/roundedCornersImageView"
-                tools:src="@drawable/night_lake"/>
+            <ImageView
+                android:id="@+id/mPlayer_badge2_Gentle"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/badge_2_gentle" />
 
-            <TextView
-                android:id="@+id/tv_AboutTheRingTone"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="15dp"
-                android:text="About the Alarm Tone"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:theme="@style/jjTextLarge"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/miniplayer_v_guide_1"/>
+            <ImageView
+                android:id="@+id/mPlayer_badge3_Nature"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/badge_3_nature" />
 
-            <!-- About the Ringtone [Description] -->
-            <TextView
-                android:id="@+id/id_lowerUi_tv_Description"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="15dp"
-                android:text="This is a placeholder text."
-                android:maxLines="3"
-                android:ellipsize="end"
-                android:theme="@style/jjTextMedium_tertiaryColor"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/miniplayer_v_guide_1"
-                app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"/>
+            <ImageView
+                android:id="@+id/mPlayer_badge_4_Location"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/badge_4_location" />
 
-            <!-- badges-->
+            <ImageView
+                android:id="@+id/mPlayer_badge_5_Popular"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/badge_5_popular" />
 
-            <TextView
-                android:id="@+id/tv_info_badgeTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="13dp"
-                android:layout_marginBottom="2dp"
-                android:text="Information"
-                android:theme="@style/jjTextLarge"
+            <ImageView
+                android:id="@+id/mPlayer_badge_6_Misc"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="5dp"
+                android:src="@drawable/badge_6_misc" />
 
 
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/ll_badgeHolder"/>
+        </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/ll_badgeHolder"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="10dp"
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-                android:orientation="horizontal"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/border_mp_btmNav"
+        android:alpha="0.5"
+        android:layout_gravity="bottom">
 
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <ImageView
-                    android:id="@+id/mPlayer_badge1_Intense"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="5dp"
-                    android:src="@drawable/badge_1_intense" />
-
-                <ImageView
-                    android:id="@+id/mPlayer_badge2_Gentle"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="5dp"
-                    android:src="@drawable/badge_2_gentle" />
-
-                <ImageView
-                    android:id="@+id/mPlayer_badge3_Nature"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="5dp"
-                    android:src="@drawable/badge_3_nature" />
-
-                <ImageView
-                    android:id="@+id/mPlayer_badge_4_Location"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="5dp"
-                    android:src="@drawable/badge_4_location" />
-
-                <ImageView
-                    android:id="@+id/mPlayer_badge_5_Popular"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="5dp"
-                    android:src="@drawable/badge_5_popular" />
-
-                <ImageView
-                    android:id="@+id/mPlayer_badge_6_Misc"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="5dp"
-                    android:src="@drawable/badge_6_misc" />
-
-
-            </LinearLayout>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </com.google.android.material.card.MaterialCardView>
-
+    </View>
 
 
 

@@ -316,7 +316,7 @@ private fun setUpSlidingPanel() {
         SlidingUpPanelLayout.PanelSlideListener {
         override fun onPanelSlide(panel: View?, slideOffset: Float) {
 
-            upperUiHolder.alpha =1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
+            //upperUiHolder.alpha =1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 // todo: 나중에는 그냥 invisible 하는게 더 좋을수도. 너무 주렁주렁
 
             // 트랙 클릭-> 미니플레이어가 등장! (그 이전에는 offset = -xxx 값임.)
             //Log.d(TAG, "onPanelSlide: slideOffset= $slideOffset, rcvAdapterInstance.itemCount=${rcvAdapterInstance.itemCount}")

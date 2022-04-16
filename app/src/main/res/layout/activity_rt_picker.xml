@@ -29,7 +29,7 @@
             android:gravity="bottom"
 
             app:umanoOverlay="false"
-            app:umanoPanelHeight="60dp"
+            app:umanoPanelHeight="64dp"
             app:umanoShadowHeight="0dp">
 
             <!--1st Child RcView [Song Selector] -->
@@ -50,7 +50,7 @@
             <RelativeLayout
                 android:id="@+id/ir_rl_entireSlider"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="wrap_content"
                 android:background="@color/jj_main_bg_color">
 
                 <include layout="@layout/jj_slide_ui2" />

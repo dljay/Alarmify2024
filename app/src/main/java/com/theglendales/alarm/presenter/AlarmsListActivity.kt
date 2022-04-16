@@ -65,10 +65,9 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34t5 [RtPicker> RadioBtn / EQ(VUMETER) 삽입 완료. 22/4/14 (Fri) 11:49 pm
+// 30708V1.18e34t6 [Badge 크기 조절..] 22/4/14 (Sat) 10:05 pm
 
-// issue: RtPickerActivity / JjRtPickerVModel . clear 관련해서 과연 .idle 로 바꾼게 최선일까? 왜 Activity 종료 후 들어왔는데도 계속 observe 하고 있었는지 확인 필요.
-// why livedata keeps observing even activty is destroyed.
+// Todo: 가격표를 밑에 넣기? Vumeter/LoadingCircle 제일 오른쪽에..
 
 // 1) Achievements:
 

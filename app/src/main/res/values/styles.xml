@@ -304,6 +304,13 @@
             <item name="android:textSize">12.5sp</item>
         </style>
 
+        <style name="jjTextMedium_Black_bigger">
+            <item name="fontFamily">@font/circular_std_medium</item>
+            <item name="android:textColor">@color/primaryDarkTextColor</item>
+            <item name="android:lineSpacingExtra">3sp</item>
+            <item name="android:textSize">14sp</item>
+        </style>
+
         <style name="jjTextMedium_secondaryColor">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/secondaryTextColor</item>
@@ -417,6 +424,11 @@
         <item name="android:textColor">@color/fourthTextColor</item>
         <item name="android:textStyle">italic</item>
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- Contact US(Alert Dialog Text Color)-->
+    <style name="ContactUsDialogTheme" parent="ThemeOverlay.AppCompat.Dialog">
+        <item name="android:textColorPrimary">@color/blackish</item>
     </style>
 
 

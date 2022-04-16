@@ -171,7 +171,7 @@ class ActionBarHandler(private val mContext: Activity,private val store: UiStore
         val dialogView = inflator.inflate(R.layout.dialog_contact_us, null)
         dialogView.findViewById<TextView>(R.id.dialog_contactus_textview).movementMethod = LinkMovementMethod.getInstance()
 
-        androidx.appcompat.app.AlertDialog.Builder(mContext).apply {
+        androidx.appcompat.app.AlertDialog.Builder(mContext, R.style.ContactUsDialogTheme).apply { // 여기에 R.style.Conta...xx 을 넣으면서 Title 색 변화 가능.
             setPositiveButton(android.R.string.ok) {_, _ -> }
             setTitle(R.string.dialog_contact_us_title)
             setView(dialogView)

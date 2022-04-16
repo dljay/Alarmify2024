@@ -189,12 +189,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_margin="50dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginEnd="50dp"
+                android:layout_marginBottom="60dp"
+                android:layout_marginTop="0dp"
                 android:scaleType="centerInside"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
 
-                app:lottie_scale="0.5">
+                app:lottie_scale="0.6">
 
 
             </com.airbnb.lottie.LottieAnimationView>

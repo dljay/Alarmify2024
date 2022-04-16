@@ -202,7 +202,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.7"/>
+            app:layout_constraintGuide_percent="0.8"/>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/id_lowerUi_iv_bigThumbnail"
@@ -222,7 +222,7 @@
             android:id="@+id/tv_AboutTheRingTone"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="7dp"
             android:layout_marginTop="3dp"
             android:layout_marginEnd="15dp"
             android:text="About the Alarm Tone"
@@ -238,7 +238,7 @@
             android:id="@+id/id_lowerUi_tv_Description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="7dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="15dp"
             android:text="This is a placeholder text."
@@ -256,7 +256,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="7dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="4dp"
             android:text="Information"
@@ -267,66 +267,70 @@
 
         <LinearLayout
             android:id="@+id/ll_badgeHolder"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginStart="7dp"
+            android:layout_marginEnd="7dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="8dp"
 
             android:orientation="horizontal"
-
-            app:layout_constraintEnd_toEndOf="parent"
+            android:weightSum="6"
+            app:layout_constraintEnd_toEndOf="@id/miniplayer_v_guide_1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_info_badgeTitle"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageView
                 android:id="@+id/mPlayer_badge1_Intense"
-                android:layout_width="50dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="2dp"
                 android:src="@drawable/badge_1_intense" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge2_Gentle"
-                android:layout_width="50dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="2dp"
                 android:src="@drawable/badge_2_gentle" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge3_Nature"
-                android:layout_width="50dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="2dp"
                 android:src="@drawable/badge_3_nature" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge_4_Location"
-                android:layout_width="50dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="2dp"
                 android:src="@drawable/badge_4_location" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge_5_Popular"
-                android:layout_width="50dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="2dp"
                 android:src="@drawable/badge_5_popular" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge_6_Misc"
-                android:layout_width="50dp"
+                android:layout_weight="1"
+                android:layout_width="0dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="5dp"
                 android:src="@drawable/badge_6_misc" />
 
 

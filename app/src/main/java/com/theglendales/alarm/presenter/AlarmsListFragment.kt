@@ -182,8 +182,8 @@ class AlarmsListFragment : Fragment() {
                 true -> {rowHolder.digitalClockContainer.alpha=1.0f
                         rowHolder.albumArt.alpha = 1.0f
                 }
-                false -> {rowHolder.digitalClockContainer.alpha=0.4f
-                        rowHolder.albumArt.alpha = 0.4f
+                false -> {rowHolder.digitalClockContainer.alpha=0.3f
+                        rowHolder.albumArt.alpha = 0.3f
                 }
             }
 
@@ -236,8 +236,8 @@ class AlarmsListFragment : Fragment() {
                         true -> {rowHolder.digitalClockContainer.alpha=1.0f
                             rowHolder.albumArt.alpha = 1.0f
                         }
-                        false -> {rowHolder.digitalClockContainer.alpha=0.4f
-                            rowHolder.albumArt.alpha = 0.4f
+                        false -> {rowHolder.digitalClockContainer.alpha=0.3f
+                            rowHolder.albumArt.alpha = 0.3f
                         }
                     }
                 }

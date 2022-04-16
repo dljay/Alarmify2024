@@ -204,8 +204,10 @@ class RtPickerActivity : AppCompatActivity() {
             //A) 생성
 
 
+        //todo: 아래 getMpxx() 등 exoForLocal 안에 있는 LiveData 들은 RtPickerActivitiy 이 종료(destroy) 됨에도 계속 살아있다. Memory Leak 일수 있음.
+        // 해결책중 하나는 RtPickerActivity 에서 observable 을 따로 변수로 만들어주고 removeObserver() .. 이거 하는건데 복잡해서 일단은 생략. 추후 확인 필요.
+        // https://www.tabnine.com/code/java/methods/androidx.lifecycle.LiveData/removeObserver
             //B) Observe
-
                 //B-1) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
         rtPickerVModel.getMpStatusLiveData().observe(this) { statusEnum ->
             Log.d(TAG,"onCreate: !!! 'MpViewModel' 옵저버! Current Music Play Status: $statusEnum")

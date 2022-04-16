@@ -78,6 +78,7 @@ class ExoForLocal(val context: Context) : Player.Listener {
         exoPlayer = SimpleExoPlayer.Builder(context).build()
         exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
         exoPlayer.addListener(this)
+        onExoIdle() // IDLE 로 해줘야 rtPickerAdapter 에서 EQ 보이지 않음.
         Log.d(TAG, "initExoPlayer: [LOCAL] .. Ends")
 
     }
@@ -114,12 +115,14 @@ class ExoForLocal(val context: Context) : Player.Listener {
 
 
     }
-    fun releaseExoPlayer() { //todo: 후에 activity ? fragment? onDestroy 에 넣어야 할듯..
+    fun releaseExoPlayer() {
         playbackPosition = exoPlayer.currentPosition
-        onExoIdle() // 현재의 상태를 IDLE 로 강제 집행 (RtPickerAdapter 에 재진입했을 때 EQ(vumeter) 안 보이게 하기 위해)
-        _songDuration.value = 0L
-        _currentPosition.value = 0L
+        // 아래 세줄에서 핵심은 onExoIdle() 이거 안해주면 -> rtPicker 재진입시 (그전에 선택했던 rt 의 VuMeter 가 뜬다.) 지금은 initExo() 안에서 시작과 동시에 IDLE 로 해주는 코드를 넣어서 아래를 생략.
+//        onExoIdle() // 현재의 상태를 IDLE 로 강제 집행 (RtPickerAdapter 에 재진입했을 때 EQ(vumeter) 안 보이게 하기 위해)
+//        _songDuration.value = 0L
+//        _currentPosition.value = 0L
         exoPlayer.release()
+
     }
 
     override fun onPlayerError(error: ExoPlaybackException) {

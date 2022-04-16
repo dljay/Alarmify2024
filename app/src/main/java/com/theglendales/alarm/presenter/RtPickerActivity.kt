@@ -8,9 +8,12 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -47,6 +50,8 @@ private const val CURRENT_RT_FILENAME_KEY= "currentRtFileName_Key"
 
 
 class RtPickerActivity : AppCompatActivity() {
+    // ViewModel
+    private val rtPickerVModel: JjRtPickerVModel by viewModels()
     //ToolBar (ActionBar 대신하여 모든 Activity 에 만들어주는 중.)
     private lateinit var toolBar: Toolbar
     // DiskSearcher
@@ -141,7 +146,7 @@ class RtPickerActivity : AppCompatActivity() {
     //4)  LIVEDATA -> // 참고로 별도로 Release 해줄 필요 없음. if you are using observe method, LiveData will be automatically cleared in onDestroy state.
         //(가) RtPicker ViewModel
             // A)생성(RcvVModel)
-            val rtPickerVModel = ViewModelProvider(this).get(JjRtPickerVModel::class.java)
+            //val rtPickerVModel = ViewModelProvider(this).get(JjRtPickerVModel::class.java)
 
             // B) Observe - RtPicker 로 User 가 RingTone 을 골랐을 때
 
@@ -200,9 +205,10 @@ class RtPickerActivity : AppCompatActivity() {
 
 
             //B) Observe
+
                 //B-1) MediaPlayer 에서의 Play 상태(loading/play/pause) 업뎃을 observe
         rtPickerVModel.getMpStatusLiveData().observe(this) { statusEnum ->
-            Log.d(TAG,"onViewCreated: !!! 'MpViewModel' 옵저버! Current Music Play Status: $statusEnum")
+            Log.d(TAG,"onCreate: !!! 'MpViewModel' 옵저버! Current Music Play Status: $statusEnum")
             // a) MiniPlayer Play() Pause UI 업데이트 (현재 SecondFragment.kt 에서 해결)
             when (statusEnum) {
                 StatusMp.PLAY -> {
@@ -227,7 +233,7 @@ class RtPickerActivity : AppCompatActivity() {
                 //B-2) Seekbar 관련
                     //2-C) seekbar 업뎃을 위한 현재 곡의 길이(.duration) observe. (ExoForLocal -> JjMpViewModel-> 여기로)
         rtPickerVModel.getSongDurationLiveData().observe(this, { dur ->
-                        Log.d(TAG, "onViewCreated: duration received = ${dur.toInt()}")
+                        Log.d(TAG, "onCreate: duration received = ${dur.toInt()}")
                         seekBar.max = dur.toInt()
 
                     })
@@ -447,8 +453,6 @@ private fun setUpSlidingPanel() {
         exoForLocal.removeHandler()
         exoForLocal.releaseExoPlayer() // 여기서 EXO LiveData 를 IDLE 로 해주는데. 차라리 강제로 모든 LiveData observe 종료시키는것도 방법일듯?
         rtPickerRcvAdapter.initVariables()
-
-
-        //System.gc() todo: 이거 별 역할 못 하는듯..
+        System.gc() // todo: 이거 별 역할 못 하는듯..
     }
 }

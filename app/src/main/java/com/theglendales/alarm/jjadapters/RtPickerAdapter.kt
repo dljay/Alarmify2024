@@ -57,7 +57,7 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
         val currentHolderTrId = rtOnThePhoneList[position].trIdStr
         val currentHolderRadioBtn = holder.radioBtn
 
-        Log.d(TAG, "onBindViewHolder: currentHolderTrId= $currentHolderTrId,  pos=$position, rtFileName=$currentRtFileName, rtTitle=$currentRtTitle,")
+        //Log.d(TAG, "onBindViewHolder: currentHolderTrId= $currentHolderTrId,  pos=$position, rtFileName=$currentRtFileName, rtTitle=$currentRtTitle,")
 
         holder.tvRtTitle.text = currentRtTitle
     //A. **[최초 RcView row 생성시 'DefaultFrag' 에서 설정되어있던 Ringtone 의 RadioBtn 체크 표시해주기]**
@@ -108,12 +108,12 @@ class RtPickerAdapter(var rtOnThePhoneList: MutableList<RtOnThePhone>,
     //C. 스크롤 쓱싹 위아래 하면서 Bind 할 때  (기존 선택된 트랙이면 -> vuMeter, RadioBtn Enable, 아니면 vuMeter/RadioBtn 재탕되는것 방지하기!)
         when(position) {
             lastUserCheckedPos -> { // 기존 선택된 트랙 -> enable vuMeter& RadioBtn (O)
-                Log.d(TAG, "onBindViewHolder: 이전에 선택해놓은 트랙(O)!! currentHolderTrId= $currentHolderTrId,  pos=$position, lastusercheckedpos=$lastUserCheckedPos")
+                //Log.d(TAG, "onBindViewHolder: 이전에 선택해놓은 트랙(O)!! currentHolderTrId= $currentHolderTrId,  pos=$position, lastusercheckedpos=$lastUserCheckedPos")
                 enableVm(ExoForLocal.currentPlayStatus, holder)
                 holder.radioBtn.isChecked = true
             }
             else -> { // 이전에 선택해놓은 트랙이 아님!  (그러니깐 viewHolder 가 재활용되면서 vuMeter 나 RadioBtn 재활성화 시키는것 막자!) (X)
-                Log.d(TAG, "onBindViewHolder: 이전에 선택해놓은 트랙이 아님(X)!! currentHolderTrId= $currentHolderTrId,  pos=$position, lastusercheckedpos=$lastUserCheckedPos")
+                //Log.d(TAG, "onBindViewHolder: 이전에 선택해놓은 트랙이 아님(X)!! currentHolderTrId= $currentHolderTrId,  pos=$position, lastusercheckedpos=$lastUserCheckedPos")
                 holder.vuMeter.visibility = View.GONE
                 holder.radioBtn.isChecked= false // Disable RadioBtn
             }

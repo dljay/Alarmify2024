@@ -29,6 +29,7 @@ class JjRtPickerVModel : ViewModel() {
     override fun onCleared() {
         Log.d(TAG, "onCleared: called")
         super.onCleared()
+
         //todo: 여기서 따로 그동안 Observe 하던거 없애줘야할지? https://origogi.github.io/android/viewmodel-onCleared/
     }
 }

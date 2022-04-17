@@ -15,7 +15,8 @@ class LottieAnimHandler(private val receivedActivity: Activity, private val lott
         //최초 app launch->read.. auto play 기 때문에
             LottieENUM.INIT_LOADING -> {
                 Log.d(TAG, "animController: initialLoading")
-                lottieAnimationView.setAnimation(R.raw.lottie_loading_threedot)
+                lottieAnimationView.setAnimation(R.raw.lottie_loading_threedot_accent_color)
+
 
             }
         // 인터넷 안되는 에러

@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34t6 [Badge 크기 조절..] 22/4/14 (Sat) 10:05 pm
+// 30708V1.18e34t6 [VuMeter/Loading Circle 옮기기전.] 22/4/14 (Sun) 10:59 pm
 
 // Todo: 가격표를 밑에 넣기? Vumeter/LoadingCircle 제일 오른쪽에..
 

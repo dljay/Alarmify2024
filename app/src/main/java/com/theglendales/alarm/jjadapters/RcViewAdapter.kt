@@ -273,8 +273,7 @@ class RcViewAdapter(
     {
 
         //1) 전체 Slot 을 감싸는 Linear Layout
-        val ll_entire_singleSlot: LinearLayout =
-            myXmlToViewObject.findViewById(R.id.id_singleSlot_ll)// HIGHLIGHT 위해 single slot 전체를 감싸는 linear layout 추가
+        val ll_entire_singleSlot: LinearLayout = myXmlToViewObject.findViewById(R.id.id_singleSlot_ll)// HIGHLIGHT 위해 single slot 전체를 감싸는 linear layout 추가
 
         //2) 왼쪽-중앙 곡 클릭 영역
 
@@ -288,13 +287,13 @@ class RcViewAdapter(
         val loadingCircle: ProgressBar = myXmlToViewObject.findViewById(R.id.id_progressCircle)
 
         // 4) 오른쪽 FREE,GET THIS 칸
-        val cl_entire_purchase: FrameLayout = myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
+        //val cl_entire_purchase: FrameLayout = myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
         //var tv4_GetThis: TextView = myXmlToViewObject.findViewById(R.id.id_tvGetThis)
         var holderTrId: Int = -10 // 처음엔 의미없는 -10 값을 갖지만, onBindView 에서 제대로 holder.id 로 설정됨.
 
         init {
-            rl_Including_tv1_2.setOnClickListener(this)
-            cl_entire_purchase.setOnClickListener(this)
+            ll_entire_singleSlot.setOnClickListener(this)
+
             //Log.d(TAG, "MyViewHolder Init: ${myXmlToViewObject.toString()}")
         }
 
@@ -310,9 +309,9 @@ class RcViewAdapter(
             if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null)
             { // To avoid possible mistake when we delete the item but click it
                // val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
-                when(v.id) {
+                when(v.id) { //todo: 사실상 when 문 없애도 된다. (구매창을 holder 에서 제외시켰으므로..)
                     //1) [하이라이트, 음악 재생] - 구매 제외 부분 클릭  (Rl_including_tv1_2 영역)
-                    R.id.id_rL_including_title_description -> {
+                    R.id.id_singleSlot_ll -> {
                         //1-a)
                         //todo: exoForUrl 에 clickedTrId 기억해놓기.
                         prevClickedHolder = clickedHolder // 이전에 선택되어있던 holder 값을 prevClickedHolder 로 복사. (첫 Click 이라면 prevClick 이 null 이 되겠지 당연히..)
@@ -334,12 +333,7 @@ class RcViewAdapter(
                         // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
                         secondFragListener.onRcvClick(selectedRt,isPurchaseClicked = false) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!
                     }
-                    //2) [구매 클릭]
-//                    R.id.id_cl_entire_Purchase -> {
-//                        Log.d(TAG, "onClick: !!!!!!!!!!!!!!!!!!!You clicked FREE or GET This. trkId=${selectedRt.id}, iapName= ${selectedRt.iapName}")
-//                        secondFragListener.onRcvClick(selectedRt,isPurchaseClicked = true) // JjMainViewModel.kt > iapV3.myOnPurchaseClicked() 로 연결 -> 구매 로직 실행.
-//                        return
-//                    }
+
                 }
             }
 

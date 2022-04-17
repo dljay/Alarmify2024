@@ -65,9 +65,9 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e34t6 [VuMeter/Loading Circle 옮기기전.] 22/4/14 (Sun) 10:59 pm
+// 30708V1.18e34u [VuMeter/Loading Circle 옮겼음.] 22/4/14 (Sun) 11:22 pm
 
-// Todo: 가격표를 밑에 넣기? Vumeter/LoadingCircle 제일 오른쪽에..
+// Todo: MiniPlayer Bottom UI: Banner 다운받기. 정렬. 가격 표시가 어정쩡..margin 없애?
 
 // 1) Achievements:
 

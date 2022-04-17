@@ -202,6 +202,7 @@ class JjMainViewModel : ViewModel() {
     private val _purchaseLoadingCircleSwitch = MutableLiveData<Int>() // Purchase 클릭 -> 구매창 뜨기전 나올 LoadingCircle
     val purchaseLoadingCircleSwitch: LiveData<Int> = _purchaseLoadingCircleSwitch
     fun triggerPurchaseLoadingCircle(onOffNumber: Int) {_purchaseLoadingCircleSwitch.value = onOffNumber} // 0: 보여주기, 1: 아예 다 끄기, 2: 어두운 화면 그대로 두고 Circle 만 안보이게 없애기
+
     fun onTrackClicked(rtObj: RtInTheCloud, isPurchaseClicked: Boolean, receivedActivity: Activity) { // todo: Click <-> RCV ViewModel 더 정석으로 찾아서 바꿔보기 + Activity 에 대한 고민..
 //[A] 단순 음악 재생용 클릭일때 -> LiveData(selectedRow.value) 업뎃 -> SecondFrag 에서 UI 업뎃
         if(!isPurchaseClicked) {

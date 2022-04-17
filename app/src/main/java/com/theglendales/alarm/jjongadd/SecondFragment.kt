@@ -526,10 +526,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             Log.d(TAG, "updateMiniPlayerUiOnClick: [FLOW] 최초 오픈시 Default 값 예상. Invalid Rt Obj. Return")
             return
         }
-
-
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
-
     //Sliding Panel - Upper UI
         // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
         var spaceFifteen="               " // 15칸
@@ -568,6 +565,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
             slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
         }
+        // 클릭시 구매창 이동..
     }
 
     //Chip Related#1 (Listener 등록)

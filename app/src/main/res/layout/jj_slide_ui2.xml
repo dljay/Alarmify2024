@@ -356,9 +356,11 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:ellipsize="end"
+                    android:background="@drawable/textview_border"
                     android:theme="@style/jjTextSmall_PriceTag"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/iv_dnld_btm_player"
                     app:layout_constraintBottom_toBottomOf="parent"/>
                 <ImageView
                     android:id="@+id/iv_dnld_btm_player"

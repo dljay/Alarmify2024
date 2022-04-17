@@ -77,9 +77,7 @@ class RcViewAdapter(
         Log.d(TAG, "onBindViewHolder: holder.hashCode= ${holder.hashCode()}, holder TrId= ${holder.holderTrId}, currentTrIapName= $currentIapName")
         Log.d(TAG, "onBindViewHolder: Purchased Stats=${currentRt.purchaseBool}")
 
-//        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " +
-//                "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " +
-//                "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
+//        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " + "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " + "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
 
     //트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
         // A) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트(O) & VuMeter (O)
@@ -94,25 +92,6 @@ class RcViewAdapter(
             disableVMnLC(holder)
         }
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
-        //IAP 관련 A) 가격 표시
-        if(currentRt.itemPrice.isNotEmpty()) {
-            holder.tv_Price.text = currentRt.itemPrice
-
-        }
-        //IAP 관련 B) Purchase Stat True or False
-        when(currentRt.purchaseBool) {
-            true -> {// Show "Check Circle(v)" icon
-                holder.iv_PurchasedCheckedIcon.visibility = View.VISIBLE
-                holder.tv_Price.visibility = View.GONE
-                //holder.downloadIcon.visibility = View.GONE
-
-            }
-            false -> {// Show "Price (TextView) & Download Icon"
-                holder.iv_PurchasedCheckedIcon.visibility = View.GONE
-                holder.tv_Price.visibility = View.VISIBLE
-                //holder.downloadIcon.visibility = View.VISIBLE
-            }
-        }
 
         GlideApp.with(receivedActivity).load(currentRt.imageURL).centerCrop()
             .error(R.drawable.errordisplay)
@@ -151,11 +130,11 @@ class RcViewAdapter(
                         if(prevClickedHolder!=null) {
                             prevClickedHolder!!.loadingCircle.visibility = View.INVISIBLE // loading Circle 안보이게. (a)
                             prevClickedHolder!!.vuMeterView.visibility = VuMeterView.GONE // VuMeter 도 안보이게 (b)
-                            prevClickedHolder!!.iv_Thumbnail.alpha = 1.0f // (c) 썸네일 밝기 원복
+                            //prevClickedHolder!!.iv_Thumbnail.alpha = 1.0f // (c) 썸네일 밝기 원복
                         }
                         // 2) 새로 Click 된 Holder 의 UI 업데이트
                         clickedHolder!!.loadingCircle.visibility = View.VISIBLE
-                        clickedHolder!!.iv_Thumbnail.alpha = 0.6f
+                        //clickedHolder!!.iv_Thumbnail.alpha = 0.6f
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.GONE
                     }
                     StatusMp.READY -> {
@@ -167,7 +146,7 @@ class RcViewAdapter(
                         clickedHolder!!.vuMeterView.pause()
                     }
                     StatusMp.PLAY -> {
-                        clickedHolder!!.iv_Thumbnail.alpha = 0.6f
+                        //clickedHolder!!.iv_Thumbnail.alpha = 0.6f
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.VISIBLE
                         clickedHolder!!.vuMeterView.resume(true)
                     }
@@ -200,13 +179,13 @@ class RcViewAdapter(
 
             when(currentPlayStatus) {
                 StatusMp.PLAY -> {
-                    selectedHolder.iv_Thumbnail.alpha = 0.6f // 어둡게
+                    //selectedHolder.iv_Thumbnail.alpha = 0.6f // 어둡게
                     selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
                 }
                 StatusMp.PAUSED -> {
                     Log.d(TAG, "enableVM: .PAUSED called for holder.hashCode= ${selectedHolder.hashCode()}")
                     selectedHolder.vuMeterView.visibility = VuMeterView.VISIBLE
-                    selectedHolder.iv_Thumbnail.alpha = 0.6f // 어둡게
+                    //selectedHolder.iv_Thumbnail.alpha = 0.6f // 어둡게
                     Handler(Looper.getMainLooper()).postDelayed({
                         selectedHolder.vuMeterView.pause() // EQ 막대기를 보여줘야하는데 바로 vuMeterView.pause() 때리면 아무것도 안 보임. 따라서 0.1 초 Delay 후 Pause 때림.
                     }, 100)
@@ -219,7 +198,7 @@ class RcViewAdapter(
         }
         private fun disableVMnLC(unselectedHolder: MyViewHolder) {
             unselectedHolder.loadingCircle.visibility = View.INVISIBLE // 일단 loadingCircle 없애기.
-            unselectedHolder.iv_Thumbnail.alpha = 1.0f // 밝기 원복
+            //unselectedHolder.iv_Thumbnail.alpha = 1.0f // 밝기 원복
             unselectedHolder.vuMeterView.visibility = VuMeterView.GONE // VuMeter 감추기
         }
 // <---------- // Highlight & VuMeter 작동 관련    --------->
@@ -310,11 +289,6 @@ class RcViewAdapter(
 
         // 4) 오른쪽 FREE,GET THIS 칸
         val cl_entire_purchase: FrameLayout = myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
-        val tv_Price: TextView = myXmlToViewObject.findViewById(R.id.id_tvPrice)
-
-        //val downloadIcon: ImageButton = myXmlToViewObject.findViewById(R.id.id_download_icon)
-        //val iv_PurchasedFalse: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_False)
-        val iv_PurchasedCheckedIcon: ImageView = myXmlToViewObject.findViewById(R.id.id_ivPurchased_Checked)
         //var tv4_GetThis: TextView = myXmlToViewObject.findViewById(R.id.id_tvGetThis)
         var holderTrId: Int = -10 // 처음엔 의미없는 -10 값을 갖지만, onBindView 에서 제대로 holder.id 로 설정됨.
 
@@ -361,11 +335,11 @@ class RcViewAdapter(
                         secondFragListener.onRcvClick(selectedRt,isPurchaseClicked = false) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!
                     }
                     //2) [구매 클릭]
-                    R.id.id_cl_entire_Purchase -> {
-                        Log.d(TAG, "onClick: !!!!!!!!!!!!!!!!!!!You clicked FREE or GET This. trkId=${selectedRt.id}, iapName= ${selectedRt.iapName}")
-                        secondFragListener.onRcvClick(selectedRt,isPurchaseClicked = true) // JjMainViewModel.kt > iapV3.myOnPurchaseClicked() 로 연결 -> 구매 로직 실행.
-                        return
-                    }
+//                    R.id.id_cl_entire_Purchase -> {
+//                        Log.d(TAG, "onClick: !!!!!!!!!!!!!!!!!!!You clicked FREE or GET This. trkId=${selectedRt.id}, iapName= ${selectedRt.iapName}")
+//                        secondFragListener.onRcvClick(selectedRt,isPurchaseClicked = true) // JjMainViewModel.kt > iapV3.myOnPurchaseClicked() 로 연결 -> 구매 로직 실행.
+//                        return
+//                    }
                 }
             }
 

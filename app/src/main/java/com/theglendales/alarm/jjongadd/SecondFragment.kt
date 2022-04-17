@@ -547,10 +547,19 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
         //1) Rt 가격 표시 + Download (Purchase) 버튼 onClickListener 설정 (Purchase 상태면 (v) 활성화)
         tv_price.text = rtObj.itemPrice
-        if(rtObj.purchaseBool) {
-            btn_buyThis.visibility = View.GONE
-            purchased_check_icon.visibility= View.VISIBLE
+        when(rtObj.purchaseBool) {
+            true -> {
+                btn_buyThis.visibility = View.GONE
+                purchased_check_icon.visibility= View.VISIBLE
+            }
+            false -> {
+                btn_buyThis.visibility = View.VISIBLE
+                purchased_check_icon.visibility= View.GONE
+            }
         }
+
+
+
 
         btn_buyThis.setOnClickListener {
             jjMainVModel.onTrackClicked(rtObj, isPurchaseClicked = true, requireActivity())

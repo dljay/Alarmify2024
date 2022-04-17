@@ -133,6 +133,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var mPlayer_bdg4_location: ImageView
     lateinit var mPlayer_bdg5_popular: ImageView
     lateinit var mPlayer_bdg6_misc: ImageView
+    lateinit var tv_price: TextView
+    lateinit var btn_buyThis: ImageButton
 
 
     // listfrag 가거나 나갔다왔을 때 관련.
@@ -542,8 +544,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         tv_lowerUi_about.text = rtObj.description // Description 채워주기
         val badgeStrList = rtObj.bdgStrArray// Badge Sort
         showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
-        //
-        //1) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
+        //1) Rt 가격 표시 + Download (Purchase) 버튼 onClickListener 설정
+        tv_price.text = rtObj.itemPrice
+        btn_buyThis.setOnClickListener {
+            jjMainVModel.onTrackClicked(rtObj, isPurchaseClicked = true, requireActivity())
+        }
+
+        //2) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
         GlideApp.with(requireContext()).load(rtObj.imageURL).centerCrop().error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
@@ -749,7 +756,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         iv_lowerUi_bigThumbnail = v.findViewById<ImageView>(R.id.id_lowerUi_iv_bigThumbnail)
         //iv_lowerUi_bigThumbnail.visibility = View.INVISIBLE // Frag 전환시 placeHolder (빨갱이사진) 보이는 것 방지 위해.
         tv_lowerUi_about = v.findViewById<TextView>(R.id.id_lowerUi_tv_Description)
-        //b-2) lower ui Badge
+        //b-2) Lower Ui 가격/Purchase Button
+        tv_price = v.findViewById<TextView>(R.id.tv_price_btm_player)
+        btn_buyThis = v.findViewById<ImageButton>(R.id.btn_buyThis)
+        //b-3) lower ui Badge
         // Badge 관련
         mPlayer_bdg1_intense = v.findViewById(R.id.mPlayer_badge1_Intense)
         mPlayer_bdg2_gentle = v.findViewById(R.id.mPlayer_badge2_Gentle)

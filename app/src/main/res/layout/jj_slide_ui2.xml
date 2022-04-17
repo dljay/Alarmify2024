@@ -213,7 +213,7 @@
             app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
             app:layout_constraintTop_toTopOf="@id/tv_AboutTheRingTone"
             app:layout_constraintBottom_toTopOf="@id/tv_info_badgeTitle"
-            app:layout_constraintEnd_toEndOf="parent"
+
             app:layout_constraintDimensionRatio="1:1"
             app:shapeAppearanceOverlay="@style/roundedCornersImageView"
             tools:src="@drawable/night_lake"/>
@@ -336,44 +336,40 @@
         </LinearLayout>
 
         <!-- Price/DNLD or OWNED(v)-->
+        <TextView
+            android:id="@+id/tv_price_btm_player"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text="$19.99"
+            android:gravity="center"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:background="@drawable/textview_border"
+            android:theme="@style/jjTextSmall_PriceTag"
+            app:layout_constraintTop_toBottomOf="@id/id_lowerUi_iv_bigThumbnail"
+            app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"/>
+
         <FrameLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_price_btm_player"
             app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="5dp"
             app:layout_constraintDimensionRatio="1:1">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <ImageButton
+                android:id="@+id/btn_buyThis"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_baseline_file_download_24"
+                app:layout_constraintTop_toTopOf="parent"
 
-                <TextView
-                    android:id="@+id/tv_price_btm_player"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    tools:text="$19.99"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:background="@drawable/textview_border"
-                    android:theme="@style/jjTextSmall_PriceTag"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/iv_dnld_btm_player"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-                <ImageView
-                    android:id="@+id/iv_dnld_btm_player"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_file_download_24"
-                    app:layout_constraintTop_toTopOf="parent"
-
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 
         </FrameLayout>

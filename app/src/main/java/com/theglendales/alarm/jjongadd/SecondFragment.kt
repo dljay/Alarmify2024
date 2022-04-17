@@ -526,6 +526,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             Log.d(TAG, "updateMiniPlayerUiOnClick: [FLOW] 최초 오픈시 Default 값 예상. Invalid Rt Obj. Return")
             return
         }
+
+
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
 
     //Sliding Panel - Upper UI

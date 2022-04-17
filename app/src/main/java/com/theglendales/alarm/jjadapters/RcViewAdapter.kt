@@ -94,7 +94,6 @@ class RcViewAdapter(
             disableVMnLC(holder)
         }
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
-        //todo: 당분간 이상하게 뜰것임. JjMainViewModel 에서 GSON 으로 저장해주기? 어떤 의미가 있을지 흐음..
         //IAP 관련 A) 가격 표시
         if(currentRt.itemPrice.isNotEmpty()) {
             holder.tv_Price.text = currentRt.itemPrice

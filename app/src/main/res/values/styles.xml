@@ -361,7 +361,7 @@
 
         <style name="jjTextSmall_PriceTag">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textColor">@color/blue_var_1</item>
+            <item name="android:textColor">@color/primaryTextColor</item>
             <item name="android:textSize">11sp</item>
             <item name="background">@drawable/textview_border</item>
         </style>

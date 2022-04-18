@@ -193,9 +193,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:paddingStart="10dp"
+        android:paddingStart="7dp"
         android:paddingTop="10dp"
-        android:paddingEnd="10dp">
+        android:paddingEnd="7dp">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/miniplayer_v_guide_1"
@@ -245,7 +245,7 @@
             android:layout_height="wrap_content"
 
             android:layout_marginStart="7dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="13dp"
             android:layout_marginBottom="4dp"
             android:text="Information"
             android:theme="@style/jjTextLarge"
@@ -359,19 +359,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_buyThis"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minWidth="20dp"
-                    android:minHeight="10dp"
-                    android:background="@drawable/textview_border"
+                    android:minWidth="0dp"
+                    android:minHeight="0dp"
+
 
                     tools:text="$19.99"
                     android:layout_gravity="center"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    android:backgroundTint="@color/jj_accentColor_1"
+                    android:backgroundTint="@color/jj_main_bg_color"
+
+                    android:background="@drawable/textview_border"
 
                     android:drawableEnd="@drawable/ic_baseline_file_download_24"/>
 

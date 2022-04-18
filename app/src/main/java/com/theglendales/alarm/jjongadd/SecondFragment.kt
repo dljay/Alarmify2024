@@ -133,7 +133,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var mPlayer_bdg4_location: ImageView
     lateinit var mPlayer_bdg5_popular: ImageView
     lateinit var mPlayer_bdg6_misc: ImageView
-    lateinit var tv_price: TextView
+    //lateinit var tv_price: TextView
     lateinit var btn_buyThis: Button
     lateinit var purchased_check_icon: ImageView
 
@@ -546,7 +546,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         val badgeStrList = rtObj.bdgStrArray// Badge Sort
         showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
         //1) Rt 가격 표시 + Download (Purchase) 버튼 onClickListener 설정 (Purchase 상태면 (v) 활성화)
-        tv_price.text = rtObj.itemPrice
+        btn_buyThis.text = rtObj.itemPrice
         when(rtObj.purchaseBool) {
             true -> {
                 btn_buyThis.visibility = View.GONE
@@ -772,8 +772,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //iv_lowerUi_bigThumbnail.visibility = View.INVISIBLE // Frag 전환시 placeHolder (빨갱이사진) 보이는 것 방지 위해.
         tv_lowerUi_about = v.findViewById<TextView>(R.id.id_lowerUi_tv_Description)
         //b-2) Lower Ui 가격/Purchase Button
-        tv_price = v.findViewById<TextView>(R.id.tv_price_btm_player)
+        //tv_price = v.findViewById<TextView>(R.id.tv_price_btm_player)
         btn_buyThis = v.findViewById(R.id.btn_buyThis)
+
         purchased_check_icon = v.findViewById(R.id.iv_purchased_check_icon)
         //b-3) lower ui Badge
         // Badge 관련

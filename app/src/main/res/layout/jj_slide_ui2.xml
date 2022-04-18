@@ -233,7 +233,7 @@
             android:text="About the Alarm Tone"
             android:maxLines="1"
             android:ellipsize="end"
-            android:theme="@style/jjTextLarge"
+            android:theme="@style/jjTextMiniplayer_Bottom"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/miniplayer_v_guide_1"/>
@@ -246,7 +246,7 @@
             android:layout_marginStart="7dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="10dp"
-            android:text="This is a placeholder text."
+            android:text="This is a placeholder text. I wish this holder text lives forever"
             android:maxLines="3"
             android:ellipsize="end"
             android:theme="@style/jjTextMedium_tertiaryColor"
@@ -265,7 +265,7 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="4dp"
             android:text="Information"
-            android:theme="@style/jjTextLarge"
+            android:theme="@style/jjTextMiniplayer_Bottom"
 
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/id_lowerUi_tv_Description"/>
@@ -340,82 +340,66 @@
         </LinearLayout>
 
         <!-- Album_ThumbNail, Price/DNLD or OWNED(v)-->
-        <androidx.constraintlayout.widget.ConstraintLayout
+
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/id_lowerUi_iv_bigThumbnail"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+
+
+            android:scaleType="centerCrop"
+
+
+            app:layout_constraintDimensionRatio="1:1"
+
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_AboutTheRingTone"
-            app:layout_constraintBottom_toBottomOf="@id/miniplayer_hor_guide_1">
+            app:layout_constraintTop_toTopOf="@id/tv_AboutTheRingTone"
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/id_lowerUi_iv_bigThumbnail"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="14dp"
-                android:layout_marginEnd="14dp"
-                android:layout_marginBottom="5dp"
+            tools:src="@drawable/night_lake" />
 
-                android:scaleType="centerCrop"
+        <FrameLayout
+            android:id="@+id/fl_buy_or_purchased"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
 
+            app:layout_constraintTop_toTopOf="@id/ll_badgeHolder"
+            app:layout_constraintBottom_toBottomOf="@id/ll_badgeHolder"
+            app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
+            app:layout_constraintEnd_toEndOf="parent">
 
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/fl_buy_or_purchased"
-
-                tools:src="@drawable/night_lake" />
-
-            <FrameLayout
-                android:id="@+id/fl_buy_or_purchased"
-                android:layout_width="0dp"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_buyThis"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
 
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                tools:text="$19.99"
+                android:textColor="@color/primaryTextColor"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:backgroundTint="@color/jj_accentColor_1"
+                android:background="@drawable/textview_border"
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btn_buyThis"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:minWidth="0dp"
-                    android:minHeight="0dp"
+                android:drawableEnd="@drawable/ic_baseline_file_download_24"/>
 
-                    tools:text="$19.99"
-                    android:textColor="@color/primaryTextColor"
-                    android:textAlignment="center"
-                    android:layout_gravity="center"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:backgroundTint="@color/jj_accentColor_1"
+            <ImageView
+                android:id="@+id/iv_purchased_check_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_check_circle_outline_24"
+                android:visibility="gone"/>
 
-                    android:background="@drawable/textview_border"
-
-                    android:drawableEnd="@drawable/ic_baseline_file_download_24"/>
-
-                <ImageView
-                    android:id="@+id/iv_purchased_check_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_baseline_check_circle_outline_24"
-                    android:visibility="gone"/>
-
-            </FrameLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-
-
+        </FrameLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

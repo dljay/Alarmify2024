@@ -134,7 +134,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var mPlayer_bdg5_popular: ImageView
     lateinit var mPlayer_bdg6_misc: ImageView
     lateinit var tv_price: TextView
-    lateinit var btn_buyThis: ImageButton
+    lateinit var btn_buyThis: Button
     lateinit var purchased_check_icon: ImageView
 
 

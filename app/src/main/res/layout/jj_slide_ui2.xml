@@ -367,11 +367,13 @@
             app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <ImageButton
+            <Button
                 android:id="@+id/btn_buyThis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/delt_test_download"
+                android:text="GET THIS"
+                android:textSize="11sp"
+                android:drawableEnd="@drawable/ic_baseline_file_download_24"
                 android:maxLines="1"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

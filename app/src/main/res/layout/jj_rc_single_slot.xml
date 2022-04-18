@@ -137,8 +137,8 @@
                 android:id="@+id/id_vumeter"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleX="0.6"
-                android:scaleY="0.6"
+                android:scaleX="0.5"
+                android:scaleY="0.5"
 
                 android:visibility="visible"
                 vumeter:vumeter_backgroundColor="@color/jj_accentColor_1"

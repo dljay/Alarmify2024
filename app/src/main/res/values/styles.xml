@@ -280,6 +280,13 @@
             <item name="android:textSize">15sp</item>
         </style>
 
+        <style name="jjTextMiniplayer_Bottom">
+            <item name="fontFamily">@font/circular_std_bold</item>
+            <item name="android:textColor">@color/primaryTextColor</item>
+            <item name="android:textSize">15sp</item>
+
+        </style>
+
         <style name="jjTextLarge_black">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryDarkTextColor</item>

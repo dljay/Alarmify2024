@@ -66,7 +66,7 @@ import java.util.Calendar
 
 
 // 30708V1.18e34w [VuMeter/Loading Circle 옮겼음.] 22/4/18 (Mon) 11:40 pm
-// Todo: Miniplayer Bottom : a) View Invisible 한것 (사진) 아예 없애기 b) 체크 표시(v) 됐을 때 어정쩡할수 있음. 그냥 You own this item 할수도 or 다른 Badge. c) RtPicker 에서..-> invisible
+// Todo: Miniplayer Bottom : c) RtPicker 에서..-> invisible b) 체크 표시(v) 됐을 때 어정쩡할수 있음. 그냥 You own this item 할수도 or 다른 Badge.
 
 // 1) Achievements:
 

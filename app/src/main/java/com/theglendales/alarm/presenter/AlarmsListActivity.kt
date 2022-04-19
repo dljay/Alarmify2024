@@ -66,7 +66,7 @@ import java.util.Calendar
 
 
 // 30708V1.18e35a4 [SecondFrag - MiniPlayer (Lower UI) 드디어 조금 안정적. Detailed 를 Fixed Height 로 하니 속이 후련..] 22/4/19 (Tue) 9:57 pm
-// Todo: Miniplayer Bottom : c) RtPicker 에서..-> invisible b) 체크 표시(v) 됐을 때 어정쩡할수 있음. 그냥 You own this item 할수도 or 다른 Badge.
+// Todo: a) Button 에 (v) Drawable 넣어서 Purchased(V) 동글뱅이 코너로 해보기. 흰글씨. 흰 테두리. b) RtPicker
 
 // 1) Achievements:
 

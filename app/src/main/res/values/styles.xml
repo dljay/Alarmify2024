@@ -371,7 +371,7 @@
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryTextColor</item>
             <item name="android:textSize">11sp</item>
-            <item name="background">@drawable/textview_border</item>
+            <item name="background">@drawable/btn_round_corner_1</item>
         </style>
 
     <!-- Purchase History Text Font-->

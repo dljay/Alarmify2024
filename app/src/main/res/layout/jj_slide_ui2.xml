@@ -357,8 +357,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_AboutTheRingTone"
-            app:layout_constraintBottom_toTopOf="@id/tv_info_badgeTitle"
+            app:layout_constraintTop_toBottomOf="@id/tv_AboutTheRingTone"
+            app:layout_constraintBottom_toBottomOf="@id/tv_info_badgeTitle"
 
             tools:src="@drawable/night_lake" />
 
@@ -375,7 +375,7 @@
                 android:id="@+id/btn_buyThis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="8dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
                 android:paddingStart="6dp"

@@ -68,8 +68,8 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_marginStart="13dp"
+                android:layout_marginEnd="18dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
 
@@ -131,7 +131,7 @@
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="7dp"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="14dp"
                 android:layout_marginBottom="7dp"
                 android:gravity="center"
                 android:orientation="horizontal"
@@ -201,14 +201,6 @@
         android:paddingEnd="7dp">
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/miniplayer_v_guide_0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.65"/>
-
-
-        <androidx.constraintlayout.widget.Guideline
             android:id="@+id/miniplayer_v_guide_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -229,7 +221,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
 
-            app:layout_constraintGuide_percent="0.9"/>
+            app:layout_constraintGuide_percent="0.95"/>
 
 
 
@@ -356,20 +348,17 @@
             android:id="@+id/id_lowerUi_iv_bigThumbnail"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
 
-
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:scaleType="centerCrop"
 
-
             app:layout_constraintDimensionRatio="1:1"
-
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_AboutTheRingTone"
+            app:layout_constraintBottom_toTopOf="@id/ll_badgeHolder"
 
             tools:src="@drawable/night_lake" />
 
@@ -377,32 +366,34 @@
             android:id="@+id/fl_buy_or_purchased"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="4dp"
-
             app:layout_constraintTop_toTopOf="@id/ll_badgeHolder"
             app:layout_constraintBottom_toBottomOf="@id/ll_badgeHolder"
-            app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_0"
+            app:layout_constraintStart_toStartOf="@id/miniplayer_v_guide_1"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_buyThis"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
                 android:minWidth="0dp"
                 android:minHeight="0dp"
-                android:paddingStart="0dp"
-                
-                android:fontFamily="@font/circular_std_light"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:background="@drawable/btn_round_corner_1"
+                android:backgroundTint="@color/jj_accentColor_1"
+                android:fontFamily="@font/circular_std_medium"
                 android:textSize="12sp"
                 tools:text="$19.99"
                 android:textColor="@color/primaryTextColor"
                 android:textAlignment="center"
-                android:layout_gravity="bottom|center"
+                android:layout_gravity="center"
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:drawablePadding="0dp"
-                android:drawableEnd="@drawable/ic_baseline_file_download_24"/>
+                android:drawableEnd="@drawable/purchase_btn_drawable"/>
 
             <ImageView
                 android:id="@+id/iv_purchased_check_icon"

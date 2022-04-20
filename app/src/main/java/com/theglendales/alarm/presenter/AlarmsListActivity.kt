@@ -66,7 +66,7 @@ import java.util.Calendar
 
 
 // 30708V1.18e35b1 [UI 제법 수정 만족. 이런저런 Error 고치기 전] 22/4/19 (Wed) 2:41 pm
-
+// DRAWABLE 안 쓰는 것 삭제 전!
 
 // 1) Achievements:
 // 2) todos:

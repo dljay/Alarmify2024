@@ -17,6 +17,9 @@
 
 package com.theglendales.alarm.alert;
 
+import static com.theglendales.alarm.configuration.Prefs.LONGCLICK_DISMISS_DEFAULT;
+import static com.theglendales.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
+
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -50,9 +53,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
-
-import static com.theglendales.alarm.configuration.Prefs.LONGCLICK_DISMISS_DEFAULT;
-import static com.theglendales.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
 
 /**
  * Alarm Clock alarm alert: pops visible indicator and plays alarm tone. This
@@ -126,7 +126,7 @@ public class AlarmAlertFullScreen extends FragmentActivity {
             logger.e("Alarm not found", e);
         }
     }
-
+// Label 현재 보여주는것으로 -> ImageView 로 보여줄 예정..
     private void setTitle() {
         final String titleText = mAlarm.getLabelOrDefault();
         setTitle(titleText);

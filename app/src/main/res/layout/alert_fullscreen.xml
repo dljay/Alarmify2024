@@ -56,7 +56,7 @@
                     android:id="@+id/digital_clock_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-thin"
+                    android:fontFamily="@font/circular_std_light"
                     android:textSize="100sp"
                     android:textStyle="normal" />
 
@@ -66,6 +66,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="bottom|center_horizontal"
                     android:textSize="20sp"
+                    android:fontFamily="@font/circular_std_light"
                     android:textStyle="bold" />
             </com.theglendales.alarm.view.DigitalClock>
 
@@ -76,6 +77,9 @@
                 android:layout_height="0px"
                 android:layout_weight="1"
                 android:clickable="false"
+                android:textColor="@color/primaryTextColor"
+                android:background="@color/jj_main_bg_color"
+                android:fontFamily="@font/circular_std_bold"
                 android:text="@string/alarm_alert_snooze_text"
                 android:textSize="24sp" />
         </LinearLayout>
@@ -102,13 +106,12 @@
     <Button
         android:id="@+id/alert_button_dismiss"
         style="?android:attr/buttonBarButtonStyle"
+        android:textColor="@color/primaryTextColor"
+        android:background="@color/jj_main_bg_color"
         android:layout_width="match_parent"
         android:layout_height="0px"
-        android:layout_marginLeft="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="40dp"
-        android:layout_marginBottom="10dp"
         android:layout_weight="1"
+        android:fontFamily="@font/circular_std_bold"
         android:text="@string/alarm_alert_dismiss_text"
         android:textSize="24sp" />
 </LinearLayout>

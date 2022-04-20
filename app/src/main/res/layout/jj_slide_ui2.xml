@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.75"/>
+                app:layout_constraintGuide_percent="0.77"/>
 
             <!-- Click Arrow up(^)-->
             <ImageView
@@ -79,7 +79,6 @@
                 android:layout_marginEnd="2dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-
                 android:baselineAligned="false"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"

@@ -65,57 +65,33 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35a6 [Purchased (v) 완료] 22/4/19 (Wed) 2:15 pm
-// Todo:  b) RtPicker
+// 30708V1.18e35b1 [UI 제법 수정 만족. 이런저런 Error 고치기 전] 22/4/19 (Wed) 2:41 pm
+
 
 // 1) Achievements:
-
 // 2) todos:
-//1. Time Picker Spinner 디자인 -> 이거 끝나는대로 전체 UI 수정 계속 진행! 색이 정해지지 않으면 아무것도 할 수 없음!
+// Alarm 울릴 때 화면 수정.
 //2. Status Bar 투명+ Collapsing Toolbar 의 사진이 보이게. (Alarm Extreme 처럼).
-//3. SecondFrag Btm MiniPlayer UI 제작.
-// 4. Fab 뭔가 해줄것. accentColor 도 좀 더 생각해보기.
-//
-// Fab 좀 더 키우고 + baseline 일치?? or 약간 위로 보내기?
-//
-//5) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
-//6) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
-//7) Details Frag- Chip!
 
-
+// 5) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
+// f) 에러처리: 오랜 시간 Background  에 있다가 다시 들어왔을 때 Details Frag 안 들어가지더라.. ㅅㅂ..
+// billing service disconnected 뜨고 app 다시  return -> secondFrag 에서 음악 재생 시도-> 되긴 되네.. 다시 ListFrag > 알람 클릭 -> 무반응.
+// g) 에러처리: Pixel 4x 에서도. Google Sign-in 하고 들어왔는데. Billing Service Disconnected 뜨면서. 음악 재생 안되고.. 크래쉬.. ㅜ 아 ㅆㅂ
+// 6) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
 
 // 전체 색!!!! 결정해야 Divider 색도 결정!!!
-// play 할 때 텍스트 색/ AlbuMArt 회색빛 변하는 것.
 // -- BtmNav 와 SecondFrag Player 사이 View 회색 Line Border 제대로 넣기 (Umano 에서 보이는 범위를 height dp 말고 '이 View 까지' 는 없을까?)
-// Eq Meter? Rubik's Cube 에서 'Purchased' (Owned?) 로 글자로 표기?
-// Font 찾아서 적용. $39 인데.. 음 분명 찾으면 있을것 같긴 함.
-// 제일 윗칸 Chip 색.
+
 
 
 //DetailsFrag> spinning time picker 디자인.
-//
 
-
-//
-//font.. textAppearance 스타일별?
-// Flaticon 도 그렇고 공짜 Android icon svg vector 찾아서 a) 좀 이쁜놈들로(컬러풀한것도 괜춘) filled/outline 등도 구분 가능한지 알아볼것.
 // drawable 등 안 쓰는 asset 지우기 (백업하고)
 //- system navigation 은 살짝 다른색으로 할수도 있겠다.
 
 //3) Issues:
 // 테스트 중 ListFrag <-> SecondFrag<-> CreateNewAlarm(+) 왔다갔다 하던중 화면 로딩이 멈췄고 재실행시 crash 났음 (listFrag 에서 삭제 logd 에서 listindex error..)
 // 이후 재현 불가지만 추후 면밀히 테스트 해볼것.
-
-// border - attr/windowBackground? 요건가? https://www.youtube.com/watch?v=Gmzk9kKA0WI
-// 해결책: 어쩔수없이 BtmNav 에 Border/Divider (위에 살짝) 넣는 느낌으로 해주고. 사실상 Spotify 스샷 clone + 카톡스샷(Medium) 느낌으로...?
-// 문제ㅐ는 SecondFrag 에서 MiniPlayer 나왔을 때 (모든 기기에서) 완벽하게 맞춰줄 수 있을지. layout_anchor 등 사용?
-
-
-// Todos:
-//- values.xml > colorprimary (Line 22xx) 정도에. // themes_dark.xml 에서 colorPrimary holo_blue_bright 으로 바꾸니 collapsing toolbar 배경색 바꼈네.
-
-// -- City Night Vector 다른 그림으로. 기기별로 늘어나는 것 어떻게 대처할지?
-
 
 // Todos :
 
@@ -125,13 +101,6 @@ import java.util.Calendar
 // 하위 버전 호환 테스트 API 30만 됐음.
 // ToolBar 꾸미기 (메뉴 없애고 등..)
 
-// RtPickerActivity 에도...
-// ToolBar 꾸미기 (메뉴 없애고 등..)
-//2) Transparent 하게. / RtPickerActivity 에도 적용.
-//3) 설정 Page 에 About.. 등 기존 Burger 에 있던 Menu 쓸것만 몇개 넣기.
-//4) DARK THEME / 적용 안되게 바꾸기.
-//5) AlarmListActivity 에서 setTheme() .. 현재 'Dark Theme' 으로 자동 선택되는듯.  무조건 Default 로 가게끔 -> 기타 코드 없애기
-//-- DynamicThemeHandler.kt 확인.. logd 넣어보기.
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.

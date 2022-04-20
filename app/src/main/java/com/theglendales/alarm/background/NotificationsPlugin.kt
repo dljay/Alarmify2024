@@ -43,6 +43,7 @@ class NotificationsPlugin(
         private val nm: NotificationManager,
         private val enclosingService: EnclosingService
 ) {
+    // Notification (상단 버블) 에서 중간 클릭
     fun show(alarm: PluginAlarmData, index: Int, startForeground: Boolean) {
         /* Close dialogs and window shade */
         //mContext.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)) //t 수정..
@@ -59,16 +60,18 @@ class NotificationsPlugin(
                 PresentationToModelIntents.ACTION_REQUEST_DISMISS, alarm.id)
 
         val notification = mContext.notificationBuilder(CHANNEL_ID_HIGH_PRIO) {
-            setContentTitle(alarm.label)
-            setContentText(getString(R.string.alarm_notify_text))
-            setSmallIcon(R.drawable.stat_notify_alarm)
+//            setContentTitle(alarm.label)
+            setContentTitle("ALARM")
+
+            setContentText(getString(R.string.alarm_notify_text)) //곡 제목? 가능하면 흐르는 텍스트로? alarm.alarmtone.persistedString . "NOW PLAYING...."
+            //setSmallIcon(R.drawable.stat_notify_alarm)
+            setSmallIcon(R.mipmap.ic_main2) // <- 기존 알람 아이콘 대신 앱아이콘으로 대체.
             priority = NotificationCompat.PRIORITY_HIGH
             setCategory(NotificationCompat.CATEGORY_ALARM)
-            // setFullScreenIntent to show the user AlarmAlert dialog at the same time
-            // when the Notification Bar was created.
+            // setFullScreenIntent to show the user AlarmAlert dialog at the same time  when the Notification Bar was created.
             setFullScreenIntent(pendingNotify, true)
-            // setContentIntent to show the user AlarmAlert dialog
-            // when he will click on the Notification Bar.
+        // setContentIntent to show the user AlarmAlert dialog  when he will click on the Notification Bar.
+            //Notification (알람 울릴 때 상단 팝업) 클릭하면 -> activity (전체화면으로 이동) 로 이동
             setContentIntent(pendingNotify)
             setOngoing(true)
             addAction(R.drawable.ic_action_snooze, getString(R.string.alarm_alert_snooze_text), pendingSnooze)

@@ -59,6 +59,7 @@ import io.reactivex.functions.Predicate;
  * activity is the full screen version which shows over the lock screen with the
  * wallpaper as the background.
  */
+// 알람 울리고 (버블에서 클릭했을 때 뜨는 전체화면 - SNOOZE/DISMISS 이렇게 두 칸 뜬다.) -> alert_fullscreen.xml
 public class AlarmAlertFullScreen extends FragmentActivity {
     protected static final String SCREEN_OFF = "screen_off";
     private final Store store = InjectKt.globalInject(Store.class).getValue();

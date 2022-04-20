@@ -32,6 +32,7 @@
             android:gravity="center|center_horizontal"
             android:orientation="vertical">
 
+        <!-- 임시 방편으로 여기 Tv 안보이게. 대신 IV 사진 넣기. -->
             <TextView
                 android:id="@+id/alarm_alert_label"
                 style="?android:attr/buttonBarButtonStyle"
@@ -43,7 +44,19 @@
                 android:paddingTop="8dip"
                 android:paddingBottom="8dip"
                 android:text="Label"
+                android:visibility="gone"
                 android:textSize="18sp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:gravity="center|center_horizontal"
+                android:paddingTop="8dip"
+                android:paddingBottom="8dip"
+                android:scaleType="centerCrop"
+                android:src="@drawable/mt_forest_lake_1"/>
 
             <com.theglendales.alarm.view.DigitalClock
                 android:id="@+id/alert_digital_clock"
@@ -56,6 +69,7 @@
                     android:id="@+id/digital_clock_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+
                     android:fontFamily="@font/circular_std_light"
                     android:textSize="100sp"
                     android:textStyle="normal" />

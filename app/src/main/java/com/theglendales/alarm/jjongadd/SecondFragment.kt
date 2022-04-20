@@ -115,7 +115,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
     lateinit var upperUiHolder: LinearLayout // { this.view?.findViewById(R.id.id_upperUi_ll) }  // 추후 이 부분이 fade out
     lateinit var tv_upperUi_title: TextView // { findViewById<TextView>(R.id.id_upperUi_tv_title) }
-    //lateinit var iv_upperUi_thumbNail: ImageView //  { findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)  }
+    lateinit var iv_upperUi_thumbNail: ImageView //  { findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)  }
     lateinit var iv_upperUi_ClickArrow: ImageView //  { findViewById<ImageView>(R.id.id_upperUi_iv_clickarrowUp) }
     lateinit var cl_upperUi_entireWindow: ConstraintLayout //  {findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)}
     lateinit var imgbtn_Play: ImageButton
@@ -575,12 +575,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
                 override fun onResourceReady(resource: Drawable?,model: Any?,target: Target<Drawable>?,dataSource: DataSource?,
                                              isFirstResource: Boolean): Boolean {
-                    //iv_upperUi_thumbNail.setImageDrawable(resource) // Upper Ui -> 이거 삭제했음.
-                    //iv_lowerUi_bigThumbnail.setImageDrawable(resource) // Lower ui.
+                    iv_upperUi_thumbNail.setImageDrawable(resource) // Upper Ui -> 이거 삭제했음.
+                    iv_lowerUi_bigThumbnail.setImageDrawable(resource) // Lower ui.
                     //
                     return false
                 }
-            }).into(iv_lowerUi_bigThumbnail)
+            }).into(iv_upperUi_thumbNail)
 
         // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
         if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
@@ -747,7 +747,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         upperUiHolder = v.findViewById(R.id.id_upperUi_ll)   // 추후 이 부분이 fade out
         tv_upperUi_title = v.findViewById<TextView>(R.id.id_upperUi_tv_title)
-        //iv_upperUi_thumbNail = v.findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)
+        iv_upperUi_thumbNail = v.findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)
         iv_upperUi_ClickArrow = v.findViewById<ImageView>(R.id.id_upperUi_iv_clickarrowUp)
         cl_upperUi_entireWindow = v.findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)
 

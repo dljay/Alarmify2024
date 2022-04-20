@@ -85,6 +85,8 @@ class RtPickerActivity : AppCompatActivity() {
         private val constLayout_entire by lazy {allBtmSlideLayout.findViewById(R.id.id_lowerUI_entireConsLayout) as ConstraintLayout}
         private val iv_lowerUi_bigThumbnail by lazy { allBtmSlideLayout.findViewById(R.id.id_lowerUi_iv_bigThumbnail) as ImageView }
         private val tv_lowerUi_about by lazy { allBtmSlideLayout.findViewById(R.id.id_lowerUi_tv_Description) as TextView }
+        private val btn_buyThis by lazy { allBtmSlideLayout.findViewById(R.id.btn_buyThis) as TextView } // 가격+ DNDL 표시 있는 버튼.
+
         // c) Badges
         private val iv_badge1_Intense by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge1_Intense) as ImageView}
         private val iv_badge2_Gentle by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge2_Gentle) as ImageView}
@@ -115,6 +117,8 @@ class RtPickerActivity : AppCompatActivity() {
         //a) 전체 SlidingUpPanel
         slidingUpPanelLayout = findViewById(R.id.id_sldUpPnlRtPickerActivity) // 전체 SlidingUpPanel
         allBtmSlideLayout = findViewById(R.id.ir_rl_entireSlider) // SlidingUpPanel 중 상단(돌출부) 전체
+        btn_buyThis.visibility=View.GONE
+
         setUpSlidingPanel()
 
         //b) 상단 돌출부 제목 TextView 흐르는 텍스트 (Marquee) 효과

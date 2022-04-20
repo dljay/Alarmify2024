@@ -65,8 +65,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35a4 [SecondFrag - MiniPlayer (Lower UI) 드디어 조금 안정적. Detailed 를 Fixed Height 로 하니 속이 후련..] 22/4/19 (Tue) 9:57 pm
-// Todo: a) Button 에 (v) Drawable 넣어서 Purchased(V) 동글뱅이 코너로 해보기. 흰글씨. 흰 테두리. b) RtPicker
+// 30708V1.18e35a6 [Purchased (v) 완료] 22/4/19 (Wed) 2:15 pm
+// Todo:  b) RtPicker
 
 // 1) Achievements:
 

@@ -241,6 +241,7 @@
             app:layout_constraintEnd_toEndOf="@id/miniplayer_v_guide_1"/>
 
         <!-- About the Ringtone [Description] -->
+        <!-- 디자인 하다 빡세서 결국 fixed height 로 함 (55dp)-->
         <TextView
             android:id="@+id/id_lowerUi_tv_Description"
             android:layout_width="0dp"
@@ -393,14 +394,20 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 android:drawablePadding="0dp"
+                android:visibility="visible"
                 android:drawableEnd="@drawable/purchase_btn_drawable"/>
 
-            <ImageView
+            <TextView
                 android:id="@+id/iv_purchased_check_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/ic_baseline_check_circle_outline_24"
+                android:text="Purchased"
+                android:theme="@style/jjTextMediumBold"
+                android:fontFamily="@font/circular_std_bold"
+                android:drawableRight="@drawable/purchased_already_textview"
+                android:drawablePadding="3dp"
+                android:background="@drawable/textview_round_corner_1"
                 android:visibility="gone"/>
 
         </FrameLayout>

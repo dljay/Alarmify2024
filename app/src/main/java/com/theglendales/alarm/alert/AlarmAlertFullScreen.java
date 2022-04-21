@@ -23,6 +23,7 @@ import static com.theglendales.alarm.configuration.Prefs.LONGCLICK_DISMISS_KEY;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -31,6 +32,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
@@ -131,12 +133,16 @@ public class AlarmAlertFullScreen extends FragmentActivity {
         }
     }
 // Label 현재 보여주는것으로 -> ImageView 로 보여줄 예정..
-    private void setTitle() {
+    private void setTitleAndAlbumArt() { // 기존 이름 setTitle()
         final String titleText = "NOW PLAYING " + "\"" +  mAlarm.getLabelOrDefault()+ "\"";
     // 내가 추가-->
         AlarmValue aVal= mAlarm.getData();
         final String artFilePath = aVal.getArtFilePath();
         Log.d(TAG, "setTitle: artFilePath= "+artFilePath + " , title=" + titleText);
+        //todo: Glide 로 Image 로딩.
+        Uri imageUri = Uri.parse(artFilePath);
+        ImageView ivAlbumArt = findViewById(R.id.iv_alertScreen_AlbumArt);
+        ivAlbumArt.setImageURI(imageUri);
     // 내가 추가-->
         setTitle(titleText);
         TextView textView = findViewById(R.id.alarm_alert_label);
@@ -217,7 +223,7 @@ public class AlarmAlertFullScreen extends FragmentActivity {
         });
 
         /* Set the title from the passed in alarm */
-        setTitle();
+        setTitleAndAlbumArt();
     }
 
     // Attempt to snooze this alert.
@@ -250,7 +256,7 @@ public class AlarmAlertFullScreen extends FragmentActivity {
         int id = intent.getIntExtra(Intents.EXTRA_ID, -1);
         try {
             mAlarm = alarmsManager.getAlarm(id);
-            setTitle();
+            setTitleAndAlbumArt();
         } catch (Exception e) {
             logger.d("Alarm not found");
         }

@@ -65,12 +65,17 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35c1 [Notification/AlarmAlertFullScreen - Label/ArtFilePath 보여주기 수정전. ] 22/4/19 (Thu) 12:59 pm
+// 30708V1.18e35c4 [Notification/AlarmAlertFullScreen - Label/ArtFilePath 보여주기 수정전. ] 22/4/19 (Thu) 3:44 pm
 // DRAWABLE 안 쓰는 것 삭제 전!
 
 // 1) Achievements:
 // 2) todos:
-// Alarm 울릴 때 화면 수정.
+//AlertFullScreen:
+// 1) 테스트에서 userCreated 가 떴는데. (아마 기존 생성 알람인듯) DetailsFrag 에서 혹시나 "userCreated" 로 뜬놈 label 잡아주기?
+//2) Glide 로 로딩 /UI 다시 짜기/ Text도 출력시험 /dismiss longclick 이거 없애기.
+//**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
+//**backgroundNotif 여기도 확인.
+
 //2. Status Bar 투명+ Collapsing Toolbar 의 사진이 보이게. (Alarm Extreme 처럼).
 
 // 5) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!

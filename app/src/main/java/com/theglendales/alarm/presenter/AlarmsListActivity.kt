@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35c1 [AlarmAlertFullScree UI 수정중. 이런저런 Error 고치기 전] 22/4/19 (Wed) 11:24 pm
+// 30708V1.18e35c1 [Notification/AlarmAlertFullScreen - Label/ArtFilePath 보여주기 수정전. ] 22/4/19 (Thu) 12:59 pm
 // DRAWABLE 안 쓰는 것 삭제 전!
 
 // 1) Achievements:

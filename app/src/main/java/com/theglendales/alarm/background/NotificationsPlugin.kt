@@ -65,7 +65,8 @@ class NotificationsPlugin(
 
             setContentText(getString(R.string.alarm_notify_text)) //곡 제목? 가능하면 흐르는 텍스트로? alarm.alarmtone.persistedString . "NOW PLAYING...."
             //setSmallIcon(R.drawable.stat_notify_alarm)
-            setSmallIcon(R.mipmap.ic_main2) // <- 기존 알람 아이콘 대신 앱아이콘으로 대체.
+            setSmallIcon(R.drawable.ic_jj_notification_icon_1) // <- 기존 알람 아이콘 대신 앱아이콘으로 대체하고 싶었지만 오직 깔끔한 (흰배경) 사진만 된다네!
+            // 참고: https://stackoverflow.com/a/44299487/13930304
             priority = NotificationCompat.PRIORITY_HIGH
             setCategory(NotificationCompat.CATEGORY_ALARM)
             // setFullScreenIntent to show the user AlarmAlert dialog at the same time  when the Notification Bar was created.

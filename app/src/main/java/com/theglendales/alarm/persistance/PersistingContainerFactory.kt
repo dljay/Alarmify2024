@@ -95,7 +95,7 @@ class PersistingContainerFactory(private val calendars: Calendars, private val m
     companion object {
         @JvmStatic
         fun create(calendars: Calendars, idMapper: (AlarmValue) -> Int): AlarmValue {
-            Log.d(TAG, "create: 'Companion Obj'")
+            Log.d(TAG, "create: 'Companion Obj' ")
             val now = calendars.now()
 
             val defaultActiveRecord = AlarmValue(

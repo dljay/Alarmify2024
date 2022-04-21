@@ -244,10 +244,10 @@ class AlarmDetailsFragment : Fragment() {
                         var rndRtPos = (0..availableRtCount).random()
                         if(rndRtPos == availableRtCount && rndRtPos >= 0 ) {rndRtPos = 0 } // ex. 총 갯수가 5개인데 5번이 뽑히면 안되니깐..
 
-                        Log.d(TAG, "onCreateView: [isNewAlarm=$isNewAlarm] jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
-
                         val randomRtaPath = DiskSearcher.finalRtArtPathList[rndRtPos].audioFilePath //todo: null error check or sharedPref 에서 꺼내오는게 낫지 않겠나? (sharedPref 는 항상..)
                         val randomArtPath = DiskSearcher.finalRtArtPathList[rndRtPos].artFilePathStr
+
+                        Log.d(TAG, "onCreateView: [isNewAlarm=$isNewAlarm] jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
 
                         changeAlarmTone(randomRtaPath,randomArtPath) // 알람톤 변경.
 
@@ -296,30 +296,21 @@ class AlarmDetailsFragment : Fragment() {
             }//for loop 여기까지
         }
 
-
-        class TextWatcherIR : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
+    // 예전 버전 LABEL 유저가 입력할때 썼던것. 이제 필요 없음.
+        /*class TextWatcherIR : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 editor.take(1) // take (RxJava) = take the number of elements you specified (n 번째까지만 받고 나머지는 무시)
-                        .filter { it.label != s.toString() }
-                        .subscribe {
-                            modify("Label") { prev -> prev.copy(label = s.toString(), isEnabled = true) }
-                        }
-                        .addToDisposables()
-            }
-        }
+                        .filter { it.label != s.toString() }.subscribe {modify("Label") { prev -> prev.copy(label = s.toString(), isEnabled = true) }
+                        }.addToDisposables()}}*/
 
     // DetailsFrag 에서 !!*** APP 설치 중 설정된 알람 파악 ->  -> alarm.label 값은 "userCreated" 로 바꿔서 -> 다음부터는 여기에 걸리지 않게끔.
         val currentAlarms = alarms.getAlarm(alarmId)
         Log.d(TAG, "onCreateView: **** [현재 알람 정보] ${currentAlarms?.data}, isSaved=${currentAlarms?.data?.isSaved}")
         //val currentAlarmsLabel= currentAlarms!!.labelOrDefault
-        if(currentAlarms!!.labelOrDefault !="userCreated") {
 
+        if(currentAlarms!!.labelOrDefault !="userCreated") {
     //인스톨시 생성된 알람의 경우 여기서 위처럼 modify 를 통해서 raw/defrt01.mp3 -> storage/../ defrt01.rta 로 변경가능하지만. 번잡스러움. (Alarmtone 클래스 생성 등)
         // updateUisForRt 에서 단순히 .rta 붙여서 DiskSearcher.kt 에 있는 리스트 정보를 받아서 해결토록 함.
             //todo: 아니면 mySharedPref 에 getRtaPathForFileName 으로 defrt01.rta 경로를 받는 function 만들고 바로 changeAlarmtone 으로 보내기?

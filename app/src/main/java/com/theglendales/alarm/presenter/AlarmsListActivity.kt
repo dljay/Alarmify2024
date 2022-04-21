@@ -177,6 +177,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     Log.d(TAG, "(line160) createNewAlarm: jj- called. editing.value=${editing.value}")
                     transitioningToNewAlarmDetails.onNext(true)
                     val newAlarm = alarms.createNewAlarm()
+
                     Log.d(TAG, "(line163) createNewAlarm: newAlarm=$newAlarm, newAlarm.hashCode=${newAlarm.hashCode()}") // 각 1회씩 뜬다.
                 // 새로 만든 newAlarm 을 EditedAlarm Object 로 만들어서 ConfigureTransActions()로 보냄
                     val editedAlarm = EditedAlarm(isNew = true, value = Optional.of(newAlarm.data),id = newAlarm.id,holder = Optional.absent())

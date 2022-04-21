@@ -86,7 +86,7 @@ class BackgroundNotifications(
             // Get the display time for the snooze and update the notification.
             setContentTitle(getString(R.string.alarm_notify_snooze_label, label))
             setContentText(contentText)
-            setSmallIcon(R.drawable.stat_notify_alarm)
+            setSmallIcon(R.drawable.ic_jj_notification_icon_1)
             setContentIntent(pendingDismiss)
             setOngoing(true)
             addAction(R.drawable.ic_action_reschedule_snooze, getString(R.string.alarm_alert_reschedule_text), pendingReschedule)

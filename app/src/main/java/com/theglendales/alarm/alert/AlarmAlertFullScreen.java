@@ -25,6 +25,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -43,6 +44,7 @@ import com.theglendales.alarm.interfaces.Alarm;
 import com.theglendales.alarm.interfaces.IAlarmsManager;
 import com.theglendales.alarm.interfaces.Intents;
 import com.theglendales.alarm.logger.Logger;
+import com.theglendales.alarm.model.AlarmValue;
 import com.theglendales.alarm.presenter.DynamicThemeHandler;
 import com.theglendales.alarm.presenter.PickedTime;
 import com.theglendales.alarm.presenter.TimePickerDialogFragment;
@@ -61,6 +63,7 @@ import io.reactivex.functions.Predicate;
  */
 // 알람 울리고 (버블에서 클릭했을 때 뜨는 전체화면 - SNOOZE/DISMISS 이렇게 두 칸 뜬다.) -> alert_fullscreen.xml
 public class AlarmAlertFullScreen extends FragmentActivity {
+    private final String TAG="AlarmAlertFullScreen";// 내가 추가
     protected static final String SCREEN_OFF = "screen_off";
     private final Store store = InjectKt.globalInject(Store.class).getValue();
     private final IAlarmsManager alarmsManager = InjectKt.globalInject(IAlarmsManager.class).getValue();
@@ -130,6 +133,11 @@ public class AlarmAlertFullScreen extends FragmentActivity {
 // Label 현재 보여주는것으로 -> ImageView 로 보여줄 예정..
     private void setTitle() {
         final String titleText = mAlarm.getLabelOrDefault();
+
+        AlarmValue aVal= mAlarm.getData();
+        final String artFilePath = aVal.getArtFilePath();
+        Log.d(TAG, "setTitle: artFilePath= "+artFilePath);
+
         setTitle(titleText);
         TextView textView = findViewById(R.id.alarm_alert_label);
         textView.setText(titleText);

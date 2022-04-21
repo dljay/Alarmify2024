@@ -294,6 +294,24 @@
             <item name="android:textSize">15sp</item>
         </style>
 
+        <style name="jjTextLarge_black_bold_24sp">
+            <item name="fontFamily">@font/circular_std_bold</item>
+            <item name="android:textColor">@color/primaryDarkTextColor</item>
+            <item name="android:textSize">24sp</item>
+        </style>
+
+        <style name="jjTextLarge_white_bold_24sp">
+            <item name="fontFamily">@font/circular_std_bold</item>
+            <item name="android:textColor">@color/primaryTextColor</item>
+            <item name="android:textSize">24sp</item>
+        </style>
+
+        <style name="jjTextLarge_black_18sp">
+            <item name="fontFamily">@font/circular_std_medium</item>
+            <item name="android:textColor">@color/primaryDarkTextColor</item>
+            <item name="android:textSize">18sp</item>
+        </style>
+
         <style name="jjTextLarge_other_font">
             <item name="fontFamily">@font/circular_std_black</item>
             <item name="android:textColor">@color/primaryTextColor</item>

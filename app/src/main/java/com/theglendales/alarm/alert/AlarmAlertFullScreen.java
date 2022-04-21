@@ -141,11 +141,11 @@ public class AlarmAlertFullScreen extends FragmentActivity {
         Log.d(TAG, "setTitle: artFilePath= "+artFilePath + " , title=" + titleText);
         //todo: Glide 로 Image 로딩.
         Uri imageUri = Uri.parse(artFilePath);
-        ImageView ivAlbumArt = findViewById(R.id.iv_alertScreen_AlbumArt);
+        ImageView ivAlbumArt = findViewById(R.id.alert_iv_albumart);
         ivAlbumArt.setImageURI(imageUri);
     // 내가 추가-->
         setTitle(titleText);
-        TextView textView = findViewById(R.id.alarm_alert_label);
+        TextView textView = findViewById(R.id.alarm_alert_label_real);
         textView.setText(titleText);
     }
 
@@ -270,9 +270,9 @@ public class AlarmAlertFullScreen extends FragmentActivity {
                 LONGCLICK_DISMISS_DEFAULT);
 
         Button snooze = findViewById(R.id.alert_button_snooze);
-        View snoozeText = findViewById(R.id.alert_text_snooze);
+        //View snoozeText = findViewById(R.id.alert_text_snooze);
         if (snooze != null) snooze.setEnabled(isSnoozeEnabled());
-        if (snoozeText != null) snoozeText.setEnabled(isSnoozeEnabled());
+        //if (snoozeText != null) snoozeText.setEnabled(isSnoozeEnabled());
     }
 
     @Override

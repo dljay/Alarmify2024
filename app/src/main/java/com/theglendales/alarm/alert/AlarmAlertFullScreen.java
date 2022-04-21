@@ -133,11 +133,11 @@ public class AlarmAlertFullScreen extends FragmentActivity {
 // Label 현재 보여주는것으로 -> ImageView 로 보여줄 예정..
     private void setTitle() {
         final String titleText = mAlarm.getLabelOrDefault();
-
+    // 내가 추가-->
         AlarmValue aVal= mAlarm.getData();
         final String artFilePath = aVal.getArtFilePath();
-        Log.d(TAG, "setTitle: artFilePath= "+artFilePath);
-
+        Log.d(TAG, "setTitle: artFilePath= "+artFilePath + " , title=" + titleText);
+    // 내가 추가-->
         setTitle(titleText);
         TextView textView = findViewById(R.id.alarm_alert_label);
         textView.setText(titleText);

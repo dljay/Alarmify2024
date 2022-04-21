@@ -246,10 +246,11 @@ class AlarmDetailsFragment : Fragment() {
 
                         val randomRtaPath = DiskSearcher.finalRtArtPathList[rndRtPos].audioFilePath //todo: null error check or sharedPref 에서 꺼내오는게 낫지 않겠나? (sharedPref 는 항상..)
                         val randomArtPath = DiskSearcher.finalRtArtPathList[rndRtPos].artFilePathStr
+                        val rtTitle= DiskSearcher.finalRtArtPathList[rndRtPos].rtTitle
 
-                        Log.d(TAG, "onCreateView: [isNewAlarm=$isNewAlarm] jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos")
+                        Log.d(TAG, "onCreateView: [isNewAlarm=$isNewAlarm] jj-!!subscribe-2 NEW ALARM SETUP. rndRtPos=$rndRtPos \n rtTitle= $rtTitle")
 
-                        changeAlarmTone(randomRtaPath,randomArtPath) // 알람톤 변경.
+                        changeAlarmTone(randomRtaPath,randomArtPath, rtTitle) // 알람톤 변경.
 
                         store.transitioningToNewAlarmDetails().onNext(false)
                         disposableDialog =myTimePickerJjong.showMaterialTimePicker(alarmsListActivity.supportFragmentManager).subscribe(pickerConsumer)
@@ -311,9 +312,6 @@ class AlarmDetailsFragment : Fragment() {
         //val currentAlarmsLabel= currentAlarms!!.labelOrDefault
 
         if(currentAlarms!!.labelOrDefault !="userCreated") {
-    //인스톨시 생성된 알람의 경우 여기서 위처럼 modify 를 통해서 raw/defrt01.mp3 -> storage/../ defrt01.rta 로 변경가능하지만. 번잡스러움. (Alarmtone 클래스 생성 등)
-        // updateUisForRt 에서 단순히 .rta 붙여서 DiskSearcher.kt 에 있는 리스트 정보를 받아서 해결토록 함.
-            //todo: 아니면 mySharedPref 에 getRtaPathForFileName 으로 defrt01.rta 경로를 받는 function 만들고 바로 changeAlarmtone 으로 보내기?
             Log.d(TAG, "onCreateView: **MODIFYING ALARMS CREATED DURING APP INSTALLATION")
             // *인스톨시 생성된 알람 두개 관련: 이 시점에서는 이미 모든 DefRta/Art 파일이 폰에 Copy 되었다는 가정하에 -> 아래 modify 로 label, alertUri, artUri 를 각 def1,2 로 변경.
             modify("Label") {alarmValue -> alarmValue.copy(label = "userCreated", isEnabled = true)} // alarmValue= AlarmValue(Data Class) -> 여기의 .copy 기능을 사용.
@@ -405,13 +403,13 @@ class AlarmDetailsFragment : Fragment() {
                 val alertSoundPath: String? = rtaPathFromIntent
 
                 // 이제 새 ringtone 으로 설정(rtaPath 와 artpath 둘다 넘김) ->
-                changeAlarmTone(alertSoundPath, artPathFromIntent)
+                changeAlarmTone(alertSoundPath, artPathFromIntent, rtTitleFromIntent)
             }
         }
 
     }
     // 내가 추가한 function
-    private fun changeAlarmTone(alertSoundPath: String?, artPath: String?) {
+    private fun changeAlarmTone(alertSoundPath: String?, artPath: String?, rtTitle: String?) {
         logger.debug { "Got ringtone: $alertSoundPath and artPath 쫑: $artPath" }
 
         val alarmtone: Alarmtone = when (alertSoundPath) {
@@ -424,7 +422,8 @@ class AlarmDetailsFragment : Fragment() {
         //checkPermissions(requireActivity(), listOf(alarmtone))
         showAlertIfRtIsMissing(requireActivity(), listOf(alarmtone))
 
-        modify("RTPicker[변경]") { prev ->prev.copy(alarmtone = alarmtone, artFilePath = artPath, isEnabled = true)}
+        val nonNullableRtTitle = rtTitle.toString()
+        modify("RTPicker[변경]") { prev ->prev.copy(alarmtone = alarmtone, artFilePath = artPath, isEnabled = true, label = nonNullableRtTitle)}
     }
 
 

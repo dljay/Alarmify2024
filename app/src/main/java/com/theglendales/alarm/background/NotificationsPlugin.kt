@@ -61,9 +61,10 @@ class NotificationsPlugin(
 
         val notification = mContext.notificationBuilder(CHANNEL_ID_HIGH_PRIO) {
 //            setContentTitle(alarm.label)
-            setContentTitle("ALARM")
-
-            setContentText(getString(R.string.alarm_notify_text)) //곡 제목? 가능하면 흐르는 텍스트로? alarm.alarmtone.persistedString . "NOW PLAYING...."
+            val nowPlayingTitle = "NOW PLAYING \""+alarm.label +"\"" //todo: STR res 쓰기
+            //todo: BOLD?
+            setContentTitle("ALARMIFY") // todo: APP TITLE
+            setContentText(nowPlayingTitle) //곡 제목? 가능하면 흐르는 텍스트로?
             //setSmallIcon(R.drawable.stat_notify_alarm)
             setSmallIcon(R.drawable.ic_jj_notification_icon_1) // <- 기존 알람 아이콘 대신 앱아이콘으로 대체하고 싶었지만 오직 깔끔한 (흰배경) 사진만 된다네!
             // 참고: https://stackoverflow.com/a/44299487/13930304

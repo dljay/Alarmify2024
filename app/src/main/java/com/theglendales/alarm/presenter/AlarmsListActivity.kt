@@ -73,6 +73,7 @@ import java.util.Calendar
 //AlertFullScreen:
 // 1) 테스트에서 userCreated 가 떴는데. (아마 기존 생성 알람인듯) DetailsFrag 에서 혹시나 "userCreated" 로 뜬놈 label 잡아주기?
 //2) Glide 로 로딩 /UI 다시 짜기/ Text도 출력시험 /dismiss longclick 이거 없애기.
+// Install Alarm 유심히 보기!
 //**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
 //**backgroundNotif 여기도 확인.
 

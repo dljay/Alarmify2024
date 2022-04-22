@@ -187,8 +187,7 @@
             android:background="@color/jj_bg_color_1"
             android:layout_weight="1"
             android:textColor="@color/primaryTextColor"
-            android:text="@string/alarm_alert_snooze_text"
-            />
+            android:text="@string/alarm_alert_snooze_text"/>
 
         <View
             android:id="@+id/alert_button_divider"

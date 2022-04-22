@@ -534,7 +534,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
         var spaceFifteen="               " // 15칸
         var spaceTwenty="                    " // 20칸
-        var spaceFifty="                                                 " //50칸 (기존 사용)
         var spaceSixty="                                                           " //60칸
         tv_upperUi_title.text = spaceFifteen+ rtObj.title // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
         if(rtObj.title.length <6) {tv_upperUi_title.append(spaceSixty) } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가] // todo: null safety check?

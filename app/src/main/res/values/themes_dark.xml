@@ -42,7 +42,7 @@
     </style>
 
     <!-- B. 기타 -->
-    <style name="AlarmAlertFullScreenDarkTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AlarmAlertFullScreenDarkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowNoTitle">true</item>
     </style>
 

@@ -90,7 +90,7 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:permission="com.android.alarm.permission.SET_ALARM"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:theme="@style/DefaultDarkTheme">
             <intent-filter>
                 <action android:name="android.intent.action.SET_ALARM" />
 

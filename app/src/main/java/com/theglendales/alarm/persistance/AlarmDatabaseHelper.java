@@ -37,7 +37,8 @@ import com.theglendales.alarm.logger.Logger;
 public class AlarmDatabaseHelper extends SQLiteOpenHelper {
 
     // 내가 추가 -->
-    private static final String ON_APP_INSTALL_LABEL = "InstallAlarm";
+    private static final String ON_APP_INSTALL_LABEL_1 = "D1_Default_Ringtone_1"; // todo: Label -> 곡 제목으로 추후 실제목으로 바껴야 함.
+    private static final String ON_APP_INSTALL_LABEL_2 = "D2_Default_Ringtone_2"; // Label -> 곡 제목으로 추후 실제목으로 바껴야 함.
     private static final String TAG = "AlarmDatabaseHelper.java";
     // 내가 추가 <--
     private static final String DATABASE_NAME = "alarms.db";
@@ -86,8 +87,8 @@ public class AlarmDatabaseHelper extends SQLiteOpenHelper {
         String insertMe = "INSERT INTO alarms " + "(hour, minutes, daysofweek, alarmtime, enabled, vibrate, "
                 + "message, alert, prealarm, state, artfilepath, isalarmsaved) VALUES ";
         // insert default alarms = ** APP 설치시 생성되는 두개!! **
-        db.execSQL(insertMe + "(8, 30, 31, 0, 1, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta01Path +"', 0, '', '" + defart01Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
-        db.execSQL(insertMe + "(9, 00, 96, 0, 1, 1, '" + ON_APP_INSTALL_LABEL +"', '" + defrta02Path +"', 0, '', '" + defart02Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
+        db.execSQL(insertMe + "(8, 30, 31, 0, 1, 1, '" + ON_APP_INSTALL_LABEL_1 +"', '" + defrta01Path +"', 0, '', '" + defart01Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
+        db.execSQL(insertMe + "(9, 00, 96, 0, 1, 1, '" + ON_APP_INSTALL_LABEL_2 +"', '" + defrta02Path +"', 0, '', '" + defart02Path +"',1);"); // d1.jpg 의 경로를 넣어줬음(Raw 폴더에 기본으로 탑재되어 있음.)
         //31: 주중 , 96 : 주말 only
 
 

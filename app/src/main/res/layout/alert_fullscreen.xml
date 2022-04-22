@@ -21,8 +21,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_gradient_listfrag_background"
-    android:padding="15dp">
+    android:background="@color/transparent">
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -129,30 +128,32 @@
                     <TextView
                         android:id="@+id/alert_tv_nowplaying"
                         android:gravity="start"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_width="0dp"
+
+                        android:layout_marginStart="6dp"
+                        android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:clickable="false"
                         android:text="NOW PLAYING"
-                        android:theme="@style/jjTextLarge_black_18sp"
+                        android:theme="@style/jjTextLarge_black_bold_24sp"
                         android:visibility="visible"
                         app:layout_constraintStart_toEndOf="@+id/alert_iv_albumart"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/alert_iv_albumart"/>
+
                     <TextView
                         android:id="@+id/alarm_alert_label_real"
                         android:gravity="center_horizontal"
-                        android:layout_width="0dp"
+                        android:layout_width="200dp"
                         android:layout_height="0dp"
                         android:layout_marginTop="5dp"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="6dp"
                         android:layout_marginEnd="10dp"
-                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="true"
                         tools:text="Sound of Raindrops falling on the rooftop of"
                         android:ellipsize="marquee"
                         android:marqueeRepeatLimit="marquee_forever"
-                        android:maxLines="1"
+                        android:singleLine="true"
                         android:theme="@style/jjTextLarge_black"
                         android:visibility="visible"
                         app:layout_constraintStart_toEndOf="@+id/alert_iv_albumart"
@@ -178,13 +179,14 @@
         android:orientation="vertical">
 
         <Button
+            android:layout_margin="10dp"
             android:id="@+id/alert_button_snooze"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:theme="@style/jjTextLarge_white_bold_24sp"
             android:background="@color/jj_bg_color_1"
             android:layout_weight="1"
+            android:textColor="@color/primaryTextColor"
             android:text="@string/alarm_alert_snooze_text"
             />
 
@@ -197,11 +199,12 @@
             android:background="?android:attr/dividerHorizontal" />
 
         <Button
+            android:layout_margin="10dp"
             android:id="@+id/alert_button_dismiss"
-            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:textColor="@color/primaryTextColor"
             android:theme="@style/jjTextLarge_white_bold_24sp"
             android:background="@color/jj_bg_color_1"
             android:text="@string/alarm_alert_dismiss_text"/>

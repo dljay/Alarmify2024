@@ -65,10 +65,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35c5ERROR [Notification/AlarmAlertFullScreen - Label/ArtFilePath 보여주기 수정후. ] 22/4/19 (Thu) 11:16 pm
-//1. AlertFull 업데이트된 UI 버전으로 저장 -> zip 파일 저장.
-//2. 바로 업데이트 전 git 으로 recovery -> 동일하게 1분 차이로 알람 설정-> 크래쉬 나는지 확인할 것. (3~4번째 정도 d3 였던듯..)
-//- 의심 가능한것은 installAlarm 여서 그런것 같은데. 에러 스샷으로 이유 분석.
+// 30708V1.18e35c6 22/4/22 (Fri) 2:28 pm
+
+
+
 //
 //- 현재 문제: 화면 안 나오고 wall paper 만 보이네.
 //apply alpha only to background. (imageview 넣고 그놈만 alpha 로. 이참에 imageview 에 gradient 간지나는거 한번 넣어볼까나?

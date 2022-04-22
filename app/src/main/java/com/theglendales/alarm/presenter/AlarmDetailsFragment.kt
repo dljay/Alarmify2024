@@ -311,12 +311,11 @@ class AlarmDetailsFragment : Fragment() {
         Log.d(TAG, "onCreateView: **** [현재 알람 정보] ${currentAlarms?.data}, isSaved=${currentAlarms?.data?.isSaved}")
         //val currentAlarmsLabel= currentAlarms!!.labelOrDefault
 
-        if(currentAlarms!!.labelOrDefault !="userCreated") {
+    // *인스톨시 생성된 알람 두개 관련: 이 시점에서는 이미 모든 DefRta/Art 파일이 폰에 Copy 되었다는 가정하에 -> 아래 modify 로 label 변경  [alertUri, artUri 는 각 def1,2 로 인스톨시 설정.]
+        /*if(currentAlarms!!.labelOrDefault !="userCreated") {
             Log.d(TAG, "onCreateView: **MODIFYING ALARMS CREATED DURING APP INSTALLATION")
-            // *인스톨시 생성된 알람 두개 관련: 이 시점에서는 이미 모든 DefRta/Art 파일이 폰에 Copy 되었다는 가정하에 -> 아래 modify 로 label, alertUri, artUri 를 각 def1,2 로 변경.
             modify("Label") {alarmValue -> alarmValue.copy(label = "userCreated", isEnabled = true)} // alarmValue= AlarmValue(Data Class) -> 여기의 .copy 기능을 사용.
-
-        }
+        }*/
 
         return view
     }

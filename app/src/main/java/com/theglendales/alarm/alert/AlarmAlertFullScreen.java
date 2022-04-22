@@ -26,6 +26,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -134,7 +135,17 @@ public class AlarmAlertFullScreen extends FragmentActivity {
     }
 // Label 현재 보여주는것으로 -> ImageView 로 보여줄 예정..
     private void setTitleAndAlbumArt() { // 기존 이름 setTitle()
-        final String titleText = "NOW PLAYING " + "\"" +  mAlarm.getLabelOrDefault()+ "\"";
+        final String spaceFifteen="               "; // 15칸
+        final String spaceTwenty="                    "; // 20칸
+        final String spaceSixty="                                                           "; //60칸
+        final String labelReceived = mAlarm.getLabelOrDefault(); // 받은 제목(레이블에 적어놓음)
+        String titleText = spaceFifteen + "\"" +  labelReceived + "\"";
+
+        if(labelReceived.length() < 6) {
+            titleText += spaceSixty; // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 60칸 추가]
+        } else {
+            titleText += spaceTwenty;
+        }
     // 내가 추가-->
         AlarmValue aVal= mAlarm.getData();
         final String artFilePath = aVal.getArtFilePath();
@@ -145,8 +156,13 @@ public class AlarmAlertFullScreen extends FragmentActivity {
         ivAlbumArt.setImageURI(imageUri);
     // 내가 추가-->
         setTitle(titleText);
-        TextView textView = findViewById(R.id.alarm_alert_label_real);
-        textView.setText(titleText);
+        TextView tv_titleView = findViewById(R.id.alarm_alert_label_real);
+        // 흐르는 Marquee FX 위해..
+        tv_titleView.setHorizontallyScrolling(true);
+        tv_titleView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+        tv_titleView.setSelected(true);
+        // set Title.
+        tv_titleView.setText(titleText);
     }
 
     protected int getLayoutResId() {

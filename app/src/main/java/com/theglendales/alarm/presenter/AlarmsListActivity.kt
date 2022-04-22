@@ -65,8 +65,9 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35c7 22/4/22 (Fri) 3:25 pm
-// - a) alpha 아직도.. b) Font / b) Snooze / dismiss -> vector drawable next to them. + design c)GalS8 다크모드..
+// 30708V1.18e35C 22/4/22 (Fri) 9:17 pm
+// AlertFullScreen (알람 울릴때 뜨는 화면) 어느정도 구색 갖춰놧음.
+// 추후 Snooze/ Dismiss 및 디자인 바꾸기. LongClick 없애기 (혹은 안내 문구 바꾸기?) 등 필요함. UI 참고: https://www.google.com/search?q=android+alarm+app+ui&newwindow=1&sxsrf=APq-WBsSWVo7y5X6wc8iP18sKK1a4phfmg:1650629882409&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjzua--06f3AhUjBKYKHai_AgkQ_AUoAXoECAEQAw&biw=1745&bih=888&dpr=1.1#imgrc=QuvLitc6Xj4BZM
 // DRAWABLE 안 쓰는 것 삭제 전!
 
 // 1) Achievements:

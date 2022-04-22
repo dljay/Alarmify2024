@@ -43,7 +43,7 @@
 
     <!-- B. 기타 -->
     <style name="AlarmAlertFullScreenDarkTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 
     <style name="TimePickerDialogFragmentDark" parent="Theme.AppCompat.Dialog">

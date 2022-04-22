@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35C 22/4/22 (Fri) 11:34 pm [오만가지 에러 수정 전]
+// 30708V1.18e35d 22/4/22 (Fri) 11:34 pm [오만가지 에러 수정 전]
 // ERROR LIST
 
 //A) ALARM Turn off/on 안되는것(INSTALL ALARM) SignedAPK (1.18e35C 설치하자마자 Install Alarm 둘다 꺼짐/켜짐 안되네 ㅆㅂ..)

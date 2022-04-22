@@ -65,10 +65,17 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35C 22/4/22 (Fri) 10:25 pm
-// AlertFullScreen (알람 울릴때 뜨는 화면) 어느정도 구색 갖춰놧음.
-// 추후 Snooze/ Dismiss 및 디자인 바꾸기. LongClick 없애기 (혹은 안내 문구 바꾸기?) 등 필요함. UI 참고: https://www.google.com/search?q=android+alarm+app+ui&newwindow=1&sxsrf=APq-WBsSWVo7y5X6wc8iP18sKK1a4phfmg:1650629882409&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjzua--06f3AhUjBKYKHai_AgkQ_AUoAXoECAEQAw&biw=1745&bih=888&dpr=1.1#imgrc=QuvLitc6Xj4BZM
-// DRAWABLE 안 쓰는 것 삭제 전!
+// 30708V1.18e35C 22/4/22 (Fri) 11:34 pm [오만가지 에러 수정 전]
+// ERROR LIST
+
+//A) ALARM Turn off/on 안되는것(INSTALL ALARM) SignedAPK (1.18e35C 설치하자마자 Install Alarm 둘다 꺼짐/켜짐 안되네 ㅆㅂ..)
+//B) GalS20 에서 Pop up 쓱~ 나오고 없어지지 않고 계속 유지되게 할수는 없을까. 후우. [Original 도 안되는것 보면 빡셀수도..]
+//C) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
+
+// D) 에러처리: 오랜 시간 Background  에 있다가 다시 들어왔을 때 Details Frag 안 들어가지더라.. ㅅㅂ..
+// E)billing service disconnected 뜨고 app 다시  return -> secondFrag 에서 음악 재생 시도-> 되긴 되네.. 다시 ListFrag > 알람 클릭 -> 무반응.
+// F) 에러처리: Pixel 4x 에서도. Google Sign-in 하고 들어왔는데. Billing Service Disconnected 뜨면서. 음악 재생 안되고.. 크래쉬.. ㅜ 아 ㅆㅂ
+
 
 // 1) Achievements:
 // 2) todos:

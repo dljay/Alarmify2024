@@ -65,15 +65,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35c6 22/4/22 (Fri) 2:28 pm
-
-
-
-//
-//- 현재 문제: 화면 안 나오고 wall paper 만 보이네.
-//apply alpha only to background. (imageview 넣고 그놈만 alpha 로. 이참에 imageview 에 gradient 간지나는거 한번 넣어볼까나?
-//round corner
-//snooze / dismiss -> vector drawable next to them.
+// 30708V1.18e35c7 22/4/22 (Fri) 3:25 pm
+// - a) alpha 아직도.. b) Font / b) Snooze / dismiss -> vector drawable next to them. + design c)GalS8 다크모드..
 // DRAWABLE 안 쓰는 것 삭제 전!
 
 // 1) Achievements:

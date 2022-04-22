@@ -61,7 +61,7 @@
                 android:src="@drawable/mt_forest_lake_1"/>
 
             <com.theglendales.alarm.view.DigitalClock
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:id="@+id/alert_digital_clock"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
@@ -90,7 +90,7 @@
                     android:textStyle="bold" />
             </com.theglendales.alarm.view.DigitalClock>
 
-            <com.google.android.material.card.MaterialCardView
+            <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
 
@@ -102,10 +102,9 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
-                app:cardElevation="@dimen/cardview_default_elevation"
-                app:cardCornerRadius="15dp">
-                <!-- 알파값 Child 에 영향 안 주고 주기위해 ImageView-->
+                android:layout_marginTop="20dp">
+
+                <!-- 알파값 Child 에 영향 안 주고 주기위해 FrameLayout + ImageView-->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -127,13 +126,12 @@
                         android:orientation="vertical"
                         app:layout_constraintGuide_percent="0.31"/>
 
-
-
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/alert_iv_albumart"
 
                         android:layout_width="0dp"
                         android:layout_height="0dp"
+                        android:layout_marginEnd="5dp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/guide_ver_inside_cardView"
@@ -163,6 +161,7 @@
 
                             android:clickable="false"
                             android:text="NOW PLAYING"
+                            android:fontFamily="@font/circular_std_medium"
                             android:theme="@style/jjTextLarge_black_18sp"
                             android:visibility="visible"/>
 
@@ -178,12 +177,12 @@
                             android:focusable="false"
                             android:focusableInTouchMode="true"
                             tools:text="Sound of Raindrops falling on the rooftop of"
+                            android:fontFamily="@font/circular_std_light"
                             android:ellipsize="marquee"
                             android:marqueeRepeatLimit="marquee_forever"
                             android:singleLine="true"
                             android:theme="@style/jjTextLarge_black"
                             android:maxLines="1"/>
-
 
                     </LinearLayout>
 
@@ -193,15 +192,19 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+            </FrameLayout>
 
 
-            </com.google.android.material.card.MaterialCardView>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/blue_var_1"
+        android:alpha="0.8"
+
         app:layout_constraintTop_toBottomOf="@+id/cl_cardview_wrap"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical">
@@ -212,9 +215,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:theme="@style/jjTextLarge_white_bold_24sp"
-            android:background="@color/jj_bg_color_1"
+            android:backgroundTint="@color/jj_bg_color_1"
+            android:background="@drawable/btn_round_corner_1"
             android:layout_weight="1"
             android:textColor="@color/primaryTextColor"
+            android:fontFamily="@font/circular_std_light"
             android:text="@string/alarm_alert_snooze_text"/>
 
         <View
@@ -231,9 +236,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:fontFamily="@font/circular_std_light"
             android:textColor="@color/primaryTextColor"
             android:theme="@style/jjTextLarge_white_bold_24sp"
-            android:background="@color/jj_bg_color_1"
+            android:backgroundTint="@color/jj_bg_color_1"
+            android:background="@drawable/btn_round_corner_1"
             android:text="@string/alarm_alert_dismiss_text"/>
 
 

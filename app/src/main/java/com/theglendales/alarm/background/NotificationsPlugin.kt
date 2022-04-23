@@ -69,6 +69,7 @@ class NotificationsPlugin(
             setSmallIcon(R.drawable.ic_jj_notification_icon_1) // <- 기존 알람 아이콘 대신 앱아이콘으로 대체하고 싶었지만 오직 깔끔한 (흰배경) 사진만 된다네!
             // 참고: https://stackoverflow.com/a/44299487/13930304
             priority = NotificationCompat.PRIORITY_HIGH
+            //priority = NotificationCompat.PRIORITY_MAX
             setCategory(NotificationCompat.CATEGORY_ALARM)
             // setFullScreenIntent to show the user AlarmAlert dialog at the same time  when the Notification Bar was created.
             setFullScreenIntent(pendingNotify, true)
@@ -76,6 +77,8 @@ class NotificationsPlugin(
             //Notification (알람 울릴 때 상단 팝업) 클릭하면 -> activity (전체화면으로 이동) 로 이동
             setContentIntent(pendingNotify)
             setOngoing(true)
+
+
             addAction(R.drawable.ic_action_snooze, getString(R.string.alarm_alert_snooze_text), pendingSnooze)
             addAction(R.drawable.ic_action_dismiss, getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
             setDefaults(Notification.DEFAULT_LIGHTS)

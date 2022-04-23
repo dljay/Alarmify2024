@@ -65,17 +65,16 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35d 22/4/22 (Fri) 11:34 pm [오만가지 에러 수정 전]
-// ERROR LIST
+// 30708V1.18e35d 22/4/22 (Sat) 9:29 am [오만가지 에러 수정 전]
 
-//A) ALARM Turn off/on 안되는것(INSTALL ALARM) SignedAPK (1.18e35C 설치하자마자 Install Alarm 둘다 꺼짐/켜짐 안되네 ㅆㅂ..)
-// B) Label= Song Title 잘 작동하는지 확인..
-//C) GalS20 에서 Pop up 쓱~ 나오고 없어지지 않고 계속 유지되게 할수는 없을까. 후우. [Original 도 안되는것 보면 빡셀수도..]
-//C) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
+//(O) ALARM Turn off/on 안되는것(INSTALL ALARM) SignedAPK (1.18e35C 설치하자마자 Install Alarm 둘다 꺼짐/켜짐 안되네 ㅆㅂ..)
+//(X) GalS20 에서 Pop up 쓱~ 나오고 없어지지 않고 계속 유지되게 할수는 없을까. 후우. [Original 도 안되는것 보면 빡셀수도..]
+//(X) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
 
-// D) 에러처리: 오랜 시간 Background  에 있다가 다시 들어왔을 때 Details Frag 안 들어가지더라.. ㅅㅂ..
-// E)billing service disconnected 뜨고 app 다시  return -> secondFrag 에서 음악 재생 시도-> 되긴 되네.. 다시 ListFrag > 알람 클릭 -> 무반응.
-// F) 에러처리: Pixel 4x 에서도. Google Sign-in 하고 들어왔는데. Billing Service Disconnected 뜨면서. 음악 재생 안되고.. 크래쉬.. ㅜ 아 ㅆㅂ
+// (X) 에러처리: 오랜 시간 Background  에 있다가 다시 들어왔을 때 Details Frag 안 들어가지더라.. ㅅㅂ..
+// (X) billing service disconnected 뜨고 app 다시  return -> secondFrag 에서 음악 재생 시도-> 되긴 되네.. 다시 ListFrag > 알람 클릭 -> 무반응.
+// (X) 에러처리: Pixel 4x 에서도. Google Sign-in 하고 들어왔는데. Billing Service Disconnected 뜨면서. 음악 재생 안되고.. 크래쉬.. ㅜ 아 ㅆㅂ
+// (X) 권한이 Phone 으로 되어있네 어째서. 미디어로 바껴야 할듯. (구글 알람 앱이나 Yuriv Original 도 그렇고..) API 31 까지 잘 확인..
 
 
 // 1) Achievements:

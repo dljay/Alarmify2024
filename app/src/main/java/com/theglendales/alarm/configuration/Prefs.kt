@@ -50,7 +50,7 @@ class Prefs private constructor(
                     snoozeDuration = factory.intStringDataStore("snooze_duration", 10),
                     listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_COMPACT),
                     autoSilence = factory.intStringDataStore("auto_silence", 10),
-                    fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 30),
+                    fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 10), // todo: 원래 30 였으나 10으로 바꿔놓음. 아쉽게도 아직 PRef 들어갔을 때 30 으로 뜨네.
                     vibrate = factory.booleanDataStore("vibrate", true),
                     skipDuration = factory.intStringDataStore(SKIP_DURATION_KEY, -1)
             )

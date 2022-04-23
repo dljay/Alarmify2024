@@ -65,13 +65,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35d3 22/4/22 (Sat) 11:13am [오만가지 에러 수정 전]
+// 30708V1.18e35e1 22/4/22 (Sat) 9:57pm [오만가지 에러 수정 직전!!]
 
-//(O) ALARM Turn off/on 안되는것(INSTALL ALARM) SignedAPK (1.18e35C 설치하자마자 Install Alarm 둘다 꺼짐/켜짐 안되네 ㅆㅂ..)
-//(O) GalS20 에서 Pop up 쓱~ 나오고 없어지지 않고 계속 유지되게 할수는 없을까. 후우. [Original 도 안되는것 보면 빡셀수도..]
-// (X) FadeIn 시간 30 -> 10초로 바꾸기. Drawable Button 옆에 일단 달아놓자..
+
 //(X) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
-
 // (X) 에러처리: 오랜 시간 Background  에 있다가 다시 들어왔을 때 Details Frag 안 들어가지더라.. ㅅㅂ..
 // (X) billing service disconnected 뜨고 app 다시  return -> secondFrag 에서 음악 재생 시도-> 되긴 되네.. 다시 ListFrag > 알람 클릭 -> 무반응.
 // (X) 에러처리: Pixel 4x 에서도. Google Sign-in 하고 들어왔는데. Billing Service Disconnected 뜨면서. 음악 재생 안되고.. 크래쉬.. ㅜ 아 ㅆㅂ

@@ -69,7 +69,8 @@ import java.util.Calendar
 // ERROR LIST
 
 //A) ALARM Turn off/on 안되는것(INSTALL ALARM) SignedAPK (1.18e35C 설치하자마자 Install Alarm 둘다 꺼짐/켜짐 안되네 ㅆㅂ..)
-//B) GalS20 에서 Pop up 쓱~ 나오고 없어지지 않고 계속 유지되게 할수는 없을까. 후우. [Original 도 안되는것 보면 빡셀수도..]
+// B) Label= Song Title 잘 작동하는지 확인..
+//C) GalS20 에서 Pop up 쓱~ 나오고 없어지지 않고 계속 유지되게 할수는 없을까. 후우. [Original 도 안되는것 보면 빡셀수도..]
 //C) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
 
 // D) 에러처리: 오랜 시간 Background  에 있다가 다시 들어왔을 때 Details Frag 안 들어가지더라.. ㅅㅂ..

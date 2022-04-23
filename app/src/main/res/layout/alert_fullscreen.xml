@@ -215,11 +215,12 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:theme="@style/jjTextLarge_white_bold_24sp"
-            android:backgroundTint="@color/jj_bg_color_1"
+            android:backgroundTint="@color/blue_var_1"
             android:background="@drawable/btn_round_corner_1"
             android:layout_weight="1"
             android:textColor="@color/primaryTextColor"
-            android:fontFamily="@font/circular_std_light"
+            android:fontFamily="@font/circular_std_black"
+
             android:text="@string/alarm_alert_snooze_text"/>
 
         <View
@@ -236,10 +237,10 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:fontFamily="@font/circular_std_light"
+            android:fontFamily="@font/circular_std_black"
             android:textColor="@color/primaryTextColor"
             android:theme="@style/jjTextLarge_white_bold_24sp"
-            android:backgroundTint="@color/jj_bg_color_1"
+            android:backgroundTint="@color/blue_var_1"
             android:background="@drawable/btn_round_corner_1"
             android:text="@string/alarm_alert_dismiss_text"/>
 

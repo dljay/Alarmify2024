@@ -49,9 +49,9 @@ public class SettingsTest extends BaseTest {
         onView(withId(R.id.seekbar_dialog_seekbar_prealarm_volume))
                 .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_LEFT, Press.FINGER));*/
 
-        sleep();
+        /*sleep();
         onView(withId(R.id.seekbar_dialog_seekbar_prealarm_volume))
-                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));
+                .perform(new GeneralClickAction(Tap.SINGLE, GeneralLocation.CENTER_RIGHT, Press.FINGER));*/
     }
 
     @Test

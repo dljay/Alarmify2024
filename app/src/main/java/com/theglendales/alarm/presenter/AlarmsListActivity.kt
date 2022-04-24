@@ -65,7 +65,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35e2 22/4/23 (Sun) 10:08am [2ndFrag 에서 background 나갔다 왔을 때 문제 해결중. ConfigureTransActions 수정 직전.]
+// 30708V1.18e35E 22/4/23 (Sun) 10:08am [2ndFrag 에서 background 나갔다 왔을 때 문제 해결중. ConfigureTransActions 수정 직전.]
+// Acheivement (O) :
+// 증상: SecondFrag 에서 Background 갔다 오면-> CreateNewAlarm 작동 안했음. 혹은 SecondFrag->Background-> ListFrag 복귀 후 Create New Alarm (X), 알람 클릭해도->Details Frag 로 이동 안 하는 문제 있었음.
+// 이유: SecondFrag 에서 Background 로 가는 순간 AlarmsListActivity>onStop() 에서 subscriptions.dispose() 가 불려서 Create New Alarm 의 존재가 사라지는 것이었음.
+// 해결: 백그라운드 나갔다 오면 AlarmsListActivity() 의  onStart() 가 불림. -> 여기서 바로 configureTransActions() 해준뒤 -> 1) 일단 sub! 2)현재 secondFrag 였으면 sub 만 해주고 return 시켰음.
+// SecondFrag->Bground->createAlarm-> 후 (DetailsFrag 안에서) OK 눌렀을 때 저장 후 화면 이동 안하는 문제도 -> 현재 currentFrag 가 secondFrag 가 아니면 showList 로 ListFrag 보여주게 하여 해결함.
 
 
 //(X) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
@@ -228,11 +233,11 @@ class AlarmsListActivity : AppCompatActivity() {
 
                 override fun hideDetails() {
                     Log.d(TAG, "hideDetails: called")
-                    editing.onNext(EditedAlarm())
+                    editing.onNext(EditedAlarm()) // configureTransactions() 안의 subscribe 로 이동함.
                 }
 
                 override fun hideDetails(holder: RowHolder) {
-                    Log.d(TAG, "hideDetails2: [DetailFrag 에서 cancel/BackButton 누름] ")
+                    Log.d(TAG, "hideDetails2: [DetailFrag 에서 cancel/OK 누름] ")
                     editing.onNext(EditedAlarm(
                             isNew = false,
                             value = Optional.absent(),
@@ -408,17 +413,16 @@ class AlarmsListActivity : AppCompatActivity() {
 
 
     override fun onStart() {
-        Log.d(TAG, "onStart: jj-called. subscriptions.isDisposed= ${subscriptions.isDisposed}")
         super.onStart()
-// ** 추가 -->
-        // if(currentFragment is SecondFragment && subscriptions.isDisposed) -> configureTransactions -> subscribe 만 하고 fragment 로딩은 x
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+        Log.d(TAG, "onStart: jj-called. currentFragment = $currentFragment, subscriptions.isDisposed= ${subscriptions.isDisposed}")
 
-        if (currentFragment is SecondFragment) { // SecondFrag 있다가 Background 나갔따 왔을 때 -> 그대로 Second Frag 보여주도록.
+// ** 추가 -->
+        if (currentFragment is SecondFragment) { // SecondFrag 있다가 Background 나갔다 왔을 때 -> ConfigureTransactions() 로 이동하여 -> Subscribe 해주고 -> do nothing(그대로 Second Frag 보여주기)
             Log.d(TAG, "onStart: 과거 머물러있던 fragment 는 SecondFragment 로 예상됨.")
-            return
-        } else {
-            configureTransactions() // <- 원래는 if, else 문 없이 이것만 있었음.
+            configureTransactions(wasAtSecondFrag = true)
+        } else { // ListFrag 에 있다가 Background 나갔따 왔을 경우.
+            configureTransactions(wasAtSecondFrag = false) // <- 원래는 if, else 문 없이 이것만 있었음.
         }
 // ** 추가 <--
     }
@@ -505,11 +509,11 @@ class AlarmsListActivity : AppCompatActivity() {
         uiStore.onBackPressed().onNext(AlarmsListActivity::class.java.simpleName)
     }
 // ***** !!! 여기서 showList() 로 감!!!! *****
-    private fun configureTransactions() { // 주의: 만약 configureTransActions() 가 n번 불리면, Subscribe 를 n번함.. -> ListFrag 에서 FAB 버튼/ DetailsFrag 열려고 할 때 우수수 열림.
-    Log.d(TAG, "configureTransactions: called")
-
+    private fun configureTransactions(wasAtSecondFrag: Boolean) { // 주의: 만약 configureTransActions() 가 n번 불리면, Subscribe 를 n번함.. -> ListFrag 에서 FAB 버튼/ DetailsFrag 열려고 할 때 우수수 열림.
+    Log.d(TAG, "configureTransactions: called. subscriptions.isDisposed=${subscriptions.isDisposed}")
     // uiStore.editing().subscribe = UiStore Class 의 editing (BehaviorSubject = LiveData 의 Emit 으로 생각하면 편함) 을 subscribe (=observe)
     // USER 가 FAB 버튼 누르거나 ListFrag 의 알람칸 클릭했을 때 여기서 uiStore.editing 을 '구독중(=observe)' 하다 알아서 DetailsFrag 보여줌.
+
         subscriptions = uiStore.editing().distinctUntilChanged { editedAlarm -> editedAlarm.isEdited } //distinctUntilChanged= 중복 filtering (ex. 1,2,2,3,1,1,2 => 1,2,3,1,2 만 받음) +  .isEdited=true 인 놈만 걸름.
                 .subscribe(Consumer { editedAlarm ->
                     Log.d(TAG, "[SUB] (line516!)configureTransactions: jj- editedAlarm.isEdited= ${editedAlarm.isEdited}, editedAlarm.hashCode= ${editedAlarm.hashCode()}") // editedAlarm 는 (type) EditedAlarm
@@ -517,9 +521,15 @@ class AlarmsListActivity : AppCompatActivity() {
                     when {
                         lollipop() && isDestroyed -> return@Consumer
                         editedAlarm.isEdited -> showDetails(editedAlarm) // Fab btn or [ListFrag] RowHolder 클릭했을 때 -> DetailsFrag 로 넘어감.
-                        else -> { // 일반 ListFrag 로딩 상황
-                            Log.d(TAG, "[SUB] (line490)configureTransactions: else->showList() 안!! editedAlarm=$editedAlarm")
-                            showList(isCreateNewClicked = false)}
+                        else -> { // 일반 A) ListFrag 로딩 상황 or B) SecondFrag 에서 Background 갔다 다시 들어왓을 때 (기존 존재하던 subscribe 가 dispose 된 상태에서 -> onStart() -> configureTransactions()
+                            val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+                            if(currentFragment is SecondFragment && wasAtSecondFrag) { // DetailsFrag 에서 신규 알람 설정을 마치고 OK 눌렀을 때 currentFrag check 안해주면 showList() 가 안되고 화면 멈춤.
+                                Log.d(TAG, "[SUB] configureTransactions: [SecondFrag->Background-> 재진입 예상] subscriptions.isDisposed=${subscriptions.isDisposed}, \n editedAlarm=$editedAlarm")
+                                return@Consumer
+                            } else {
+                                Log.d(TAG, "[SUB] configureTransactions: [일반 ListFrag 로딩] subscriptions.isDisposed=${subscriptions.isDisposed}, \neditedAlarm=$editedAlarm")
+                                showList(isCreateNewClicked = false)}
+                            }
                     }
                 })
     }
@@ -581,8 +591,8 @@ class AlarmsListActivity : AppCompatActivity() {
     }
     private fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
     // ListFrag 나 DetailsFrag 는 서로 이동시에는 subscription 으로 EditeAlarm 받아서 이동하지만, BtmNav 로 오갈때  열릴 때 configureTransActions() 함수가 불리면서 계속 subscribe 함.
-        //subscriptions.dispose() // todo: 추후 a) 신규알람생성(createNewAlarm-FAB 버튼)시 TimePicker 가 Spinner TimePicker 에 반영 안되는문제 발생 or
-        //todo: b) Second Frag N번 왔다갔다 한 후 Details Frag 열 때 log 에  '다수의 ListFrag 로부터의 이동' 이 뜨면. 해당 subscriptions.dispose 다시 활성화해보기.
+        //subscriptions.dispose() // 추후 a) 신규알람생성(createNewAlarm-FAB 버튼)시 TimePicker 가 Spinner TimePicker 에 반영 안되는문제 발생 or
+        // b) Second Frag N번 왔다갔다 한 후 Details Frag 열 때 log 에  '다수의 ListFrag 로부터의 이동' 이 뜨면. 해당 subscriptions.dispose 다시 활성화해보기.
     // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
         appBarLayout.setExpanded(false,true)
     // B) SecondFrag 로딩

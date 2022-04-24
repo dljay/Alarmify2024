@@ -23,6 +23,17 @@
     android:layout_height="match_parent"
     android:background="@color/transparent">
 
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/iv_bg_donation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/mt_forest_lake_1"/>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/alert_guide_hor_1_wrap"
@@ -36,7 +47,7 @@
         android:id="@+id/cl_cardview_wrap"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@drawable/roundstyle3_top_only"
+        android:background="@color/transparent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -49,16 +60,7 @@
                 android:orientation="horizontal"
                 app:layout_constraintGuide_percent="0.6"/>
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/iv_bg_donation"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:scaleType="centerCrop"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:src="@drawable/mt_forest_lake_1"/>
+
 
             <com.theglendales.alarm.view.DigitalClock
                 android:layout_marginTop="30dp"
@@ -202,22 +204,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/bg_gradient_end_color"
-
-
+        android:background="@color/transparent"
         app:layout_constraintTop_toBottomOf="@+id/cl_cardview_wrap"
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_margin="10dp"
             android:id="@+id/alert_button_snooze"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:alpha="0.9"
             android:theme="@style/jjTextLarge_white_bold_24sp"
-            android:backgroundTint="@color/blue_var_1"
+
             android:background="@drawable/btn_round_corner_1"
             android:layout_weight="1"
+            app:backgroundTint="@color/jj_bg_color_1"
+            app:icon="@drawable/ic_baseline_airline_seat_individual_suite_30"
+            app:iconGravity="textEnd"
+            app:iconTint="@null"
+
             android:textColor="@color/primaryTextColor"
             android:fontFamily="@font/circular_std_black"
 
@@ -231,17 +237,21 @@
             android:layout_marginRight="16dp"
             android:background="?android:attr/dividerHorizontal" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_margin="10dp"
             android:id="@+id/alert_button_dismiss"
             android:layout_width="match_parent"
+            android:alpha="0.9"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:fontFamily="@font/circular_std_black"
             android:textColor="@color/primaryTextColor"
             android:theme="@style/jjTextLarge_white_bold_24sp"
-            android:backgroundTint="@color/blue_var_1"
+            app:backgroundTint="@color/jj_bg_color_1"
             android:background="@drawable/btn_round_corner_1"
+            app:icon="@drawable/ic_baseline_accessibility_new_24"
+            app:iconGravity="textEnd"
+            app:iconTint="@null"
             android:text="@string/alarm_alert_dismiss_text"/>
 
 

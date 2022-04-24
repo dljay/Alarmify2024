@@ -226,7 +226,6 @@
 
             android:textColor="@color/primaryTextColor"
             android:fontFamily="@font/circular_std_black"
-
             android:text="@string/alarm_alert_snooze_text"/>
 
         <View

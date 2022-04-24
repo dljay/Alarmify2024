@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35E 22/4/23 (Sun) 10:08am [2ndFrag 에서 background 나갔다 왔을 때 문제 해결중. ConfigureTransActions 수정 직전.]
+// 30708V1.18e35E 22/4/23 (Sun) 11:01am [2ndFrag 에서 background 나갔다 왔을 때 문제 해결중. ConfigureTransActions 수정 후.]
 // Acheivement (O) :
 // 증상: SecondFrag 에서 Background 갔다 오면-> CreateNewAlarm 작동 안했음. 혹은 SecondFrag->Background-> ListFrag 복귀 후 Create New Alarm (X), 알람 클릭해도->Details Frag 로 이동 안 하는 문제 있었음.
 // 이유: SecondFrag 에서 Background 로 가는 순간 AlarmsListActivity>onStop() 에서 subscriptions.dispose() 가 불려서 Create New Alarm 의 존재가 사라지는 것이었음.
@@ -73,7 +73,7 @@ import java.util.Calendar
 // SecondFrag->Bground->createAlarm-> 후 (DetailsFrag 안에서) OK 눌렀을 때 저장 후 화면 이동 안하는 문제도 -> 현재 currentFrag 가 secondFrag 가 아니면 showList 로 ListFrag 보여주게 하여 해결함.
 
 
-//(X) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
+//(O) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
 // (X) 에러처리: 오랜 시간 Background  에 있다가 다시 들어왔을 때 Details Frag 안 들어가지더라.. ㅅㅂ..
 // (X) billing service disconnected 뜨고 app 다시  return -> secondFrag 에서 음악 재생 시도-> 되긴 되네.. 다시 ListFrag > 알람 클릭 -> 무반응.
 // (X) 에러처리: Pixel 4x 에서도. Google Sign-in 하고 들어왔는데. Billing Service Disconnected 뜨면서. 음악 재생 안되고.. 크래쉬.. ㅜ 아 ㅆㅂ

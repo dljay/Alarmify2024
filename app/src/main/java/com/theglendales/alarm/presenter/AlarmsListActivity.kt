@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35e1 22/4/22 (Sat) 9:57pm [오만가지 에러 수정 직전!!]
+// 30708V1.18e35e2 22/4/23 (Sun) 10:08am [2ndFrag 에서 background 나갔다 왔을 때 문제 해결중. ConfigureTransActions 수정 직전.]
 
 
 //(X) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
@@ -192,7 +192,7 @@ class AlarmsListActivity : AppCompatActivity() {
                     val newAlarm = alarms.createNewAlarm()
 
                     Log.d(TAG, "(line163) createNewAlarm: newAlarm=$newAlarm, newAlarm.hashCode=${newAlarm.hashCode()}") // 각 1회씩 뜬다.
-                // 새로 만든 newAlarm 을 EditedAlarm Object 로 만들어서 ConfigureTransActions()로 보냄
+                // 새로 만든 newAlarm 을 EditedAlarm Object 로 만들어서 ConfigureTransActions()로 보냄 [Subscribe=Observe 중였음]
                     val editedAlarm = EditedAlarm(isNew = true, value = Optional.of(newAlarm.data),id = newAlarm.id,holder = Optional.absent())
                     editing.onNext(editedAlarm)
                     Log.d(TAG, "(line 166) createNewAlarm: ----------finished sending via RxJava. editedAlarm=$editedAlarm \n  editing.value=${editing.value}")
@@ -393,9 +393,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
         })
 
-        addNewAlarmBtn.setOnClickListener { showList(isCreateNewClicked = true)
-
-        }
+        addNewAlarmBtn.setOnClickListener { showList(isCreateNewClicked = true)}
 
     } // onCreate() 여기까지.
 // 추가 1-B)-->
@@ -410,12 +408,13 @@ class AlarmsListActivity : AppCompatActivity() {
 
 
     override fun onStart() {
-        Log.d(TAG, "onStart: jj-called")
+        Log.d(TAG, "onStart: jj-called. subscriptions.isDisposed= ${subscriptions.isDisposed}")
         super.onStart()
 // ** 추가 -->
+        // if(currentFragment is SecondFragment && subscriptions.isDisposed) -> configureTransactions -> subscribe 만 하고 fragment 로딩은 x
         val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
 
-        if (currentFragment is SecondFragment) {
+        if (currentFragment is SecondFragment) { // SecondFrag 있다가 Background 나갔따 왔을 때 -> 그대로 Second Frag 보여주도록.
             Log.d(TAG, "onStart: 과거 머물러있던 fragment 는 SecondFragment 로 예상됨.")
             return
         } else {
@@ -425,7 +424,7 @@ class AlarmsListActivity : AppCompatActivity() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.S)
+    @RequiresApi(Build.VERSION_CODES.S) // S=31 todo: 이후 다른 API 에서 테스트 필요.
     override fun onResume() {
         Log.d(TAG, "onResume: jj-called. subscriptions.toString=${subscriptions.toString()}")
         super.onResume()
@@ -513,12 +512,12 @@ class AlarmsListActivity : AppCompatActivity() {
     // USER 가 FAB 버튼 누르거나 ListFrag 의 알람칸 클릭했을 때 여기서 uiStore.editing 을 '구독중(=observe)' 하다 알아서 DetailsFrag 보여줌.
         subscriptions = uiStore.editing().distinctUntilChanged { editedAlarm -> editedAlarm.isEdited } //distinctUntilChanged= 중복 filtering (ex. 1,2,2,3,1,1,2 => 1,2,3,1,2 만 받음) +  .isEdited=true 인 놈만 걸름.
                 .subscribe(Consumer { editedAlarm ->
-                    Log.d(TAG, "[SUB] (line486!)configureTransactions: jj- editedAlarm.isEdited= ${editedAlarm.isEdited}, editedAlarm.hashCode= ${editedAlarm.hashCode()}") // editedAlarm 는 (type) EditedAlarm
+                    Log.d(TAG, "[SUB] (line516!)configureTransactions: jj- editedAlarm.isEdited= ${editedAlarm.isEdited}, editedAlarm.hashCode= ${editedAlarm.hashCode()}") // editedAlarm 는 (type) EditedAlarm
 
                     when {
                         lollipop() && isDestroyed -> return@Consumer
-                        editedAlarm.isEdited -> showDetails(editedAlarm)
-                        else -> {
+                        editedAlarm.isEdited -> showDetails(editedAlarm) // Fab btn or [ListFrag] RowHolder 클릭했을 때 -> DetailsFrag 로 넘어감.
+                        else -> { // 일반 ListFrag 로딩 상황
                             Log.d(TAG, "[SUB] (line490)configureTransactions: else->showList() 안!! editedAlarm=$editedAlarm")
                             showList(isCreateNewClicked = false)}
                     }
@@ -528,107 +527,103 @@ class AlarmsListActivity : AppCompatActivity() {
 // 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
     private fun showList(isCreateNewClicked: Boolean) {
     //추가->
-    Log.d(TAG, "(Line281)showList: jj-called")
-    appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
-    btmAppBar.setBackgroundResource(R.drawable.btm_nav_bg_round_corner) // SecondFrag 에서 돌아왔을 때 Corner 가 직사각형 -> Round Corner 로 다시 변경.
+        Log.d(TAG, "(Line531)showList: jj-called")
+        appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
+        btmAppBar.setBackgroundResource(R.drawable.btm_nav_bg_round_corner) // SecondFrag 에서 돌아왔을 때 Corner 가 직사각형 -> Round Corner 로 다시 변경.
 
-    // 혹시나 Btm Nav> Set ALARM 의 메뉴 아이콘이 isChecked bool 값이 틀린 경우 바꿔주기(회색 -> 흰색)(Ex. SecondFrag 에서 (+) 누른 경우
-    // Mystery..  : 여기서 if 문을 안해주고 그냥 .isChecked=true 해주면 오히려 결과값이 반대(false) 가 된다 .. ?? 그래서 if 문 붙여줬음.
-    val listFragMenuItem = btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm)
-    val secondFragMenuItem = btmNavView.menu.findItem(R.id.id_BtmNav_RingTone)
-    if(!listFragMenuItem.isChecked) {
-        listFragMenuItem.isChecked = true
-    }
-    if(secondFragMenuItem.isChecked) {
-        secondFragMenuItem.isChecked = false
-    }
-
-
-
-//<-추가
-    val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container) // first searches through fragments that are currently added to the manager's activity
-
-    when(currentFragment)
-    {
-        is AlarmsListFragment -> { // listFrag 보고 있다 홈 버튼 눌러서 Background 로 앱 갔다 들어왓을 때. (암것도 로딩 안함. 그대로..)
-            logger.debug { "skipping fragment transition, because already showing $currentFragment" }
+        // 혹시나 Btm Nav> Set ALARM 의 메뉴 아이콘이 isChecked bool 값이 틀린 경우 바꿔주기(회색 -> 흰색)(Ex. SecondFrag 에서 (+) 누른 경우
+        // Mystery..  : 여기서 if 문을 안해주고 그냥 .isChecked=true 해주면 오히려 결과값이 반대(false) 가 된다 .. ?? 그래서 if 문 붙여줬음.
+            val listFragMenuItem = btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm)
+            val secondFragMenuItem = btmNavView.menu.findItem(R.id.id_BtmNav_RingTone)
+            if(!listFragMenuItem.isChecked) {
+                listFragMenuItem.isChecked = true
             }
-        else -> {
-            //logger.debug { "transition from: $currentFragment to show list, editedAlarm.hashCode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
-            // ListFrag 를 로딩>
-                val listFragment = AlarmsListFragment()
-            Log.d(TAG, "showList: created New ListFrag = $listFragment, ListFrag.hashCode= ${listFragment.hashCode()}")
-                supportFragmentManager.beginTransaction().apply {
-                    this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
-                    Log.d(TAG, "showList: not lollipop()")
-                }.replace(R.id.main_fragment_container, listFragment).commitNowAllowingStateLoss()
+            if(secondFragMenuItem.isChecked) {
+                secondFragMenuItem.isChecked = false
+            }
 
+    //<-추가
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container) // first searches through fragments that are currently added to the manager's activity
+
+        when(currentFragment)
+        {
+            is AlarmsListFragment -> { // listFrag 보고 있다 홈 버튼 눌러서 Background 로 앱 갔다 들어왓을 때. (암것도 로딩 안함. 그대로..)
+                logger.debug { "skipping fragment transition, because already showing $currentFragment" }
+                }
+            else -> {
+                //logger.debug { "transition from: $currentFragment to show list, editedAlarm.hashCode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
+                // ListFrag 를 로딩>
+                    val listFragment = AlarmsListFragment()
+                Log.d(TAG, "showList: created New ListFrag = $listFragment, ListFrag.hashCode= ${listFragment.hashCode()}")
+                    supportFragmentManager.beginTransaction().apply {
+                        this.setCustomAnimations(R.anim.push_down_in, R.anim.my_fade_out_time_short)
+                        Log.d(TAG, "showList: not lollipop()")
+                    }.replace(R.id.main_fragment_container, listFragment).commitNowAllowingStateLoss()
+
+            }
         }
+
+    //내가 추가->
+    // a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
+        btmNavView.visibility =View.VISIBLE
+        btmAppBar.visibility= View.VISIBLE
+
+    // b) AppBarLayout 설정변경 -> ToolBar 보여주는데까지 Collapse 시키기(O)
+        //if(supportActionBar != null) {supportActionBar?.show()}
+        val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+        // % 참고: Java 에서는 params.setScrollFlags(xxx SCROLL | FLAG_EXIT ... ) 이런식으로 '|' 파이프라인을 쓰는데. 그게 Kotlin 에서는 or 임. bitwise INT... 흐음.
+    // c) 만약 (+) 버튼 눌러서 여기로 온거면 바로 새 알람 생성(->DetailsFrag)
+        if(isCreateNewClicked) {
+            uiStore.createNewAlarm()
+        }
+        Log.d(TAG, "showList: BtmNav_SetAlarm.isChecked=${btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm).isChecked} , BtmNav_RingTone.isChecked=${btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked}")
+    }
+    private fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
+    // ListFrag 나 DetailsFrag 는 서로 이동시에는 subscription 으로 EditeAlarm 받아서 이동하지만, BtmNav 로 오갈때  열릴 때 configureTransActions() 함수가 불리면서 계속 subscribe 함.
+        //subscriptions.dispose() // todo: 추후 a) 신규알람생성(createNewAlarm-FAB 버튼)시 TimePicker 가 Spinner TimePicker 에 반영 안되는문제 발생 or
+        //todo: b) Second Frag N번 왔다갔다 한 후 Details Frag 열 때 log 에  '다수의 ListFrag 로부터의 이동' 이 뜨면. 해당 subscriptions.dispose 다시 활성화해보기.
+    // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
+        appBarLayout.setExpanded(false,true)
+    // B) SecondFrag 로딩
+        replace(R.id.main_fragment_container, secondFragReceived)
+        commit() //현재 상태에서 특별히 commitNow() 쓸 이유 안 보임.
+
+    // D) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
+        val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
+
+        Log.d(TAG, "showSecondFrag: ..... ")
+
     }
 
-//내가 추가->
-// a) btmNavView 다시 보이게 하기 (Detail 들어갈때는 visibility= GONE 으로)
-    btmNavView.visibility =View.VISIBLE
-    btmAppBar.visibility= View.VISIBLE
 
-// b) AppBarLayout 설정변경 -> ToolBar 보여주는데까지 Collapse 시키기(O)
-    //if(supportActionBar != null) {supportActionBar?.show()}
-    val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
-    params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
-    // % 참고: Java 에서는 params.setScrollFlags(xxx SCROLL | FLAG_EXIT ... ) 이런식으로 '|' 파이프라인을 쓰는데. 그게 Kotlin 에서는 or 임. bitwise INT... 흐음.
-// c) 만약 (+) 버튼 눌러서 여기로 온거면 바로 새 알람 생성(->DetailsFrag)
-    if(isCreateNewClicked) {
-        uiStore.createNewAlarm()
+    private fun showDetails(@NonNull editedAlarm: EditedAlarm) {
+        Log.d(TAG, "showDetails: called. ")
+        appBarLayout.setExpanded(false,true) // A)ToolBar 포함된 넓은 부분 Collapse 시키기!
+
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
+
+        if (currentFragment is AlarmDetailsFragment) {
+            logger.debug { "skipping fragment transition, because already showing $currentFragment" }
+        } else
+        {
+            logger.debug { "transition from: $currentFragment to show details, editedAlarm.Hashcode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
+
+            val detailsFragment = AlarmDetailsFragment().apply {arguments = Bundle()}
+            supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, detailsFragment).commitAllowingStateLoss()
+        //todo: [혹시 showDetails x2 뜨는것 방지 위해 ].CommitNow()(Synchronous) 가 나을것 같은데.. 느려질려나?
+        }
+        // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
+        btmNavView.visibility =View.GONE
+        btmAppBar.visibility= View.GONE
+
+        // C) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
+        val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
+
+
     }
-    Log.d(TAG, "showList: BtmNav_SetAlarm.isChecked=${btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm).isChecked} , BtmNav_RingTone.isChecked=${btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked}")
-
-
-}
-private fun showSecondFrag(secondFragReceived: Fragment) =supportFragmentManager.beginTransaction().apply{ //supportFragmentManager = get FragmentManager() class
-// ListFrag 나 DetailsFrag 는 서로 이동시에는 subscription 으로 EditeAlarm 받아서 이동하지만, BtmNav 로 오갈때  열릴 때 configureTransActions() 함수가 불리면서 계속 subscribe 함.
-    //subscriptions.dispose() // todo: 추후 a) 신규알람생성(createNewAlarm-FAB 버튼)시 TimePicker 가 Spinner TimePicker 에 반영 안되는문제 발생 or
-    //todo: b) Second Frag N번 왔다갔다 한 후 Details Frag 열 때 log 에  '다수의 ListFrag 로부터의 이동' 이 뜨면. 해당 subscriptions.dispose 다시 활성화해보기.
-// A) ToolBar 포함된 넓은 부분 Collapse 시키기!
-    appBarLayout.setExpanded(false,true)
-// B) SecondFrag 로딩
-    replace(R.id.main_fragment_container, secondFragReceived)
-    commit() //현재 상태에서 특별히 쓸 이유 안 보임.
-
-// D) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
-    val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
-    params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
-
-    Log.d(TAG, "showSecondFrag: ..... ")
-
-}
-
-
-private fun showDetails(@NonNull editedAlarm: EditedAlarm) {
-    Log.d(TAG, "showDetails: called. ")
-    appBarLayout.setExpanded(false,true) // A)ToolBar 포함된 넓은 부분 Collapse 시키기!
-
-    val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
-
-    if (currentFragment is AlarmDetailsFragment) {
-        logger.debug { "skipping fragment transition, because already showing $currentFragment" }
-    } else
-    {
-        logger.debug { "transition from: $currentFragment to show details, editedAlarm.Hashcode= ${editedAlarm.hashCode()}, edited: $editedAlarm" }
-
-        val detailsFragment = AlarmDetailsFragment().apply {arguments = Bundle()}
-        supportFragmentManager.beginTransaction().replace(R.id.main_fragment_container, detailsFragment).commitAllowingStateLoss()
-    //todo: [혹시 showDetails x2 뜨는것 방지 위해 ].CommitNow()(Synchronous) 가 나을것 같은데.. 느려질려나?
-    }
-    // 내가 추가- > btmNavView 감추기 (ShowList 에서 visibility= Visible로)
-    btmNavView.visibility =View.GONE
-    btmAppBar.visibility= View.GONE
-
-    // C) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
-    val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
-    params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
-
-
-}
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
 private fun moveTransition(): TransitionSet {

@@ -11,46 +11,80 @@
         android:scaleType="centerCrop"
         android:src="@drawable/night_lake" />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/nav_drawer_logo_img"
-
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="10dp"
         android:layout_marginEnd="4dp"
-        android:layout_marginBottom="13dp"
+        android:layout_marginBottom="12dp"
 
-        android:scaleType="centerCrop"
-        android:src="@mipmap/ic_main2"
+        android:paddingStart="8dp"
+        android:paddingEnd="14dp"
+
+
+        android:background="@drawable/nav_drawer_const_layout_round_corner_1"
+
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@id/vertical_guideline_1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:shapeAppearanceOverlay="@style/roundedCornersImageView"/>
+        app:layout_constraintTop_toTopOf="@id/navdrawer_horizontal_guideline_1"
+
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/nav_drawer_logo_img"
+
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="4dp"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/ic_main2"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImageView"/>
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:layout_marginStart="7dp"
-            android:layout_marginBottom="13dp"
-
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
+            android:layout_marginStart="10dp"
             android:text="ALARMIFY"
             android:theme="@style/jjText_nav_drawer_logo_text"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/vertical_guideline_1"/>
+            app:layout_constraintBottom_toBottomOf="@+id/nav_drawer_logo_img"
+            app:layout_constraintTop_toTopOf="@+id/nav_drawer_logo_img"
+            app:layout_constraintStart_toEndOf="@+id/nav_drawer_logo_img"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
 
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/vertical_guideline_1"
+        android:id="@+id/navdrawer_vertical_guideline_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.20" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/navdrawer_vertical_guideline_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.52" />
 
-
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/navdrawer_horizontal_guideline_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.65" />
 
 
 

@@ -65,7 +65,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35E 22/4/23 (Sun) 9:12pm [2ndFrag 에서 background 나갔다 왔을 때 문제 해결 완료라 감히 씀. ConfigureTransActions 수정 후.]
+// 30708V1.18e35E 22/4/23 (Sun) 10:44pm [PERMISSION 수정 전]
 // Achievement (O) :
 // 증상: SecondFrag 에서 Background 갔다 오면-> CreateNewAlarm 작동 안했음. 혹은 SecondFrag->Background-> ListFrag 복귀 후 Create New Alarm (X), 알람 클릭해도->Details Frag 로 이동 안 하는 문제 있었음.
 // 이유: SecondFrag 에서 Background 로 가는 순간 AlarmsListActivity>onStop() 에서 subscriptions.dispose() 가 불려서 Create New Alarm 의 존재가 사라지는 것이었음.

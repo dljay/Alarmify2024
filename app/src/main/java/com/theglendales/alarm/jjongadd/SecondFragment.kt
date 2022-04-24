@@ -557,9 +557,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             }
         }
 
-
-
-
         btn_buyThis.setOnClickListener {
             jjMainVModel.onTrackClicked(rtObj, isPurchaseClicked = true, requireActivity())
         }

@@ -65,58 +65,31 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35E 22/4/23 (Sun) 10:44pm [PERMISSION 수정 전]
+// 30708V1.18e35F 22/4/24 (Sun) 11:24pm [PERMISSION 수정 후]
 // Achievement (O) :
-// 증상: SecondFrag 에서 Background 갔다 오면-> CreateNewAlarm 작동 안했음. 혹은 SecondFrag->Background-> ListFrag 복귀 후 Create New Alarm (X), 알람 클릭해도->Details Frag 로 이동 안 하는 문제 있었음.
-// 이유: SecondFrag 에서 Background 로 가는 순간 AlarmsListActivity>onStop() 에서 subscriptions.dispose() 가 불려서 Create New Alarm 의 존재가 사라지는 것이었음.
-// 해결: 백그라운드 나갔다 오면 AlarmsListActivity() 의  onStart() 가 불림. -> 여기서 바로 configureTransActions() 해준뒤 -> 1) 일단 sub! 2)현재 secondFrag 였으면 sub 만 해주고 return 시켰음.
-// SecondFrag->Bground->createAlarm-> 후 (DetailsFrag 안에서) OK 눌렀을 때 저장 후 화면 이동 안하는 문제도 -> 현재 currentFrag 가 secondFrag 가 아니면 showList 로 ListFrag 보여주게 하여 해결함.
+//*Permission -> 문제 없이 다운 되는것 확인했음.
 
-
-
-// (X) 에러처리: Pixel 4x 에서도. Google Sign-in 하고 들어왔는데. Billing Service Disconnected 뜨면서. 음악 재생 안되고.. 크래쉬.. ㅜ 아 ㅆㅂ
-// (X) 권한이 Phone 으로 되어있네 어째서. 미디어로 바껴야 할듯. (구글 알람 앱이나 Yuriv Original 도 그렇고..) API 31 까지 잘 확인..
-
-
-// 1) Achievements:
-// 2) todos:
-//AlertFullScreen:
-// 1) 테스트에서 userCreated 가 떴는데. (아마 기존 생성 알람인듯) DetailsFrag 에서 혹시나 "userCreated" 로 뜬놈 label 잡아주기?
-//2) Glide 로 로딩 /UI 다시 짜기/ Text도 출력시험 /dismiss longclick 이거 없애기.
-// Install Alarm 유심히 보기!
-//**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
-//**backgroundNotif 여기도 확인.
-
-//2. Status Bar 투명+ Collapsing Toolbar 의 사진이 보이게. (Alarm Extreme 처럼).
-
-// 5) 에러 처리 : *** 2nd Frag 에서 나갔다 온 뒤 (+) Create Alarm 작동 문제 있음. Harsh Test 필요. 음악 Play -> ListFrag -> SecondFrag -> 나갔다 오고나서 -> (+) or ListFrag -> ListFrag 암것도 안 떴음 심지어!
-// f) 에러처리: 오랜 시간 Background  에 있다가 다시 들어왔을 때 Details Frag 안 들어가지더라.. ㅅㅂ..
-// billing service disconnected 뜨고 app 다시  return -> secondFrag 에서 음악 재생 시도-> 되긴 되네.. 다시 ListFrag > 알람 클릭 -> 무반응.
-// g) 에러처리: Pixel 4x 에서도. Google Sign-in 하고 들어왔는데. Billing Service Disconnected 뜨면서. 음악 재생 안되고.. 크래쉬.. ㅜ 아 ㅆㅂ
-// 6) Free ITEM -> IAP 절차 생략하고 곧바로 다운로드로. 그런데 아이템 복원에서 skuList 를 따라가니.. 나름 복잡할수도 있음. 그럼에도 FREE 는 반드시 있어야한다!!
-
-// 전체 색!!!! 결정해야 Divider 색도 결정!!!
-// -- BtmNav 와 SecondFrag Player 사이 View 회색 Line Border 제대로 넣기 (Umano 에서 보이는 범위를 height dp 말고 '이 View 까지' 는 없을까?)
-
-
-
-//DetailsFrag> spinning time picker 디자인.
-
-// drawable 등 안 쓰는 asset 지우기 (백업하고)
-//- system navigation 은 살짝 다른색으로 할수도 있겠다.
-
-//3) Issues:
-// 테스트 중 ListFrag <-> SecondFrag<-> CreateNewAlarm(+) 왔다갔다 하던중 화면 로딩이 멈췄고 재실행시 crash 났음 (listFrag 에서 삭제 logd 에서 listindex error..)
-// 이후 재현 불가지만 추후 면밀히 테스트 해볼것.
-
-// Todos :
-
-//[알람 울릴 때 Android 12.0 (API 31) 크래쉬는 일단 안 나니 a)추가 테스트+ b)하위 API emulator 테스트 해볼것.]
-// 우선은 현재 버전 백업 -> 1.17C 로 다시 복귀 후 다시 현재 상태로 거슬러 올라가기 .. OR 현재 상태에서 api.SDKINT= s(API31) .. 이걸로 조져보기..
-// 하위 버전 호환 테스트 API 30만 됐음.
-// 하위 버전 호환 테스트 API 30만 됐음.
-// ToolBar 꾸미기 (메뉴 없애고 등..)
-
+//Issue)
+//1. SecondFrag 위에 Listfrag 화면 걸린 것 재구현 어떻게든 해볼것.
+//SecondFrag 에서 다운 완료 -> Status 창 한번 스르륵 열었다가 --ListFrag 갔다가 -> APP 한번 나갔다와서 (CX EXPOLORER 확인 후)
+//-> 신규 ALARM 설정 -> SecondFrag 했을 떄 ListFrag 윗대가리 (사진) 이 SEcondFrag 와 겹쳐서 나옴.
+//[SecondFrag 에서 트랙 플레이한게 없었음!] -> 재구현 쉽지 않음.
+//
+//Todos)
+//0. Install Alarm 테스트 하기 // //**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
+//1. 다운로드 할 때 음악 재생되고 있으면 멈추기.
+//2. ListFrag 에 울리는 시간 남은 것 표기 방식 바꾸기 -> 그냥 알람 Vector 울리는 모습 넣고 xx Hrs and xx minutes
+//-> STR 한글 바꿔도 될듯..
+//
+//3. -- Slide 지우기 Sensitivity
+//4.language String -- Hold the Button 의 경우 한국말...
+//5. 최적화. 뭐가 자꾸 느리게 하는지 지울것?
+//6. FadeIn Time.
+//7. App ICON -> NavigationDrawer 꾸미기.
+//8. Free Item
+//9. Status Bar 투명+ Collapsing Toolbar 의 사진이 보이게. (Alarm Extreme 처럼).
+//10. drawable 등 안 쓰는 asset 지우기 (백업하고)
+// 전체 색!!!! 결정해야 Divider 색도 결정!!! //- system navigation 은 살짝 다른색으로 할수도 있겠다.
 
 /**
  * This activity displays a list of alarms and optionally a details fragment.
@@ -333,15 +306,14 @@ class AlarmsListActivity : AppCompatActivity() {
         }
         //btmNavView.itemIconTintList = null
     // 추가: Permission 검사 (App 최초 설치시 반드시 거치며, no 했을때는 벤치휭~ BtmSheet 계속 뜬다. yes 하면 그다음부터는 안 뜸.)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 Write, DOWNLOAD 에 특별한 Permission 필요 없는듯?
-            Log.d(TAG, "onCreate: Permission Check. Build Ver=${Build.VERSION.SDK_INT}")
+        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 Write, DOWNLOAD 에 특별한 Permission 필요 없는듯?
+            Log.d(TAG, "onCreate: Permission Check. Build Ver.SDK_INT=${Build.VERSION.SDK_INT}")
 
             myPermHandler.permissionToWriteOnInitialLaunch() //
-        }
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S) { // S = API 31
+        }*/
+        /*if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S) { // S = API 31
             myPermHandler.permissionReadPhoneState()
-
-        }
+        }*/
     // Toolbar & appbarLayout
         toolBar = findViewById(R.id.id_toolbar_Collapsable) // Collapsible toolBar
         setSupportActionBar(toolBar)

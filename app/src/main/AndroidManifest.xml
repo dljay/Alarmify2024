@@ -13,14 +13,15 @@
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         android:maxSdkVersion="19" /> <!-- Dangerous. READ_PHONE_STATE 의 경우. 전화가 와도 알람이 안 멈추는것 같음.. -->
-    <uses-permission
-        android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" /> <!-- 아직 안 알아봄... -->
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+<!--    <uses-permission -->
+<!--        android:name="android.permission.READ_PHONE_STATE"-->
+<!--        android:maxSdkVersion="22"/>-->
+<!--    <uses-permission-->
+<!--        android:name="android.permission.READ_EXTERNAL_STORAGE"-->
+<!--        android:maxSdkVersion="19" /> &lt;!&ndash; API19 부터는 상관 없는듯. 어차피 우리는 minSdk 가 23 여서 이거 안 써도 될듯. &ndash;&gt;-->
+<!--    <uses-permission-->
+<!--        android:name="android.permission.WRITE_EXTERNAL_STORAGE"-->
+<!--        android:maxSdkVersion="19" /> &lt;!&ndash; API19 부터는 상관 없는듯. 어차피 우리는 minSdk 가 23 여서 이거 안 써도 될듯. &ndash;&gt;-->
     <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />

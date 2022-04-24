@@ -209,6 +209,11 @@ class JjMainViewModel : ViewModel() {
             _selectedRow.value = rtObj
             return
         }
+    // [단순 다운로드 테스트할 때 아래 코드 사용] 잠시 READ/WRITE_EXTERNAL PERMISSION 없애고도 다운 되는지 테스트 해봤는데 -> 잘되네. (갤S9)
+//        else {
+//            downloadPurchased(rtObj)
+//            return
+//        }
 //[B] Purchase 클릭했을때 -> UI 업뎃 필요없고 purchase logic & download 만 실행.
 
     //1) 디스크에 파일이 이미 있으면 -> return // 유저 입장에서는 클릭-> 무반응 (어차피 유저가 보고있는RcV 리스트에 'Purchased' 아이콘이 뜬 상태여서 이게 맞는듯)
@@ -288,7 +293,7 @@ class JjMainViewModel : ViewModel() {
                     }
                 }// end of Dispatcher.IO
                 Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] run download..Thread= ${Thread.currentThread().name}")
-                downloadPurchased(rtObj)//todo: run download -진짜
+                downloadPurchased(rtObj)
             }
         }// end of invokeOnCompletion.
         Log.d(TAG, "onTrackClicked: [outside-purchaseParentJob] 위 코루틴과 상관없이 빨리 불림..Thread=${Thread.currentThread().name}")

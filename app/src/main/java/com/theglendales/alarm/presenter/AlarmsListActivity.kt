@@ -78,8 +78,8 @@ import java.util.Calendar
 //Todos)
 //0. Install Alarm 테스트 하기 // //**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
 //1. 다운로드 할 때 음악 재생되고 있으면 멈추기.
-//2. ListFrag 에 울리는 시간 남은 것 표기 방식 바꾸기 -> 그냥 알람 Vector 울리는 모습 넣고 xx Hrs and xx minutes
-//-> STR 한글 바꿔도 될듯..
+//2. ListFrag 에 울리는 시간 남은 것 표기 방식 바꾸기 -> 그냥 알람 Vector 울리는 모습 넣고 xx Hrs and xx minutes // 1시간 and 53분 (후 울립니다 로 한글로 쓰고) 영어로는 ?
+//3. -> STR 한글 바꿔도 될듯..
 //
 //3. -- Slide 지우기 Sensitivity
 //4.language String -- Hold the Button 의 경우 한국말...

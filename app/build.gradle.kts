@@ -65,13 +65,14 @@ val acraEmail = project.rootProject.file("local.properties")
     ?: ""
 
 android {
-    compileSdkVersion(31)
+    compileSdk =31
+
     defaultConfig {
         versionCode = 30708 // Version Code = 지속적으로 increment 해야 Google Play Console 에서 받아줌.
         versionName = "0.01.01A" // User 에게 보여지는 Version Number.
         applicationId = "com.theglendales.alarm"
-        minSdkVersion(23)
-        targetSdkVersion(31)
+        minSdk = 23
+        targetSdk = 31
         testApplicationId = "com.theglendales.alarm.test"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true

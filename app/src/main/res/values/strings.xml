@@ -49,7 +49,8 @@
 
 
     <!--Permission 내가 추가 -->
-    <string name="bottomSheet_Message1">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again.\n\nHitting <b>CANCEL</b> will dismiss your purchase and disable restoring previously purchased ringtones.</string>
+    <string name="btmsheet_permission_msg1_WriteExternal">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again.\n\nHitting <b>CANCEL</b> will dismiss your purchase and disable restoring previously purchased ringtones.</string>
+    <string name="btmsheet_permission_msg2_ReadPhoneState">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again.\n\nAndroid 12 requires a user\'s permission for the app to access phone call status. Given access will be used to set an alarm to pause during a phone call. Alarm will not fire without an access to this permission.</string>
 
     <string-array name="fade_in_time_sec_values" tools:ignore="MissingTranslation">
         <item>1</item>

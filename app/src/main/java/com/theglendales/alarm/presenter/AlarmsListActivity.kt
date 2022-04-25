@@ -65,9 +65,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35F 22/4/24 (Sun) 11:24pm [PERMISSION 수정 후]
+// 30708V1.18e35f2 22/4/25 (Mon) 10:24pm [PERMISSION 수정 중]
 // Achievement (O) :
-//*Permission -> 문제 없이 다운 되는것 확인했음.
+//* WriteExternal Permission -> 문제 없이 다운 되는것 확인했음. (API 22 전까지만 신경쓰면 되는듯..)
+//* ReadPhoneState Permission -> manifest 에서 없앴을 때 (혹은 runtime request 안했을 때) API 31 에서 알람 울릴 때 에러!!
+// 우선 WriteExternal Permission 없애고 ReadPhoneState 를 BtmSheetPermission.kt 이용해서 보여주는 중.
 
 //Issue)
 //1. SecondFrag 위에 Listfrag 화면 걸린 것 재구현 어떻게든 해볼것.
@@ -305,15 +307,17 @@ class AlarmsListActivity : AppCompatActivity() {
             true // we don't write return true in the lambda function, it will always return the last line of that function
         }
         //btmNavView.itemIconTintList = null
-    // 추가: Permission 검사 (App 최초 설치시 반드시 거치며, no 했을때는 벤치휭~ BtmSheet 계속 뜬다. yes 하면 그다음부터는 안 뜸.)
+        //Permission 관련
+        // 추가: Permission 검사 (App 최초 설치시 반드시 거치며, no 했을때는 벤치휭~ BtmSheet 계속 뜬다. yes 하면 그다음부터는 안 뜸.)
         /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) { // API ~28 이하인 경우에는 Permission Check. API 29 이상에서는 Write, DOWNLOAD 에 특별한 Permission 필요 없는듯?
             Log.d(TAG, "onCreate: Permission Check. Build Ver.SDK_INT=${Build.VERSION.SDK_INT}")
 
             myPermHandler.permissionToWriteOnInitialLaunch() //
         }*/
-        /*if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S) { // S = API 31
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S) { // S = API 31
             myPermHandler.permissionReadPhoneState()
-        }*/
+        }
+
     // Toolbar & appbarLayout
         toolBar = findViewById(R.id.id_toolbar_Collapsable) // Collapsible toolBar
         setSupportActionBar(toolBar)
@@ -404,7 +408,7 @@ class AlarmsListActivity : AppCompatActivity() {
         super.onResume()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         NotificationSettings().checkSettings(this)
-        //Permission 관련
+
         // A) Permission 을 허용하라는 btmSheet 을 보여준뒤 복귀했을때! [WRITE_EXTERNAL_STORAGE]
         if(BtmSheetPermission.isAdded) {
             if (ContextCompat.checkSelfPermission(this.applicationContext,

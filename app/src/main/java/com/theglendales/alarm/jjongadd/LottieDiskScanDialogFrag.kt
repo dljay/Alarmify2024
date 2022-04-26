@@ -32,7 +32,7 @@ class LottieDiskScanDialogFrag: DialogFragment() {
         val window = dialog?.window
         val params = window?.attributes
         params?.x = 0
-        params?.y = 250 // 원래 값은 100 였는데 Permission 관련 AlertDialog 와 겹쳐서 ( + 는 밑으로 - 는 위로.. 희한하네..)
+        params?.y = 100 // 원래 값은 100 였는데 Permission 관련 AlertDialog 와 겹쳐서 ( + 는 밑으로 - 는 위로.. 희한하네..)
         window?.attributes = params
     // 기타 설정
 

@@ -17,10 +17,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -65,11 +67,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f2 22/4/25 (Tue) 11:27am [PERMISSION 수정 중]
+// 30708V1.18e35f3 22/4/25 (Tue) 3:53pm [PERMISSION 수정 중]
 // Achievement (O) :
 // [Permission 거부 없이 최초실행시] -> AlertDialog 왜 Read_phone_state Perm 필요한지 설명 -> ok click -> permission 요청.
-// Permission 나올 때 뒤에 Rebuilding Db y 축 위치 변경
-// todo: AlertDialog 디자인. Lottie Rebuilding DB 위치 흐음.
+// AlertDialog 디자인 거의 완료.
 
 // 우선 WriteExternal Permission 없애고 ReadPhoneState 를 BtmSheetPermission.kt 이용해서 보여주는 중.
 
@@ -316,9 +317,26 @@ class AlarmsListActivity : AppCompatActivity() {
 
             myPermHandler.permissionToWriteOnInitialLaunch() //
         }*/
-        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S) { // S = API 31
+        // 현재 버전이 (S=API 31) 이고 -- READ_PHONE_STATE 권한이 안 주어진 상태
+        if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(this.applicationContext, android.Manifest.permission.READ_PHONE_STATE)
+            == PackageManager.PERMISSION_DENIED) { // S = API 31
+            // 일단 왜 권한이 필요한지 AlertDialog 로 보여줌.
+            //AlertDialog 로 왜 'Read Phone State 권한' 이 필요한지 설명
+            val layoutInflater = getLayoutInflater()
+            val perm_alertDialog_xml: View = layoutInflater.inflate(R.layout.permission_alertdialog_layout_1, null)
+            val confirmBtn = perm_alertDialog_xml.findViewById<Button>(R.id.btn_perm_confirm_1)
+            confirmBtn.setOnClickListener {
+                myPermHandler.permissionReadPhoneState()
+            }
+                AlertDialog.Builder(this)
+                    .setView(perm_alertDialog_xml)
+//                    .setTitle("Test Title")
+//                    .setIcon(R.drawable.ic_alarm_on_2)
+//                    .setMessage("Permission 이 필요한 이유 기타 등등등등")
+//                    .setPositiveButton(R.string.alertdialog_confirm_text) {_,_ -> // 여기 Confirm 버튼이 오른쪽/왼쪽으로 치우쳐있고 CENTER 로 포지셔닝이 어려워서 그냥 위에서 내가 만든걸로 쓰기로..
+//                        myPermHandler.permissionReadPhoneState()}
+                    .show()
 
-            myPermHandler.permissionReadPhoneState()
         }
 
     // Toolbar & appbarLayout
@@ -369,6 +387,7 @@ class AlarmsListActivity : AppCompatActivity() {
                         collapsingTBLayout.isTitleEnabled=true
                     } else if(percentClosed <90) {
                         collapsingTBLayout.isTitleEnabled=false
+
                     }
                 } //
             }

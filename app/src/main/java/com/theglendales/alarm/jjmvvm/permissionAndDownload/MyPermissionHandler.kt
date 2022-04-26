@@ -1,6 +1,7 @@
 package com.theglendales.alarm.jjmvvm.permissionAndDownload
 
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
@@ -18,7 +19,7 @@ import com.theglendales.alarm.R
  */
 
 private const val TAG="MyPermissionHandler"
-class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnRequestPermissionsResultCallback
+class MyPermissionHandler(private val receivedActivity: Activity) : ActivityCompat.OnRequestPermissionsResultCallback
 {
     private val MY_READ_PERMISSION_CODE = 812 // Download(Write) 후 파일 읽을때. WRITE PERMISSION 하면 자동으로 Permission Granted!
     private val MY_WRITE_PERMISSION_CODE = 2480 // Download 용
@@ -102,15 +103,8 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
 
             } else { // 1-b) 권한 거부한적이 없음 (아마 최초로 앱 열었을 시점일것)
                 Log.d(TAG, "permissionReadPhoneState: 1-b) 처음으로 권한 요청드립니다!!")
-                //AlertDialog 로 왜 'Read Phone State 권한' 이 필요한지 설명
-                  AlertDialog.Builder(receivedActivity)
-                      .setTitle("Test Title")
-                      .setIcon(R.drawable.exo_icon_fastforward)
-                      .setMessage("Permission 이 필요한 이유 기타 등등등등")
-                      .setPositiveButton(R.string.btnText_donate) {_,_ ->
-                          //권한 요청
-                          reqPerm_ReadState()
-                      }.show()
+                //권한 요청
+                reqPerm_ReadState()
             }
         } else { // 2) 이미 권한 허용이 된 상태
             Log.d(TAG, "permissionReadPhoneState: 2) 이미 권한이 허용된 상태!")

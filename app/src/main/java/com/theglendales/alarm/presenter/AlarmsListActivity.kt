@@ -65,10 +65,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f2 22/4/25 (Mon) 10:24pm [PERMISSION 수정 중]
+// 30708V1.18e35f2 22/4/25 (Tue) 11:27am [PERMISSION 수정 중]
 // Achievement (O) :
-//* WriteExternal Permission -> 문제 없이 다운 되는것 확인했음. (API 22 전까지만 신경쓰면 되는듯..)
-//* ReadPhoneState Permission -> manifest 에서 없앴을 때 (혹은 runtime request 안했을 때) API 31 에서 알람 울릴 때 에러!!
+// [Permission 거부 없이 최초실행시] -> AlertDialog 왜 Read_phone_state Perm 필요한지 설명 -> ok click -> permission 요청.
+// Permission 나올 때 뒤에 Rebuilding Db y 축 위치 변경
+// todo: AlertDialog 디자인. Lottie Rebuilding DB 위치 흐음.
+
 // 우선 WriteExternal Permission 없애고 ReadPhoneState 를 BtmSheetPermission.kt 이용해서 보여주는 중.
 
 //Issue)
@@ -315,6 +317,7 @@ class AlarmsListActivity : AppCompatActivity() {
             myPermHandler.permissionToWriteOnInitialLaunch() //
         }*/
         if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S) { // S = API 31
+
             myPermHandler.permissionReadPhoneState()
         }
 
@@ -409,10 +412,12 @@ class AlarmsListActivity : AppCompatActivity() {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
         NotificationSettings().checkSettings(this)
 
-        // A) Permission 을 허용하라는 btmSheet 을 보여준뒤 복귀했을때! [WRITE_EXTERNAL_STORAGE]
+        // A) Permission 을 허용하라는 btmSheet 을 보여준뒤 복귀했을때! [READ_PHONE_STATE]
         if(BtmSheetPermission.isAdded) {
             if (ContextCompat.checkSelfPermission(this.applicationContext,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+                    android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED)
+            /*if (ContextCompat.checkSelfPermission(this.applicationContext,
+                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)*/
             { // user 가 settings>app>perm 에서 허용해줬으면
                 BtmSheetPermission.removePermBtmSheetAndResume() // btmSheet 을 없애줌! Perm 허용 안되었으면 (Cancel 누를때까지) BtmSheet 유지!
             }

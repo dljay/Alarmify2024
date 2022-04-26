@@ -5,9 +5,10 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-
+import com.theglendales.alarm.R
 
 
 /**
@@ -99,10 +100,17 @@ class MyPermissionHandler(val receivedActivity: Activity) : ActivityCompat.OnReq
                     Log.d(TAG, "permissionReadPhoneState: ***DISPLAY 벤치휭~ BOTTOM SHEET NOW!! .isAdded= FALSE!!..")
                 }
 
-            } else { // 1-b) 최초로 권한 요청!
-                //권한 요청
+            } else { // 1-b) 권한 거부한적이 없음 (아마 최초로 앱 열었을 시점일것)
                 Log.d(TAG, "permissionReadPhoneState: 1-b) 처음으로 권한 요청드립니다!!")
-                reqPerm_ReadState()
+                //AlertDialog 로 왜 'Read Phone State 권한' 이 필요한지 설명
+                  AlertDialog.Builder(receivedActivity)
+                      .setTitle("Test Title")
+                      .setIcon(R.drawable.exo_icon_fastforward)
+                      .setMessage("Permission 이 필요한 이유 기타 등등등등")
+                      .setPositiveButton(R.string.btnText_donate) {_,_ ->
+                          //권한 요청
+                          reqPerm_ReadState()
+                      }.show()
             }
         } else { // 2) 이미 권한 허용이 된 상태
             Log.d(TAG, "permissionReadPhoneState: 2) 이미 권한이 허용된 상태!")

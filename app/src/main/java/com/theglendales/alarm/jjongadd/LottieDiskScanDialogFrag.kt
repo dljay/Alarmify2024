@@ -28,11 +28,11 @@ class LottieDiskScanDialogFrag: DialogFragment() {
         Log.d(TAG, "onCreateView: called")
         //return super.onCreateView(inflater, container, savedInstanceState)
     // 위치 설정
-        //dialog?.window?.setGravity(Gravity.CENTER_HORIZONTAL)
+        //dialog?.window?.setGravity(Gravity.BOTTOM)
         val window = dialog?.window
         val params = window?.attributes
         params?.x = 0
-        params?.y = -100
+        params?.y = 250 // 원래 값은 100 였는데 Permission 관련 AlertDialog 와 겹쳐서 ( + 는 밑으로 - 는 위로.. 희한하네..)
         window?.attributes = params
     // 기타 설정
 

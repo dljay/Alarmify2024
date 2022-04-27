@@ -309,9 +309,9 @@ class RcViewAdapter(
             if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null)
             { // To avoid possible mistake when we delete the item but click it
                // val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
-                when(v.id) { //todo: 사실상 when 문 없애도 된다. (구매창을 holder 에서 제외시켰으므로..)
+                /*when(v.id) { //사실상 when 문 없애도 된다. (구매창을 holder 에서 제외시켰으므로..)
                     //1) [하이라이트, 음악 재생] - 구매 제외 부분 클릭  (Rl_including_tv1_2 영역)
-                    R.id.id_singleSlot_ll -> {
+                    R.id.id_singleSlot_ll -> {*/
                         //1-a)
                         //todo: exoForUrl 에 clickedTrId 기억해놓기.
                         prevClickedHolder = clickedHolder // 이전에 선택되어있던 holder 값을 prevClickedHolder 로 복사. (첫 Click 이라면 prevClick 이 null 이 되겠지 당연히..)
@@ -324,7 +324,7 @@ class RcViewAdapter(
                           disableHL(prevClickedHolder)
                           enableHL(clickedHolder)
 
-                        //1-c) 음악 플레이 //todo: 재생중일때 또 클릭하면 그냥 무시하기?
+                        //1-c) 음악 플레이 //재생중일때 또 클릭하면 그냥 무시하기?
                         exoForUrlPlay.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
 
 //[음악 재생 대신 Diffutil Test 용 코드] - 구매 후 즉각 RcV 아이콘 변경되는지 확인하기 위한 간접 테스트=> 클릭한 아이템 purchaseBool 값을 인위적으로 true 로 바꿔줌 => 바로 RcV 에 반영되야함!
@@ -332,9 +332,8 @@ class RcViewAdapter(
 
                         // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
                         secondFragListener.onRcvClick(selectedRt,isPurchaseClicked = false) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!
-                    }
-
-                }
+                    //}
+                //}
             }
 
 

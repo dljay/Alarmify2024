@@ -558,6 +558,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
 
         btn_buyThis.setOnClickListener {
+            onMiniPlayerPauseClicked() // 음악 재생 멈춤.
             jjMainVModel.onTrackClicked(rtObj, isPurchaseClicked = true, requireActivity())
         }
 

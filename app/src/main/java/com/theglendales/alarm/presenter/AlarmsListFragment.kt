@@ -111,12 +111,12 @@ class AlarmsListFragment : Fragment() {
         if(myDiskSearcher.isDiskScanNeeded()) { // 만약 새로 스캔 후 리스트업 & Shared Pref 저장할 필요가 있다면
             Log.d(TAG, "onCreate: $$$ Alright let's scan the disk!")
             // ** diskScan 시작 시점-> ANIM(ON)!
-        //[LOTTIE REBUILDING DB 애니메이션 보여주기] -- AlarmsListActivity 에서 Permission 관련 AlertDialog 와 위치가 겹쳐서 일단 Rebuilding DB 애니메이션은 없애줬음!!
+        //[LOTTIE REBUILDING DB 애니메이션 보여주기] (X) AlarmsListActivity 에서 Permission 관련 AlertDialog 와 위치가 겹쳐서 일단 Rebuilding DB 애니메이션은 없애줬음!!
             /*showLottieDialogFrag()// 2.5초후에 애니메이션 없애기->  loop=false, repeat 없이 보여주기.(lottie_rebuild_rt.xml)
             // 만약 여기서 handler 문제가 생겨서 안 없어지면 Lottie 다 재생하고( 약 2.5초) LottieDiskScanDiaFrag.kt > onAnimationEnd 로 DialFrag 자체를 없애줌!
             val handler: Handler = Handler(Looper.getMainLooper())
             handler.postDelayed({hideLottieAndShowSnackBar()}, 2500) // handler 는 올바른 방법이 아니라고 보긴 봤음.. 일단은 잘되네.*/
-
+            hideLottieAndShowSnackBar() // [22.4.27]] RebuildingDB 완료 시 Lottie 는 안 뜨고 SnackBar 만 출력.
 
             //CoroutineScope(Dispatchers.IO).launch { <== ** 일부러 코루틴에서 제외-> 그래야 여기서 update SharedPref 등이 끝나고나서 밑에 innerClass>getView 실행됨.
             //코루틴 안 쓰고 DiskScan 가동시에는 어떻게든 Animation 으로 시간 끌기?
@@ -495,10 +495,9 @@ class AlarmsListFragment : Fragment() {
     private fun hideLottieAndShowSnackBar() {
         if(lottieDialogFrag.isAdded) {
             lottieDialogFrag.dismissAllowingStateLoss()
-            if(activity != null) {
-                snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"REBUILDING DATABASE COMPLETED",isShort = false )
-            }
-
+        }
+        if(activity != null) {
+            snackBarDeliverer(requireActivity().findViewById(android.R.id.content),"REBUILDING DATABASE COMPLETED",isShort = false )
         }
     }
 

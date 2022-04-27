@@ -223,7 +223,6 @@ class JjMainViewModel : ViewModel() {
 
         // [**SEQUENTIAL**] // 기존 구입 과정을 Coroutine 으로 blocking+순차적 라인으로 보기 쉽게 했음.
         val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler - 원래 logd 넣어줬으나 그냥 뺴줌.
-
         val purchaseParentJob = viewModelScope.launch(handler) {
 
             //_centerLoadingCircleSwitch.value = 0 //로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~

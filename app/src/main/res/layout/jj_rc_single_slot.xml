@@ -121,6 +121,14 @@
             android:padding="15dp"
             android:alpha="0.8">
 
+            <!-- Purchased Tag-->
+            <ImageView
+                android:id="@+id/iv_singleSlot_purchased_check"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                android:src="@drawable/ic_baseline_check_circle_24"/>
+
             <!--Progress Circle -->
             <ProgressBar
                 android:id="@+id/id_progressCircle"

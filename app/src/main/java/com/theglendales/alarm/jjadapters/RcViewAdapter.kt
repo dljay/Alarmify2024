@@ -16,7 +16,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.android.material.chip.Chip
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.GlbVars
@@ -74,22 +73,32 @@ class RcViewAdapter(
         holder.holderTrId = currentTrId
 
 
+
         Log.d(TAG, "onBindViewHolder: holder.hashCode= ${holder.hashCode()}, holder TrId= ${holder.holderTrId}, currentTrIapName= $currentIapName")
         Log.d(TAG, "onBindViewHolder: Purchased Stats=${currentRt.purchaseBool}")
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " + "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " + "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
 
-    //트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
-        // A) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트(O) & VuMeter (O)
+    //스크롤 하면서 트랙 재활용시 하이라이트&VuMeter & Purchased(V) 표시 관련--->
+        // Purchase 값 초기화 [일단 구입 안된것으로 표시하고 시작] --> 이거 안하면 Holder 가 Recycle 되면서 (v) 표시 또 뜬다.
+        disablePurchasedCheck(holder)
+        holder.isPurchased = false // Bind 되면서 기존에 enablePurchasedCheck() 작동전에 기입한 holder.isPurchased Value 를 '현재 RT 의 값으로 복원'
+
+        // A) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트(O) & VuMeter (O) & Purchased Check(X)
         if (currentTrId == GlbVars.clickedTrId) {
             clickedHolder = holder // a) ListFrag 복귀 후 clickedHolder 는 Null 상태이므로 '기존에 선택했던 TrId 가 배정된 '현재의 Holder' 로 설정' b) 단순 위아래 Scroll 은 어차피 동일한 clickedHolder 값이 배정됨.
             enableHL(holder)
             enableVM(exoForUrlPlay.currentPlayStatus, holder)
+            disablePurchasedCheck(holder)
         }
-        // B) Bind 하면서 'Select' 된 트랙이 아닐경우 하이라이트(X) & VuMeter (X)
+        // B) Bind 하면서 'Select' 된 트랙이 아닐경우 하이라이트(X) & VuMeter (X) & Purchased Check (O) (필요할 경우)
         if (currentTrId != GlbVars.clickedTrId) {
             disableHL(holder)
             disableVMnLC(holder)
+            if(currentRt.purchaseBool) {
+                holder.isPurchased = true
+                enablePurchasedCheck(holder)
+            }
         }
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
 
@@ -130,11 +139,13 @@ class RcViewAdapter(
                         if(prevClickedHolder!=null) {
                             prevClickedHolder!!.loadingCircle.visibility = View.INVISIBLE // loading Circle 안보이게. (a)
                             prevClickedHolder!!.vuMeterView.visibility = VuMeterView.GONE // VuMeter 도 안보이게 (b)
-                            //prevClickedHolder!!.iv_Thumbnail.alpha = 1.0f // (c) 썸네일 밝기 원복
+                            if(prevClickedHolder!!.isPurchased) {// 만약 PurchasedCheck(v) 표시 되있는 상태였으면
+                                prevClickedHolder!!.ivPurchaseCheck.visibility = View.VISIBLE
+                            }
                         }
                         // 2) 새로 Click 된 Holder 의 UI 업데이트
                         clickedHolder!!.loadingCircle.visibility = View.VISIBLE
-                        //clickedHolder!!.iv_Thumbnail.alpha = 0.6f
+                        clickedHolder!!.ivPurchaseCheck.visibility = VuMeterView.GONE // PurchasedCheck(v) 표시 없애주기.
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.GONE
                     }
                     StatusMp.READY -> {
@@ -146,7 +157,7 @@ class RcViewAdapter(
                         clickedHolder!!.vuMeterView.pause()
                     }
                     StatusMp.PLAY -> {
-                        //clickedHolder!!.iv_Thumbnail.alpha = 0.6f
+
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.VISIBLE
                         clickedHolder!!.vuMeterView.resume(true)
                     }
@@ -201,6 +212,13 @@ class RcViewAdapter(
             //unselectedHolder.iv_Thumbnail.alpha = 1.0f // 밝기 원복
             unselectedHolder.vuMeterView.visibility = VuMeterView.GONE // VuMeter 감추기
         }
+    // 3) Purchased Check(v) 표시
+    private fun enablePurchasedCheck(holder: MyViewHolder) {
+        holder.ivPurchaseCheck.visibility = View.VISIBLE
+    }
+    private fun disablePurchasedCheck(holder: MyViewHolder) {
+        holder.ivPurchaseCheck.visibility = View.INVISIBLE
+    }
 // <---------- // Highlight & VuMeter 작동 관련    --------->
 
     // 스크롤 화면 떨어져나갔다 들어오는거 관련 (EQ Animation 때문에 넣었음!)---------------->
@@ -283,13 +301,14 @@ class RcViewAdapter(
 
         // 3) 왼쪽 - 제일 왼쪽 AlbumArt 및 vuMeter/LoadingCircle 영역
         val iv_Thumbnail: ImageView = myXmlToViewObject.findViewById(R.id.id_ivThumbnail)
+
+        // 4) 오른쪽 vumeter /loading circle / Purchased(V) 표시 영역
+        val ivPurchaseCheck: ImageView = myXmlToViewObject.findViewById(R.id.iv_singleSlot_purchased_check)
         val vuMeterView: VuMeterView = myXmlToViewObject.findViewById(R.id.id_vumeter)
         val loadingCircle: ProgressBar = myXmlToViewObject.findViewById(R.id.id_progressCircle)
-
-        // 4) 오른쪽 FREE,GET THIS 칸
-        //val cl_entire_purchase: FrameLayout = myXmlToViewObject.findViewById(R.id.id_cl_entire_Purchase)
-        //var tv4_GetThis: TextView = myXmlToViewObject.findViewById(R.id.id_tvGetThis)
         var holderTrId: Int = -10 // 처음엔 의미없는 -10 값을 갖지만, onBindView 에서 제대로 holder.id 로 설정됨.
+        // 5) 구매상태
+        var isPurchased=false
 
         init {
             ll_entire_singleSlot.setOnClickListener(this)

@@ -67,11 +67,10 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f5 22/4/27 (Wed) 12:48pm [PERMISSION UI 수정 완료]
+// 30708V1.18e35f6 22/4/27 (Wed) 2:55pm [SecondFrag> Purchased(v) 표시 RcV 진행중.]
 // Achievement (O) :
 // [Permission 거부 없이 최초실행시] -> AlertDialog 왜 Read_phone_state Perm 필요한지 설명 -> ok click -> permission 요청.
 // AlertDialog 디자인 거의 완료.
-
 // 우선 WriteExternal Permission 없애고 ReadPhoneState 를 BtmSheetPermission.kt 이용해서 보여주는 중.
 
 //Issue)
@@ -83,7 +82,6 @@ import java.util.Calendar
 //Todos)
 //0. Install Alarm 테스트 하기 // //**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
 //*SecondFrag 에 구매 된 RT 는 표시 (체크표시. 노란색 점?)
-//* 1. 다운로드 할 때 음악 재생되고 있으면 멈추기.
 //* 2. ListFrag 에 울리는 시간 남은 것 표기 방식 바꾸기 -> 그냥 알람 Vector 울리는 모습 넣고 xx Hrs and xx minutes // 1시간 and 53분 (후 울립니다 로 한글로 쓰고) 영어로는 ?
 // ListFrag 에서 diskScanNeeded() 인데 -> 단순히 파일하나가 없을때는 RebuildingDb Completed 말고 -> "Please hit Ringtones Tab to recover missing ringtone(s)."
 //3. -> STR 한글 바꿔도 될듯..

@@ -70,9 +70,6 @@ import java.util.Calendar
 // 30708V1.18e35f7 22/4/27 (Wed) 10:31pm [SecondFrag> Purchased(v) 표시 RcV 진행중.]
 // Achievement (O) :
 
-
-
-
 //Issue)
 //1. SecondFrag 위에 Listfrag 화면 걸린 것 재구현 어떻게든 해볼것.
 //SecondFrag 에서 다운 완료 -> Status 창 한번 스르륵 열었다가 --ListFrag 갔다가 -> APP 한번 나갔다와서 (CX EXPLORER 확인 후)

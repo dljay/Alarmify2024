@@ -51,7 +51,7 @@
     <!--Permission 내가 추가 -->
     <string name="btmsheet_permission_msg1_WriteExternal">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again.\n\nHitting <b>CANCEL</b> will dismiss your purchase and disable restoring previously purchased ringtones.</string>
     <string name="btmsheet_permission_msg2_ReadPhoneState">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again. <b><u>Alarm will not fire without an access to this permission.</u></b></string>
-    <string name="alertDialog_perm_msg">Starting Android 12, a user\'s permission is required to access the phone call status. Given access will be used to prevent an alarm go off during a phone call. <u><b>Alarm will not fire without an access to this permission</b></u>.</string>
+    <string name="alertDialog_perm_msg">Starting Android 12, a user\'s permission is required to access the phone call status. Given access will be used to prevent an alarm going off during a phone call. <u><b>Alarm will not fire without an access to this permission</b></u>.</string>
     <!-- Permission Alert Dialog CONFIRM Text-->
     <string name="alertdialog_confirm_text">CONFIRM</string>
 
@@ -125,7 +125,7 @@
         <item><xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g> and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
         <item><xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
-        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g>, <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g>, and <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
+        <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g> <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
     </string-array>
 
     <string name="theme_title">Interface theme</string>

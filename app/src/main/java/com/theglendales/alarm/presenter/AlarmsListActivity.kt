@@ -67,7 +67,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f7 22/4/27 (Wed) 10:31pm [SecondFrag> Purchased(v) 표시 RcV 진행중.]
+// 30708V1.18e35f9 22/4/27 (Wed) 10:31pm [SecondFrag 위에 Listfrag 화면 걸린 것 재구현 어떻게든 해볼것. 하기 전.]
 // Achievement (O) :
 
 //Issue)

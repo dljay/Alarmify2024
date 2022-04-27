@@ -296,6 +296,12 @@
             <item name="android:textSize">12sp</item>
         </style>
 
+        <style name="jjTextMedium_black_lite">
+            <item name="fontFamily">@font/circular_std_light</item>
+            <item name="android:textColor">@color/primaryDarkTextColor</item>
+            <item name="android:textSize">12sp</item>
+        </style>
+
         <style name="jjTextLarge_black">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryDarkTextColor</item>

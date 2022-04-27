@@ -67,11 +67,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f3 22/4/25 (Tue) 3:53pm [PERMISSION 수정 중]
+// 30708V1.18e35f5 22/4/27 (Wed) 12:48pm [PERMISSION UI 수정 완료]
 // Achievement (O) :
 // [Permission 거부 없이 최초실행시] -> AlertDialog 왜 Read_phone_state Perm 필요한지 설명 -> ok click -> permission 요청.
 // AlertDialog 디자인 거의 완료.
-//todo: AlertDialog Round Corner. BtmSheet: Re-Design 뭔가 구리네. Cancel, Open 가운데 | 맞춰주기. AlertDialog Background 클릭관련..
+
 
 // 우선 WriteExternal Permission 없애고 ReadPhoneState 를 BtmSheetPermission.kt 이용해서 보여주는 중.
 

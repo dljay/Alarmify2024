@@ -47,9 +47,9 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:theme="@style/jjTextMedium_black"
-        android:lineSpacingExtra="2dp"
+        android:fontFamily="@font/circular_std_light"
+        android:theme="@style/jjTextMedium_black_lite"
+        android:lineSpacingExtra="3dp"
         android:text="@string/alertDialog_perm_msg"/>
 
     <View
@@ -61,7 +61,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp">
 
         <ImageView
             android:id="@+id/iv_phone_icon_1"
@@ -87,13 +88,12 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
+    <!--<View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="10dp"
-
-        android:background="?android:attr/dividerHorizontal" />
+        android:background="?android:attr/dividerHorizontal" />-->
 
     <Button
         android:id="@+id/btn_perm_confirm_1"

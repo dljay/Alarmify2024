@@ -72,8 +72,6 @@ class RcViewAdapter(
         holder.tv2_ShortDescription.text = currentRt.tags
         holder.holderTrId = currentTrId
 
-
-
         Log.d(TAG, "onBindViewHolder: holder.hashCode= ${holder.hashCode()}, holder TrId= ${holder.holderTrId}, currentTrIapName= $currentIapName")
         Log.d(TAG, "onBindViewHolder: Purchased Stats=${currentRt.purchaseBool}")
 
@@ -81,8 +79,8 @@ class RcViewAdapter(
 
     //스크롤 하면서 트랙 재활용시 하이라이트&VuMeter & Purchased(V) 표시 관련--->
         // Purchase 값 초기화 [일단 구입 안된것으로 표시하고 시작] --> 이거 안하면 Holder 가 Recycle 되면서 (v) 표시 또 뜬다.
-        disablePurchasedCheck(holder)
-        holder.isPurchased = false // Bind 되면서 기존에 enablePurchasedCheck() 작동전에 기입한 holder.isPurchased Value 를 '현재 RT 의 값으로 복원'
+//        disablePurchasedCheck(holder)
+//        holder.isPurchased = false // Bind 되면서 기존에 enablePurchasedCheck() 작동전에 기입한 holder.isPurchased Value 를 '현재 RT 의 값으로 복원'
 
         // A) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트(O) & VuMeter (O) & Purchased Check(X)
         if (currentTrId == GlbVars.clickedTrId) {
@@ -95,9 +93,9 @@ class RcViewAdapter(
         if (currentTrId != GlbVars.clickedTrId) {
             disableHL(holder)
             disableVMnLC(holder)
-            if(currentRt.purchaseBool) {
-                holder.isPurchased = true
-                enablePurchasedCheck(holder)
+            when(currentRt.purchaseBool) {
+                true -> enablePurchasedCheck(holder)
+                false -> disablePurchasedCheck(holder)
             }
         }
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
@@ -139,9 +137,7 @@ class RcViewAdapter(
                         if(prevClickedHolder!=null) {
                             prevClickedHolder!!.loadingCircle.visibility = View.INVISIBLE // loading Circle 안보이게. (a)
                             prevClickedHolder!!.vuMeterView.visibility = VuMeterView.GONE // VuMeter 도 안보이게 (b)
-                            if(prevClickedHolder!!.isPurchased) {// 만약 PurchasedCheck(v) 표시 되있는 상태였으면
-                                prevClickedHolder!!.ivPurchaseCheck.visibility = View.VISIBLE
-                            }
+
                         }
                         // 2) 새로 Click 된 Holder 의 UI 업데이트
                         clickedHolder!!.loadingCircle.visibility = View.VISIBLE
@@ -214,9 +210,11 @@ class RcViewAdapter(
         }
     // 3) Purchased Check(v) 표시
     private fun enablePurchasedCheck(holder: MyViewHolder) {
+        Log.d(TAG, "enablePurchasedCheck: (O) called")
         holder.ivPurchaseCheck.visibility = View.VISIBLE
     }
     private fun disablePurchasedCheck(holder: MyViewHolder) {
+        Log.d(TAG, "disablePurchasedCheck: (X) called")
         holder.ivPurchaseCheck.visibility = View.INVISIBLE
     }
 // <---------- // Highlight & VuMeter 작동 관련    --------->
@@ -304,15 +302,16 @@ class RcViewAdapter(
 
         // 4) 오른쪽 vumeter /loading circle / Purchased(V) 표시 영역
         val ivPurchaseCheck: ImageView = myXmlToViewObject.findViewById(R.id.iv_singleSlot_purchased_check)
+
         val vuMeterView: VuMeterView = myXmlToViewObject.findViewById(R.id.id_vumeter)
         val loadingCircle: ProgressBar = myXmlToViewObject.findViewById(R.id.id_progressCircle)
         var holderTrId: Int = -10 // 처음엔 의미없는 -10 값을 갖지만, onBindView 에서 제대로 holder.id 로 설정됨.
+
         // 5) 구매상태
         var isPurchased=false
 
         init {
             ll_entire_singleSlot.setOnClickListener(this)
-
             //Log.d(TAG, "MyViewHolder Init: ${myXmlToViewObject.toString()}")
         }
 
@@ -327,11 +326,12 @@ class RcViewAdapter(
 
             if (clickedPosition != RecyclerView.NO_POSITION && clickedView != null)
             { // To avoid possible mistake when we delete the item but click it
-               // val vHolderAndTrId = ViewAndTrIdClass(v, holderTrId)
-                /*when(v.id) { //사실상 when 문 없애도 된다. (구매창을 holder 에서 제외시켰으므로..)
-                    //1) [하이라이트, 음악 재생] - 구매 제외 부분 클릭  (Rl_including_tv1_2 영역)
-                    R.id.id_singleSlot_ll -> {*/
-                        //1-a)
+
+                        //1-a) 만약 이 RtClass 의 purchase 값이 true 면 일단 holder 에 기록해놓기
+                            if(selectedRt.purchaseBool) {
+                                this.isPurchased = true
+                            }
+
                         //todo: exoForUrl 에 clickedTrId 기억해놓기.
                         prevClickedHolder = clickedHolder // 이전에 선택되어있던 holder 값을 prevClickedHolder 로 복사. (첫 Click 이라면 prevClick 이 null 이 되겠지 당연히..)
                         clickedHolder = this // clickedHolder = holder
@@ -343,13 +343,18 @@ class RcViewAdapter(
                           disableHL(prevClickedHolder)
                           enableHL(clickedHolder)
 
-                        //1-c) 음악 플레이 //재생중일때 또 클릭하면 그냥 무시하기?
+                        //1-c) 이전 holder [previousHolder] 의 .isPurchased 값이 true 면
+                        if(prevClickedHolder!=null && prevClickedHolder!!.isPurchased) {
+                            enablePurchasedCheck(prevClickedHolder!!)
+                        }
+
+                        //1-d) 음악 플레이 //재생중일때 또 클릭하면 그냥 무시하기?
                         exoForUrlPlay.prepMusicPlayOnlineSrc(holderTrId, true) // 여기서부터 RcVAdapter -> mediaPlayer <-> mpVuModel <-> SecondFrag (Vumeter UI업뎃)
 
 //[음악 재생 대신 Diffutil Test 용 코드] - 구매 후 즉각 RcV 아이콘 변경되는지 확인하기 위한 간접 테스트=> 클릭한 아이템 purchaseBool 값을 인위적으로 true 로 바꿔줌 => 바로 RcV 에 반영되야함!
 //jjMainVModel.testDiffutil()
 
-                        // [UI 업데이트]: <구매 제외한 영역> 을 클릭했을 때는 <음악 재생> 목적이므로 miniPlayer UI 를 업뎃.
+                        // miniPlayer UI 를 업뎃.
                         secondFragListener.onRcvClick(selectedRt,isPurchaseClicked = false) // JjMainViewModel.kt - selectedRt(StateFlow) 값을 업데이트!
                     //}
                 //}

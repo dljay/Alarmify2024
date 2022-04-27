@@ -71,6 +71,7 @@ import java.util.Calendar
 // Achievement (O) :
 // [Permission 거부 없이 최초실행시] -> AlertDialog 왜 Read_phone_state Perm 필요한지 설명 -> ok click -> permission 요청.
 // AlertDialog 디자인 거의 완료.
+//todo: AlertDialog Round Corner. BtmSheet: Re-Design 뭔가 구리네. Cancel, Open 가운데 | 맞춰주기. AlertDialog Background 클릭관련..
 
 // 우선 WriteExternal Permission 없애고 ReadPhoneState 를 BtmSheetPermission.kt 이용해서 보여주는 중.
 
@@ -328,14 +329,18 @@ class AlarmsListActivity : AppCompatActivity() {
             confirmBtn.setOnClickListener {
                 myPermHandler.permissionReadPhoneState()
             }
-                AlertDialog.Builder(this)
-                    .setView(perm_alertDialog_xml)
+            val alertDialog = AlertDialog.Builder(this).setView(perm_alertDialog_xml).create()
+            alertDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_four_corners_btm_sheet)
+            alertDialog.show()
+
+
+/*                AlertDialog.Builder(this).setView(perm_alertDialog_xml)
 //                    .setTitle("Test Title")
 //                    .setIcon(R.drawable.ic_alarm_on_2)
 //                    .setMessage("Permission 이 필요한 이유 기타 등등등등")
 //                    .setPositiveButton(R.string.alertdialog_confirm_text) {_,_ -> // 여기 Confirm 버튼이 오른쪽/왼쪽으로 치우쳐있고 CENTER 로 포지셔닝이 어려워서 그냥 위에서 내가 만든걸로 쓰기로..
 //                        myPermHandler.permissionReadPhoneState()}
-                    .show()
+                    .show()*/
 
         }
 

@@ -76,9 +76,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/circular_std_medium"
-            android:text="READ PHONE STATE"
+            android:text="PHONE"
 
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="7dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_phone_icon_1"
             app:layout_constraintTop_toTopOf="parent"

@@ -50,8 +50,8 @@
 
     <!--Permission 내가 추가 -->
     <string name="btmsheet_permission_msg1_WriteExternal">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again.\n\nHitting <b>CANCEL</b> will dismiss your purchase and disable restoring previously purchased ringtones.</string>
-    <string name="btmsheet_permission_msg2_ReadPhoneState">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again. Alarm will not fire without an access to this permission.</string>
-    <string name="alertDialog_perm_msg">Starting Android 12, a user\'s permission is required for an app to access phone call status. Given access will be used to manage alarm to avoid ringing during a phone call. <b>Alarm will not fire without an access to this permission</b>.</string>
+    <string name="btmsheet_permission_msg2_ReadPhoneState">Choose <b>OPEN SETTINGS</b>, then allow the following permissions and try again. <u>Alarm will not fire without an access to this permission.</u></string>
+    <string name="alertDialog_perm_msg">Starting Android 12, a user\'s permission is required for an app to access phone call status. Given access will be used to prevent an alarm go off during a phone call. <b>Alarm will not fire without an access to this permission</b>.</string>
     <!-- Permission Alert Dialog CONFIRM Text-->
     <string name="alertdialog_confirm_text">CONFIRM</string>
 

@@ -318,29 +318,23 @@ class AlarmsListActivity : AppCompatActivity() {
 
             myPermHandler.permissionToWriteOnInitialLaunch() //
         }*/
-        // 현재 버전이 (S=API 31) 이고 -- READ_PHONE_STATE 권한이 안 주어진 상태
+        // 현재 버전이 (S=API 31) 이고 -- READ_PHONE_STATE 권한이 안 주어진 상태 -> 왜 권한이 필요한지 AlertDialog로 보여주기
         if(Build.VERSION.SDK_INT == Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(this.applicationContext, android.Manifest.permission.READ_PHONE_STATE)
             == PackageManager.PERMISSION_DENIED) { // S = API 31
-            // 일단 왜 권한이 필요한지 AlertDialog 로 보여줌.
-            //AlertDialog 로 왜 'Read Phone State 권한' 이 필요한지 설명
+
             val layoutInflater = getLayoutInflater()
             val perm_alertDialog_xml: View = layoutInflater.inflate(R.layout.permission_alertdialog_layout_1, null)
-            val confirmBtn = perm_alertDialog_xml.findViewById<Button>(R.id.btn_perm_confirm_1)
-            confirmBtn.setOnClickListener {
-                myPermHandler.permissionReadPhoneState()
-            }
+
             val alertDialog = AlertDialog.Builder(this).setView(perm_alertDialog_xml).create()
             alertDialog.window!!.setBackgroundDrawableResource(R.drawable.rounded_four_corners_btm_sheet)
             alertDialog.show()
 
-
-/*                AlertDialog.Builder(this).setView(perm_alertDialog_xml)
-//                    .setTitle("Test Title")
-//                    .setIcon(R.drawable.ic_alarm_on_2)
-//                    .setMessage("Permission 이 필요한 이유 기타 등등등등")
-//                    .setPositiveButton(R.string.alertdialog_confirm_text) {_,_ -> // 여기 Confirm 버튼이 오른쪽/왼쪽으로 치우쳐있고 CENTER 로 포지셔닝이 어려워서 그냥 위에서 내가 만든걸로 쓰기로..
-//                        myPermHandler.permissionReadPhoneState()}
-                    .show()*/
+            val confirmBtn = perm_alertDialog_xml.findViewById<Button>(R.id.btn_perm_confirm_1)
+            confirmBtn.setOnClickListener {
+                // 일단 AlertDialog 감추기.
+                alertDialog.dismiss()
+                myPermHandler.permissionReadPhoneState()
+            }
 
         }
 

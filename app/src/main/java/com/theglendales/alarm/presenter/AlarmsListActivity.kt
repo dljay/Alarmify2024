@@ -67,7 +67,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f6 22/4/27 (Wed) 2:55pm [SecondFrag> Purchased(v) 표시 RcV 진행중.]
+// 30708V1.18e35f6 22/4/27 (Wed) 3:37pm [SecondFrag> Purchased(v) 표시 RcV 진행중.]
 // Achievement (O) :
 // [Permission 거부 없이 최초실행시] -> AlertDialog 왜 Read_phone_state Perm 필요한지 설명 -> ok click -> permission 요청.
 // AlertDialog 디자인 거의 완료.
@@ -75,13 +75,13 @@ import java.util.Calendar
 
 //Issue)
 //1. SecondFrag 위에 Listfrag 화면 걸린 것 재구현 어떻게든 해볼것.
-//SecondFrag 에서 다운 완료 -> Status 창 한번 스르륵 열었다가 --ListFrag 갔다가 -> APP 한번 나갔다와서 (CX EXPOLORER 확인 후)
+//SecondFrag 에서 다운 완료 -> Status 창 한번 스르륵 열었다가 --ListFrag 갔다가 -> APP 한번 나갔다와서 (CX EXPLORER 확인 후)
 //-> 신규 ALARM 설정 -> SecondFrag 했을 떄 ListFrag 윗대가리 (사진) 이 SEcondFrag 와 겹쳐서 나옴.
 //[SecondFrag 에서 트랙 플레이한게 없었음!] -> 재구현 쉽지 않음.
 //
 //Todos)
 //0. Install Alarm 테스트 하기 // //**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
-//*SecondFrag 에 구매 된 RT 는 표시 (체크표시. 노란색 점?)
+//*SecondFrag 에 구매 된 RT 는 표시 (체크표시. 노란색 점?)  //todo: RcVadapter. holder (345 번째 줄에 넣으면 되겠네! 기존 코드 삭제해주고!)
 //* 2. ListFrag 에 울리는 시간 남은 것 표기 방식 바꾸기 -> 그냥 알람 Vector 울리는 모습 넣고 xx Hrs and xx minutes // 1시간 and 53분 (후 울립니다 로 한글로 쓰고) 영어로는 ?
 // ListFrag 에서 diskScanNeeded() 인데 -> 단순히 파일하나가 없을때는 RebuildingDb Completed 말고 -> "Please hit Ringtones Tab to recover missing ringtone(s)."
 //3. -> STR 한글 바꿔도 될듯..

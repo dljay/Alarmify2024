@@ -456,7 +456,10 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         lottieAnimHandler.animController(LottieENUM.INIT_LOADING) //우선  빙글빙글 Init Loading 작동 -> (추후) Fb 에서 리스트 받는대로 없애줌.
         jjMainVModel.refreshFbAndIAPInfo() // refreshFbIAP 해서 GooglePlay 에 이제는 로긴 되어있다면) -> Fb 에서 공갈 아닌 리스트 받아서 lottieAnim 과 BtmSheetPsError 둘 다 없애줄것임.
         }
-
+    // C) CollapsingToolbarLayout 이 혹시라도 확장되서 보여지는것을 방지위해 (위에 onViewCreated 에도 있으나 대책없이 일단 여기 넣어놨음..)
+        if(rcView.isActivated) {
+            rcView.isNestedScrollingEnabled =false //
+        }
     // DNLD BTM SHEET 보여주기 관련 - 이것은 Permission과도 관련되어 있어서?  신중한 접근 필요. (Update: permission 상관없는듯..)
     // 현재 기본 WRITE_EXTERNAL Permission 은 AlarmsListActivity 에서 이뤄지는 중.
 //        //B) 현재 Sync = Multi 다운로드가 진행중 && 인터넷이 되는 상태면 btmSheet_Multi 다시 보여주기!
@@ -849,7 +852,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.ANCHORED // 위치를 60%로 초기 시작
         slidingUpPanelLayout.addPanelSlideListener(object :SlidingUpPanelLayout.PanelSlideListener {
             override fun onPanelSlide(panel: View?, slideOffset: Float) {
-                Log.d(TAG, "onPanelSlide: Panel State=${slidingUpPanelLayout.panelState}")
+                //Log.d(TAG, "onPanelSlide: Panel State=${slidingUpPanelLayout.panelState}")
                 shouldPanelBeVisible = true // 이제 Panel 이 열렸으니깐. todo: 이거 bool 값에 의존하는게 괜찮을지..
                 //upperUiHolder.alpha = 1 - slideOffset + 0.5f // +0.5 은 어느정도 보이게끔 //
 

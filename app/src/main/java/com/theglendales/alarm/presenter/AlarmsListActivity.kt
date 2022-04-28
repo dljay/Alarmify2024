@@ -67,27 +67,25 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f9 22/4/27 (Wed) 10:31pm [SwipeRevealLayout Slide-Delete 민감도.. + Switch 대체품 찾기.]
+// 30708V1.18e35f12 22/4/28 (Thu) 9:41pm [Switch On/Off -> SecondFrag 이동시 CollpasingToolbar 확장되서 나오는 현상 발견. 수정 전.]
 // Achievement (O) :
 
 //Issue)
-//1. SecondFrag 위에 Listfrag 화면 걸린 것 재구현 어떻게든 해볼것.
-//SecondFrag 에서 다운 완료 -> Status 창 한번 스르륵 열었다가 --ListFrag 갔다가 -> APP 한번 나갔다와서 (CX EXPLORER 확인 후)
-//-> 신규 ALARM 설정 -> SecondFrag 했을 떄 ListFrag 윗대가리 (사진) 이 SEcondFrag 와 겹쳐서 나옴.
-//[SecondFrag 에서 트랙 플레이한게 없었음!] -> 재구현 쉽지 않음.
-//
+
+// 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
+//Snooze -- xx 분 후에 울립니다 SnackBar? 아니면 Snooze(xxMins) 표기?
+// Purchase 창 뜨고 앱 꺼지는것.
 //0. Install Alarm 테스트 하기 // //**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
 
 //* 2. ListFrag 에 울리는 시간 남은 것 표기 방식 바꾸기 -> 그냥 알람 Vector 울리는 모습 넣고 xx Hrs and xx minutes // 1시간 and 53분 (후 울립니다 로 한글로 쓰고) 영어로는 ?
 // ListFrag 에서 diskScanNeeded() 인데 -> 단순히 파일하나가 없을때는 RebuildingDb Completed 말고 -> "Please hit Ringtones Tab to recover missing ringtone(s)."
-//3. -> STR 한글 바꿔도 될듯..
-//
-//3. -- Slide 지우기 Sensitivity
+//3. -> STR 한글은 바꿔도 될듯..
+
 // Crashlytics / Testing 이해하기.
 //4.language String -- Hold the Button 의 경우 한국말... 어마어마하게 많은 작업일것으로 예상.
 //5. 최적화. 뭐가 자꾸 느리게 하는지 지울것?
-//6. FadeIn Time.
+
 //7. App ICON -> NavigationDrawer 꾸미기.
 //8. Free Item
 //9. Status Bar 투명+ Collapsing Toolbar 의 사진이 보이게. (Alarm Extreme 처럼).
@@ -298,7 +296,8 @@ class AlarmsListActivity : AppCompatActivity() {
                     it.isChecked = true
                     btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked = false
                 }
-                R.id.id_BtmNav_RingTone -> {showSecondFrag(secondFrag)
+                R.id.id_BtmNav_RingTone -> {
+                    showSecondFrag(secondFrag)
                     btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm).isChecked = false
                     it.isChecked = true
 

@@ -1,5 +1,6 @@
 package com.theglendales.alarm.presenter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
@@ -168,6 +169,7 @@ class AlarmsListFragment : Fragment() {
 
         }
         // <3> 제공받은 ViewHolder 의 UI(button, textView 등)들은 모두 findViewById() 가 끝났으니, 이제 여기서 내용을 채워줌!
+        @SuppressLint("ClickableViewAccessibility") // 아래에 rowHolder.container.setOnTouchListener [e-3] 에서 노란색 워닝 뜨는것 없애주기 위해 넣음.
         override fun onBindViewHolder(rowHolder: RowHolder, position: Int) {
             val alarm = alarmValuesList[position]
             val alarmId = alarm.id
@@ -228,6 +230,7 @@ class AlarmsListFragment : Fragment() {
             if (rowHolder.idHasChanged) {rowHolder.onOff.jumpDrawablesToCurrentState()}
         //e-2) onOff [알람 껐다 켰다 하는 스위치] Listener
             rowHolder.container.setOnClickListener {
+
                     val enable = !alarm.isEnabled
                     logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
                     alarms.enable(alarm, enable)
@@ -241,8 +244,17 @@ class AlarmsListFragment : Fragment() {
                         }
                     }
                 }
+        //e-3) onOff [알람 껐다 켰다 하는 스위치] 여기서 만지는건 SwipeReveal(Delete) - Slide 가 작동하지 않게끔
+            // SwipeReveal Slide (Touch) 먹히지 않게
+            rowHolder.container.setOnTouchListener { v, event ->
+                if(event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE) {
+                    rowHolder.parentSwipeRevealLayout.requestDisallowInterceptTouchEvent(true)
+                    //v.performClick()
+                }
+                return@setOnTouchListener false
+            }
 
-            //Log.d(TAG, "onBindViewHolder: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \nalarm.alarmtone= ${alarm.alarmtone}, ")
+            //Log.d(TAG, "onBindViewHolder: (2-정상) alarm.id=${alarm.id},  \nartPathFromAlarmValue= $artPathFromAlarmValue, \n alarm.alarmtone= ${alarm.alarmtone}, ")
         // f)  시간 누르거나 or AlbumArt 눌렀을 떄 ->
             // Option A-1) 만약 ListFrag 에서 시간 눌렀을 때 => 바로 Details Frag 로 가고 싶다면 아래를 넣으면 된다!
             rowHolder.digitalClockContainer.setOnClickListener {
@@ -452,6 +464,7 @@ class AlarmsListFragment : Fragment() {
     }*/
 
     override fun onCreateContextMenu(menu: ContextMenu, view: View, menuInfo: ContextMenuInfo?) {
+        Log.d(TAG, "onCreateContextMenu: called.")
         // Inflate the menu from xml.
         requireActivity().menuInflater.inflate(R.menu.list_context_menu, menu)
 

@@ -13,17 +13,16 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <com.theglendales.alarm.jjongadd.SwipeRevealLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="76dp"
 
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipeReveal_listrow"
 
     app:mode="normal"
-
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
     android:layout_marginTop="8dp"
@@ -77,7 +76,8 @@
         android:baselineAligned="true"
         android:orientation="horizontal">
 
-        <com.theglendales.alarm.view.DontPressWithParentLayout
+        <!-- 원래 DontPressWithParentLayout 였음 -->
+        <LinearLayout
             android:id="@+id/list_row_on_off_checkbox_container"
             android:layout_width="68dp"
             android:layout_height="match_parent"
@@ -85,6 +85,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="10dp"
+
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/list_row_digital_clock_container"
@@ -109,6 +110,7 @@
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:thumb="@drawable/switch_thumb"
+
                 app:track="@drawable/switch_track_v1" />
 
 
@@ -116,7 +118,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
-        </com.theglendales.alarm.view.DontPressWithParentLayout>
+        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/list_row_digital_clock_container"

@@ -30,6 +30,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.chip.Chip
@@ -104,12 +105,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Media Player & MiniPlayer Related
     private val exoForUrlPlay: ExoForUrl by globalInject()
 
-
+    //
     //Sliding Panel Related
     var shouldPanelBeVisible = false
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout    //findViewById(R.id.id_slidingUpPanel)  }
-    lateinit var btmNavViewFromActivity: BottomNavigationView
-    lateinit var btmAppBarFromActivity: BottomAppBar
+    lateinit var btmNavViewFromActivity: BottomNavigationView // AlarmsListActivity 에서 넘어온것 받을 것.
+    lateinit var btmAppBarFromActivity: BottomAppBar // AlarmsListActivity 에서 넘어온것 받을 것.
+    lateinit var collapsingToolbarLayout: CollapsingToolbarLayout // AlarmsListActivity 에서 넘어온것 받을 것.
 
     //a) Sliding Panel: Upper Ui
 
@@ -787,8 +789,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //Activity 에서 받은 BottomNavView (추후 SlidingPanel 이 EXPAND/COLLAPSE 될 때 VISIBLE/INVISIBLE 해준다.)
         btmNavViewFromActivity = requireActivity().findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) // todo: check
         btmAppBarFromActivity = requireActivity().findViewById(R.id.bottomAppBar2)
+        //Activity 에서 받은 CollapsingToolBar -- 혹시나 펼쳐있을 수 있으니 접어주기.
+        //collapsingToolbarLayout = requireActivity().findViewById()
 
-        //btmAppBarFromActivity.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.blue_var_1)) // 테스트. Spotify 처럼 배경색 일치.
 
 
     // RcV 를 감싸는 FrameLayout [RcV 마지막 칸이 짤리는 문제가 있어서 PaddingBottom 으로 해결중. 최초 SecondFrag 열었을때는 ]

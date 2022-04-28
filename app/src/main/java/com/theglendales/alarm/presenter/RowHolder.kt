@@ -5,6 +5,7 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
+import com.theglendales.alarm.jjongadd.SwipeRevealLayout
 import com.theglendales.alarm.view.DigitalClock
 
 /**
@@ -24,6 +25,7 @@ class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : Recycler
     val detailsButton: View
     val idHasChanged: Boolean
 // 내가 추가->
+    val parentSwipeRevealLayout: SwipeRevealLayout
     val swipeDeleteContainer: LinearLayout
     val albumArtContainer: LinearLayout//Album Art container (LinearLayout)
     val albumArt: ImageView// Album Art 추가 (detailsButton 대체 <== '...' 요렇게 생긴 놈.)
@@ -53,6 +55,7 @@ class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : Recycler
         rowView.tag = this
 
     // 내가 추가->
+        parentSwipeRevealLayout = find(R.id.swipeReveal_listrow) as SwipeRevealLayout
         swipeDeleteContainer = find(R.id.ll_swipeDeleteContainer) as LinearLayout
         digitalClockContainer.tag = this
         albumArtContainer = find(R.id.ll_albumArt_Container) as LinearLayout

@@ -147,9 +147,11 @@ public class AlarmAlertFullScreen extends FragmentActivity {
             titleText += spaceTwenty;
         }
     // 내가 추가-->
+
         AlarmValue aVal= mAlarm.getData();
         final String artFilePath = aVal.getArtFilePath();
         Log.d(TAG, "setTitle: artFilePath= "+artFilePath + " , title=" + titleText);
+
         //todo: Glide 로 Image 로딩.
         Uri imageUri = Uri.parse(artFilePath);
         ImageView ivAlbumArt = findViewById(R.id.alert_iv_albumart);
@@ -163,6 +165,15 @@ public class AlarmAlertFullScreen extends FragmentActivity {
         tv_titleView.setSelected(true);
         // set Title.
         tv_titleView.setText(titleText);
+        // Snooze 시간
+        /*Button btn_Snooze = findViewById(R.id.alert_button_snooze);
+        final String currentSNZValue = sp.getSnoozeDuration().getValue().toString();
+        final String snoozeString = "SNOOZE (" + currentSNZValue + " mins)"; //이거 할지 말지.
+        btn_Snooze.setText(snoozeString);*/
+
+
+
+
     }
 
     protected int getLayoutResId() {

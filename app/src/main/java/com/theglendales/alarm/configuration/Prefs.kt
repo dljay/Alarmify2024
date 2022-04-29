@@ -50,7 +50,7 @@ class Prefs private constructor(
                     snoozeDuration = factory.intStringDataStore("snooze_duration", 10),
                     listRowLayout = factory.stringDataStore(LIST_ROW_LAYOUT, LIST_ROW_LAYOUT_COMPACT),
                     autoSilence = factory.intStringDataStore("auto_silence", 10),
-                    fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 10), // todo: 원래 30 였으나 10으로 바꿔놓음. 아쉽게도 아직 PRef 들어갔을 때 30 으로 뜨네.
+                    fadeInTimeInSeconds = factory.intStringDataStore(Prefs.KEY_FADE_IN_TIME_SEC, 5), // 원래 30 였으나 5로 바꿔놓음.
                     vibrate = factory.booleanDataStore("vibrate", true),
                     skipDuration = factory.intStringDataStore(SKIP_DURATION_KEY, -1)
             )
@@ -70,5 +70,7 @@ class Prefs private constructor(
         const val LIST_ROW_LAYOUT = "list_row_layout"
         const val LIST_ROW_LAYOUT_COMPACT = "compact"
         const val LIST_ROW_LAYOUT_CLASSIC = "classic"
+
+        // 내가 추가 -> AlarmAlertFullScreen 에서 SNOOZE [10 MINS] 볼 수 있게끔.
     }
 }

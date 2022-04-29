@@ -67,38 +67,26 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f13 22/4/29 (Fri) 2:58pm [Switch On/Off or Swipe-Delete 살짝 보이고 바로 -> SecondFrag 이동시 CollapsingToolbar 확장되서 나오는 현상 발견. 수정 후!!]
-
-// 고찰)
-//현상) ListFrag 에서
-//1) SwipeReveal (DELETE) 만 살짝~ 보이거나 or Switch 부분 클릭했을 때(requestDisallowInterceptTouchEvent(true) 걸린상태)
-//->  SecondFrag 이동 => 위에 Collapsing Toolbar 가 크게 남은 상태로 이동됨.
-//2) 1) 한뒤에 살짝 스크롤 위아래로 하고 -> SecondFrag 가면 문제없음.
-//3) 스위치에서 requestDisallow..(true) 없애면 (즉 Parent 가 간섭가능하게끔) Switch 클릭 후 -> SecondFrag 이동은- 문제없음.
-//4) ListFrag> recyclerV.setNested..=false 하면 만사형통 (대신 Appbar Collapse/Expand 안된다)
-
-// Achievement (O) :
-//해결) AlarmsListActivity.kt>showSecondFrag() 안에서
-//**1) params.scrollFlags 에서 SCROLL_FLAG_SCROLL 만 남김
-//2) appBarlayout.setExpanded(false,true) [Collapse 시키는 것] 을 //D 밑에 놨음 (별로 영향은 없는듯)
-
+// 30708V1.18e35f13 22/4/29 (Fri) 10:06pm [Switch On/Off or Swipe-Delete 살짝 보이고 바로 -> SecondFrag 이동시 CollapsingToolbar 확장되서 나오는 현상 발견. 수정 후!!]
 
 //Issue)
 
 
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
-//Snooze -- xx 분 후에 울립니다 SnackBar? 아니면 Snooze(xxMins) 표기?
+
 // Purchase 창 뜨고 앱 꺼지는것.
+// xx 시간 후 알람- > Toast->Snackbar 로..
+// Snooze -> Rings in 10 mins.. SnackBar.
 //0. Install Alarm 테스트 하기 // //**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
 
-//* 2. ListFrag 에 울리는 시간 남은 것 표기 방식 바꾸기 -> 그냥 알람 Vector 울리는 모습 넣고 xx Hrs and xx minutes // 1시간 and 53분 (후 울립니다 로 한글로 쓰고) 영어로는 ?
+
 // ListFrag 에서 diskScanNeeded() 인데 -> 단순히 파일하나가 없을때는 RebuildingDb Completed 말고 -> "Please hit Ringtones Tab to recover missing ringtone(s)."
 //3. -> STR 한글은 바꿔도 될듯..
 
-// Crashlytics / Testing 이해하기.
+// *Crashlytics / Testing 이해하기.
 //4.language String -- Hold the Button 의 경우 한국말... 어마어마하게 많은 작업일것으로 예상.
-//5. 최적화. 뭐가 자꾸 느리게 하는지 지울것?
+//5. 최적화. 뭐가 자꾸 느리게 하는지 지울것? -> Recycler -- NotifyDataSetChanged(?) or Adapter? 가 훨씬 빠른데???
 
 //7. App ICON -> NavigationDrawer 꾸미기.
 //8. Free Item
@@ -620,6 +608,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
     // D) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
         val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
+        // 아래 or 이후 없애고 나서 비로소 listFrag -> SEcondFrag 이동했을 때 CollapsingToolbar 크게 화면 위에 안 뜬다. (Swipe - Delete 보이거나 Alarm Switch 살짝 만졌을 때 그랬음)
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL // or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
         appBarLayout.setExpanded(false,true) //A) ToolBar 포함된 넓은 부분 Collapse 시키기!
         Log.d(TAG, "showSecondFrag: ..... ")

@@ -88,6 +88,7 @@ class AlarmsListFragment : Fragment() {
 
     private val myTimePickerJjong: TimePickerJjong by globalInject()
 
+    lateinit var recyclerV: RecyclerView
     //lateinit var listView: ListView // 기존에는 onCreateView 에서 그냥 val listView 해줬었음.
 
     private var isLottiePlayedOnce = false // DiskScan 에서 한번이라도 Lottie 애니메이션이 재생됐는지 확인( -> recoverMissingPurchasedFiles() 때도 틀어줘야될수도 있거덩)
@@ -227,19 +228,21 @@ class AlarmsListFragment : Fragment() {
             //Log.d(TAG, "onBindViewHolder: alarm= $alarm, position=$position,  isRtUnplayable=$isRtUnplayable") // <-- 여기 logd 중요 정보 많음.
 
         // e-1) Delete add, skip animation
-            if (rowHolder.idHasChanged) {rowHolder.onOff.jumpDrawablesToCurrentState()}
+            if (rowHolder.idHasChanged) {
+                Log.d(TAG, "onBindViewHolder: rowHolder.idHasChanged/ jumpDrawablesToCurrentState()")
+                rowHolder.onOff.jumpDrawablesToCurrentState()}
         //e-2) onOff [알람 껐다 켰다 하는 스위치] Listener
             rowHolder.container.setOnClickListener {
 
                     val enable = !alarm.isEnabled
-                    logger.debug { "onClick: ${if (enable) "enable" else "disable"}" }
+                    logger.debug { "onClick: ${if (enable) "enabled" else "disabled"}" }
                     alarms.enable(alarm, enable)
 
-                    when(alarm.isEnabled) { // 꺼지고 켜짐에 따라 시계,Am/Pm, 요일 있는 부분 알파 값 변경.
-                        true -> {rowHolder.digitalClockContainer.alpha=1.0f
+                    when(alarm.isEnabled) { // 꺼지고 켜짐에 따라 시계, Am/Pm, 요일 있는 부분 알파 값 변경.
+                        true -> {rowHolder.digitalClockContainer.alpha= 1.0f
                             rowHolder.albumArt.alpha = 1.0f
                         }
-                        false -> {rowHolder.digitalClockContainer.alpha=0.3f
+                        false -> {rowHolder.digitalClockContainer.alpha= 0.3f
                             rowHolder.albumArt.alpha = 0.3f
                         }
                     }
@@ -247,8 +250,11 @@ class AlarmsListFragment : Fragment() {
         //e-3) onOff [알람 껐다 켰다 하는 스위치] 여기서 만지는건 SwipeReveal(Delete) - Slide 가 작동하지 않게끔
             // SwipeReveal Slide (Touch) 먹히지 않게
             rowHolder.container.setOnTouchListener { v, event ->
-                if(event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE) {
+                //Log.d(TAG, "onBindViewHolder: event.action=${event.action}") // 0 = DOWN, 2= MOVE , 1= UP
+
+                if(event.action == MotionEvent.ACTION_DOWN) {
                     rowHolder.parentSwipeRevealLayout.requestDisallowInterceptTouchEvent(true)
+                    //requestDisallow...Event =  Called when a child does not want this parent and its ancestors to intercept touch events
                     //v.performClick()
                 }
                 return@setOnTouchListener false
@@ -359,7 +365,8 @@ class AlarmsListFragment : Fragment() {
         logger.debug { "onCreateView $this" }
 
         val view = inflater.inflate(R.layout.list_fragment, container, false)
-        val recyclerV = view.findViewById(R.id.list_fragment_list) as RecyclerView // listView -> recyclerV 로 변경함.
+        recyclerV = view.findViewById(R.id.list_fragment_list) as RecyclerView // listView -> recyclerV 로 변경함.
+
         val layoutManager: LinearLayoutManager = LinearLayoutManager(context)
 
 
@@ -369,10 +376,17 @@ class AlarmsListFragment : Fragment() {
 
         recyclerV.adapter = mAdapter
         recyclerV.setHasFixedSize(true)
+
+        //recyclerV.isNestedScrollingEnabled = false
+
         recyclerV.layoutManager = layoutManager
         recyclerV.isVerticalScrollBarEnabled = false
         recyclerV.setOnCreateContextMenuListener(this)
+
+
+
         //listView.choiceMode = AbsListView.CHOICE_MODE_SINGLE
+
 
     // ListView <--
         registerForContextMenu(recyclerV)
@@ -443,6 +457,7 @@ class AlarmsListFragment : Fragment() {
         backSub.dispose()
         //dismiss the time picker if it was showing. Otherwise we will have to uiStore the state and it is not nice for the user
         timePickerDialogDisposable.dispose()
+
     }
 
     override fun onDestroy() {

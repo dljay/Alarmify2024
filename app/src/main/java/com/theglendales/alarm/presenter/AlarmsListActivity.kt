@@ -67,10 +67,24 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f12 22/4/28 (Thu) 9:41pm [Switch On/Off -> SecondFrag 이동시 CollpasingToolbar 확장되서 나오는 현상 발견. 수정 전.]
+// 30708V1.18e35f13 22/4/29 (Fri) 2:58pm [Switch On/Off or Swipe-Delete 살짝 보이고 바로 -> SecondFrag 이동시 CollapsingToolbar 확장되서 나오는 현상 발견. 수정 후!!]
+
+// 고찰)
+//현상) ListFrag 에서
+//1) SwipeReveal (DELETE) 만 살짝~ 보이거나 or Switch 부분 클릭했을 때(requestDisallowInterceptTouchEvent(true) 걸린상태)
+//->  SecondFrag 이동 => 위에 Collapsing Toolbar 가 크게 남은 상태로 이동됨.
+//2) 1) 한뒤에 살짝 스크롤 위아래로 하고 -> SecondFrag 가면 문제없음.
+//3) 스위치에서 requestDisallow..(true) 없애면 (즉 Parent 가 간섭가능하게끔) Switch 클릭 후 -> SecondFrag 이동은- 문제없음.
+//4) ListFrag> recyclerV.setNested..=false 하면 만사형통 (대신 Appbar Collapse/Expand 안된다)
+
 // Achievement (O) :
+//해결) AlarmsListActivity.kt>showSecondFrag() 안에서
+//**1) params.scrollFlags 에서 SCROLL_FLAG_SCROLL 만 남김
+//2) appBarlayout.setExpanded(false,true) [Collapse 시키는 것] 을 //D 밑에 놨음 (별로 영향은 없는듯)
+
 
 //Issue)
+
 
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
@@ -297,6 +311,9 @@ class AlarmsListActivity : AppCompatActivity() {
                     btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked = false
                 }
                 R.id.id_BtmNav_RingTone -> {
+                    /*Log.d(TAG, "onCreate: hit btmnave_rt")
+                    collapsingTBLayout.isTitleEnabled=false
+                    appBarLayout.setExpanded(false,true)*/
                     showSecondFrag(secondFrag)
                     btmNavView.menu.findItem(R.id.id_BtmNav_SetAlarm).isChecked = false
                     it.isChecked = true
@@ -339,6 +356,7 @@ class AlarmsListActivity : AppCompatActivity() {
         setSupportActionBar(toolBar)
         //supportActionBar?.setDisplayShowHomeEnabled(true)
         appBarLayout = findViewById(R.id.id_appBarLayout) // 늘였다 줄였다 관장하는 App Bar Layout
+
         collapsingTBLayout = findViewById(R.id.id_collapsingToolBarLayout)
         collapsingTBLayout.isTitleEnabled = false // 일단 화면에 제목 안 보여주고 시작 -> 추후 AppBarLayout 줄어들면 보여주기.
 
@@ -357,9 +375,11 @@ class AlarmsListActivity : AppCompatActivity() {
             mActionBarHandler.onOptionsItemSelected(it)
         }
 
+
     // AppBaR Expand/Collapse Listener. AppBar 가 (72% 이상) 접혔을 때 'xHrxMn 후 울립니다' 표기하는 View 를 없애줌.
         appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
         //todo: 실제 기기별로 totalScrollRange 가 다를것임. 실 기기에서 Double Check. (Ex. 에뮬레이터 8 FOLDABLE 로 했을 때 totalScrollRange = 357)
+            //Log.d(TAG, "onCreate: addOnOffsetChangedListener called")
             // totalScrollRange = 전체 스크롤 가능 범위 Ex) 갤 S20 에서 totalScrollRange = 378, verticalOffset: 완전 확장시 (=0), 완전 Collapsed = -378 // 기기마다 값은 다를것으로 예상됨.
             val percentClosed = (kotlin.math.abs(verticalOffset).toFloat() / appBarLayout.totalScrollRange.toFloat() * 100).toInt()
             //Log.d(TAG, "onCreate: verticalOffset=$verticalOffset, totalScrollRange = ${appBarLayout.totalScrollRange}, percentClosed=$percentClosed")
@@ -531,6 +551,8 @@ class AlarmsListActivity : AppCompatActivity() {
     private fun showList(isCreateNewClicked: Boolean) {
     //추가->
         Log.d(TAG, "(Line531)showList: jj-called")
+        //collapsingTBLayout.visibility = View.VISIBLE
+
         appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
         btmAppBar.setBackgroundResource(R.drawable.btm_nav_bg_round_corner) // SecondFrag 에서 돌아왔을 때 Corner 가 직사각형 -> Round Corner 로 다시 변경.
 
@@ -571,10 +593,12 @@ class AlarmsListActivity : AppCompatActivity() {
         btmNavView.visibility =View.VISIBLE
         btmAppBar.visibility= View.VISIBLE
 
+
     // b) AppBarLayout 설정변경 -> ToolBar 보여주는데까지 Collapse 시키기(O)
         //if(supportActionBar != null) {supportActionBar?.show()}
         val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
         params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_EXIT_UNTIL_COLLAPSED
+
         // % 참고: Java 에서는 params.setScrollFlags(xxx SCROLL | FLAG_EXIT ... ) 이런식으로 '|' 파이프라인을 쓰는데. 그게 Kotlin 에서는 or 임. bitwise INT... 흐음.
     // c) 만약 (+) 버튼 눌러서 여기로 온거면 바로 새 알람 생성(->DetailsFrag)
         if(isCreateNewClicked) {
@@ -586,17 +610,20 @@ class AlarmsListActivity : AppCompatActivity() {
     // ListFrag 나 DetailsFrag 는 서로 이동시에는 subscription 으로 EditeAlarm 받아서 이동하지만, BtmNav 로 오갈때  열릴 때 configureTransActions() 함수가 불리면서 계속 subscribe 함.
         //subscriptions.dispose() // 추후 a) 신규알람생성(createNewAlarm-FAB 버튼)시 TimePicker 가 Spinner TimePicker 에 반영 안되는문제 발생 or
         // b) Second Frag N번 왔다갔다 한 후 Details Frag 열 때 log 에  '다수의 ListFrag 로부터의 이동' 이 뜨면. 해당 subscriptions.dispose 다시 활성화해보기.
-    // A) ToolBar 포함된 넓은 부분 Collapse 시키기!
-        appBarLayout.setExpanded(false,true)
+
+    //
+
+
     // B) SecondFrag 로딩
         replace(R.id.main_fragment_container, secondFragReceived)
         commit() //현재 상태에서 특별히 commitNow() 쓸 이유 안 보임.
 
     // D) AppBarLayout 설정변경 -> 완전히 Collapse (ToolBar 영역도 무시)
         val params = collapsingTBLayout.layoutParams as AppBarLayout.LayoutParams
-        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
-
+        params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL // or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS// Scroll|snap|enterAlways
+        appBarLayout.setExpanded(false,true) //A) ToolBar 포함된 넓은 부분 Collapse 시키기!
         Log.d(TAG, "showSecondFrag: ..... ")
+        //collapsingTBLayout.visibility = View.GONE
 
     }
 

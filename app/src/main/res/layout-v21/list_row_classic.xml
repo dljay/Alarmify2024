@@ -19,7 +19,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="76dp"
-
     android:id="@+id/swipeReveal_listrow"
 
     app:mode="normal"
@@ -30,10 +29,14 @@
     app:dragFromEdge="right">
 
     <FrameLayout
+
+
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/swipe_reveal_round_corner_and_color">
         <LinearLayout
+
+
             android:id="@+id/ll_swipeDeleteContainer"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -70,6 +73,8 @@
 
     <!-- android:background="@drawable/bg_gradient_rowholder_background" -->
     <androidx.constraintlayout.widget.ConstraintLayout
+
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_gradient_rowholder_background"
@@ -82,9 +87,9 @@
             android:layout_width="68dp"
             android:layout_height="match_parent"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="10dp"
+
 
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -113,7 +118,6 @@
 
                 app:track="@drawable/switch_track_v1" />
 
-
             <View
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -121,6 +125,8 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+
+
             android:id="@+id/list_row_digital_clock_container"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -173,6 +179,7 @@
             </com.theglendales.alarm.view.DigitalClock>
 
             <LinearLayout
+
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -301,6 +308,8 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
+
+
             android:id="@+id/ll_albumArt_Container"
             style="@style/alarm_list_albumArt_Container"
             android:layout_height="match_parent"
@@ -336,6 +345,7 @@
 
             </LinearLayout>
         </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.theglendales.alarm.jjongadd.SwipeRevealLayout>

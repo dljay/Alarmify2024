@@ -166,10 +166,10 @@ public class AlarmAlertFullScreen extends FragmentActivity {
         // set Title.
         tv_titleView.setText(titleText);
         // Snooze 시간
-        /*Button btn_Snooze = findViewById(R.id.alert_button_snooze);
+        Button btn_Snooze = findViewById(R.id.alert_button_snooze);
         final String currentSNZValue = sp.getSnoozeDuration().getValue().toString();
         final String snoozeString = "SNOOZE (" + currentSNZValue + " mins)"; //이거 할지 말지.
-        btn_Snooze.setText(snoozeString);*/
+        btn_Snooze.setText(snoozeString);
 
 
 

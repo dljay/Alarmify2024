@@ -83,7 +83,7 @@ import java.util.Calendar
 
 // ListFrag 에서 diskScanNeeded() 인데 -> 단순히 파일하나가 없을때는 RebuildingDb Completed 말고 -> "Please hit Ringtones Tab to recover missing ringtone(s)."
 //3. -> STR 한글은 바꿔도 될듯..
-
+// Firebase Security Rules
 // *Crashlytics / Testing 이해하기.
 //4.language String -- Hold the Button 의 경우 한국말... 어마어마하게 많은 작업일것으로 예상.
 //5. 최적화. 뭐가 자꾸 느리게 하는지 지울것? -> Recycler -- NotifyDataSetChanged(?) or Adapter? 가 훨씬 빠른데???

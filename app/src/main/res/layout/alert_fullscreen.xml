@@ -214,6 +214,7 @@
             android:id="@+id/alert_button_snooze"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+
             android:alpha="0.9"
             android:theme="@style/jjTextLarge_white_bold_24sp"
 

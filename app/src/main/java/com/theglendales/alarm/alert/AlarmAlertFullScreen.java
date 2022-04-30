@@ -168,9 +168,13 @@ public class AlarmAlertFullScreen extends FragmentActivity {
         // Snooze 시간
         Button btn_Snooze = findViewById(R.id.alert_button_snooze);
         final String currentSNZValue = sp.getSnoozeDuration().getValue().toString();
-        final String snoozeString = "SNOOZE (" + currentSNZValue + " mins)"; //이거 할지 말지.
-        btn_Snooze.setText(snoozeString);
-
+        if(sp.getSnoozeDuration().getValue() > 0) {
+            final String snoozeString = "SNOOZE (" + currentSNZValue + " mins)"; //이거 할지 말지.
+            btn_Snooze.setText(snoozeString);
+        } else { // Snooze 가 Disable 된 경우. (-1 을 리턴)
+            Log.d(TAG, "setTitleAndAlbumArt: currentSNZValue=" + currentSNZValue);
+            btn_Snooze.setVisibility(View.INVISIBLE);
+        }
 
 
 

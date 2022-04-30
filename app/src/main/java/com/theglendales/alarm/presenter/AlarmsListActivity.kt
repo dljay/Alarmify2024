@@ -75,6 +75,7 @@ import java.util.Calendar
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
 
+//Alarm App ICON
 // Purchase 창 뜨고 앱 꺼지는것.
 // xx 시간 후 알람- > Toast->Snackbar 로..
 // Snooze -> Rings in 10 mins.. SnackBar.

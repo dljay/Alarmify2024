@@ -26,6 +26,8 @@ import androidx.core.app.NotificationCompat
 import com.theglendales.alarm.CHANNEL_ID_HIGH_PRIO
 import com.theglendales.alarm.R
 import com.theglendales.alarm.alert.AlarmAlertFullScreen
+import com.theglendales.alarm.configuration.Prefs
+import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.interfaces.Intents
 import com.theglendales.alarm.interfaces.PresentationToModelIntents
 import com.theglendales.alarm.isOreo
@@ -43,6 +45,7 @@ class NotificationsPlugin(
         private val nm: NotificationManager,
         private val enclosingService: EnclosingService
 ) {
+    private val sp: Prefs = globalInject(Prefs::class.java).value// 내가 추가 (Prefs - Snooze 설정된 타임 확인 위해 -> Snooze 시간이 Off 로 설정된 경우-> Popup (notification) 에서 SNOOZE 버튼을 없애기.
     // Notification (상단 버블) 에서 중간 클릭
     fun show(alarm: PluginAlarmData, index: Int, startForeground: Boolean) {
         /* Close dialogs and window shade */
@@ -78,9 +81,14 @@ class NotificationsPlugin(
             setContentIntent(pendingNotify)
             setOngoing(true)
 
+            if(sp.snoozeDuration.value > 0) {
+                addAction(R.drawable.ic_action_snooze, getString(R.string.alarm_alert_snooze_text), pendingSnooze)
+                addAction(R.drawable.ic_action_dismiss, getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
+            } else { // User 가 Preference 에서 SNooze 를 껐을때
+                addAction(R.drawable.ic_action_snooze, getString(R.string.alarm_alert_snooze_disabled_text), pendingSnooze)
+                addAction(R.drawable.ic_action_dismiss, getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
+            }
 
-            addAction(R.drawable.ic_action_snooze, getString(R.string.alarm_alert_snooze_text), pendingSnooze)
-            addAction(R.drawable.ic_action_dismiss, getString(R.string.alarm_alert_dismiss_text), pendingDismiss)
             setDefaults(Notification.DEFAULT_LIGHTS)
         }
 

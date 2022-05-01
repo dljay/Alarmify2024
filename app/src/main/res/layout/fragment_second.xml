@@ -169,7 +169,7 @@
                         android:checked="false"
                         android:text="@string/chip6_Misc"
                         app:checkedIcon="@drawable/chip_check_empty_background"
-                        app:chipIcon="@drawable/chip_misc_lightbulb"
+                        app:chipIcon="@drawable/chip_misc_lightbulb_2"
                         app:chipIconVisible="true">
 
                     </com.google.android.material.chip.Chip>

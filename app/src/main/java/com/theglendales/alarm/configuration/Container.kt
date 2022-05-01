@@ -141,7 +141,7 @@ fun startKoin(context: Context): Koin {
         // 내가 추가 -->
 
         //single<VHolderUiHandler> { VHolderUiHandler(context = context)}
-        single<FirebaseRepoClass> { FirebaseRepoClass()}
+        single<FirebaseRepoClass> { FirebaseRepoClass(context = context)}
         single<MySharedPrefManager> {MySharedPrefManager(context = context)}
         single<DiskSearcher> { DiskSearcher(context = context)}
         single<SpinnerAdapter> { SpinnerAdapter(context = context) }

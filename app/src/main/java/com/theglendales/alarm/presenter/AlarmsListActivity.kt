@@ -67,7 +67,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f13 22/4/29 (Sun) 09:20am [Switch On/Off or Swipe-Delete 살짝 보이고 바로 -> SecondFrag 이동시 CollapsingToolbar 확장되서 나오는 현상 발견. 수정 후!!]
+// 30708V1.18e35f15 22/4/29 (Sun) 09:14pm [Firebase Appcheck 하다 멈춤. Debug Build..]
 
 //Issue)
 

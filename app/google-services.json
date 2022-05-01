@@ -7,12 +7,20 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:407761012217:android:6b265b91adb5e43ced2928",
+        "mobilesdk_app_id": "1:407761012217:android:0e05fe897895e378ed2928",
         "android_client_info": {
           "package_name": "com.theglendales.alarm"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "407761012217-h7jk1n591vvo6s3p0cndsjcgraej0g8p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.theglendales.alarm",
+            "certificate_hash": "19d9dea80b8b265d9856dae1092c4ccfdcd78c46"
+          }
+        },
         {
           "client_id": "407761012217-502o5uinomjgdhpj2tpa95fehdjqt4d5.apps.googleusercontent.com",
           "client_type": 3

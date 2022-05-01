@@ -1,8 +1,12 @@
 package com.theglendales.alarm.jjfirebaserepo
 
+import android.content.Context
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.BuildConfig
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -10,14 +14,24 @@ import com.google.firebase.firestore.QuerySnapshot
 
 private const val TAG ="FBRepoClass"
 private const val FB_COLLECTION_NAME="ringtones"
-class FirebaseRepoClass
+class FirebaseRepoClass(val context: Context)
 {
     private val firebaseFSInstance : FirebaseFirestore = FirebaseFirestore.getInstance()
     lateinit var dbCollectionReference: CollectionReference
 
     //1) Get all data from Firebase . 2) 코루틴 사용 안하고 callback 사용 3) google.
     fun getPostList(): Task<QuerySnapshot> { // return type: Task snapshot!
+        // A) APP CHECK todo: '22 5.1 일단은 Debug Build 와 기타 빌드 Variant 안쓰게 설정하고 넣어보기.
+        // App check Debug: https://firebase.google.com/docs/app-check/web/debug-provider
+     /*   try {
+            FirebaseApp.initializeApp(context) // Init FB
+            val fbAppCheck = FirebaseAppCheck.getInstance()
+            fbAppCheck.installAppCheckProviderFactory (SafetyNetAppCheckProviderFactory.getInstance())
+        }catch (e: Exception) {
+            Log.d(TAG, "getPostList: Unable to app Check! ㅆㅂ! e=$e")
+        }*/
 
+        // B) 자료 받기.
         dbCollectionReference = firebaseFSInstance.collection(FB_COLLECTION_NAME)
 //        dbCollectionReference.whereArrayContains(badgeStrArray, "A, B")
         

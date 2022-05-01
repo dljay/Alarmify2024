@@ -159,7 +159,9 @@ dependencies {
     kapt ("android.arch.lifecycle:compiler:1.1.1")
     kapt ("com.github.bumptech.glide:compiler:4.12.0")
     //Firebase
-    implementation("com.google.firebase:firebase-firestore:24.0.1")
+    implementation("com.google.firebase:firebase-firestore:24.1.1")
+    //Firebase AppCheck
+    implementation("com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta06")
     //SlidingUpPanel
     implementation("com.sothree.slidinguppanel:library:3.4.0")
     //Lottie

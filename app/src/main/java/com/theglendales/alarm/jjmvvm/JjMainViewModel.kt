@@ -51,7 +51,8 @@ class JjMainViewModel : ViewModel() {
 
     init {
         Log.d(TAG, "init: called.. ^^ Thread=${Thread.currentThread().name} ")
-        refreshFbAndIAPInfo()
+        // 1) Firebase APP CHECK [앱 쓰는 사람만 Cloud Storage 등 쓸 수 있도록]
+        refreshFbAndIAPInfo() // 2) APP CHECK 이 끝나면 이제 Data 갖고오기.
     }
 //********** FB ->rtList -> IAP -> rtListPlusIAPInfo -> LiveData(rtInTheCloudList) -> SecondFrag-> UI 업데이트 : ViewModel 최초 로딩시 & Spinner 로 휘리릭~ 새로고침 할 때 아래 function 이 불림.
     fun refreshFbAndIAPInfo() {

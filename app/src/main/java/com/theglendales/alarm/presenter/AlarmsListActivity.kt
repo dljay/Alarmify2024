@@ -67,16 +67,17 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f15 22/4/29 (Sun) 10:47pm [SecondFrag- CHIP ICON 변경 완료]
-// Crashlytics 넣기전.
+// 30708V1.18e35f16 22/4/29 (Sun) 11:17pm [SecondFrag- CHIP ICON 변경 완료]
+// Crashlytics 넣었음. 테스트 완료.
 //Issue)
-
-
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
-// Change App ICON 이것저것으로 바꿔보기.
-// Firebase Security Rules + APP CHECK // Storage Rules. --> 직접 링크갖고 다운로드 테스트 해보기.
-// *Crashlytics / Testing 이해하기.
+//FREE: FB 에 isFree 항목 추가? iapName 으로 못 찾으며->isFRee 확인 ->  리스트에 추가  -> FREE 인거지 ... F1001 뭐 이런식으로. // 바깥에 [FREE] 표시하는게 득?해?
+//Firebase Performance Monitoring
+//Btm Nav- 약간의 Gradient 넣기 (앱 Calm 느낌) --- Gradient - ICON 사이사이? Glowing? Flaticon 가서 그래픽 괜찮은 놈으로 찾아볼것.
+//navigationBar Color (List Activity) [최하단]
+
+
 
 //Alarm App ICON, APP NAME: Alarmify , AlarmXPRESS
 // Purchase 창 뜨고 앱 꺼지는것.

@@ -128,7 +128,7 @@ class JjMainViewModel : ViewModel() {
                         val rtListPlusIAPInfo = iapV3.e_getFinalList() // gets immutable List!
                         unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 SecondFrag 활용)
                         _rtInTheCloudList.value = rtListPlusIAPInfo // !!! update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
-                        Log.d(TAG, "refreshFbAndIAPInfo: (3-b) <<<<<<<<<getRtList: updated LiveData!")
+                        Log.d(TAG, "refreshFbAndIAPInfo: (3-b) <<<<<<<<<getRtList: updated LiveData! \n\n [*[*[*[* rtListPlusIAPInfo=$rtListPlusIAPInfo *]*]*]*]")
 
             //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
                         // a), b), c) 는 모두 동시 실행(Parallel)

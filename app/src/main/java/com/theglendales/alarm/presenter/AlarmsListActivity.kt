@@ -67,25 +67,27 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f13 22/4/29 (Fri) 10:06pm [Switch On/Off or Swipe-Delete 살짝 보이고 바로 -> SecondFrag 이동시 CollapsingToolbar 확장되서 나오는 현상 발견. 수정 후!!]
+// 30708V1.18e35f13 22/4/29 (Sun) 09:20am [Switch On/Off or Swipe-Delete 살짝 보이고 바로 -> SecondFrag 이동시 CollapsingToolbar 확장되서 나오는 현상 발견. 수정 후!!]
 
 //Issue)
 
 
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
+// Change App ICON 이것저것으로 바꿔보기.
+// Firebase Security Rules + APP CHECK // Storage Rules. --> 직접 링크갖고 다운로드 테스트 해보기.
+// *Crashlytics / Testing 이해하기.
 
-//Alarm App ICON
+//Alarm App ICON, APP NAME: Alarmify , AlarmXPRESS
 // Purchase 창 뜨고 앱 꺼지는것.
 // xx 시간 후 알람- > Toast->Snackbar 로..
-// Snooze -> Rings in 10 mins.. SnackBar.
+
 //0. Install Alarm 테스트 하기 // //**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
 
 
 // ListFrag 에서 diskScanNeeded() 인데 -> 단순히 파일하나가 없을때는 RebuildingDb Completed 말고 -> "Please hit Ringtones Tab to recover missing ringtone(s)."
 //3. -> STR 한글은 바꿔도 될듯..
-// Firebase Security Rules
-// *Crashlytics / Testing 이해하기.
+
 //4.language String -- Hold the Button 의 경우 한국말... 어마어마하게 많은 작업일것으로 예상.
 //5. 최적화. 뭐가 자꾸 느리게 하는지 지울것? -> Recycler -- NotifyDataSetChanged(?) or Adapter? 가 훨씬 빠른데???
 

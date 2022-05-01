@@ -67,8 +67,8 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f15 22/4/29 (Sun) 09:14pm [Firebase Appcheck 하다 멈춤. Debug Build..]
-
+// 30708V1.18e35f15 22/4/29 (Sun) 10:47pm [SecondFrag- CHIP ICON 변경 완료]
+// Crashlytics 넣기전.
 //Issue)
 
 
@@ -247,6 +247,8 @@ class AlarmsListActivity : AppCompatActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+        //throw RuntimeException("Crashlytics Test")
+
         Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
         window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_1)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 

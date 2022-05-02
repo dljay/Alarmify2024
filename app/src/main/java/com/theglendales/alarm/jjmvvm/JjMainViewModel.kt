@@ -21,7 +21,6 @@ import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.function.Predicate
 
 /**
  * 쫑 한말씀: This ViewModel should follow Activity(AlarmsListActivity)'s life cycle.
@@ -62,9 +61,9 @@ class JjMainViewModel : ViewModel() {
             if(it.isSuccessful)
             {
             //1)Fb 에서 RtList를 받아옴 [유료+무료]
-                val rtFreeAndPaid = it.result!!.toObjects(RtInTheCloud::class.java) // [전체리스트= 유료+무료]
-                val rtFreeOnly = rtFreeAndPaid.filter { rtInTheCloud -> rtInTheCloud.iapName.contains("f") } // [무료 리스트- iapName 이 'F' 를 포함]
-                val rtPaidOnly = rtFreeAndPaid.filter { rtInTheCloud -> rtInTheCloud.iapName.contains("p") }.toMutableList() // [유료 리스트- iapName 이 'P' 를 포함] -> MyIapHelerV3 로 전달-> 가격/Purchase 정보를 채워줌]
+                val rtFromFireBase = it.result!!.toObjects(RtInTheCloud::class.java) // [전체리스트= 유료+무료]
+                val rtFreeOnly = rtFromFireBase.filter { rtInTheCloud -> rtInTheCloud.iapName.contains("f") } // [무료 리스트- iapName 이 'F' 를 포함]
+                val rtPaidOnly = rtFromFireBase.filter { rtInTheCloud -> rtInTheCloud.iapName.contains("p") }.toMutableList() // [유료 리스트- iapName 이 'P' 를 포함] -> MyIapHelerV3 로 전달-> 가격/Purchase 정보를 채워줌]
                     
 
                 Log.d(TAG, "refreshFbAndIAPInfo: (1) Got the list from FB!! ")
@@ -131,11 +130,14 @@ class JjMainViewModel : ViewModel() {
                 //3-b) *** 에러 없으면 '최종 리스트' iapV3-E) iap 정보(price/purchaseBool) 입힌 리스트를 받아서 -> LiveData 전달 + sharedPref 에 저장.
                     else //에러 없으면
                     {
-                        val rtListPlusIAPInfo = iapV3.e_getFinalList() // gets immutable List! //todo: 2) FreeAndPaid_with_IAPInfo ->
-                        // todo: 3) rtFree 까지 더해서 rtPaid_Free_IapInfo
-                        unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 SecondFrag 활용)
-                        _rtInTheCloudList.value = rtListPlusIAPInfo // !!! update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
-                        Log.d(TAG, "refreshFbAndIAPInfo: (3-b) <<<<<<<<<getRtList: updated LiveData! \n\n [*[*[*[* rtListPlusIAPInfo=$rtListPlusIAPInfo *]*]*]*]")
+                        val rtPaidPlusIAPInfo = iapV3.e_getFinalList() // [유료+ Price/Purchase BOOL 등 기입된 리스트]
+                        val rtFinalList = rtFreeOnly + rtPaidPlusIAPInfo // [유료(IAP 정보 포함)+무료 리스트]
+
+                        Log.d(TAG, "refreshFbAndIAPInfo: rtFinalList= $rtFinalList")
+
+                        unfilteredRtList = rtFinalList // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 SecondFrag 활용)
+                        _rtInTheCloudList.value = rtFinalList // !!! update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+                        Log.d(TAG, "refreshFbAndIAPInfo: (3-b) <<<<<<<<<getRtList: updated LiveData! \n\n [*[*[*[* rtListPlusIAPInfo=$rtFinalList *]*]*]*]")
 
             //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
                         // a), b), c) 는 모두 동시 실행(Parallel)
@@ -144,8 +146,9 @@ class JjMainViewModel : ViewModel() {
 //[Background Thread]   //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
                             launch {
                                 Log.d(TAG, "refreshFbAndIAPInfo: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
-                                mySharedPrefManager.saveRtInTheCloudList(rtListPlusIAPInfo)
+                                mySharedPrefManager.saveRtInTheCloudList(rtFinalList)
                             }
+                            //todo: 아래 두가지 FREE LIST 도 동일하게 적용 시켜주기 (필요한 경우)
 //[Background Thread]   //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
                             launch {
                                 Log.d(TAG, "refreshFbAndIAPInfo: (4-b) xxxxx deleting where purchaseBool=false. Thread=${Thread.currentThread().name}")

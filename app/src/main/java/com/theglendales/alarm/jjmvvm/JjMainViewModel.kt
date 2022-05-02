@@ -21,6 +21,7 @@ import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.function.Predicate
 
 /**
  * 쫑 한말씀: This ViewModel should follow Activity(AlarmsListActivity)'s life cycle.
@@ -60,9 +61,14 @@ class JjMainViewModel : ViewModel() {
         firebaseRepoInstance.getPostList().addOnCompleteListener {
             if(it.isSuccessful)
             {
-            //1)Fb 에서 RtList를 받아옴
-                val rtList = it.result!!.toObjects(RtInTheCloud::class.java)
-                Log.d(TAG, "refreshFbAndIAPInfo: (1) Got the list from FB!!")
+            //1)Fb 에서 RtList를 받아옴 [유료+무료]
+                val rtFreeAndPaid = it.result!!.toObjects(RtInTheCloud::class.java) // [전체리스트= 유료+무료]
+                val rtFreeOnly = rtFreeAndPaid.filter { rtInTheCloud -> rtInTheCloud.iapName.contains("f") } // [무료 리스트- iapName 이 'F' 를 포함]
+                val rtPaidOnly = rtFreeAndPaid.filter { rtInTheCloud -> rtInTheCloud.iapName.contains("p") }.toMutableList() // [유료 리스트- iapName 이 'P' 를 포함] -> MyIapHelerV3 로 전달-> 가격/Purchase 정보를 채워줌]
+                    
+
+                Log.d(TAG, "refreshFbAndIAPInfo: (1) Got the list from FB!! ")
+                Log.d(TAG, "refreshFbAndIAPInfo: rtFreeOnly.size=${rtFreeOnly.size}, \n\n rtPaidOnly.size= ${rtPaidOnly.size}")
             //2)RtList 를 -> IAP 에 전달
                 //Exception handler -> iapParentJob 에서 문제가 생겼을 때 Exception 을 받고 -> 아래 iapParentJob.invokeOnCompletion 에서 sharedPref 에 있는 데이터를 읽기.
 
@@ -79,7 +85,7 @@ class JjMainViewModel : ViewModel() {
                     Log.d(TAG, "refreshFbAndIAPInfo: (2) RtList ->IAP // Thread=${Thread.currentThread().name}")
 
                 //iapV3-B) Fb 에서 받은 리스트를 -> IAP 에 전달 //** Coroutine 안에서는 순차적(Sequential) 으로 모두 진행됨.
-                    iapV3.b_feedRtList(rtList)
+                    iapV3.b_feedRtList(rtPaidOnly)
                 //iapV3-C) BillingClient - startConnection!
                     iapV3.c_prepBillingClient()
 
@@ -125,7 +131,8 @@ class JjMainViewModel : ViewModel() {
                 //3-b) *** 에러 없으면 '최종 리스트' iapV3-E) iap 정보(price/purchaseBool) 입힌 리스트를 받아서 -> LiveData 전달 + sharedPref 에 저장.
                     else //에러 없으면
                     {
-                        val rtListPlusIAPInfo = iapV3.e_getFinalList() // gets immutable List!
+                        val rtListPlusIAPInfo = iapV3.e_getFinalList() // gets immutable List! //todo: 2) FreeAndPaid_with_IAPInfo ->
+                        // todo: 3) rtFree 까지 더해서 rtPaid_Free_IapInfo
                         unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 SecondFrag 활용)
                         _rtInTheCloudList.value = rtListPlusIAPInfo // !!! update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
                         Log.d(TAG, "refreshFbAndIAPInfo: (3-b) <<<<<<<<<getRtList: updated LiveData! \n\n [*[*[*[* rtListPlusIAPInfo=$rtListPlusIAPInfo *]*]*]*]")

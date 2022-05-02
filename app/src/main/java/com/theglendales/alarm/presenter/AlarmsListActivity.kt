@@ -67,7 +67,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f17 22/4/29 (Mon) 10:14pm [FREE 리스트 넣기 수정전!!]
+// 30708V1.18e35f18 22/4/29 (Mon) 10:14pm [FREE 리스트 넣기 수정중-(1)]
 // Crashlytics 넣었음. 테스트 완료.
 //Issue)
 // 그 후 Docs 보고 FIX/Update 점검.

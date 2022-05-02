@@ -67,15 +67,15 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f16 22/4/29 (Sun) 11:17pm [SecondFrag- CHIP ICON 변경 완료]
+// 30708V1.18e35f17 22/4/29 (Mon) 10:14pm [SecondFrag- CHIP ICON 변경 완료]
 // Crashlytics 넣었음. 테스트 완료.
 //Issue)
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
 //FREE: FB 에 isFree 항목 추가? iapName 으로 못 찾으며->isFRee 확인 ->  리스트에 추가  -> FREE 인거지 ... F1001 뭐 이런식으로. // 바깥에 [FREE] 표시하는게 득?해?
 //Firebase Performance Monitoring
-//Btm Nav- 약간의 Gradient 넣기 (앱 Calm 느낌) --- Gradient - ICON 사이사이? Glowing? Flaticon 가서 그래픽 괜찮은 놈으로 찾아볼것.
-//navigationBar Color (List Activity) [최하단]
+//Btm Nav- 약간의 Gradient 넣었음(O) (앱 Calm 느낌) --- ** a) ICON 좀 더 돋보이게 (현재 너무 심심!!) b) 선택되었을 때는 뭔가 돋보이는 아이콘으로+조금 크게(글자+ICON)
+//navigationBar Color (List Activity) (O) Gradient 에서 이어지는 색으로 바꾸긴 했음. 좀 더 변화줘도 될수도..? [최하단]
 
 
 
@@ -251,7 +251,7 @@ class AlarmsListActivity : AppCompatActivity() {
         //throw RuntimeException("Crashlytics Test")
 
         Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
-        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_1)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
+        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_system_navbar_color)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 
 
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))

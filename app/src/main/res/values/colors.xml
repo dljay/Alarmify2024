@@ -20,6 +20,9 @@
             <color name="jj_layered_bg_color">#495468</color>
             <color name="jj_main_bg_color">#091627</color>
 
+        <!-- navigationBar (최하단 < O [] 부분 ) 칼라 -->
+            <color name="jj_system_navbar_color">#25354C</color>
+
 
         <!-- bg_color_1 Btm Nav 색/DetailsFrag 하단 색 -->
 <!--            <color name="jj_bg_color_1">#2b3649</color>-->

@@ -67,14 +67,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f17 22/4/29 (Mon) 10:14pm [SecondFrag- CHIP ICON 변경 완료]
+// 30708V1.18e35f17 22/4/29 (Mon) 10:14pm [FREE 리스트 넣기 수정전!!]
 // Crashlytics 넣었음. 테스트 완료.
 //Issue)
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
 //FREE: FB 에 isFree 항목 추가? iapName 으로 못 찾으며->isFRee 확인 ->  리스트에 추가  -> FREE 인거지 ... F1001 뭐 이런식으로. // 바깥에 [FREE] 표시하는게 득?해?
 //Firebase Performance Monitoring
-//Btm Nav- 약간의 Gradient 넣었음(O) (앱 Calm 느낌) --- ** a) ICON 좀 더 돋보이게 (현재 너무 심심!!) b) 선택되었을 때는 뭔가 돋보이는 아이콘으로+조금 크게(글자+ICON)
+//Btm Nav- 약간의 Gradient 넣었음(O) -> [약간 앱 Calm 느낌 나네 ^^;---] ** a) ICON 좀 더 돋보이게 (현재 너무 심심!!) b) 선택되었을 때는 뭔가 돋보이는 아이콘으로+조금 크게(글자+ICON)
 //navigationBar Color (List Activity) (O) Gradient 에서 이어지는 색으로 바꾸긴 했음. 좀 더 변화줘도 될수도..? [최하단]
 
 

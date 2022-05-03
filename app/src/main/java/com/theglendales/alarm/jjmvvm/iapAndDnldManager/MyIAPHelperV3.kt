@@ -12,7 +12,6 @@ import com.theglendales.alarm.jjmvvm.util.JjServiceUnAvailableException
 import com.theglendales.alarm.jjmvvm.util.ToastMessenger
 import com.theglendales.alarm.model.mySharedPrefManager
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.delay
 import java.io.File
 import java.io.IOException
 import kotlin.Exception
@@ -49,7 +48,7 @@ class MyIAPHelperV3(val context: Context ) {
 
     private val toastMessenger: ToastMessenger by globalInject() // ToastMessenger
 //IAP
-    var rtListPlusIAPInfo= mutableListOf<RtInTheCloud>() // Fb 에서 받은 RtList 에 여기서 구매정보 확인후 IAP info 를 더해줄 리스트.
+    var rtPaidWithIAPInfo= mutableListOf<RtInTheCloud>() // Fb 에서 받은 RtList 에 여기서 구매정보 확인후 IAP info 를 더해줄 리스트.
     private var billingClient: BillingClient? = null
 
 //복원(Multi DNLD) 및 삭제 관련
@@ -117,7 +116,7 @@ class MyIAPHelperV3(val context: Context ) {
     fun b_feedRtList(rtListFromFb: MutableList<RtInTheCloud>) {
         Log.d(TAG, "b_feedRtList: <B> Called")
         
-        rtListPlusIAPInfo = rtListFromFb
+        rtPaidWithIAPInfo = rtListFromFb
     }
 
     suspend fun c_prepBillingClient() {
@@ -179,7 +178,7 @@ class MyIAPHelperV3(val context: Context ) {
         if (listOfPurchases.isNotEmpty()) // [유효한 모든 구매건. Refund 된 경우 현 리스트에서 사라짐!]
         {
             for (purchase in listOfPurchases){
-                val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
+                val indexOfRtObj: Int =rtPaidWithIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
                 if(indexOfRtObj!=-1 && purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged){
                     Log.d(TAG, "d1_B_checkUnacknowledged: $#%#$%@$#@@%@#%%#% iapName= ${purchase.skus[0]}, 이럴수가!!!! acknowledge 를 부여할 대상이 있따니!!@$# @4# @#%@#%@#%#@")
@@ -191,11 +190,11 @@ class MyIAPHelperV3(val context: Context ) {
                                 // ############################## 신규 구매 정상적으로 완료 #######################
                                 //[구입인정] + purchaseBool 값 변경 반영(true)
                                 Log.d(TAG, "d1_B_checkUnacknowledged: [후속] 구매인정 부가 했음!!")
-                                rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
+                                rtPaidWithIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
                                 continuation.resume(Unit) // isPurchaseCompleted =true 로 모든 구입 절차가 끝났음을 알림.
                             } else {
                                 //BillingResult 문제로 -> [후속 구입인정 부가 실패 X] + purchaseBool 값 변경 반영(false)
-                                rtListPlusIAPInfo[indexOfRtObj].purchaseBool =false// [!!Bool 값 변경!!] default 값은 어차피 false ..혹시 몰라서 넣어줌.
+                                rtPaidWithIAPInfo[indexOfRtObj].purchaseBool =false// [!!Bool 값 변경!!] default 값은 어차피 false ..혹시 몰라서 넣어줌.
                                 continuation.resume(Unit) // 그럼에도 그냥 나머지 IAP 확인 절차 진행 (최악의 경우에 예전 구입인정 못 받은 한 놈 안 걸리는것이니..)
                                 Log.d(TAG, "d1_B_checkUnacknowledged: [후속] 구매 인정 부가 실패!!! XXf")
                                 //continuation.resumeWithException(Exception("d1_B_checkUnacknowledged 부여중 Error 흐음. billingResult.responseCode= ${billingResult.responseCode} "))
@@ -209,7 +208,10 @@ class MyIAPHelperV3(val context: Context ) {
     }
 
     fun d1_C_addPurchaseBoolToList(listOfPurchases: List<Purchase>) {
+        // [1] <Free 건에 대해서 처리: multiDnld 리스트, rtListPlusIAPInfo 에 purchase Bool 반영>
 
+
+        // [2] <유료 건에 대해서 처리: multiDnld 리스트, rtListPlusIAPInfo 에 purchase Bool 반영>
         if (listOfPurchases.isNotEmpty()) // 구매건이 한 개 이상. // [살아있는 모든 구매건. Refund 된 경우 현 리스트에서 사라짐!]
         {
             //인도놈은 일단 여기서 handlePurchases(list<Purchase>) 넣었지만 우리는 그냥 refund Play Console 에서 하자마자 -> 바로 purchaesList 에서 빠지고 RCV 에 반영..대박..
@@ -224,7 +226,7 @@ class MyIAPHelperV3(val context: Context ) {
                  */
 
                 ///** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
-                val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
+                val indexOfRtObj: Int =rtPaidWithIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
                 // 우리가 구매한 물품이 현재 rtListPlusIAPInfo 에 없는 물품이면 (ex. p1,p7 등 아예 PlayConsole 카탈로그에서 Deactivate 시킨 물품인 경우) -> 다음 for loop 으로 넘어가기
                 if (purchase.quantity != 1 || indexOfRtObj < 0) { // 갯수가 1개 초과 or rtListPlusIAPInfo 리스트에 우리가 찾는 rtObj 이 없는 경우
@@ -239,7 +241,7 @@ class MyIAPHelperV3(val context: Context ) {
                     continue // 다음 for loop 의 iteration (purchase) 로 이동(?)
                 }
                 // 정상적으로 item 을 리스트에서 찾았다는 가정하에 다음을 진행->
-                val rtObject = rtListPlusIAPInfo[indexOfRtObj]
+                val rtObject = rtPaidWithIAPInfo[indexOfRtObj]
                 val trackID = rtObject.id
                 val iapName = rtObject.iapName//purchase.skus[0]
                 val fileSupposedToBeAt =context.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
@@ -252,9 +254,9 @@ class MyIAPHelperV3(val context: Context ) {
                 if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED)
                 {
                     Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-2> ☺ PurchaseState is PURCHASED for trackID=$trackID, itemName=$iapName")
-                    rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
-                    rtListPlusIAPInfo[indexOfRtObj].orderID = purchase.orderId
-                    rtListPlusIAPInfo[indexOfRtObj].purchaseTime = purchase.purchaseTime
+                    rtPaidWithIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
+                    rtPaidWithIAPInfo[indexOfRtObj].orderID = purchase.orderId
+                    rtPaidWithIAPInfo[indexOfRtObj].purchaseTime = purchase.purchaseTime
                     //*******구매는 확인되었으나 item(ex p1001.rta 등) 이 phone 에 없다 (삭제 혹은 재설치?)
                     if (!myDiskSearcher.isSameFileOnThePhone(fileSupposedToBeAt)) {
                         multiDNLDNeededList.add(rtObject)
@@ -281,14 +283,14 @@ class MyIAPHelperV3(val context: Context ) {
             val purchasedRts = listFromSharedPref.filter { rtObj -> rtObj.purchaseBool }
         // C) <D1-C-1> 과 동일한 작업
             for (purchasedRt in purchasedRts) {
-                val indexOfRtObj: Int =rtListPlusIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchasedRt.iapName } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
+                val indexOfRtObj: Int =rtPaidWithIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchasedRt.iapName } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
                 val iapName = purchasedRt.iapName//purchase.skus[0]
                 val fileSupposedToBeAt =context.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
-                val rtObject = rtListPlusIAPInfo[indexOfRtObj]
+                val rtObject = rtPaidWithIAPInfo[indexOfRtObj]
 
                 if(indexOfRtObj != -1) {
         //D) SharedPref 로 받은 리스트에서 구입=true 로 되있던 놈들은 rtlistPlusIAPInfo 에도 .purchaseBool = true 로 변경 => 추후 RcV 에 Display 됨+ Google Play 에러로 안 샀다고 판단하여 파일들 삭제 되는것 방지
-                    rtListPlusIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
+                    rtPaidWithIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
                     Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-5> [SharedPref 리스트에 근거함] iapName=$iapName 의 purchaseBool=true 로 한다. ")
                     //*******구매는 확인되었으나 item(ex p1001.rta 등) 이 phone 에 없다 (삭제 혹은 재설치?)
                     if (!myDiskSearcher.isSameFileOnThePhone(fileSupposedToBeAt)) {
@@ -300,7 +302,7 @@ class MyIAPHelperV3(val context: Context ) {
 
         }
     // **** D1-C-6 모든건에 대해 정리가 끝났으니 purchaseBool 이 false 인 놈들취합
-        purchaseFalseRtList = rtListPlusIAPInfo.filter { rtObj -> !rtObj.purchaseBool }.toMutableList()
+        purchaseFalseRtList = rtPaidWithIAPInfo.filter { rtObj -> !rtObj.purchaseBool }.toMutableList()
         Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-6> ************ iap_D1_B_addPurchaseBoolToList() 끝나는지점 *****")
     }
 
@@ -308,7 +310,7 @@ class MyIAPHelperV3(val context: Context ) {
     suspend fun d2_A_addPriceToList(): List<SkuDetails> {
         Log.d(TAG, "d2_A_addPriceToList: <D2-A> called. ThreadName=${Thread.currentThread().name}")
         val itemNameList = ArrayList<String>()
-        rtListPlusIAPInfo.forEach {rtObject -> itemNameList.add(rtObject.iapName)}
+        rtPaidWithIAPInfo.forEach { rtObject -> itemNameList.add(rtObject.iapName)}
     // rtObj 의 IAPName 으로 구성된 itemNameList 를 만들고 -> PlayConsole 에 등록된 동일한 iapName 으로 확인 후 -> 아래 skuDetailsList 가 만들어짐!
         // 즉, 현재 제공하는 iapName 과 매칭하는 PlayConsole Product 가 없으면 -> skuDetailsList 는 null 이 된다.
         val myParams = SkuDetailsParams.newBuilder()
@@ -322,18 +324,19 @@ class MyIAPHelperV3(val context: Context ) {
                 } else {
                     Log.d(TAG, "d2_A_addPriceToList: <D2-A> Finished(X) - Error! XXX loading price for items")
                     continuation.resumeWithException(Exception("<D2-A> Error. responseCode= ${queryResult.responseCode} "))
+
                 }
 
             }
         }
-
     }
+
     fun d2_B_addPriceToList(skuDetailsList: List<SkuDetails>) {
         Log.d(TAG, "d2_B_addPriceToList: skuDetailsList = $skuDetailsList")
         for(skuDetails in skuDetailsList)
         {
             //something better than .single? -> 근데 실제 연산 속도가 개당 .001 초니깐
-            rtListPlusIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
+            rtPaidWithIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
             Log.d(TAG,"d2_B_addPriceToList : <D2-B> item title=${skuDetails.title} b)item price= ${skuDetails.price}," +
                     " c)item sku= ${skuDetails.sku}")
         }
@@ -344,7 +347,7 @@ class MyIAPHelperV3(val context: Context ) {
     fun e_getFinalList(): List<RtInTheCloud> {
         Log.d(TAG, "e_getFinalList: <E> called")
     //Create a complete new list (그렇지 않으면 object 의 memory 값만 복사한 list 가 생성 -> rcvAdapter 안의 List(rtPlusIapInfoList) 도 같이 변함!! -> DiffUtil 아예 안 먹히는 문제!!
-        val finalList = rtListPlusIAPInfo.map { it.copy() } //여기서 .map 으로 개별 객체를 .copy() 해줄 때 deep copy 가 된다 (단순 메모리 address reference 가 아님)
+        val finalList = rtPaidWithIAPInfo.map { it.copy() } //여기서 .map 으로 개별 객체를 .copy() 해줄 때 deep copy 가 된다 (단순 메모리 address reference 가 아님)
         return finalList //mutable -> immutable 로! //참고로 .map{} 무지 빠름. 시간 소요 전혀 없음.
     }
     fun f_getPurchaseFalseRtList() = purchaseFalseRtList
@@ -462,6 +465,8 @@ class MyIAPHelperV3(val context: Context ) {
         }
     }
 
+
+
 // ** Utility Methods
     //결재창 에러 대응용도: Map 을 다 비워주고 Exception 을 던져 대기중인 oldPurchaseDeferred 가 대기하지 않도록 한다.
     private fun emptyMapAndThrowExceptionToDeferred(errorReason: String) { // Map 에 등록된 모든걸 삭제+ 개별 Deferred 구매건에 Exception 을 주며 i_launchBillingFlow() 에서 return 이 진행가능하게끔 한다!
@@ -479,16 +484,16 @@ class MyIAPHelperV3(val context: Context ) {
     }
     
     //Reflect purchase to the list: 정상 구매가 이뤄진 경우 List 두군데에 반영=> (어차피 refresh 하면 다 반영 되지만 굳이 billingClient 연결 안하고도 즉각 RcV 반영 위해)
-    private fun reflectPurchaseToOurLists(isOkayToOwn: Boolean, rtReceived: RtInTheCloud) {
+    fun reflectPurchaseToOurLists(isOkayToOwn: Boolean, rtReceived: RtInTheCloud) {
         /*Log.d(TAG, "reflectPurchaseToOurLists:[BEFORE] rtListPlusIAPInfo= $rtListPlusIAPInfo")
         Log.d(TAG, "reflectPurchaseToOurLists: [BEFORE] purchaseFalseRtList = $purchaseFalseRtList")*/
 
         Log.d(TAG, "reflectPurchaseToOurLists: isOkayToOwn=$isOkayToOwn")
         //a) rtListPlusIAPInfo 에서 해당 rt 를 찾아 -> purchaseBool -> true/false 로 변경
 
-        val index1 = rtListPlusIAPInfo.indexOf(rtReceived)
+        val index1 = rtPaidWithIAPInfo.indexOf(rtReceived)
         if(index1 != -1) {
-            rtListPlusIAPInfo[index1].purchaseBool = isOkayToOwn // 문제는 여기서 purchaseBool 을 변경 -> rcVAdapter rtPlustIapInfoList 도 자동으로 변경되어있음 -> DiffUtil() 안 먹힘.
+            rtPaidWithIAPInfo[index1].purchaseBool = isOkayToOwn // 문제는 여기서 purchaseBool 을 변경 -> rcVAdapter rtPlustIapInfoList 도 자동으로 변경되어있음 -> DiffUtil() 안 먹힘.
 
         }
         when(isOkayToOwn) {

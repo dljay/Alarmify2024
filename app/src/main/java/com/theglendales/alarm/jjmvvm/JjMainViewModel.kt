@@ -43,6 +43,7 @@ class JjMainViewModel : ViewModel() {
     private val firebaseRepoInstance: FirebaseRepoClass by globalInject()
 
     private var unfilteredRtList: List<RtInTheCloud> = ArrayList()
+    private var rtFreeOnly: List<RtInTheCloud> = ArrayList()
     private val _rtInTheCloudList = MutableLiveData<List<RtInTheCloud>>() // Private& Mutable LiveData
     val rtInTheCloudList: LiveData<List<RtInTheCloud>> = _rtInTheCloudList // Public but! Immutable (즉 이놈은 언제나= _liveRtList)
 //Error reporting liveData:
@@ -62,12 +63,12 @@ class JjMainViewModel : ViewModel() {
             {
             //1)Fb 에서 RtList를 받아옴 [유료+무료]
                 val rtFromFireBase = it.result!!.toObjects(RtInTheCloud::class.java) // [전체리스트= 유료+무료]
-                val rtFreeOnly = rtFromFireBase.filter { rtInTheCloud -> rtInTheCloud.iapName.contains("f") } // [무료 리스트- iapName 이 'F' 를 포함]
+                rtFreeOnly = rtFromFireBase.filter { rtInTheCloud -> rtInTheCloud.iapName.contains("f") } // [무료 리스트- iapName 이 'F' 를 포함]
                 val rtPaidOnly = rtFromFireBase.filter { rtInTheCloud -> rtInTheCloud.iapName.contains("p") }.toMutableList() // [유료 리스트- iapName 이 'P' 를 포함] -> MyIapHelerV3 로 전달-> 가격/Purchase 정보를 채워줌]
                     
 
                 Log.d(TAG, "refreshFbAndIAPInfo: (1) Got the list from FB!! ")
-                Log.d(TAG, "refreshFbAndIAPInfo: rtFreeOnly.size=${rtFreeOnly.size}, \n\n rtPaidOnly.size= ${rtPaidOnly.size}")
+                Log.d(TAG, "refreshFbAndIAPInfo: rtFreeOnly=${rtFreeOnly}, \n\n rtPaidOnly.size= ${rtPaidOnly.size}")
             //2)RtList 를 -> IAP 에 전달
                 //Exception handler -> iapParentJob 에서 문제가 생겼을 때 Exception 을 받고 -> 아래 iapParentJob.invokeOnCompletion 에서 sharedPref 에 있는 데이터를 읽기.
 
@@ -91,10 +92,16 @@ class JjMainViewModel : ViewModel() {
                 //iapV3-D) Each .launch{} running on separate thread (동시 실행) //D1&D2 는 같이 시작하지만.. suspendCoroutine() 사용하니깐.. 진정한 의미에서 parallel 이 아님 -> 성능상 거의 차이 없음 그냥 둬!!!
                         //D) Parallel Job  - D1
                         launch {
+                        // $ 유료건
                             val listOfPurchases = iapV3.d1_A_getAllPurchasedList() // D1-A ** AsyncCallback 이 있어서 suspendCoroutine->continuation(result)-> d1_b(result)
                             iapV3.d1_B_checkUnacknowledged(listOfPurchases) //[D1-B] 기존 구매중 Network 이상 등으로 acknowledge 가 안된 물품들 처리
                             iapV3.d1_C_addPurchaseBoolToList(listOfPurchases)// D1-B => D1-C 되야함.
-
+                        // 무료건 -- sharedPref 에서 Purchase 정보 받아서 리스트 정보 업데이트
+                            rtFreeOnly.forEach { rtObj ->
+                                if(mySharedPrefManager.getFreeRtPurchaseInfo(rtObj)) { // 구입한 FREE ITEM 일 경우 (O)
+                                    rtObj.purchaseBool = true
+                                }
+                            }
                         }
                         //D) Parallel Job - D2
                         launch {
@@ -119,6 +126,7 @@ class JjMainViewModel : ViewModel() {
                             }
                             // 그 외 에러인 경우 (기기에 저장된) sharedPref 에서 받아서 -> LiveData 전달!
                             else -> {
+
                                 val listSavedOnPhone = mySharedPrefManager.getRtInTheCloudList() // get old list From SharedPref (없을땐 그냥 깡통 arrayListOf<RtInTheCloud>() 를 받음.
                                 unfilteredRtList = listSavedOnPhone
                                 _rtInTheCloudList.value = listSavedOnPhone // update LiveData -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
@@ -130,8 +138,9 @@ class JjMainViewModel : ViewModel() {
                 //3-b) *** 에러 없으면 '최종 리스트' iapV3-E) iap 정보(price/purchaseBool) 입힌 리스트를 받아서 -> LiveData 전달 + sharedPref 에 저장.
                     else //에러 없으면
                     {
-                        val rtPaidPlusIAPInfo = iapV3.e_getFinalList() // [유료+ Price/Purchase BOOL 등 기입된 리스트]
-                        val rtFinalList = rtFreeOnly + rtPaidPlusIAPInfo // [유료(IAP 정보 포함)+무료 리스트]
+                        val rtPaidWithIAPInfo = iapV3.e_getFinalList() // [유료+ Price/Purchase BOOL 등 기입된 리스트]
+                    // ** 최종 리스트! **
+                        val rtFinalList = rtFreeOnly + rtPaidWithIAPInfo // [유료(IAP 정보 포함)+무료 리스트]
 
                         Log.d(TAG, "refreshFbAndIAPInfo: rtFinalList= $rtFinalList")
 
@@ -148,19 +157,31 @@ class JjMainViewModel : ViewModel() {
                                 Log.d(TAG, "refreshFbAndIAPInfo: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
                                 mySharedPrefManager.saveRtInTheCloudList(rtFinalList)
                             }
-                            //todo: 아래 두가지 FREE LIST 도 동일하게 적용 시켜주기 (필요한 경우)
+
 //[Background Thread]   //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
                             launch {
                                 Log.d(TAG, "refreshFbAndIAPInfo: (4-b) xxxxx deleting where purchaseBool=false. Thread=${Thread.currentThread().name}")
-                                val neverPurchasedList = iapV3.f_getPurchaseFalseRtList()
+                                val nonPurchasedRtFree = rtFreeOnly.filter { rtObj -> !rtObj.purchaseBool }
+                                val neverPurchasedList = iapV3.f_getPurchaseFalseRtList() + nonPurchasedRtFree
+
                                 neverPurchasedList.forEach {
                                         rtInTheCloud -> myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
                                 }
                             }
 //[Background Thread]   //4-c) [멀티 DNLD] 구입했으나 폰에 없는 RT(s) list 확인-> 다운로드 (새로운 coroutine) (iapV3-G)
                             launch {
-                                val multiDnldNeededList= iapV3.g_getMultiDnldNeededList()
-                                if(multiDnldNeededList.size >0) {
+                                val missingFreeRtList: MutableList<RtInTheCloud> = ArrayList()
+                                // 무료건 - 샀는데 디스크에 없는 경우
+                                val purchasedFreeRtList = rtFreeOnly.filter { freeRtObj -> freeRtObj.purchaseBool }
+                                purchasedFreeRtList.forEach { freeRtObj ->
+                                    if (!myDiskSearcher.isSameFileOnThePhone_RtObj(freeRtObj)) {
+                                        missingFreeRtList.add(freeRtObj)
+                                    }
+                                }
+                                // 유료건과 리스트 합치기.
+                                val multiDnldNeededList = iapV3.g_getMultiDnldNeededList() + missingFreeRtList
+
+                                if(multiDnldNeededList.isNotEmpty()) {
                                     Log.d(TAG, "refreshFbAndIAPInfo: (4-c-1) [멀티] ↓ ↓ ↓ ↓ Launching multiDnld. Thread=${Thread.currentThread().name} ")
                                     val resultEnum: MultiDnldState = multiDownloaderV3.launchMultipleFileDNLD(multiDnldNeededList)
                                     // 여기서 Coroutine 이 기다려줌.
@@ -176,7 +197,6 @@ class JjMainViewModel : ViewModel() {
                         }
                     }
                 }
-
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.
                 Log.d(TAG, "<<<<<<<refreshFbAndIAPInfo: ERROR!! (个_个) Exception message: ${it.exception!!.message}")
                 //lottieAnimController(1) // this is useless at the moment..
@@ -229,84 +249,130 @@ class JjMainViewModel : ViewModel() {
 
     //1) 디스크에 파일이 이미 있으면 -> return // 유저 입장에서는 클릭-> 무반응 (어차피 유저가 보고있는RcV 리스트에 'Purchased' 아이콘이 뜬 상태여서 이게 맞는듯)
         if(myDiskSearcher.isSameFileOnThePhone_RtObj(rtObj)) return //
-    //2) 구입시도 Purchase Process -> [Sequential] & 최종적으로 Returns RtObj! (만약 구입 취소의 경우에는....)
+
+
 /*알파벳은 IAPV3 안 method 를 따라감*/
+    //2-A) 구입 FREE- 무료건 [바로 purchaseBool= true 로 바꿔주고 & 다운로드 직행] --> 여기서 종료
+        if(rtObj.iapName.contains("f")) {
+            Log.d(TAG, "onTrackClicked: 공짜 아이템 구입 클릭했음")
 
-        // [**SEQUENTIAL**] // 기존 구입 과정을 Coroutine 으로 blocking+순차적 라인으로 보기 쉽게 했음.
-        val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler - 원래 logd 넣어줬으나 그냥 뺴줌.
-        val purchaseParentJob = viewModelScope.launch(handler) {
+            mySharedPrefManager.saveFreeRtPurchaseInfo(rtObj) // 구입한 RT 의 정보를 sharedPref 에 저장
+            val rtIndex = rtFreeOnly.indexOf(rtObj)
+            rtFreeOnly[rtIndex].purchaseBool = true // List 에서 Purchase=TRUE 로 표시.
 
-            //_centerLoadingCircleSwitch.value = 0 //로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
-            triggerPurchaseLoadingCircle(0)
+            // 신규리스트 전달+ RcV 업뎃!
+            val rtPaidWithIAPInfo = iapV3.e_getFinalList() // [유료+ Price/Purchase BOOL 등 기입된 리스트]
+            val rtFinalList = rtFreeOnly + rtPaidWithIAPInfo // [유료(IAP 정보 포함)+무료 리스트]
+            unfilteredRtList = rtFinalList // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
+            _rtInTheCloudList.value = rtFinalList // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
 
-        //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
-            val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
-            val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
-        //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
+            //[***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
+            // a), b), c) 는 모두 동시 실행(Parallel)
+            viewModelScope.launch(Dispatchers.IO) {
+//[Background Thread]   //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
+                launch {
+                    Log.d(TAG,"onTrackClicked: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
+                    mySharedPrefManager.saveRtInTheCloudList(rtFinalList)
+                }
+//[Background Thread]   //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
+                launch {
+                    Log.d(TAG,"onTrackClicked: (4-b) xxxxx deleting where purchaseBool=false. Thread=${Thread.currentThread().name}")
+                    val nonPurchasedRtFree = rtFreeOnly.filter { rtObj -> !rtObj.purchaseBool }
+                    val neverPurchasedList = iapV3.f_getPurchaseFalseRtList() + nonPurchasedRtFree
 
-            //_centerLoadingCircleSwitch.value = 2 // 어두운 화면 그대로 두고 Circle 만 안보이게 없애기 (LaunchBilling Flow 에도 Circle 같이 떠서 신경쓰임)
-            triggerPurchaseLoadingCircle(2)
-            val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
-        //2-j) Verify ->
-            iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
-        //2-k) [구매인정!] Acknowledge!!
-            val isPurchaseAllCompleted = iapV3.l_acknowledgePurchase(purchaseResult, rtObj) // acknowledge 를 여기서 해주고 이제 모든 구입 절차가 끝이 남.
-            Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 O] isPurchaseAllCompleted=$isPurchaseAllCompleted")
-        // => 여기서 구매절차는 COMPLETE! => invokeOnCompletion 으로 이동
-            //_centerLoadingCircleSwitch.value = 1 //로딩 Circle 없애기
-            triggerPurchaseLoadingCircle(1)
-
-        }
-        purchaseParentJob.invokeOnCompletion { throwable ->
-            //_centerLoadingCircleSwitch.value = 1 // 만약 Purchase Loading Circle 이 켜져있었다면 꺼주기 (Handler 에러 잡히든 말든 무조건 꺼!!)
-            triggerPurchaseLoadingCircle(1)
-            Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..Thread= ${Thread.currentThread().name}")
-            if (throwable != null && !throwable.message.isNullOrEmpty()) {
-                when {
-                    throwable.message!!.contains("USER_CANCELED") -> { // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지나 기타 아무것도 안 보여주기.
-                        return@invokeOnCompletion
-                    }
-                    throwable is JjServiceUnAvailableException -> {
-                        toastMessenger.showMyToast("Purchase Error: Service Unavailable Error. Please check your internet connectivity.", isShort = false)
-                    }
-                    throwable is CancellationException -> {
-                        Log.d(TAG, "Purchase Error: job Cancellation Exception.. =_=")
-                    }
-                    else -> {
-                        Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(X)] - Error. throwable=$throwable ")
-                        toastMessenger.showMyToast("Purchase Error: $throwable", isShort = false)
+                    neverPurchasedList.forEach { rtInTheCloud ->
+                        myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
                     }
                 }
-            } else {// 아무 문제없이 구매가 끝이남.
-                Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(O)] - !!No problemo!!!")
-        //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
-                val rtListPlusIAPInfo = iapV3.e_getFinalList()
-                unfilteredRtList = rtListPlusIAPInfo // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
+            }// end of Dispatcher.IO
+            Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] run download..Thread= ${Thread.currentThread().name}")
+            //[** DOWNLOAD **]
+            downloadPurchased(rtObj)
+            return
+        }
+        
 
-                _rtInTheCloudList.value = rtListPlusIAPInfo // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+    //2-B) 구입 유료 건 Purchase Process -> [Sequential] & 최종적으로 Returns RtObj! (만약 구입 취소의 경우에는....)
+        if(rtObj.iapName.contains("f")) {
+            // [**SEQUENTIAL**] // 기존 구입 과정을 Coroutine 으로 blocking+순차적 라인으로 보기 쉽게 했음.
+            val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler - 원래 logd 넣어줬으나 그냥 뺴줌.
+            val purchaseParentJob = viewModelScope.launch(handler) {
 
-        //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
-                // a), b), c) 는 모두 동시 실행(Parallel)
-                viewModelScope.launch(Dispatchers.IO) {
-//[Background Thread]   //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
-                    launch {
-                        Log.d(TAG,"onTrackClicked: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
-                        mySharedPrefManager.saveRtInTheCloudList(rtListPlusIAPInfo)
-                    }
-//[Background Thread]   //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
-                    launch {
-                        Log.d(TAG,"onTrackClicked: (4-b) xxxxx deleting where purchaseBool=false. Thread=${Thread.currentThread().name}")
-                        val neverPurchasedList = iapV3.f_getPurchaseFalseRtList()
-                        neverPurchasedList.forEach { rtInTheCloud ->
-                            myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
+                //_centerLoadingCircleSwitch.value = 0 //로딩 Circle 보여주기 -> 보통 구매창 뜨기까지 2초정도 걸림~
+                triggerPurchaseLoadingCircle(0)
+
+                //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
+                val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
+                val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
+                //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
+
+                //_centerLoadingCircleSwitch.value = 2 // 어두운 화면 그대로 두고 Circle 만 안보이게 없애기 (LaunchBilling Flow 에도 Circle 같이 떠서 신경쓰임)
+                triggerPurchaseLoadingCircle(2)
+                val purchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)
+                //2-j) Verify ->
+                iapV3.j_checkVerification(purchaseResult) // 문제 있으면 여기서 알아서 throw exception 던질것임. 결과 확인 따로 안해줌.
+                //2-k) [구매인정!] Acknowledge!!
+                val isPurchaseAllCompleted = iapV3.l_acknowledgePurchase(purchaseResult, rtObj) // acknowledge 를 여기서 해주고 이제 모든 구입 절차가 끝이 남.
+                Log.d(TAG, "onTrackClicked: -----[Acknowledge 부여 O] isPurchaseAllCompleted=$isPurchaseAllCompleted")
+                // => 여기서 구매절차는 COMPLETE! => invokeOnCompletion 으로 이동
+                //_centerLoadingCircleSwitch.value = 1 //로딩 Circle 없애기
+                triggerPurchaseLoadingCircle(1)
+
+            }
+            purchaseParentJob.invokeOnCompletion { throwable ->
+                //_centerLoadingCircleSwitch.value = 1 // 만약 Purchase Loading Circle 이 켜져있었다면 꺼주기 (Handler 에러 잡히든 말든 무조건 꺼!!)
+                triggerPurchaseLoadingCircle(1)
+                Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] Called..Thread= ${Thread.currentThread().name}")
+                if (throwable != null && !throwable.message.isNullOrEmpty()) {
+                    when {
+                        throwable.message!!.contains("USER_CANCELED") -> { // 구매창 바깥 눌러서 User 가 Cancel 한 경우 Toast 메시지나 기타 아무것도 안 보여주기.
+                            return@invokeOnCompletion
+                        }
+                        throwable is JjServiceUnAvailableException -> {
+                            toastMessenger.showMyToast("Purchase Error: Service Unavailable Error. Please check your internet connectivity.", isShort = false)
+                        }
+                        throwable is CancellationException -> {
+                            Log.d(TAG, "Purchase Error: job Cancellation Exception.. =_=")
+                        }
+                        else -> {
+                            Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(X)] - Error. throwable=$throwable ")
+                            toastMessenger.showMyToast("Purchase Error: $throwable", isShort = false)
                         }
                     }
-                }// end of Dispatcher.IO
-                Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] run download..Thread= ${Thread.currentThread().name}")
-                downloadPurchased(rtObj)
-            }
-        }// end of invokeOnCompletion.
-        Log.d(TAG, "onTrackClicked: [outside-purchaseParentJob] 위 코루틴과 상관없이 빨리 불림..Thread=${Thread.currentThread().name}")
+                } else {// 아무 문제없이 구매가 끝이남.
+                    Log.d(TAG,"onTrackClicked: [purchaseParentJob-invokeOnCompletion(O)] - !!No problemo!!!")
+                    //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
+                    val rtPaidWithIAPInfo = iapV3.e_getFinalList()
+                    val rtFinalList = rtFreeOnly + rtPaidWithIAPInfo
+                    unfilteredRtList = rtFinalList // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
+                    _rtInTheCloudList.value = rtFinalList // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+
+                    //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
+                    // a), b), c) 는 모두 동시 실행(Parallel)
+                    viewModelScope.launch(Dispatchers.IO) {
+//[Background Thread]   //4-a) SharedPref 에 현재 받은 리스트 저장. (새로운 coroutine)
+                        launch {
+                            Log.d(TAG,"onTrackClicked: (4-a) saving current RtList+IAPInfo to Shared Pref. Thread=${Thread.currentThread().name}")
+                            mySharedPrefManager.saveRtInTheCloudList(rtFinalList)
+                        }
+//[Background Thread]   //4-b) iapV3-F) Purchase=false 인 리스트를 받음 (purchaseBool= true 를 제외한 리스트의 모든 항목으로 폰에 있는지 여부는 쓰레드가 한가한 여기서 확인 예정!!)
+                        launch {
+
+                            val nonPurchasedRtFree = rtFreeOnly.filter { rtObj -> !rtObj.purchaseBool }
+                            val neverPurchasedList = iapV3.f_getPurchaseFalseRtList() + nonPurchasedRtFree
+                            neverPurchasedList.forEach { rtInTheCloud ->
+                                myDiskSearcher.deleteFileByIAPName(rtInTheCloud.iapName)
+                            }
+                            Log.d(TAG,"onTrackClicked: (4-b) xxxxx deleting where purchaseBool=false. neverPurchasedList.size=${neverPurchasedList.size}, Thread=${Thread.currentThread().name}")
+                        }
+                    }// end of Dispatcher.IO
+                    Log.d(TAG, "onTrackClicked: [purchaseParentJob-invokeOnCompletion] run download..Thread= ${Thread.currentThread().name}")
+                    downloadPurchased(rtObj)
+                }
+            }// end of invokeOnCompletion.
+            Log.d(TAG, "onTrackClicked: [outside-purchaseParentJob] 위 코루틴과 상관없이 빨리 불림..Thread=${Thread.currentThread().name}")
+        }
+
     }
 
     //fun getPurchaseState(): LiveData<MyPurchResultENUM> = iapV3.getPurchStateLiveData()

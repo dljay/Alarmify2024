@@ -550,7 +550,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         val badgeStrList = rtObj.bdgStrArray// Badge Sort
         showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
         //1) Rt 가격 표시 + Download (Purchase) 버튼 onClickListener 설정 (Purchase 상태면 (v) 활성화)
-        btn_buyThis.text = rtObj.itemPrice
+        if(rtObj.iapName.contains("f")) {
+            btn_buyThis.text = "FREE"
+        } else {
+            btn_buyThis.text = rtObj.itemPrice
+        }
         when(rtObj.purchaseBool) {
             true -> {
                 btn_buyThis.visibility = View.GONE

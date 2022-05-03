@@ -21,12 +21,16 @@ private const val KEY_1 = "RTOP_KEY"
 private const val RT_IN_THE_CLOUD_LIST ="RtInTheCloudList" //현재 .rta 는 Uri 로 ..  .art 는 String path 로 저장
 private const val KEY_2 = "RTIC_KEY"
 
+//<3> PurchasedFreeRtList.xml
+private const val PURCHASED_FREE_RT_LIST ="PurchasedFreeRtList" //현재 .rta 는 Uri 로 ..  .art 는 String path 로 저장
+private const val KEY_3 = "FREE_KEY"
+
 
 class MySharedPrefManager(val context: Context) {
 
     private val prefRtInTheCloud: SharedPreferences = context.getSharedPreferences(RT_IN_THE_CLOUD_LIST,Context.MODE_PRIVATE) // RtInTheCloudList.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
     private val prefRtOnThePhone: SharedPreferences = context.getSharedPreferences(RT_ON_THE_PHONE_LIST,Context.MODE_PRIVATE) // RtOneThePhoneList.xml 파일 이름 (디스크에 저장된 rta, art 파일 uri 저장)
-
+    private val prefPurchasedFreeRts: SharedPreferences = context.getSharedPreferences(PURCHASED_FREE_RT_LIST,Context.MODE_PRIVATE)
 
     //
     private val gson: Gson = Gson()
@@ -76,7 +80,14 @@ class MySharedPrefManager(val context: Context) {
         val jsonStrSave = gson.toJson(rtInTheCloudList)
         prefRtInTheCloud.edit().putString(KEY_2, jsonStrSave).apply()
         Log.d(TAG, "saveRtInTheCloudList: done")
-
+    }
+    // <3> 무료 RT 구입했을 때 SAVE/READ
+    fun saveFreeRtPurchaseInfo(rtObj: RtInTheCloud) {
+        Log.d(TAG, "savePurchasedFreeRt: Documenting Free RT as Purchased")
+        prefPurchasedFreeRts.edit().putBoolean(rtObj.iapName, true).apply()
+    }
+    fun getFreeRtPurchaseInfo(rtObj: RtInTheCloud): Boolean {
+        return prefPurchasedFreeRts.getBoolean(rtObj.iapName, false) // DEFAULT VALUE 는 뭐 그냥 false 로.
     }
 
 

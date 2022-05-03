@@ -77,11 +77,12 @@ class RcViewAdapter(
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " + "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " + "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
 
+     // FREE ITEM 은 FREE 표시.
+        if(currentRt.iapName.contains("f")) {
+            //todo: FREE ITEM 의 경우 FREE 표시.
+            Log.d(TAG, "onBindViewHolder: this-trID=$currentTrId must have FREE marked!!")
+        }
     //스크롤 하면서 트랙 재활용시 하이라이트&VuMeter & Purchased(V) 표시 관련--->
-        // Purchase 값 초기화 [일단 구입 안된것으로 표시하고 시작] --> 이거 안하면 Holder 가 Recycle 되면서 (v) 표시 또 뜬다.
-//        disablePurchasedCheck(holder)
-//        holder.isPurchased = false // Bind 되면서 기존에 enablePurchasedCheck() 작동전에 기입한 holder.isPurchased Value 를 '현재 RT 의 값으로 복원'
-
         // A) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트(O) & VuMeter (O) & Purchased Check(X)
         if (currentTrId == GlbVars.clickedTrId) {
             clickedHolder = holder // a) ListFrag 복귀 후 clickedHolder 는 Null 상태이므로 '기존에 선택했던 TrId 가 배정된 '현재의 Holder' 로 설정' b) 단순 위아래 Scroll 은 어차피 동일한 clickedHolder 값이 배정됨.
@@ -363,8 +364,6 @@ class RcViewAdapter(
 
         }
     }
-
-
 
 
 }

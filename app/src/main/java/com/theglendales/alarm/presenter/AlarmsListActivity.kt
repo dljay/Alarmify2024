@@ -67,12 +67,12 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f18b 22/4/29 (Mon) 10:14pm [FREE 리스트 넣기 수정중-(3)]
+// 30708V1.18e35f18c 22/4/29 (Tue) 3:07pm [FREE 리스트 넣기 수정중-(4)]
 // Crashlytics 넣었음. 테스트 완료.
 //Issue)
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
-//FREE: todo a) Firebase 업로드는 완료 f5001, f5002. b) 이제 읽고 RCV 표시. FREE 아이콘/MINIPLAYER 열었을 때 등..
+//FREE:  b) 이제 읽고 RCV 표시. FREE 아이콘/MINIPLAYER 열었을 때 등..
 // //todo .. 파일정리할때 P 없으면 삭제? 이것도 신경쓸것. b)5001 부터 (ex.f5001). JjMainVModel 에서 4-a & 4-b 동일하게 적용시켜주기
 //Firebase Performance Monitoring
 //Btm Nav- 약간의 Gradient 넣었음(O) -> [약간 앱 Calm 느낌 나네 ^^;---] ** a) ICON 좀 더 돋보이게 (현재 너무 심심!!) b) 선택되었을 때는 뭔가 돋보이는 아이콘으로+조금 크게(글자+ICON)

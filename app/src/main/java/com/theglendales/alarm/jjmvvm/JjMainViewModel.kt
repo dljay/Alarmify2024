@@ -141,12 +141,12 @@ class JjMainViewModel : ViewModel() {
                         val rtPaidWithIAPInfo = iapV3.e_getFinalList() // [유료+ Price/Purchase BOOL 등 기입된 리스트]
                     // ** 최종 리스트! **
                         val rtFinalList = rtFreeOnly + rtPaidWithIAPInfo // [유료(IAP 정보 포함)+무료 리스트]
+                        val rtFinalListShuffled = rtFinalList.shuffled()
+                        Log.d(TAG, "refreshFbAndIAPInfo: rtFinalList= $rtFinalList, rtFinalListShuffled=$rtFinalListShuffled")
 
-                        Log.d(TAG, "refreshFbAndIAPInfo: rtFinalList= $rtFinalList")
-
-                        unfilteredRtList = rtFinalList // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 SecondFrag 활용)
-                        _rtInTheCloudList.value = rtFinalList // !!! update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
-                        Log.d(TAG, "refreshFbAndIAPInfo: (3-b) <<<<<<<<<getRtList: updated LiveData! \n\n [*[*[*[* rtListPlusIAPInfo=$rtFinalList *]*]*]*]")
+                        unfilteredRtList = rtFinalListShuffled // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 SecondFrag 활용)
+                        _rtInTheCloudList.value = rtFinalListShuffled // !!! update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+                        Log.d(TAG, "refreshFbAndIAPInfo: (3-b) <<<<<<<<<getRtList: updated LiveData! \n\n [*[*[*[* rtListPlusIAPInfo=$rtFinalListShuffled *]*]*]*]")
 
             //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
                         // a), b), c) 는 모두 동시 실행(Parallel)
@@ -263,8 +263,9 @@ class JjMainViewModel : ViewModel() {
             // 신규리스트 전달+ RcV 업뎃!
             val rtPaidWithIAPInfo = iapV3.e_getFinalList() // [유료+ Price/Purchase BOOL 등 기입된 리스트]
             val rtFinalList = rtFreeOnly + rtPaidWithIAPInfo // [유료(IAP 정보 포함)+무료 리스트]
-            unfilteredRtList = rtFinalList // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
-            _rtInTheCloudList.value = rtFinalList // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+            val rtFinalListShuffled = rtFinalList.shuffled()
+            unfilteredRtList = rtFinalListShuffled // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
+            _rtInTheCloudList.value = rtFinalListShuffled // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
 
             //[***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
             // a), b), c) 는 모두 동시 실행(Parallel)
@@ -344,8 +345,9 @@ class JjMainViewModel : ViewModel() {
                     //3) 구입 끝 -> 신규리스트 전달+ RcV 업뎃!
                     val rtPaidWithIAPInfo = iapV3.e_getFinalList()
                     val rtFinalList = rtFreeOnly + rtPaidWithIAPInfo
-                    unfilteredRtList = rtFinalList // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
-                    _rtInTheCloudList.value = rtFinalList // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
+                    val rtFinalListShuffled = rtFinalList.shuffled()
+                    unfilteredRtList = rtFinalListShuffled // 가장 최신의 List 를 variable 에 저장 (추후 Chip 관련 정보- SecondFrag 에서 넘어왔을 떄 활용)
+                    _rtInTheCloudList.value = rtFinalListShuffled // update LiveData!! -> SecondFrag 에서는 a)Lottie OFF b)RefreshRcV! ---
 
                     //4) [***후속작업- PARALLEL+ Background TASK**] 이제 리스트 없이 되었으니:  a)sharedPref 에 리스트 저장 b) 삭제 필요한 파일 삭제 c) 멀티 다운로드 필요하면 실행 //
                     // a), b), c) 는 모두 동시 실행(Parallel)

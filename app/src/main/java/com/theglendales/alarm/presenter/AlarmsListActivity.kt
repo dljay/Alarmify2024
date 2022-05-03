@@ -67,13 +67,21 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f18c 22/4/29 (Tue) 3:07pm [FREE 리스트 넣기 수정중-(4)]
+// 30708V1.18e35f18e 22/4/29 (Tue) 11:41pm [FREE 리스트 넣기 수정중-(6)]
 // Crashlytics 넣었음. 테스트 완료.
-//Issue)
+//Achievement)
+//* FREE 중간에 보이게끔 SORTING List->Shuffled
+//* - FREE 다운로드 띄어쓰기? 다른 아이콘? 간격?
+
+//* DOWNLOAD 및 이후 PURCHASED 로 표시 잘되는지 테스트.
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
-//FREE:  b) 이제 읽고 RCV 표시. FREE 아이콘/MINIPLAYER 열었을 때 등..
+// todo: BottomNav ICON 조금 괜찮은 놈으로 바꾸자!!
+//ISSUE)
+//todo: * RcV FREE ICON 표시되게 (아이콘 다운 받아서 좀 괜찮은 놈으로..) -> 이거 또 BINDVIEW 재활용될때 겹쳐서 뜨는 문제 해결 필요.
+// shuffle 잘되는지 확인하기.
 // //todo .. 파일정리할때 P 없으면 삭제? 이것도 신경쓸것. b)5001 부터 (ex.f5001). JjMainVModel 에서 4-a & 4-b 동일하게 적용시켜주기
+
 //Firebase Performance Monitoring
 //Btm Nav- 약간의 Gradient 넣었음(O) -> [약간 앱 Calm 느낌 나네 ^^;---] ** a) ICON 좀 더 돋보이게 (현재 너무 심심!!) b) 선택되었을 때는 뭔가 돋보이는 아이콘으로+조금 크게(글자+ICON)
 //navigationBar Color (List Activity) (O) Gradient 에서 이어지는 색으로 바꾸긴 했음. 좀 더 변화줘도 될수도..? [최하단]

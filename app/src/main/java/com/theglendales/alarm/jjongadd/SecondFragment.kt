@@ -551,7 +551,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
         //1) Rt 가격 표시 + Download (Purchase) 버튼 onClickListener 설정 (Purchase 상태면 (v) 활성화)
         if(rtObj.iapName.contains("f")) {
-            btn_buyThis.text = "FREE"
+            btn_buyThis.text = " FREE " // todo: a) FREE 만 있을때 이상해보여서 공백 넣었음. 추후 언어바꿨을 때 어찌할지 생각.. b) Str Resource 로 옮기기.
         } else {
             btn_buyThis.text = rtObj.itemPrice
         }

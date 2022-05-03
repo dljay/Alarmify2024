@@ -77,9 +77,9 @@ class RcViewAdapter(
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " + "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " + "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
 
-     // FREE ITEM 은 FREE 표시.
-        if(currentRt.iapName.contains("f")) {
-            //todo: FREE ITEM 의 경우 FREE 표시.
+     // FREE ITEM 이고 "아직 구입이 안된 경우"-> FREE ICON 보여주기.
+        if(currentRt.iapName.contains("f") && !currentRt.purchaseBool) {
+            showFreeIcon(holder)
             Log.d(TAG, "onBindViewHolder: this-trID=$currentTrId must have FREE marked!!")
         }
     //스크롤 하면서 트랙 재활용시 하이라이트&VuMeter & Purchased(V) 표시 관련--->
@@ -128,7 +128,9 @@ class RcViewAdapter(
             }).into(holder.iv_Thumbnail)
     }
 
-// Highlight & LoadingCircle & VuMeter 작동 관련    --------->
+
+
+    // Highlight & LoadingCircle & VuMeter 작동 관련    --------->
     //0) LcVmIvController : LoadingCircle, VuMeter, ImageView: 썸네일 밝기 원복
         fun lcVmIvController(playStatus: StatusMp) {
             if(clickedHolder!=null) {
@@ -143,6 +145,7 @@ class RcViewAdapter(
                         // 2) 새로 Click 된 Holder 의 UI 업데이트
                         clickedHolder!!.loadingCircle.visibility = View.VISIBLE
                         clickedHolder!!.ivPurchaseCheck.visibility = VuMeterView.GONE // PurchasedCheck(v) 표시 없애주기.
+                        clickedHolder!!.ivFreeIcon.visibility = VuMeterView.GONE // PurchasedCheck(v) 표시 없애주기.
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.GONE
                     }
                     StatusMp.READY -> {
@@ -213,10 +216,17 @@ class RcViewAdapter(
     private fun enablePurchasedCheck(holder: MyViewHolder) {
         Log.d(TAG, "enablePurchasedCheck: (O) called")
         holder.ivPurchaseCheck.visibility = View.VISIBLE
+
     }
     private fun disablePurchasedCheck(holder: MyViewHolder) {
         Log.d(TAG, "disablePurchasedCheck: (X) called")
         holder.ivPurchaseCheck.visibility = View.INVISIBLE
+    }
+    // 3) 무료 아이템 (iapName 이 f 로 시작 ex.f5001) FREE ICON 보여주기.
+    private fun showFreeIcon(holder: MyViewHolder) {
+        holder.ivFreeIcon.visibility = View.VISIBLE
+
+
     }
 // <---------- // Highlight & VuMeter 작동 관련    --------->
 
@@ -301,8 +311,9 @@ class RcViewAdapter(
         // 3) 왼쪽 - 제일 왼쪽 AlbumArt 및 vuMeter/LoadingCircle 영역
         val iv_Thumbnail: ImageView = myXmlToViewObject.findViewById(R.id.id_ivThumbnail)
 
-        // 4) 오른쪽 vumeter /loading circle / Purchased(V) 표시 영역
+        // 4) 오른쪽 vumeter /loading circle / Purchased(V) / FREE ICON 표시 영역
         val ivPurchaseCheck: ImageView = myXmlToViewObject.findViewById(R.id.iv_singleSlot_purchased_check)
+        val ivFreeIcon: ImageView = myXmlToViewObject.findViewById(R.id.iv_singleSlot_freeicon_container)
 
         val vuMeterView: VuMeterView = myXmlToViewObject.findViewById(R.id.id_vumeter)
         val loadingCircle: ProgressBar = myXmlToViewObject.findViewById(R.id.id_progressCircle)

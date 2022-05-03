@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/roundstyle3_top_only"
+    android:background="@drawable/roundstyle3_top_only_with_gradients_1"
 
     android:orientation="vertical">
 
@@ -401,10 +401,19 @@
                 android:ellipsize="end"
                 android:drawablePadding="0dp"
 
-                android:visibility="visible"
+                android:visibility="gone"
                 android:drawableEnd="@drawable/purchase_btn_drawable"/>
 
-                <TextView
+                <ImageView
+                    android:id="@+id/iv_purchased_check_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/purchased_already_textview"
+                    android:background="@drawable/textview_round_corner_1"
+                    android:visibility="visible"/>
+
+                <!--<TextView
                     android:id="@+id/iv_purchased_check_icon"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -419,7 +428,7 @@
                     android:drawableRight="@drawable/purchased_already_textview"
                     android:drawablePadding="2dp"
                     android:background="@drawable/textview_round_corner_1"
-                    android:visibility="gone"/>
+                    android:visibility="visible"/>-->
 
         </FrameLayout>
 

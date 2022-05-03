@@ -137,7 +137,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var mPlayer_bdg6_misc: ImageView
     //lateinit var tv_price: TextView
     lateinit var btn_buyThis: Button
-    lateinit var purchased_check_icon: TextView
+    lateinit var purchased_check_icon: ImageView
 
 
     // listfrag 가거나 나갔다왔을 때 관련.

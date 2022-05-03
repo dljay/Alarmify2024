@@ -322,7 +322,7 @@ class MyIAPHelperV3(val context: Context ) {
                 {
                     continuation.resume(skuDetailsList)
                 } else {
-                    Log.d(TAG, "d2_A_addPriceToList: <D2-A> Finished(X) - Error! XXX loading price for items")
+                    Log.d(TAG, "d2_A_addPriceToList: <D2-A> Finished(X) - Error! XXX loading price for items \n\n queryResult=$queryResult, skuDetailsList=$skuDetailsList")
                     continuation.resumeWithException(Exception("<D2-A> Error. responseCode= ${queryResult.responseCode} "))
 
                 }

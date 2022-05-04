@@ -67,7 +67,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f20 22/5/4 (Wed) 10:27pm [FREE 리스트 넣기 수정중-(9)]
+// 30708V1.18e35f21 22/5/4 (Wed) 11:15pm [FREE 리스트 넣기 수정중-(9)]
 // Crashlytics 넣었음. 테스트 완료.
 //
 //Achievement)
@@ -77,11 +77,8 @@ import java.util.Calendar
 //* DOWNLOAD 및 이후 PURCHASED 로 표시 잘되는지 테스트.
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
-// todo: BottomNav ICON 조금 괜찮은 놈으로 바꾸자!!
+// todo: BottomNav ICON 조금 괜찮은 놈으로 바꾸자!! // BtmNav Gradient -> Radial ? Linear 말고?
 //ISSUE)
-
-// shuffle 잘되는지 확인하기.
-// //todo .. 파일정리할때 P 없으면 삭제? 이것도 신경쓸것. b)5001 부터 (ex.f5001). JjMainVModel 에서 4-a & 4-b 동일하게 적용시켜주기
 
 //Firebase Performance Monitoring
 //Btm Nav- 약간의 Gradient 넣었음(O) -> [약간 앱 Calm 느낌 나네 ^^;---] ** a) ICON 좀 더 돋보이게 (현재 너무 심심!!) b) 선택되었을 때는 뭔가 돋보이는 아이콘으로+조금 크게(글자+ICON)

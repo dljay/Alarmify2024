@@ -238,7 +238,7 @@
             android:layout_marginStart="7dp"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="10dp"
-            android:text="About the Alarm Tone"
+            android:text="Information"
             android:maxLines="1"
             android:ellipsize="end"
             android:theme="@style/jjTextMiniplayer_Bottom"
@@ -256,7 +256,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="10dp"
             android:text="This is a placeholder text. I wish this holder text lives forever is holder text lives foreveris holder text lives forever"
-            android:maxLines="3"
+            android:maxLines="4"
             android:ellipsize="end"
             android:theme="@style/jjTextMedium_tertiaryColor"
             app:layout_constraintStart_toStartOf="parent"
@@ -265,7 +265,7 @@
 
         <!-- badges-->
 
-        <TextView
+        <!--<TextView
             android:id="@+id/tv_info_badgeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -277,7 +277,7 @@
             android:theme="@style/jjTextMiniplayer_Bottom"
 
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/id_lowerUi_tv_Description"/>
+            app:layout_constraintTop_toBottomOf="@id/id_lowerUi_tv_Description"/>-->
 
         <LinearLayout
             android:id="@+id/ll_badgeHolder"
@@ -285,13 +285,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
             android:layout_marginEnd="7dp"
-            android:layout_marginTop="2dp"
+
+
 
             android:orientation="horizontal"
             android:weightSum="6"
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_info_badgeTitle"
             app:layout_constraintBottom_toBottomOf="@id/minip_btmUi_hor_guide_1">
 
             <ImageView
@@ -355,9 +355,9 @@
             android:id="@+id/id_lowerUi_iv_bigThumbnail"
             android:layout_width="0dp"
             android:layout_height="0dp"
-
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp"
             android:scaleType="centerCrop"
 
             app:layout_constraintDimensionRatio="1:1"
@@ -365,7 +365,7 @@
             app:layout_constraintStart_toStartOf="@id/minip_btmUi_vert_guide_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_AboutTheRingTone"
-            app:layout_constraintBottom_toTopOf="@id/tv_info_badgeTitle"
+            app:layout_constraintBottom_toTopOf="@id/ll_badgeHolder"
 
             tools:src="@drawable/night_lake" />
 
@@ -406,6 +406,7 @@
 
                 <ImageView
                     android:id="@+id/iv_purchased_check_icon"
+                    android:layout_marginTop="3dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

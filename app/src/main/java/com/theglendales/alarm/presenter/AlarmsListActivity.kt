@@ -67,7 +67,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f18e 22/4/29 (Tue) 11:41pm [FREE 리스트 넣기 수정중-(6)]
+// 30708V1.18e35f19 22/5/4 (Wed) 9:35pm [FREE 리스트 넣기 수정중-(7)]
 // Crashlytics 넣었음. 테스트 완료.
 //Achievement)
 //* FREE 중간에 보이게끔 SORTING List->Shuffled

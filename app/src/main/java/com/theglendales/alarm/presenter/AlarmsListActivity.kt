@@ -67,10 +67,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f19 22/5/4 (Wed) 9:35pm [FREE 리스트 넣기 수정중-(7)]
+// 30708V1.18e35f20 22/5/4 (Wed) 10:27pm [FREE 리스트 넣기 수정중-(9)]
 // Crashlytics 넣었음. 테스트 완료.
+//
 //Achievement)
-//* FREE 중간에 보이게끔 SORTING List->Shuffled
+//* FREE 중간에 보이게끔 SORTING List-> Alphabetic
 //* - FREE 다운로드 띄어쓰기? 다른 아이콘? 간격?
 
 //* DOWNLOAD 및 이후 PURCHASED 로 표시 잘되는지 테스트.
@@ -78,7 +79,7 @@ import java.util.Calendar
 //Todos)
 // todo: BottomNav ICON 조금 괜찮은 놈으로 바꾸자!!
 //ISSUE)
-//todo: * RcV FREE ICON 표시되게 (아이콘 다운 받아서 좀 괜찮은 놈으로..) -> 이거 또 BINDVIEW 재활용될때 겹쳐서 뜨는 문제 해결 필요.
+
 // shuffle 잘되는지 확인하기.
 // //todo .. 파일정리할때 P 없으면 삭제? 이것도 신경쓸것. b)5001 부터 (ex.f5001). JjMainVModel 에서 4-a & 4-b 동일하게 적용시켜주기
 

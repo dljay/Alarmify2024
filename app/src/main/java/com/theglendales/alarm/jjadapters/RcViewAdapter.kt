@@ -77,26 +77,31 @@ class RcViewAdapter(
 
 //        Log.d(TAG,"onBindViewHolder: jj- trId: ${holder.holderTrId}, pos: $position) " + "Added holder($holder) to vHoldermap[${holder.holderTrId}]. " + "b)vHolderMap size: ${viewHolderMap.size} c) VholderMap info: $viewHolderMap")
 
-     // FREE ITEM 이고 "아직 구입이 안된 경우"-> FREE ICON 보여주기.
-        if(currentRt.iapName.contains("f") && !currentRt.purchaseBool) {
-            showFreeIcon(holder)
-            Log.d(TAG, "onBindViewHolder: this-trID=$currentTrId must have FREE marked!!")
-        }
+
+        hideFreeIcon(holder) // 우선 View 가 Recycle 되면서 기존 [FREE] 표시가 그대로 나올 수 있으므로 -> Bind 과정에서 Hide 시켜주기
+
     //스크롤 하면서 트랙 재활용시 하이라이트&VuMeter & Purchased(V) 표시 관련--->
-        // A) Bind 하면서 기존에 Click 되어있던 트랙이면 하이라이트(O) & VuMeter (O) & Purchased Check(X)
+        // A) Bind 하면서 기존에 Click 되어있던 트랙이면 a) 글자 색 변경 (O) b) VuMeter (O) c) Purchased Check(X) d) FREE(X)
         if (currentTrId == GlbVars.clickedTrId) {
             clickedHolder = holder // a) ListFrag 복귀 후 clickedHolder 는 Null 상태이므로 '기존에 선택했던 TrId 가 배정된 '현재의 Holder' 로 설정' b) 단순 위아래 Scroll 은 어차피 동일한 clickedHolder 값이 배정됨.
             enableHL(holder)
             enableVM(exoForUrlPlay.currentPlayStatus, holder)
             disablePurchasedCheck(holder)
+            hideFreeIcon(holder)
         }
-        // B) Bind 하면서 'Select' 된 트랙이 아닐경우 하이라이트(X) & VuMeter (X) & Purchased Check (O) (필요할 경우)
+        // B) Bind 하면서 'Select' 된 트랙이 아닐경우 a) 글자 색 변경 (X) b) VuMeter (X) c) Purchased Check (O) (필요할 경우)
         if (currentTrId != GlbVars.clickedTrId) {
             disableHL(holder)
             disableVMnLC(holder)
             when(currentRt.purchaseBool) {
                 true -> enablePurchasedCheck(holder)
-                false -> disablePurchasedCheck(holder)
+                false -> {
+                    disablePurchasedCheck(holder)
+                    if(currentRt.iapName.contains("f")) { // FREE ITEM 이고 "아직 구입이 안된 경우"-> FREE ICON 보여주기.
+                        showFreeIcon(holder)
+                        Log.d(TAG, "onBindViewHolder: this-trID=$currentTrId must have FREE marked!!")
+                    }
+                }
             }
         }
     // <-- 트랙 재활용시 하이라이트&VuMeter 이슈 관련--->
@@ -225,8 +230,9 @@ class RcViewAdapter(
     // 3) 무료 아이템 (iapName 이 f 로 시작 ex.f5001) FREE ICON 보여주기.
     private fun showFreeIcon(holder: MyViewHolder) {
         holder.ivFreeIcon.visibility = View.VISIBLE
-
-
+    }
+    private fun hideFreeIcon(holder: MyViewHolder) {
+        holder.ivFreeIcon.visibility = View.GONE
     }
 // <---------- // Highlight & VuMeter 작동 관련    --------->
 

@@ -180,7 +180,7 @@
                             android:focusableInTouchMode="true"
                             tools:text="Sound of Raindrops falling on the rooftop of"
                             android:fontFamily="@font/circular_std_light"
-                            android:ellipsize="marquee"
+
                             android:marqueeRepeatLimit="marquee_forever"
                             android:singleLine="true"
                             android:theme="@style/jjTextLarge_black"

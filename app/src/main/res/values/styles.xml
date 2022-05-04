@@ -283,7 +283,7 @@
         </style>
 
         <style name="jjTextMiniplayer_Bottom">
-            <item name="fontFamily">@font/circular_std_bold</item>
+            <item name="fontFamily">@font/circular_std_black</item>
             <item name="android:textColor">@color/primaryTextColor</item>
             <item name="android:textSize">15.5sp</item>
             <item name="android:textStyle">bold</item>

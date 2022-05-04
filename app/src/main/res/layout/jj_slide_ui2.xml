@@ -91,7 +91,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:ellipsize="marquee"
+
 
                     android:focusable="true"
                     android:focusableInTouchMode="true"
@@ -241,6 +241,7 @@
             android:text="Information"
             android:maxLines="1"
             android:ellipsize="end"
+
             android:theme="@style/jjTextMiniplayer_Bottom"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -258,7 +259,7 @@
             android:text="This is a placeholder text. I wish this holder text lives forever is holder text lives foreveris holder text lives forever"
             android:maxLines="4"
             android:ellipsize="end"
-            android:theme="@style/jjTextMedium_tertiaryColor"
+            android:theme="@style/jjTextMedium_secondaryColor"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_1"
             app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"/>
@@ -357,7 +358,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="6dp"
             android:scaleType="centerCrop"
 
             app:layout_constraintDimensionRatio="1:1"

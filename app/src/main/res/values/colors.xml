@@ -33,7 +33,7 @@
         <!-- bg_color_2 SecondFrag 칩 색 등. bg_color_1 보다 살짝 밝은 톤. -->
             <color name="jj_bg_color_2">#334661</color>
             <color name="jj_bg_color_3">#3c506d</color>
-            <color name="jj_bg_color_4">#4A6284</color>
+            <color name="jj_bg_color_4">#3C516F</color>
 
         <!-- SecondFrag -->
 <!--            <color name="jj_accentColor_1">#eeff41</color>-->

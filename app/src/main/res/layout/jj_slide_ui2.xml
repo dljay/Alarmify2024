@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="65dp"
 
-        android:background="@drawable/roundstyle3_top_only_with_gradients_1"
+        android:background="@drawable/btm_nav_bg_round_and_gradient_1"
         android:clickable="true"
         android:gravity="center"
         android:orientation="vertical">
@@ -174,12 +174,12 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
         <!-- 중간에 작은 Divider Border>>> -->
-       <!-- <View
+        <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:alpha="0.5"
             android:background="@color/border_mp_btmNav">
-        </View>-->
+        </View>
 
     </LinearLayout>
 
@@ -200,6 +200,7 @@
         android:id="@+id/id_lowerUI_entireConsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/miniplayer_lowerui_background_gradient_1"
         android:layout_marginStart="14dp"
         android:layout_marginEnd="14dp"
         android:paddingStart="10dp"

@@ -103,7 +103,7 @@ class RtPickerActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_rt_picker)
-        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_1)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
+        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_2)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 
     //1) Activity 화면 Initialize (ActionBar 등..)
         // 화면 위에 뜨는 타이틀

@@ -841,8 +841,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         // A. 기존에 클릭 후 다른 Frag 갔다 돌아온 경우. (Panel 은 Collapsed 아니면 Expanded 상태 유지중임.)
         if (shouldPanelBeVisible) {
             Log.d(TAG, "setUpSlidingPanel: HEY isInitialPanelSetup=$shouldPanelBeVisible")
-            //btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_rectangle_corner)
-            btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_square_and_gradient_1)
+            btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_rectangle_corner)
+
             //collapseSlidingPanel()
 
             // 만약 확장된 상태였다면 초기화가 안되어있어서 모퉁이 허옇고 & arrow(↑)가 위로 가있음. 아래에서 해결.
@@ -898,8 +898,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             //1) Bottom App Bar 코너 Round -> Rectangle 로. (최초 트랙 클릭 으로 Hidden -> Dragging 상태) 이후 Collapsed 가 되는것임
             if(previousState== SlidingUpPanelLayout.PanelState.HIDDEN && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
-                //btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_rectangle_corner)
-                btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_square_and_gradient_1)
+                btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_rectangle_corner)
+
 
             }
 

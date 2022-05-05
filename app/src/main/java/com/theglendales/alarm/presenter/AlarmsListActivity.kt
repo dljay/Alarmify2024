@@ -99,8 +99,6 @@ import java.util.Calendar
 //5. 최적화. 뭐가 자꾸 느리게 하는지 지울것? -> Recycler -- NotifyDataSetChanged(?) or Adapter? 가 훨씬 빠른데???
 
 //7. App ICON -> NavigationDrawer 꾸미기.
-//8. Free Item
-//9. Status Bar 투명+ Collapsing Toolbar 의 사진이 보이게. (Alarm Extreme 처럼).
 //10. drawable 등 안 쓰는 asset 지우기 (백업하고)
 // 전체 색!!!! 결정해야 Divider 색도 결정!!! //- system navigation 은 살짝 다른색으로 할수도 있겠다.
 
@@ -257,7 +255,7 @@ class AlarmsListActivity : AppCompatActivity() {
         //throw RuntimeException("Crashlytics Test")
 
         Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
-        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_1)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
+        window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_2)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 
 
         setTheme(dynamicThemeHandler.getIdForName(AlarmsListActivity::class.java.name))

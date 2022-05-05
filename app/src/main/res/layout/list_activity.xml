@@ -118,8 +118,7 @@
             app:contentInsetStart="0dp"
             app:contentInsetEnd="0dp"
 
-            android:background="@drawable/btm_nav_bg_round_and_gradient_1"
-            app:backgroundTint="@color/transparent">
+            android:background="@drawable/btm_nav_bg_round_and_gradient_1">
 
 
             <com.google.android.material.bottomnavigation.BottomNavigationView

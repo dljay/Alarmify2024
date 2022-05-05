@@ -67,7 +67,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f21 22/5/4 (Wed) 11:15pm [FREE 리스트 넣기 수정중-(9)]
+// 30708V1.18e35f22 22/5/5 (Thu) 4:27pm [FREE 리스트 넣기 수정중-(10)]
 // Crashlytics 넣었음. 테스트 완료.
 //
 //Achievement)
@@ -77,7 +77,6 @@ import java.util.Calendar
 //* DOWNLOAD 및 이후 PURCHASED 로 표시 잘되는지 테스트.
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
-// todo: BottomNav ICON 조금 괜찮은 놈으로 바꾸자!! // BtmNav Gradient -> Radial ? Linear 말고?
 //ISSUE)
 
 //Firebase Performance Monitoring

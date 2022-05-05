@@ -57,4 +57,13 @@
         <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="android:tint">@color/grey</item>
     </style>
+
+    <!-- C. SPLASH SCREEN -->
+    <style name="Theme.JJMan.Splash" parent="Theme.SplashScreen">
+        <!-- Background 색 -->
+        <item name="windowSplashScreenBackground">@color/jj_main_bg_color</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/mt_forest_lake_1</item>
+        <!-- Splash 보여주고 나서 이동하는 Theme-->
+        <item name="postSplashScreenTheme">@style/DefaultDarkTheme</item>
+    </style>
 </resources>

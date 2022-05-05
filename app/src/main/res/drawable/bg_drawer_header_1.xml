@@ -9,8 +9,6 @@
                 android:startColor="#2C415B"
                 android:endColor="#112238"/>
 
-
-
         </shape>
     </item>
 </layer-list>

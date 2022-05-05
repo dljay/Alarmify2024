@@ -27,6 +27,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
@@ -67,27 +68,25 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f23 22/5/5 (Thu) 10:46pm [SPLASH SCREEN 넣기 전]
+// 30708V1.18e35f25 22/5/6 (Fri) 00:02am [SPLASH SCREEN 넣은 후]
 // Crashlytics 넣었음. 테스트 완료.
 //
 //Achievement)
-//* FREE 중간에 보이게끔 SORTING List-> Alphabetic
-//* - FREE 다운로드 띄어쓰기? 다른 아이콘? 간격?
-
-//* DOWNLOAD 및 이후 PURCHASED 로 표시 잘되는지 테스트.
+// SPLASH SCREEN
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
+//SPLASH -> APP ICON + ALARM PLANET 글자 보이게. aircuve mobile 참고.
+// SPLASH -> 여유되면 API31 이상 brand 글자도 보이게끔. https://itnext.io/a-comprehensive-guide-to-android-12s-splash-screen-api-644609c811fa
+//Pref - 흰색 대신 어두운 jj_main? 사용+ 흰 글자 (아이콘 색도 변경)
+//Image size PX
+//FREE -> * DOWNLOAD 및 이후 PURCHASED 로 표시 잘되는지 테스트.
 //ISSUE)
 
 //Firebase Performance Monitoring
-//Btm Nav- 약간의 Gradient 넣었음(O) -> [약간 앱 Calm 느낌 나네 ^^;---] ** a) ICON 좀 더 돋보이게 (현재 너무 심심!!) b) 선택되었을 때는 뭔가 돋보이는 아이콘으로+조금 크게(글자+ICON)
-//navigationBar Color (List Activity) (O) Gradient 에서 이어지는 색으로 바꾸긴 했음. 좀 더 변화줘도 될수도..? [최하단]
 
-
-
-//Alarm App ICON, APP NAME: Alarmify , AlarmXPRESS
+//Alarm App ICON, APP NAME: Alarmify , AlarmXPRESS, ALARM PLANET
 // Purchase 창 뜨고 앱 꺼지는것.
-// xx 시간 후 알람- > Toast->Snackbar 로..
+
 
 //0. Install Alarm 테스트 하기 // //**Install Alarm 에 대해서는 AlarmDbHelper -> line 76 - tag 수정.
 
@@ -253,7 +252,9 @@ class AlarmsListActivity : AppCompatActivity() {
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         //throw RuntimeException("Crashlytics Test")
-
+        installSplashScreen().apply {
+            // setKeepOnScreenCondition() -- todo
+        }
         Log.d(TAG, "onCreate: **** !!AlarmsListActivity onCreate() !!!****")
         window.navigationBarColor = ContextCompat.getColor(applicationContext, R.color.jj_bg_color_2)//System NAV BAR (최하단 뒤로가기/Home 버튼 등 구성되어있는) 배경색 설정
 

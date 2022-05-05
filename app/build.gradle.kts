@@ -192,6 +192,8 @@ dependencies {
     implementation("com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1")
     //Billing Client (IAP related!)
     implementation ("com.android.billingclient:billing-ktx:4.1.0")
+    // Splash Screen
+    implementation("androidx.core:core-splashscreen:1.0.0-beta02")
 
 
 }

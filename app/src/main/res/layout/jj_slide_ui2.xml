@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/btm_nav_bg_round_and_gradient_1"
+    android:background="@drawable/btm_nav_bg_round_and_gradient_2"
 
     android:orientation="vertical">
 
@@ -200,7 +200,7 @@
         android:id="@+id/id_lowerUI_entireConsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/miniplayer_lowerui_background_gradient_1"
+
         android:layout_marginStart="14dp"
         android:layout_marginEnd="14dp"
         android:paddingStart="10dp"

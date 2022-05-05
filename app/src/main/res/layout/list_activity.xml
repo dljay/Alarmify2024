@@ -138,6 +138,7 @@
                 app:menu="@menu/bottom_nav_menu"
                 android:clipChildren="false">
 
+<!--  아래에 포함되어있던 내용  app:tint="@color/tertiaryTextColor"-->
                 <ImageButton
                     android:id="@+id/imgBtn_Add_BtmNav"
                     android:background="@color/transparent"
@@ -146,8 +147,8 @@
                     android:layout_gravity="center"
 
                     app:maxImageSize="35dp"
-                    app:tint="@color/tertiaryTextColor"
-                    android:src="@drawable/ic_add_bell_24"/>
+
+                    android:src="@drawable/ic_bell_pink_selected_export_2"/>
 
             <!-- 기존 (+) 흑백 스타일 -->
                 <!--<ImageButton

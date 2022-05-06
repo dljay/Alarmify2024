@@ -75,6 +75,7 @@ import java.util.Calendar
 // SPLASH SCREEN
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
+// ** 결국에는 Adobe Illustrator 로 -> APP ICON, SPLASH PNG (스플래시용 사이즈) + Text 는 Canva 에서!
 // Navigation Drawer 사진 넣지 말고 약간 형이상학적 느낌 배경 넣고 -> Round Circle Image (APP ICON) + 깔끔한 TExtView 글씨.
 // navigation drawer background image -> Google Image 로 검색. // Navigation Design 검색.
 //SPLASH -> Fiverr 나 Adobe 일러로 제대로 만들기.

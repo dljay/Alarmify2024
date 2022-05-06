@@ -2,67 +2,60 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
+    android:layout_height="200dp"
     android:background="@drawable/bg_drawer_header_1">
 
+    <!-- 사진  -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/mt_forest_lake_1" />
+        android:src="@drawable/dark_city_generated" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="12dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="14dp"
-
-        android:background="@drawable/nav_drawer_const_layout_round_corner_1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/navdrawer_horizontal_guideline_1"
-
-        app:layout_constraintStart_toStartOf="parent">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/nav_drawer_logo_img"
-
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginEnd="4dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/splash_test_3_500px"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintTop_toTopOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/transparent"
             app:layout_constraintStart_toStartOf="parent"
-            app:shapeAppearanceOverlay="@style/CircleImageView"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:gravity="center_vertical"
-            android:layout_marginStart="10dp"
-            android:text="Alarm Planet"
-            android:theme="@style/jjText_nav_drawer_logo_text"
-            android:textColor="@color/blackish"
-            app:layout_constraintBottom_toBottomOf="@+id/nav_drawer_logo_img"
-            app:layout_constraintTop_toTopOf="@+id/nav_drawer_logo_img"
-            app:layout_constraintStart_toEndOf="@+id/nav_drawer_logo_img"/>
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/nav_drawer_logo_img"
+
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="4dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/splash_test_3_500px"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:shapeAppearanceOverlay="@style/CircleImageView"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:text="ALARM PLANET"
+                android:textSize="18sp"
+                android:fontFamily="@font/circular_std_black"
+                android:textColor="@color/primaryTextColor"
+                app:layout_constraintBottom_toBottomOf="@+id/nav_drawer_logo_img"
+                app:layout_constraintTop_toTopOf="@+id/nav_drawer_logo_img"
+                app:layout_constraintStart_toEndOf="@+id/nav_drawer_logo_img"/>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-
-
-
-
+<!--
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/navdrawer_vertical_guideline_1"
         android:layout_width="wrap_content"
@@ -82,9 +75,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.65" />
-
-
+        app:layout_constraintGuide_percent="0.4" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

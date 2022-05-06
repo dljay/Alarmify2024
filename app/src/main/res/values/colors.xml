@@ -34,7 +34,7 @@
             <color name="jj_bg_color_2">#334661</color>
             <color name="jj_bg_color_3">#3c506d</color>
             <color name="jj_bg_color_4">#3C516F</color>
-            <color name="jj_bg_color_5_xtreme">#EDDCC3</color>
+            <color name="jj_bg_color_5_xtreme">#0e426a</color>
 
 
         <!-- SecondFrag -->
@@ -115,6 +115,7 @@
     <color name="black">#ff000000</color>
     <!-- If this color is changed or no longer used as the primary background, ensure that blackish_trans is changed as well. -->
     <color name="blackish">#ff1c1e20</color>
+    <color name="blackish2">#2A2C30</color>
     <!-- Transparent background for use in the footer. 80% opacity. The color must remain the same as "blackish" above. -->
     <color name="blackish_trans">#cc1c1e20</color>
     <color name="white">#ffffffff</color>

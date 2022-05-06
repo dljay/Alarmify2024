@@ -129,7 +129,7 @@
                 android:layout_height="match_parent"
                 android:visibility="gone"
                 android:padding="13dp"
-                android:src="@drawable/free_icon_5"/>
+                android:src="@drawable/free_icon_4"/>
 
             <ImageView
                 android:padding="12dp"

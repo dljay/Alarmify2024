@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/night_lake" />
+        android:src="@drawable/mt_forest_lake_1" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
@@ -17,13 +17,10 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="12dp"
-
         android:paddingStart="8dp"
         android:paddingEnd="14dp"
 
-
         android:background="@drawable/nav_drawer_const_layout_round_corner_1"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="@id/navdrawer_horizontal_guideline_1"
 
@@ -39,7 +36,7 @@
             android:layout_marginBottom="5dp"
             android:layout_marginEnd="4dp"
             android:scaleType="centerCrop"
-            android:src="@mipmap/ic_main2"
+            android:src="@drawable/splash_test_3_500px"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintTop_toTopOf="parent"
@@ -51,8 +48,9 @@
             android:layout_height="0dp"
             android:gravity="center_vertical"
             android:layout_marginStart="10dp"
-            android:text="ALARMIFY"
+            android:text="Alarm Planet"
             android:theme="@style/jjText_nav_drawer_logo_text"
+            android:textColor="@color/blackish"
             app:layout_constraintBottom_toBottomOf="@+id/nav_drawer_logo_img"
             app:layout_constraintTop_toTopOf="@+id/nav_drawer_logo_img"
             app:layout_constraintStart_toEndOf="@+id/nav_drawer_logo_img"/>

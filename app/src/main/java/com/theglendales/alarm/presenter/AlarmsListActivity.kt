@@ -68,14 +68,19 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f25 22/5/6 (Fri) 00:02am [SPLASH SCREEN 넣은 후]
+// 30708V1.18e35f26 22/5/6 (Fri) 4:46pm [SPLASH SCREEN 넣은 후]
 // Crashlytics 넣었음. 테스트 완료.
 //
 //Achievement)
 // SPLASH SCREEN
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
-//SPLASH -> APP ICON + ALARM PLANET 글자 보이게. aircuve mobile 참고.
+// Navigation Drawer 사진 넣지 말고 약간 형이상학적 느낌 배경 넣고 -> Round Circle Image (APP ICON) + 깔끔한 TExtView 글씨.
+// navigation drawer background image -> Google Image 로 검색. // Navigation Design 검색.
+//SPLASH -> Fiverr 나 Adobe 일러로 제대로 만들기.
+//Pref - 로고 배너 [TEXT 만 Canva 에서 받아서 (background empty) 넣어보기?]
+
+//Image size PX
 // SPLASH -> 여유되면 API31 이상 brand 글자도 보이게끔. https://itnext.io/a-comprehensive-guide-to-android-12s-splash-screen-api-644609c811fa
 //Pref - 흰색 대신 어두운 jj_main? 사용+ 흰 글자 (아이콘 색도 변경)
 //Image size PX

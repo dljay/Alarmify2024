@@ -34,10 +34,15 @@
             <color name="jj_bg_color_2">#334661</color>
             <color name="jj_bg_color_3">#3c506d</color>
             <color name="jj_bg_color_4">#3C516F</color>
+            <color name="jj_bg_color_5_xtreme">#EDDCC3</color>
+
 
         <!-- SecondFrag -->
+    <!--            <color name="jj_accentColor_1">#FF9C25</color>-->
 <!--            <color name="jj_accentColor_1">#eeff41</color>-->
-            <color name="jj_accentColor_1">#FF9C25</color>
+            <color name="jj_accentColor_1">#dd7d7e</color>
+
+
 
         <!-- Background Gradient 시작/종료 색 -->
             <color name="bg_gradient_start_color">#061623</color>
@@ -90,7 +95,7 @@
 <!-- JJONG added-->
 
     <color name="purple_200">#FFBB86FC</color>
-    <color name="gray_light_highlight_1">#ECECEC</color>
+    <color name="gray_light_highlight_1">#D5D5D5</color>
     <color name="light_gray_jjong">#AEABAB</color>
     <color name="light_gray_brighter_jjong">#BFBFBF</color>
     <color name="dark_gray_jjong">#3D3D3D</color>

@@ -68,22 +68,21 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35f26 22/5/6 (Fri) 4:46pm [SPLASH SCREEN 넣은 후]
+// 30708V1.18e35g1 22/5/6 (Fri) 11:50pm [SPLASH SCREEN 넣었고/Nav Darawer Header 디자인 중]
 // Crashlytics 넣었음. 테스트 완료.
 //
 //Achievement)
-// SPLASH SCREEN
+// Nav Drawer 새로운 사진 넣었음.
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
-// ** 결국에는 Adobe Illustrator 로 -> APP ICON, SPLASH PNG (스플래시용 사이즈) + Text 는 Canva 에서!
-// Navigation Drawer 사진 넣지 말고 약간 형이상학적 느낌 배경 넣고 -> Round Circle Image (APP ICON) + 깔끔한 TExtView 글씨.
-// navigation drawer background image -> Google Image 로 검색. // Navigation Design 검색.
-//SPLASH -> Fiverr 나 Adobe 일러로 제대로 만들기.
-//Pref - 로고 배너 [TEXT 만 Canva 에서 받아서 (background empty) 넣어보기?]
+// ** Splash 스크린 a) png 사이즈 알아보고 b) canva 의 free font 이용해서 아이콘+TEXT 만들기. [Adobe Illustrator 사용하여 합치기?]
+// navigation drawer 현재상태에서 a) 새로 만든 SPLASH 이미지의 TEXT 만 떼서 Header 에 넣기?
+// b) 현재 아이콘 배경색 (#EDDCC3) 연장해서 ALARM PLANET 텍스트까지 곡선 네모로 감싸기 (layout 으로 textView , ImageView 감싸야함)
+// 그 이상 nav drawer 는 건들지 말것! 흰색도 지금 괜찮음!! 꼭 해야되면 Pref 아이콘 바꾸는 정도?
 
 //Image size PX
 // SPLASH -> 여유되면 API31 이상 brand 글자도 보이게끔. https://itnext.io/a-comprehensive-guide-to-android-12s-splash-screen-api-644609c811fa
-//Pref - 흰색 대신 어두운 jj_main? 사용+ 흰 글자 (아이콘 색도 변경)
+
 //Image size PX
 //FREE -> * DOWNLOAD 및 이후 PURCHASED 로 표시 잘되는지 테스트.
 //ISSUE)

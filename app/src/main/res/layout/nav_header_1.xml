@@ -45,6 +45,7 @@
                 android:gravity="center_vertical"
                 android:layout_marginStart="10dp"
                 android:text="ALARM PLANET"
+
                 android:textSize="18sp"
                 android:fontFamily="@font/circular_std_black"
                 android:textColor="@color/primaryTextColor"

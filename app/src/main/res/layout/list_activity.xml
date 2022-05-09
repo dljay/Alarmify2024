@@ -179,7 +179,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
 
-        android:background="@drawable/nav_drawer_bg_gradient"
+        android:backgroundTint="@color/jj_bg_color_5"
         app:headerLayout="@layout/nav_header_1"
         app:itemTextColor="@color/primaryTextColor"
         app:menu="@menu/menu_nav_drawer">

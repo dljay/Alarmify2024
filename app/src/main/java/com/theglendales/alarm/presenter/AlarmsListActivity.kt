@@ -68,18 +68,18 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35G3 22/5/9 (Mon) 9:46pm [Nav Darawer Header 디자인 변경. APP ICON FIXED(O)]
+// 30708V1.18e36A 22/5/9 (Mon) 11:10pm [Nav Darawer Header 디자인 변경. APP ICON FIXED(O)]
 // Crashlytics 넣었음. 테스트 완료.
 //
 //Achievement)
 // Nav Drawer 새로운 사진 넣었음.
 // 그 후 Docs 보고 FIX/Update 점검.
 //Todos)
-// ** Splash 스크린 a) png 사이즈 알아보고 b) canva 의 free font 이용해서 아이콘+TEXT 만들기. [Adobe Illustrator 사용하여 합치기?]
-// navigation drawer 현재상태에서 a) 새로 만든 SPLASH 이미지의 TEXT 만 떼서 Header 에 넣기?
-//* b) 현재 아이콘 배경색 (#EDDCC3) 연장해서 ALARM PLANET 텍스트까지 곡선 네모로 감싸기--배너 스타일. (layout 으로 textView , ImageView 감싸야함)
-// c) 그냥 현재대로 두기.
-// 그 이상 nav drawer 는 건들지 말것! 흰색도 지금 괜찮음!! 꼭 해야되면 Pref 아이콘 바꾸는 정도?
+// Intensity 넣기.
+// ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]
+// Badge 글자 안 보임
+
+
 
 //Image size PX
 // SPLASH -> 여유되면 API31 이상 brand 글자도 보이게끔. https://itnext.io/a-comprehensive-guide-to-android-12s-splash-screen-api-644609c811fa
@@ -90,7 +90,7 @@ import java.util.Calendar
 
 //Firebase Performance Monitoring
 
-//Alarm App ICON, APP NAME: Alarmify , AlarmXPRESS, ALARM PLANET
+// ALARM PLANET
 // Purchase 창 뜨고 앱 꺼지는것.
 
 
@@ -103,7 +103,7 @@ import java.util.Calendar
 //4.language String -- Hold the Button 의 경우 한국말... 어마어마하게 많은 작업일것으로 예상.
 //5. 최적화. 뭐가 자꾸 느리게 하는지 지울것? -> Recycler -- NotifyDataSetChanged(?) or Adapter? 가 훨씬 빠른데???
 
-//7. App ICON -> NavigationDrawer 꾸미기.
+
 //10. drawable 등 안 쓰는 asset 지우기 (백업하고)
 // 전체 색!!!! 결정해야 Divider 색도 결정!!! //- system navigation 은 살짝 다른색으로 할수도 있겠다.
 

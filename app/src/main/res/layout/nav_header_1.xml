@@ -32,7 +32,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_marginEnd="4dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/splash_test_3_500px"
+                android:src="@mipmap/ic_main2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintTop_toTopOf="parent"

@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e35g1 22/5/6 (Fri) 11:50pm [SPLASH SCREEN 넣었고/Nav Darawer Header 디자인 중]
+// 30708V1.18e35G3 22/5/9 (Mon) 9:46pm [Nav Darawer Header 디자인 변경. APP ICON FIXED(O)]
 // Crashlytics 넣었음. 테스트 완료.
 //
 //Achievement)
@@ -77,7 +77,8 @@ import java.util.Calendar
 //Todos)
 // ** Splash 스크린 a) png 사이즈 알아보고 b) canva 의 free font 이용해서 아이콘+TEXT 만들기. [Adobe Illustrator 사용하여 합치기?]
 // navigation drawer 현재상태에서 a) 새로 만든 SPLASH 이미지의 TEXT 만 떼서 Header 에 넣기?
-// b) 현재 아이콘 배경색 (#EDDCC3) 연장해서 ALARM PLANET 텍스트까지 곡선 네모로 감싸기 (layout 으로 textView , ImageView 감싸야함)
+//* b) 현재 아이콘 배경색 (#EDDCC3) 연장해서 ALARM PLANET 텍스트까지 곡선 네모로 감싸기--배너 스타일. (layout 으로 textView , ImageView 감싸야함)
+// c) 그냥 현재대로 두기.
 // 그 이상 nav drawer 는 건들지 말것! 흰색도 지금 괜찮음!! 꼭 해야되면 Pref 아이콘 바꾸는 정도?
 
 //Image size PX
@@ -370,6 +371,7 @@ class AlarmsListActivity : AppCompatActivity() {
     // Drawer Layout (navigation view)
         drawerLayout = findViewById(R.id.id_drawerLayout) //String Resource= 시각 장애인 위함.
         drawerNavView = findViewById(R.id.id_nav_view)
+        drawerNavView.itemIconTintList = null // NavDrawer 에서 아이콘(shopping cart, dollar sign 등) 색이 원래 지정색(흰색)으로 안 나올 때 설정.
         toggleDrawer = ActionBarDrawerToggle(this, drawerLayout,toolBar,R.string.openNavBlind, R.string.closeNavBlind)// Drawer (Navigaton View)열리는 Toggle
         drawerLayout.addDrawerListener(toggleDrawer)
         toggleDrawer.syncState() // 그냥 이제 사용준비 되었다는 의미라네.

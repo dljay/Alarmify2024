@@ -178,8 +178,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:backgroundTint="@color/gray_light_highlight_1"
+
+        android:background="@drawable/nav_drawer_bg_gradient"
         app:headerLayout="@layout/nav_header_1"
+        app:itemTextColor="@color/primaryTextColor"
         app:menu="@menu/menu_nav_drawer">
 
 

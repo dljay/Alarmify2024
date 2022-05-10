@@ -535,7 +535,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             return
         }
         // 추후 다른 Frag 갔다 들어왔을 때 화면에 재생시키기 위해. 아래 currentThumbNail 에 임시저장.
-    //Sliding Panel - Upper UI
+    // [1] Sliding Panel - Upper UI
         // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
         var spaceFifteen="               " // 15칸
         var spaceTwenty="                    " // 20칸
@@ -545,12 +545,14 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         else {tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
         }
 
-    //Sliding Panel -  Lower UI
+    // [2] Sliding Panel -  Lower UI
         tv_lowerUi_about.text = rtObj.description // Description 채워주기
+
+        //a) Badge 표시
         val badgeStrList = rtObj.bdgStrArray// Badge Sort
         showOrHideBadgesOnMiniPlayer(badgeStrList) // Badge 켜고끄기- MiniPlayer 에 반영
-        //1) Rt 가격 표시 + Download (Purchase) 버튼 onClickListener 설정 (Purchase 상태면 (v) 활성화)
-        if(rtObj.iapName.contains("f")) {
+        //b) Rt 가격 표시 + Download (Purchase) 버튼 onClickListener 설정 (Purchase 상태면 (v) 활성화)
+        if(rtObj.iapName.contains("f")) { // 달리 다른 방법이 없어서 iapName 에 "f"가 있으면으로 했지만. 다소 불안정.
             btn_buyThis.text = " FREE " // todo: a) FREE 만 있을때 이상해보여서 공백 넣었음. 추후 언어바꿨을 때 어찌할지 생각.. b) Str Resource 로 옮기기.
         } else {
             btn_buyThis.text = rtObj.itemPrice
@@ -565,13 +567,13 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 purchased_check_icon.visibility= View.GONE
             }
         }
-
+        //c) 클릭시 구매창 이동..
         btn_buyThis.setOnClickListener {
             onMiniPlayerPauseClicked() // 음악 재생 멈춤.
             jjMainVModel.onTrackClicked(rtObj, isPurchaseClicked = true, requireActivity())
         }
 
-        //2) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
+        //d) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
         GlideApp.with(requireContext()).load(rtObj.imageURL).centerCrop().error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
@@ -588,11 +590,36 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 }
             }).into(iv_upperUi_thumbNail)
 
-        // 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
+        //e) Intensity 표시 (1-4 Str 으로 받음). 이게 이렇게 무식하게 코드 써야될 일인가 싶긴 하네..
+        val intensity = rtObj.intensity
+        when(intensity) {
+            "1" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                iv_lightning_2.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+            }
+            "2" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
+                iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+            }
+            "3" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
+                iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
+                iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+            }
+            "4" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
+                iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
+                iv_lightning_4.setImageResource(R.drawable.ic_lightning_1)
+            }
+        }
+        Log.d(TAG, "updateMiniPlayerUiOnClick: intensity=$intensity")
+        //f 최초 SlidingPanel 이 HIDDEN  일때만 열어주기. 이미 EXPAND 상태로 보고 있다면 Panel 은 그냥 둠
         if (slidingUpPanelLayout.panelState == SlidingUpPanelLayout.PanelState.HIDDEN) {
             slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED // Show Panel! 아리러니하게도 .COLLAPSED 가 (위만) 보이는 상태임!
         }
-        // 클릭시 구매창 이동..
+
     }
 
     //Chip Related#1 (Listener 등록)

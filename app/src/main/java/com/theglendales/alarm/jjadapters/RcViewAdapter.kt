@@ -65,8 +65,9 @@ class RcViewAdapter(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
         val currentRt = rtPlusIapInfoList[position]
-        val currentTrId = rtPlusIapInfoList[position].id
-        val currentIapName = rtPlusIapInfoList[position].iapName
+        val currentTrId = currentRt.id
+        val currentIapName = currentRt.iapName
+        val currentIntensity = currentRt.intensity
 
         holder.tv1_Title.text = currentRt.title
         holder.tv2_ShortDescription.text = currentRt.tags

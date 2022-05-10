@@ -3,9 +3,9 @@ package com.theglendales.alarm.jjdata
 import android.util.Log
 
 private const val TAG="RtInTheCloud_DataClass"
-
+// intensity= between 1 - 4 (STR)
 data class RtInTheCloud(val title: String="", val tags: String="", val description: String="", val imageURL: String="", val mp3URL: String="",
-                        val id: Int = 0, val iapName: String="", val bdgStrArray: ArrayList<String> = arrayListOf(),
+                        val id: Int = 0, val iapName: String="", val bdgStrArray: ArrayList<String> = arrayListOf(), val intensity: String="",
                         var itemPrice: String="", var purchaseBool: Boolean=false, var orderID: String="", var purchaseTime: Long = 0L)
 {
     override fun toString(): String

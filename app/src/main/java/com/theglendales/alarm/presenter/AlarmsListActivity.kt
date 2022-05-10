@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36c 22/5/10 (Tue) 2:18pm [Nav Drawer Header 디자인 변경. Intensity 반영중. 3]
+// 30708V1.18e36c 22/5/10 (Tue) 3:03pm [Intensity 반영중. 3]
 // Crashlytics 넣었음. 테스트 완료.
 //
 //Achievement)

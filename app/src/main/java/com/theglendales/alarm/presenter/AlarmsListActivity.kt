@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36E2 22/5/10 (Tue) 11:57pm [Intensity 반영 완료(O)]
+// 30708V1.18e36E2 22/5/10 (Wed) 12:06am [Intensity 반영 완료(O)]
 
 //Achievement)
 // Intensity- 약간 작게(Scale 이용?) / Badge 더 크고 잘 보이게(O) /

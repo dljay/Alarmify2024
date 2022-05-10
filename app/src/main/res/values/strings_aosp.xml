@@ -71,6 +71,9 @@
     <!-- Setting labels on Set alarm screen: Select alarm ringtone -->
     <string name="alert">Ringtone</string>
 
+    <!-- Setting labels on Set alarm screen: Ringtone / Intensity Select alarm ringtone -->
+    <string name="alertAndIntensity">Ringtone / Intensity</string>
+
     <!-- 내가 심은. jj- 현재 설정된 알람의 Ringtone 파일이 삭제되었을 때-->
     <string name="alert_missing_file">Missing Ringtone</string>
 

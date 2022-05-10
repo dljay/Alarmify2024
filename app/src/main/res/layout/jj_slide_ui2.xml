@@ -312,8 +312,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
-
-                android:src="@drawable/badge_1_intense" />
+                android:src="@drawable/badge_1_intense_2" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge2_Gentle"
@@ -322,7 +321,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
-                android:src="@drawable/badge_2_gentle" />
+                android:src="@drawable/badge_2_gentle_2" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge3_Nature"
@@ -331,7 +330,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
-                android:src="@drawable/badge_3_nature" />
+                android:src="@drawable/badge_3_nature_2" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge_4_Location"
@@ -340,7 +339,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
-                android:src="@drawable/badge_4_location" />
+                android:src="@drawable/badge_4_locations_2" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge_5_Popular"
@@ -349,14 +348,14 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
-                android:src="@drawable/badge_5_popular" />
+                android:src="@drawable/badge_5_popular_2" />
 
             <ImageView
                 android:id="@+id/mPlayer_badge_6_Misc"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
-                android:src="@drawable/badge_6_misc" />
+                android:src="@drawable/badge_6_misc_2" />
 
         </LinearLayout>
 

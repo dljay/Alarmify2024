@@ -394,6 +394,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -416,9 +417,9 @@
                         android:id="@+id/iv_badge1_intense"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/badge_1_intense"
+                        android:src="@drawable/badge_1_intense_2"
 
                         android:visibility="gone"/>
 
@@ -426,58 +427,50 @@
                         android:id="@+id/iv_badge2_gentle"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/badge_2_gentle"
+                        android:src="@drawable/badge_2_gentle_2"
                         android:visibility="gone"/>
 
                     <ImageView
                         android:id="@+id/iv_badge3_nature"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/badge_3_nature"
+                        android:src="@drawable/badge_3_nature_2"
                         android:visibility="gone"/>
 
                     <ImageView
                         android:id="@+id/iv_badge4_location"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/badge_4_location"
+                        android:src="@drawable/badge_4_locations_2"
                         android:visibility="gone"/>
 
                     <ImageView
                         android:id="@+id/iv_badge5_popular"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/badge_5_popular"
+                        android:src="@drawable/badge_5_popular_2"
                         android:visibility="gone"/>
 
                     <ImageView
                         android:id="@+id/iv_badge6_misc"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="5dp"
                         android:layout_marginEnd="5dp"
-                        android:src="@drawable/badge_6_misc"
+                        android:src="@drawable/badge_6_misc_2"
                         android:visibility="gone"/>
 
 
                 </LinearLayout>
-
-
-
-
-
-
             </LinearLayout>
-
-
         </LinearLayout>
     </ScrollView>
 

@@ -256,21 +256,23 @@
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_1"/>
 
         <!-- About the Ringtone [Description] -->
-        <!-- 디자인 하다 빡세서 결국 fixed height 로 함 (55dp)-->
+        <!-- 디자인 하다 빡세서 결국 fixed height 로 함 (65dp)-->
         <TextView
             android:id="@+id/id_lowerUi_tv_Description"
             android:layout_width="0dp"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="10dp"
-            android:text="This is a placeholder text. I wish this holder text lives forever is holder text lives foreveris holder text lives forever"
+            android:layout_marginBottom="8dp"
+            android:text="This is a placeholder text. I wish this holder text lives forever is holder text lives foreveris holder text lives forever. Now heading to our fourth line"
             android:maxLines="4"
             android:ellipsize="end"
             android:theme="@style/jjTextMedium_secondaryColor"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_1"
-            app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"/>
+            app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"
+            app:layout_constraintBottom_toTopOf="@id/ll_badgeHolder"/>
 
         <!-- badges-->
 
@@ -364,8 +366,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="9dp"
+            android:layout_marginBottom="7dp"
             android:scaleType="centerCrop"
 
             app:layout_constraintDimensionRatio="1:1"
@@ -434,7 +436,7 @@
             app:layout_constraintTop_toBottomOf="@id/intensity_container"
             app:layout_constraintBottom_toBottomOf="@id/ll_badgeHolder"
             app:layout_constraintStart_toStartOf="@id/id_lowerUi_iv_bigThumbnail"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="@id/id_lowerUi_iv_bigThumbnail">
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_buyThis"
@@ -450,7 +452,7 @@
                 android:background="@drawable/btn_round_corner_1"
                 android:backgroundTint="@color/jj_accentColor_1"
                 android:fontFamily="@font/circular_std_medium"
-                android:textSize="13sp"
+                android:textSize="12sp"
                 tools:text="$19.99"
                 android:textColor="@color/primaryTextColor"
                 android:textAlignment="center"

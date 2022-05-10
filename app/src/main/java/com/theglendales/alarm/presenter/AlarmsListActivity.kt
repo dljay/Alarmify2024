@@ -68,13 +68,13 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36d 22/5/10 (Tue) 3:53pm [Intensity SecondFrag>MiniPlayer 에 반영중. 어느정되 되었음. 5]
+// 30708V1.18e36E 22/5/10 (Tue) 4:28pm [Intensity SecondFrag>MiniPlayer 에 반영중. 어느정되 되었음. 6]
 
-//
 //Achievement)
 // Intensity- 약간 작게(Scale 이용?) / Badge 더 크고 잘 보이게 /
+//  설명 칸은 4줄 기입도 가능하게끔(O) => 전체 Miniplayer 가 조금 더 올라와야 함.
+
 //Todos)
-//  설명 칸은 4줄 기입도 가능하게끔. => 전체 Miniplayer 가 조금 더 올라와야 함.
 // ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]
 
 

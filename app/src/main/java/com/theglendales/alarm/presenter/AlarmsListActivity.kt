@@ -68,16 +68,15 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36c 22/5/10 (Tue) 3:03pm [Intensity 반영중. 3]
-// Crashlytics 넣었음. 테스트 완료.
+// 30708V1.18e36d 22/5/10 (Tue) 3:53pm [Intensity SecondFrag>MiniPlayer 에 반영중. 어느정되 되었음. 5]
+
 //
 //Achievement)
-// Nav Drawer 새로운 사진 넣었음.
-// 그 후 Docs 보고 FIX/Update 점검.
+// Intensity- 약간 작게(Scale 이용?) / Badge 더 크고 잘 보이게 /
 //Todos)
-// Intensity 넣기.
+//  설명 칸은 4줄 기입도 가능하게끔. => 전체 Miniplayer 가 조금 더 올라와야 함.
 // ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]
-// Badge 글자 안 보임
+
 
 
 

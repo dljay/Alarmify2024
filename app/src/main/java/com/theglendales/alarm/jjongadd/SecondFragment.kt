@@ -105,7 +105,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //Media Player & MiniPlayer Related
     private val exoForUrlPlay: ExoForUrl by globalInject()
 
-    //
+
     //Sliding Panel Related
     var shouldPanelBeVisible = false
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout    //findViewById(R.id.id_slidingUpPanel)  }
@@ -138,6 +138,12 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     //lateinit var tv_price: TextView
     lateinit var btn_buyThis: Button
     lateinit var purchased_check_icon: ImageView
+        //b-2) Lower Ui Intensity 관련
+        // Intensity 관련
+        lateinit var mp_iv_lightning_1: ImageView
+        lateinit var mp_iv_lightning_2: ImageView
+        lateinit var mp_iv_lightning_3: ImageView
+        lateinit var mp_iv_lightning_4: ImageView
 
 
     // listfrag 가거나 나갔다왔을 때 관련.
@@ -593,25 +599,25 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //e) Intensity 표시 (1-4 Str 으로 받음). 이게 이렇게 무식하게 코드 써야될 일인가 싶긴 하네..
         val intensity = rtObj.intensity
         when(intensity) {
-            "1" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                iv_lightning_2.setImageResource(R.drawable.ic_lightning_1_grayedout)
-                iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
-                iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+            "1" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                mp_iv_lightning_2.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                mp_iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                mp_iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
             }
-            "2" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
-                iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
-                iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+            "2" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                mp_iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
+                mp_iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                mp_iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
             }
-            "3" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
-                iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
-                iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+            "3" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                mp_iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
+                mp_iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
+                mp_iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
             }
-            "4" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
-                iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
-                iv_lightning_4.setImageResource(R.drawable.ic_lightning_1)
+            "4" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                mp_iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
+                mp_iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
+                mp_iv_lightning_4.setImageResource(R.drawable.ic_lightning_1)
             }
         }
         Log.d(TAG, "updateMiniPlayerUiOnClick: intensity=$intensity")
@@ -822,6 +828,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         btmAppBarFromActivity = requireActivity().findViewById(R.id.bottomAppBar2)
         //Activity 에서 받은 CollapsingToolBar -- 혹시나 펼쳐있을 수 있으니 접어주기.
         //collapsingToolbarLayout = requireActivity().findViewById()
+        //b-4) Intensity 관련
+        mp_iv_lightning_1 = v.findViewById(R.id.mp_iv_lightning_1)
+        mp_iv_lightning_2 = v.findViewById(R.id.mp_iv_lightning_2)
+        mp_iv_lightning_3 = v.findViewById(R.id.mp_iv_lightning_3)
+        mp_iv_lightning_4 = v.findViewById(R.id.mp_iv_lightning_4)
 
 
 

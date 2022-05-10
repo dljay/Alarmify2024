@@ -278,7 +278,7 @@ class DiskSearcher(val context: Context)
             val rtTitle = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE)
 
             // 3-b) "TrId 찾기" // METADATA_KEY_COMPOSER 사용!
-            //val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
+
             val trIDString = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_COMPOSER)
 
             // 3-c) rta File Path
@@ -297,9 +297,13 @@ class DiskSearcher(val context: Context)
             //todo:  ** 아래 readArtOnDisk() 가 앱 시작과 동시에 실행됨. 다 되었다는 가정하에 여기서 찾지만. Path 가 아직 없는경우에 보완책
             val artFilePath = onDiskArtMap[trIDString] //<trkId, 앨범아트 경로> trIDString & artFilePath 둘 다 nullable String
 
+            // 3-g) Intensity (KEY_DISC_NUMBER) 스트링 사용.
+            val alarmIntensity = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER)
+            Log.d(TAG, "extractMetaDataFromRta: alarmIntensity= $alarmIntensity")
+
         //4) RtOnThePhone Class 로 만들어서 리스트(onDiskRtList)에 저장
         val onDiskRingtone = RtOnThePhone(trIDString, rtTitle= rtTitle, audioFilePath = audioFilePath, fileNameWithExt = fileInRtaFolder.name,
-            artFilePathStr = artFilePath, rtDescription = rtDescription, badgeStr = badgeString) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
+            artFilePathStr = artFilePath, rtDescription = rtDescription, badgeStr = badgeString, intensity = alarmIntensity) // 못 찾을 경우 default 로 일단 trid 는 모두 -20 으로 설정
         Log.d(TAG, "extractMetaDataFromRta: Extracted [onDiskRingtone]=$onDiskRingtone")
         return onDiskRingtone
     }

@@ -347,7 +347,7 @@ class AlarmDetailsFragment : Fragment() {
             val rtDescription = selectedRtForThisAlarm.rtDescription
             val badgeStr = selectedRtForThisAlarm.badgeStr // ex. "I,N,H" -> Intense, Nature, History 뭔 이런식.
             val artPath = selectedRtForThisAlarm.artFilePathStr
-
+            val alarmIntensity = selectedRtForThisAlarm.intensity
 
 
         // 2-b) 잠시! AlarmListFrag 에서 Row 에 보여줄 AlbumArt 의 art Path 수정/저장!  [alarmId, artPath] 가 저장된 Shared Pref(ArtPathForListFrag.xml) 업데이트..
@@ -376,6 +376,10 @@ class AlarmDetailsFragment : Fragment() {
                         return false
                     }
                 }).into(ivRtArtBig)
+            }
+        // 2-f) Intensity 보여주기
+            if(alarmIntensity!=null) {
+                Log.d(TAG, "updateUisForRt: intensity=$alarmIntensity")
             }
         }
     }

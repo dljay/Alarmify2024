@@ -12,6 +12,7 @@ data class RtOnThePhone(val trIdStr: String?="",
                         val fileNameWithExt: String="",
                         val rtDescription: String?="",
                         val badgeStr: String?="",
+                        val intensity: String?="",
                         var isRadioBtnChecked: Boolean=false) {
     //isRadioBtnChecked = RtPickerActivity 에서 Rt 선택할 때 체크표시 보여주기 용도로 사용.,
 }

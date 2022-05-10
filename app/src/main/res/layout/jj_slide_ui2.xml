@@ -368,7 +368,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_AboutTheRingTone"
             app:layout_constraintBottom_toTopOf="@id/ll_badgeHolder"
-
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView"
             tools:src="@drawable/night_lake" />
 
         <FrameLayout
@@ -403,7 +403,7 @@
                 android:ellipsize="end"
                 android:drawablePadding="0dp"
 
-                android:visibility="gone"
+                android:visibility="visible"
                 android:drawableEnd="@drawable/purchase_btn_drawable"/>
 
                 <ImageView
@@ -414,7 +414,7 @@
                     android:layout_gravity="center"
                     android:src="@drawable/purchased_already_textview"
                     android:background="@drawable/textview_round_corner_1"
-                    android:visibility="visible"/>
+                    android:visibility="gone"/>
 
                 <!--<TextView
                     android:id="@+id/iv_purchased_check_icon"

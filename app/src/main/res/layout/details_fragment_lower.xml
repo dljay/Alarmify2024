@@ -202,7 +202,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_RtPicker_Container"
                 android:layout_width="match_parent"
-                android:layout_height="77dp">
+                android:layout_height="82dp">
                 <!-- A) Ringtone Text + Spinner-->
 
 
@@ -267,6 +267,7 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_marginEnd="10dp"
+                    android:orientation="vertical"
 
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -276,12 +277,49 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/iv_ringtoneArtBig"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="4"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
                         android:paddingEnd="10dp"
                         android:layout_gravity="start"
                         android:src="@drawable/errordisplay"/>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1">
+                        <ImageView
+                            android:id="@+id/iv_lightning_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_lightning_1_grayedout"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"/>
+                        <ImageView
+                            android:id="@+id/iv_lightning_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_lightning_1_grayedout"
+                            app:layout_constraintStart_toEndOf="@id/iv_lightning_1"
+                            app:layout_constraintTop_toTopOf="parent"/>
+                        <ImageView
+                            android:id="@+id/iv_lightning_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_lightning_1_grayedout"
+                            app:layout_constraintStart_toEndOf="@id/iv_lightning_2"
+                            app:layout_constraintTop_toTopOf="parent"/>
+                        <ImageView
+                            android:id="@+id/iv_lightning_4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/ic_lightning_1_grayedout"
+                            app:layout_constraintStart_toEndOf="@id/iv_lightning_3"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>

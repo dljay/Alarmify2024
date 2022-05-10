@@ -112,6 +112,12 @@ class AlarmDetailsFragment : Fragment() {
             private val tvRtPicker by lazy { fragmentView.findViewById(R.id.tv_RtPicker_DetailsFrag) as TextView }
             private val clRtPickerContainer by lazy { fragmentView.findViewById(R.id.cl_RtPicker_Container) as ConstraintLayout} // Ringtone 이라고 써 있는 전체 박스!!
             private val tvRtDescription by lazy { fragmentView.findViewById(R.id.tv_rt_description_detailsFrag) as TextView }
+        // Intensity 관련
+            private val iv_lightning_1 by lazy { fragmentView.findViewById(R.id.iv_lightning_1) as ImageView }
+            private val iv_lightning_2 by lazy { fragmentView.findViewById(R.id.iv_lightning_2) as ImageView }
+            private val iv_lightning_3 by lazy { fragmentView.findViewById(R.id.iv_lightning_3) as ImageView }
+            private val iv_lightning_4 by lazy { fragmentView.findViewById(R.id.iv_lightning_4) as ImageView }
+
         // Badge 관련
             private val iv_badge1_Intense by lazy {fragmentView.findViewById(R.id.iv_badge1_intense) as ImageView}
             private val iv_badge2_Gentle by lazy {fragmentView.findViewById(R.id.iv_badge2_gentle) as ImageView}
@@ -377,9 +383,33 @@ class AlarmDetailsFragment : Fragment() {
                     }
                 }).into(ivRtArtBig)
             }
-        // 2-f) Intensity 보여주기
+        // 2-f) Intensity 보여주기 [STRING 으로 받음]
             if(alarmIntensity!=null) {
                 Log.d(TAG, "updateUisForRt: intensity=$alarmIntensity")
+                when(alarmIntensity) {
+                    "1" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                        iv_lightning_2.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                        iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                        iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                    }
+                    "2" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                        iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
+                        iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                        iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                    }
+                    "3" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                        iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
+                        iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
+                        iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                    }
+                    "4" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
+                        iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
+                        iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
+                        iv_lightning_4.setImageResource(R.drawable.ic_lightning_1)
+                    }
+                }
+            } else { // null 인 경우
+
             }
         }
     }

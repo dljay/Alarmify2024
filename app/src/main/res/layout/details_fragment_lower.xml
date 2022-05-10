@@ -304,32 +304,39 @@
                         app:layout_constraintTop_toTopOf="@id/intensity_guide_hor_1">
 
                         <ImageView
-
+                            android:scaleX="0.8"
+                            android:scaleY="0.8"
                             android:id="@+id/iv_lightning_1"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/ic_lightning_1_grayedout"
+                            android:src="@drawable/ic_speaker_1_grayedout"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"/>
                         <ImageView
+                            android:scaleX="0.8"
+                            android:scaleY="0.8"
                             android:id="@+id/iv_lightning_2"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/ic_lightning_1_grayedout"
+                            android:src="@drawable/ic_speaker_1_grayedout"
                             app:layout_constraintStart_toEndOf="@id/iv_lightning_1"
                             app:layout_constraintTop_toTopOf="parent"/>
                         <ImageView
+                            android:scaleX="0.8"
+                            android:scaleY="0.8"
                             android:id="@+id/iv_lightning_3"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/ic_lightning_1_grayedout"
+                            android:src="@drawable/ic_speaker_1_grayedout"
                             app:layout_constraintStart_toEndOf="@id/iv_lightning_2"
                             app:layout_constraintTop_toTopOf="parent"/>
                         <ImageView
+                            android:scaleX="0.8"
+                            android:scaleY="0.8"
                             android:id="@+id/iv_lightning_4"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:src="@drawable/ic_lightning_1_grayedout"
+                            android:src="@drawable/ic_speaker_1_grayedout"
                             app:layout_constraintStart_toEndOf="@id/iv_lightning_3"
                             app:layout_constraintTop_toTopOf="parent"/>
 

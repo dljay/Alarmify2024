@@ -68,13 +68,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36E 22/5/10 (Tue) 4:28pm [Intensity SecondFrag>MiniPlayer 에 반영중. 어느정되 되었음. 6]
+// 30708V1.18e36E1 22/5/10 (Tue) 10:57pm [Intensity 반영 완료(O)]
 
 //Achievement)
 // Intensity- 약간 작게(Scale 이용?) / Badge 더 크고 잘 보이게 /
 //  설명 칸은 4줄 기입도 가능하게끔(O) => 전체 Miniplayer 가 조금 더 올라와야 함.
 
 //Todos)
+// ** 번개 gap 이 Emulator 와 S8 과 조금 다르네..
 // ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]
 
 

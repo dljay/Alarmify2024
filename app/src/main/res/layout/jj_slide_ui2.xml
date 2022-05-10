@@ -244,7 +244,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="10dp"
             android:text="Information"
             android:maxLines="1"
@@ -296,6 +296,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="0dp"
+
+
 
             android:orientation="horizontal"
             android:weightSum="6"
@@ -365,9 +367,10 @@
             android:id="@+id/id_lowerUi_iv_bigThumbnail"
             android:layout_width="0dp"
             android:layout_height="0dp"
+
             android:layout_marginStart="10dp"
             android:layout_marginEnd="9dp"
-            android:layout_marginBottom="7dp"
+            android:layout_marginBottom="10dp"
             android:scaleType="centerCrop"
 
             app:layout_constraintDimensionRatio="1:1"
@@ -375,7 +378,7 @@
             app:layout_constraintStart_toStartOf="@id/minip_btmUi_vert_guide_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/tv_AboutTheRingTone"
-            app:layout_constraintBottom_toTopOf="@id/intensity_container"
+            app:layout_constraintBottom_toTopOf="@id/ll_badgeHolder"
             app:shapeAppearanceOverlay="@style/roundedCornersImageView"
             tools:src="@drawable/night_lake" />
 
@@ -384,7 +387,9 @@
             android:id="@+id/intensity_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="@id/ll_badgeHolder"
+            android:layout_marginTop="5dp"
+
+            app:layout_constraintTop_toBottomOf="@id/id_lowerUi_iv_bigThumbnail"
             app:layout_constraintBottom_toTopOf="@id/fl_buy_or_purchased"
             app:layout_constraintStart_toStartOf="@id/id_lowerUi_iv_bigThumbnail"
             app:layout_constraintEnd_toEndOf="@id/id_lowerUi_iv_bigThumbnail">
@@ -395,7 +400,7 @@
                 android:id="@+id/mp_iv_lightning_1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_lightning_1_grayedout"
+                android:src="@drawable/ic_speaker_1_grayedout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>
             <ImageView
@@ -404,7 +409,7 @@
                 android:id="@+id/mp_iv_lightning_2"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_lightning_1_grayedout"
+                android:src="@drawable/ic_speaker_1_grayedout"
                 app:layout_constraintStart_toEndOf="@id/mp_iv_lightning_1"
                 app:layout_constraintTop_toTopOf="parent"/>
             <ImageView
@@ -413,7 +418,7 @@
                 android:id="@+id/mp_iv_lightning_3"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_lightning_1_grayedout"
+                android:src="@drawable/ic_speaker_1_grayedout"
                 app:layout_constraintStart_toEndOf="@id/mp_iv_lightning_2"
                 app:layout_constraintTop_toTopOf="parent"/>
             <ImageView
@@ -422,7 +427,7 @@
                 android:id="@+id/mp_iv_lightning_4"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_lightning_1_grayedout"
+                android:src="@drawable/ic_speaker_1_grayedout"
                 app:layout_constraintStart_toEndOf="@id/mp_iv_lightning_3"
                 app:layout_constraintTop_toTopOf="parent"/>
 
@@ -442,7 +447,7 @@
                 android:id="@+id/btn_buyThis"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="4dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
                 android:paddingStart="5dp"

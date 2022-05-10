@@ -387,25 +387,25 @@ class AlarmDetailsFragment : Fragment() {
             if(alarmIntensity!=null) {
                 Log.d(TAG, "updateUisForRt: intensity=$alarmIntensity")
                 when(alarmIntensity) {
-                    "1" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                        iv_lightning_2.setImageResource(R.drawable.ic_lightning_1_grayedout)
-                        iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
-                        iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                    "1" -> { iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                        iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                        iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_grayedout)
                     }
-                    "2" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                        iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
-                        iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
-                        iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                    "2" -> { iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                        iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_grayedout)
                     }
-                    "3" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                        iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
-                        iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
-                        iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+                    "3" -> { iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_grayedout)
                     }
-                    "4" -> { iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                        iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
-                        iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
-                        iv_lightning_4.setImageResource(R.drawable.ic_lightning_1)
+                    "4" -> { iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_yellow)
                     }
                 }
             } else { // null 인 경우

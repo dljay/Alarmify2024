@@ -599,25 +599,25 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //e) Intensity 표시 (1-4 Str 으로 받음). 이게 이렇게 무식하게 코드 써야될 일인가 싶긴 하네..
         val intensity = rtObj.intensity
         when(intensity) {
-            "1" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                mp_iv_lightning_2.setImageResource(R.drawable.ic_lightning_1_grayedout)
-                mp_iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
-                mp_iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+            "1" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                mp_iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                mp_iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                mp_iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_grayedout)
             }
-            "2" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                mp_iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
-                mp_iv_lightning_3.setImageResource(R.drawable.ic_lightning_1_grayedout)
-                mp_iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+            "2" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                mp_iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_yellow)
+                mp_iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                mp_iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_grayedout)
             }
-            "3" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                mp_iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
-                mp_iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
-                mp_iv_lightning_4.setImageResource(R.drawable.ic_lightning_1_grayedout)
+            "3" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                mp_iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_yellow)
+                mp_iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_yellow)
+                mp_iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_grayedout)
             }
-            "4" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_lightning_1)
-                mp_iv_lightning_2.setImageResource(R.drawable.ic_lightning_1)
-                mp_iv_lightning_3.setImageResource(R.drawable.ic_lightning_1)
-                mp_iv_lightning_4.setImageResource(R.drawable.ic_lightning_1)
+            "4" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                mp_iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_yellow)
+                mp_iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_yellow)
+                mp_iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_yellow)
             }
         }
         Log.d(TAG, "updateMiniPlayerUiOnClick: intensity=$intensity")

@@ -68,15 +68,16 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36E2 22/5/10 (Wed) 12:06am [Intensity 반영 완료(O)]
+// 30708V1.18e36E3 22/5/10 (Wed) 09:07pm [Speaker Intensity (완료)]
 
 //Achievement)
-// Intensity- 약간 작게(Scale 이용?) / Badge 더 크고 잘 보이게(O) /
+// 2ndFrag> MiniPlayer> Bottom> Speaker (Rating) Horizontal Chain
 // 설명 칸은 4줄 기입도 가능하게끔(O) => 전체 Miniplayer 가 조금 더 올라와야 함.
 
 //Todos)
-// 번개(Speaker rating)Emulator 에서도 확인.
+
 // ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]
+// ** Drawable 삭제. 백업먼저하고.
 // ** Drawable 제대로 import 해보기.. mdpi 기기로 테스트?
 
 

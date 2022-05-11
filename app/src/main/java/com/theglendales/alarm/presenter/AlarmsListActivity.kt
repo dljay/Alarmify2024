@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36E3 22/5/10 (Wed) 09:07pm [Speaker Intensity (완료)]
+// 30708V1.18e36d1 22/5/10 (Wed) 09:45pm [Scroll View 넣기전.]
 
 //Achievement)
 // 2ndFrag> MiniPlayer> Bottom> Speaker (Rating) Horizontal Chain

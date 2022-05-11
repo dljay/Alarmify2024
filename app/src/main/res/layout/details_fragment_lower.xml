@@ -6,10 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/btm_nav_bg_round_corner"
     android:orientation="vertical"
-
-
-
-
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 

@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36d1 22/5/10 (Wed) 09:45pm [Scroll View 넣기전.]
+// 30708V1.18e36D2 22/5/10 (Wed) 10:13pm [Scroll View, Purchased_RT 페이지 Lottie 출력 확인. MDPI 테스트(O)]
 
 //Achievement)
 // 2ndFrag> MiniPlayer> Bottom> Speaker (Rating) Horizontal Chain

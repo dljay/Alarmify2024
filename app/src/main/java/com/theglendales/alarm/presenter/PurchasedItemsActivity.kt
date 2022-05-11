@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
+import com.google.android.material.card.MaterialCardView
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjadapters.PurchasedItemRcVAdapter
@@ -20,6 +21,7 @@ import com.theglendales.alarm.jjmvvm.util.LottieENUM
 
 private const val TAG="PurchasedItemsActivity"
 class PurchasedItemsActivity : AppCompatActivity() {
+
     //ToolBar (ActionBar 대신하여 모든 Activity 에 만들어주는 중.)
     private lateinit var toolBar: Toolbar
     private val mySharedPrefManager: MySharedPrefManager by globalInject()
@@ -28,7 +30,7 @@ class PurchasedItemsActivity : AppCompatActivity() {
     private lateinit var rcvAdapter: PurchasedItemRcVAdapter
     private lateinit var rcView: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
-
+    private lateinit var rcvContainer: MaterialCardView // RcV 를 담고 있는 CardView (구매건이 없을땐 이놈을 Hide!)
     //Lottie Related
     private lateinit var lottieAnimationView: LottieAnimationView
     private lateinit var lottieAnimHandler: LottieAnimHandler
@@ -56,6 +58,7 @@ class PurchasedItemsActivity : AppCompatActivity() {
 
     //3) RcView 셋업
         rcView = findViewById(R.id.purch_items_rcView)
+        rcvContainer = findViewById(R.id.purch_items_rcv_container) // RcV 를 담고있는 레이아웃.
         layoutManager = LinearLayoutManager(this)
         rcView.layoutManager = layoutManager
 
@@ -70,13 +73,20 @@ class PurchasedItemsActivity : AppCompatActivity() {
         tvNoPurchase = findViewById(R.id.tvNoPurchase)
         lottieAnimHandler = LottieAnimHandler(this, lottieAnimationView)
 
-    //6) Refresh RcV or Show Lottie (구매내역 없음!)
+    //6-a) Refresh RcV or Show Lottie (구매내역 없음!)
         if(purchaseBoolTrueList.isEmpty()) {
             Log.d(TAG, "onCreate: purchase 산게 없음(X) !!")
+            rcvContainer.visibility = View.GONE
             lottieAnimHandler.animController(LottieENUM.PURCHASED_ITEM_EMPTY)
             tvNoPurchase.visibility = View.VISIBLE
+        } else { //6-b) Refresh RcV or Show Lottie (구매내역 있음!)
+            Log.d(TAG, "onCreate: 구매 내역 있음-> purchaseBoolTrueList.size = ${purchaseBoolTrueList.size}")
+            tvNoPurchase.visibility = View.GONE
+            rcvContainer.visibility = View.VISIBLE
+            rcvAdapter.refreshRecyclerView(purchaseBoolTrueList)
         }
-        rcvAdapter.refreshRecyclerView(purchaseBoolTrueList)
+
+
 
     }
 

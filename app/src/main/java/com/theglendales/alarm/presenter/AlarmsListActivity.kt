@@ -68,16 +68,17 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36D2 22/5/10 (Wed) 10:36pm [Scroll View, Purchased_RT 페이지 Lottie 출력 확인. MDPI 테스트(O)]
+// 30708V1.18e36D3 22/5/10 (Wed) 11:08pm [DRAWABLE 삭제(O)]
 
 //Achievement)
 // 2ndFrag> MiniPlayer> Bottom> Speaker (Rating) Horizontal Chain
 // 설명 칸은 4줄 기입도 가능하게끔(O) => 전체 Miniplayer 가 조금 더 올라와야 함.
 
 //Todos)
+// 왜 PNG IMPORT 뿌연 화면? (이건 그냥 떄려치고.) -> img-bak.in 쓰기. https://www.img-bak.in/ 수동 카피.
+// 문제는 xxxhdpi 폴더에만 넣으면 안돼? 256 x 256 이면 충분할듯 (cover art 기준) -> firebase 업로드.
 // Versioned Folders & Files -- Demystify..
 // ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]
-// ** Drawable 삭제. 백업먼저하고.
 // ** Drawable 제대로 import 해보기.. mdpi 기기로 테스트?
 
 

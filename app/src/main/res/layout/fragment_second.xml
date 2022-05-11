@@ -19,7 +19,6 @@
 
         <!--1st child - Chips+ 리싸이클뷰임!  -->
         <LinearLayout
-            android:id="@+id/id_mainLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">

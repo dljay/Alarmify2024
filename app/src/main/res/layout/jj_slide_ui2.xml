@@ -133,7 +133,6 @@
 
             <!-- Play/Stop Button From Here>>>>> -->
             <LinearLayout
-                android:id="@+id/id_upperUi_ll_playpause"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="7dp"
@@ -215,7 +214,6 @@
             app:layout_constraintGuide_percent="0.7"/>
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/minip_btmUi_vert_guide_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -235,7 +233,7 @@
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
 
-            app:layout_constraintGuide_percent="0.95"/>
+            app:layout_constraintGuide_percent="0.93"/>
 
 
 
@@ -296,9 +294,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:layout_marginEnd="0dp"
-
-
-
             android:orientation="horizontal"
             android:weightSum="6"
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_3"
@@ -312,6 +307,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
+                android:scaleType="fitEnd"
                 android:src="@drawable/badge_1_intense_2" />
 
             <ImageView
@@ -321,6 +317,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
+                android:scaleType="fitEnd"
                 android:src="@drawable/badge_2_gentle_2" />
 
             <ImageView
@@ -330,6 +327,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
+                android:scaleType="fitEnd"
                 android:src="@drawable/badge_3_nature_2" />
 
             <ImageView
@@ -339,6 +337,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
+                android:scaleType="fitEnd"
                 android:src="@drawable/badge_4_locations_2" />
 
             <ImageView
@@ -348,6 +347,7 @@
                 android:layout_height="60dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
+                android:scaleType="fitEnd"
                 android:src="@drawable/badge_5_popular_2" />
 
             <ImageView
@@ -355,6 +355,7 @@
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
+                android:scaleType="fitEnd"
                 android:src="@drawable/badge_6_misc_2" />
 
         </LinearLayout>
@@ -457,13 +458,13 @@
                 android:id="@+id/btn_buyThis"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
+                android:layout_marginBottom="2dp"
                 android:minWidth="0dp"
                 android:minHeight="0dp"
                 android:paddingStart="5dp"
                 android:paddingEnd="5dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
                 android:background="@drawable/btn_round_corner_1"
                 android:backgroundTint="@color/jj_accentColor_1"
                 android:fontFamily="@font/circular_std_medium"

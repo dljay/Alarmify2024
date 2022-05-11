@@ -21,10 +21,9 @@
             <color name="jj_main_bg_color">#091627</color>
 
         <!-- navigationBar (최하단 < O [] 부분 ) 칼라 -->
-            <color name="jj_system_navbar_color">#25354C</color>
 
 
-        <!-- bg_color_1 Btm Nav 색/DetailsFrag 하단 색 -->
+    <!-- bg_color_1 Btm Nav 색/DetailsFrag 하단 색 -->
 <!--            <color name="jj_bg_color_1">#2b3649</color>-->
             <color name="jj_bg_color_1">#2d3e57</color>
             <color name="secondfrag_chipstroke_color">#979797</color>
@@ -33,8 +32,7 @@
         <!-- bg_color_2 SecondFrag 칩 색 등. bg_color_1 보다 살짝 밝은 톤. -->
             <color name="jj_bg_color_2">#334661</color>
             <color name="jj_bg_color_3">#3c506d</color>
-            <color name="jj_bg_color_4">#3C516F</color>
-            <color name="jj_bg_color_5">#0c2039</color>
+    <color name="jj_bg_color_5">#0c2039</color>
 
 
         <!-- SecondFrag -->
@@ -45,9 +43,7 @@
 
 
         <!-- Background Gradient 시작/종료 색 -->
-            <color name="bg_gradient_start_color">#061623</color>
-            <color name="bg_gradient_end_color">#0e3b48</color>
-        <!-- 경계선 색! -->
+    <!-- 경계선 색! -->
             <color name="border_secondFrag_Top">#09161E</color>
             <color name="border_mp_btmNav">#5c677c</color>
             <color name="border_purchase_history">#4D678C</color>
@@ -62,20 +58,10 @@
 
 
     <color name="secondaryLightColor">#4f83cc</color>
-    <color name="secondaryDarkColor">#002f6c</color>
-<!--여기저기 쓰일 BLUE/NAVY & 기타 색깔의 Variation -->
+    <!--여기저기 쓰일 BLUE/NAVY & 기타 색깔의 Variation -->
     <color name="blue_var_1">#7991BD</color>
-    <color name="blue_var_2">#0b1e38</color>
-    <color name="blue_var_3">#D40E2646</color>
-    <color name="blue_var_4">#041064</color>
-    <color name="skyblue_var_1">#1AA5CF</color>
-    <color name="switch_on">#6D96A5</color>
-    <color name="switch_on_2">#CFDD80</color>
-    <color name="other_var_3">#041064</color>
-    <color name="other_var_4">#041064</color>
-    <color name="jj_background_Gray_1">#646464</color>
 
-<!-- TEXT 관련 -->
+    <!-- TEXT 관련 -->
 
     <!--primaryTextColor =   현재 a) Spinner TimePicker, b) BottomNav View, c) Preferences  에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
         <color name="primaryTextColor">#ECECEC</color>
@@ -89,59 +75,26 @@
     <!--primaryDarkTextColor =   현재 a) Spinner TimePicker, b) BottomNav View 에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->
         <color name="primaryDarkTextColor">#1E1E1E</color>
         <color name="secondaryDarkTextColor">#2B2B2B</color>
-        <color name="textColorBakHaSaTangYo">#A2FCF7</color>
 
 
-<!-- JJONG added-->
+    <!-- JJONG added-->
 
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="gray_light_highlight_1">#D5D5D5</color>
-    <color name="light_gray_jjong">#AEABAB</color>
-    <color name="light_gray_brighter_jjong">#BFBFBF</color>
-    <color name="dark_gray_jjong">#3D3D3D</color>
     <color name="myDividerColor">#CFCDCD</color>
     <!--<color name="jj_background_DarkNavy_1">#0E2646</color>-->
 
-    <color name="jj_background_SkyBlue_1">#3D88EC</color>
-
     <!-- JJONG added-->
-    <color name="ampm_off">#ff404040</color>
-    <color name="ampm_on">#ffffffff</color>
-    <color name="time_text_color">#E6FFFFFF</color>
     <color name="ampm_text_color">#99FFFFFF</color>
-    <color name="screen_saver_color">#FF006688</color>
-    <color name="screen_saver_dim_color">#FF001634</color>
 
     <color name="black">#ff000000</color>
     <!-- If this color is changed or no longer used as the primary background, ensure that blackish_trans is changed as well. -->
     <color name="blackish">#ff1c1e20</color>
-    <color name="blackish2">#2A2C30</color>
     <!-- Transparent background for use in the footer. 80% opacity. The color must remain the same as "blackish" above. -->
-    <color name="blackish_trans">#cc1c1e20</color>
     <color name="white">#ffffffff</color>
-    <color name="red">#ffee0000</color>
     <color name="grey">#ffaaaaaa</color>
     <color name="transparent">#00000000</color>
     <color name="transparent_white">#66ffffff</color>
-    <color name="alarm_whiteish">#0cffffff</color>
 
-    <color name="clock_red">#ff4444</color>
-    <color name="clock_white">#ffffff</color>
-    <color name="clock_gray">#80ffffff</color>
-    <color name="clock_blue">#ff33b5e5</color>
-    <color name="notification_bg">#ff15444F</color>
-    <color name="alarm_selected_color">#aa0099cc</color>
-
-    <drawable name="notification_template_icon_bg">#3333B5E5</drawable>
-    <drawable name="notification_template_icon_low_bg">#0cffffff</drawable>
-
-    <color name="pressed_greenactionbar">#CC99CC00</color>
-    <color name="mat_blue">#4285F4</color>
     <color name="mat_red">#DB4437</color>
-    <color name="mat_yellow">#F4B400</color>
-    <color name="mat_green_g">#0F9D58</color>
-    <color name="mat_green">#4CAF50</color>
-    <color name="mat_dark_grey">#121212</color>
     <color name="mat_dark_grey_purple_overlay">#332940</color>
     <color name="mat_dark_grey_purple_overlay_original">#5D4B70</color>
     <color name="mat_purple">#BB86FC</color>

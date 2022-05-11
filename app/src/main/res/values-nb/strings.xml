@@ -26,39 +26,17 @@
         <item>120</item>
     </string-array>
     <!-- Setting labels on Set alarm screen: Prealarm -->
-    <string name="alarm_prealarm">Dempet forhåndsalarm</string>
     <!-- Pre-alarm duration title -->
-    <string name="prealarm_duration_title" tools:ignore="MissingTranslation">Forhåndsalarm-varighet</string>
     <!--
          Entries listed in the ListPreference when invoking the pre-alarm duration
          preference.
     -->
-    <string-array name="prealarm_duration_entries">
-        <item>Av</item>
-        <item>10 minutter</item>
-        <item>20 minutter</item>
-        <item>30 minutter</item>
-        <item>45 minutter</item>
-        <item>60 minutter</item>
-    </string-array>
     <!--
          Values that are retrieved from the ListPreference. These must match
          the prealarm_duration_entries above.
     -->
-    <string-array name="prealarm_duration_values" tools:ignore="MissingTranslation">
-        <item>-1</item>
-        <item>10</item>
-        <item>20</item>
-        <item>30</item>
-        <item>45</item>
-        <item>60</item>
-    </string-array>
     <!-- Pre-alarm duration summary string set based on the preference value. -->
-    <string name="prealarm_summary">Forhåndsalarm starter
-<xliff:g id="minutes">%d</xliff:g> minutter før hovedalarmen</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minutter forhåndsalarm</string>
-    <string name="prealarm_off_summary">Forhåndsalarm er slått av</string>
-    <string name="master_volume">Hovedvolum</string>
     <string name="menu_share">Del</string>
     <string name="menu_bugreport">Send en feilrapport</string>
     <string name="dialog_say_thanks_review_button">Vurder appen</string>
@@ -85,29 +63,6 @@
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g> og <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
         <item><xliff:g example="2 hours" id="HOURS">%2$s</xliff:g> og <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
         <item><xliff:g example="2 days" id="DAYS">%1$s</xliff:g>, <xliff:g example="2 hours" id="HOURS">%2$s</xliff:g>, og <xliff:g example="2 minutes" id="MINUTES">%3$s</xliff:g></item>
-    </string-array>
-
-    <string name="theme_title">Brukerflatetema</string>
-    <string-array name="themes_entries">
-        <item>Mørkt</item>
-        <item>Lyst</item>
-        <item>Synthwave</item>
-    </string-array>
-    <string-array name="themes_values">
-        <item>mørkt</item>
-        <item>lyst</item>
-        <item>synthwave</item>
-    </string-array>
-    <string name="preference_list_row_layout_title">Layout-stil</string>
-    <string-array name="preference_list_row_layout_entries">
-        <item>Kompakt</item>
-        <item>Stor</item>
-        <item>Klassisk</item>
-    </string-array>
-    <string-array name="preference_list_row_layout_values">
-        <item>kompakt</item>
-        <item>stor</item>
-        <item>klassisk</item>
     </string-array>
 
     <string name="app_name_jjong">The Glendales Alarmify</string>
@@ -141,9 +96,7 @@
     <string name="alarm_alert_hold_the_button_text">Hold knappen!</string>
 
     <string name="preference_category_sound">Volum og lyd</string>
-    <string name="preference_category_ui">Brukerflate</string>
     <string name="preference_category_durations">Varighet</string>
-    <string name="details_no_ringtone_picker">Ingen ringetonetilbyder funnet...</string>
     <string name="permissions_external_storage_text">Det ser ut til at %s ikke kan spilles, sannsynligvis fordi en tillatelse kreves. Hvis du vil kan du gi tillatelsen. Alternativt, velg en annen lyd. Denne beslutningen kan endres i Systeminnstillinger.</string>
     <string name="menu_about_title">Om</string>
     <string name="dialog_about_content">Simple Alarm Clock is an open source project which brings pure alarm experience to you by combining essential features and clean interface.
@@ -176,7 +129,6 @@
     <string name="dialog_say_thanks_title">Si takk</string>
     <string name="dialog_say_thanks_review_message">Thanks a lot for taking your time to say thanks! “Simple Alarm Clock” is an open source non-profit project. We will never use ads or gather user data to earn money. However, we are extremely happy if you like our work. One of the best ways to say thanks is to write a positive review. You can also ask a question or leave your feature request.</string>
     <string name="dialog_say_thanks_premium_text">If you really like the app, you could consider upgrading to the premium version! Premium sounds great, does it not?</string>
-    <string name="dialog_say_thanks_donate_message">Another great way to support the app is to buy me a coffee or a donut! You can do this using one of the following options</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Go premium</a></string>
 
     <string name="notification_channel_high_prio">Big popup with snooze and dismiss buttons</string>

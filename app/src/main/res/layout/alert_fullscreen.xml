@@ -153,7 +153,6 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/alert_tv_nowplaying"
                             android:gravity="start"
                             android:layout_marginStart="15dp"
                             android:layout_marginEnd="15dp"
@@ -230,7 +229,6 @@
             android:text="@string/alarm_alert_snooze_text"/>
 
         <View
-            android:id="@+id/alert_button_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="16dp"

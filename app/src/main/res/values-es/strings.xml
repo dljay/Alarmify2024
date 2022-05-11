@@ -18,27 +18,13 @@
     <!--      Here come strings which are not contained in the AOSP -->
 
     <!-- Setting labels on Set alarm screen: Prealarm -->
-    <string name="alarm_prealarm">Prealarma discreta</string>
     <!-- Pre-alarm duration title -->
-    <string name="prealarm_duration_title">Duración de prealarma</string>
     <!--
          Entries listed in the ListPreference when invoking the pre-alarm duration
          preference.
     -->
-    <string-array name="prealarm_duration_entries">
-        <item>está apagada</item>
-        <item>10 minutos</item>
-        <item>20 minutos</item>
-        <item>30 minutos</item>
-        <item>45 minutos</item>
-        <item>60 minutos</item>
-    </string-array>
     <!-- Pre-alarm duration summary string set based on the preference value. -->
-    <string name="prealarm_summary">La prealarma comenzará
-<xliff:g id="minutes">%d</xliff:g> minutos antes de la alarma principal</string>
     <string name="info_fragment_prealarm_summary"><xliff:g id="minutes">%d</xliff:g> minutos prealarma</string>
-    <string name="prealarm_off_summary">La prealarma está apagada</string>
-    <string name="master_volume">Volumen maestro</string>
     <string name="menu_share">Compartir</string>
     <string name="menu_bugreport">Enviar un informe de error</string>
     <string name="dialog_say_thanks_review_button">Valorar la aplicación</string>
@@ -67,12 +53,6 @@
         <item><xliff:g id="DAYS" example="2 days">%1$s</xliff:g>, <xliff:g id="HOURS" example="2 hours">%2$s</xliff:g>, and <xliff:g id="MINUTES" example="2 minutes">%3$s</xliff:g></item>
     </string-array>
 
-    <string name="theme_title">Gama de colores</string>
-    <string-array name="preference_list_row_layout_entries">
-        <item>Compacto</item>
-        <item>Normal</item>
-        <item>Clásico</item>
-    </string-array>
     <string name="app_name_jjong">The Glendales Alarmify</string>
     <string-array name="snooze_duration_with_off_entries">
         <item>"está apagada"</item>
@@ -86,11 +66,8 @@
     <string name="alarm_alert_reschedule_text">Рosponer</string>
     <string name="alarm_alert_hold_the_button_text">Botón de retención!</string>
     <string name="permissions_external_storage_text">Lo sentimos %s, se requiere un permiso especial. Haga clic en Aceptar para confirmar. Si no está de acuerdo, seleccione un tono de llamada diferente. Esta decisión se puede cambiar en cualquier momento en la configuración del sistema.</string>
-    <string name="details_no_ringtone_picker">No se ha encontrado ningún proveedor de tonos de llamada. Por favor instale un proveedor.</string>
     <string name="preference_category_durations">Duración</string>
     <string name="preference_category_sound">Volumen y sonido</string>
-    <string name="preference_category_ui">Interfaz</string>
-    <string name="preference_list_row_layout_title">Tamaño</string>
     <string name="menu_about_title">Sobre el programa</string>
     <string name="dialog_about_content">Simple alarm clock es un programa de código abierto que combina una interfaz simple y las características necesarias
 
@@ -123,7 +100,6 @@ A menudo recibimos tales quejas, y generalmente resulta que un tiempo después d
     <string name="dialog_say_thanks_review_message">¡Gracias por tomarse el tiempo de agradecernos! "Simple Alarm Clock" es un proyecto de código abierto sin fines de lucro.
 Nunca utilizaremos publicidad ni recopilaremos datos de usuarios con fines de lucro. Sin embargo, estaremos felices si aprecia nuestro trabajo. Una de las mejores maneras de hacer esto es escribir una crítica positiva. También puede hacernos una pregunta o enviar una solicitud para la implementación de una nueva función.</string>
     <string name="dialog_say_thanks_premium_text">Si realmente te gusta nuestra aplicación, puedes considerar comprar una versión premium. Suena genial, ¿verdad? :)</string>
-    <string name="dialog_say_thanks_donate_message">¡Otra excelente manera de apoyar la aplicación es comprarme una taza de café o una galleta! :) Puede hacerlo utilizando una de las siguientes opciones.</string>
     <string name="dialog_say_thanks_premium_text_as_button"><a href="https://play.google.com/store/apps/details?id=com.premium.alarm">Versión premium
 </a></string>
     <string name="notification_channel_high_prio">Gran ventana emergente con botones para posponer y descartar</string>

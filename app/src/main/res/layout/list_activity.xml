@@ -29,7 +29,6 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
 
-        android:id="@+id/info_fragment_base_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bg_gradient_listfrag_background"
@@ -92,7 +91,6 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <LinearLayout
-            android:id="@+id/listActivity_LinearLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"

@@ -33,7 +33,6 @@
 
             <!--Repeat(요일선택) 칩으로 >>>>>> -->
             <LinearLayout
-                android:id="@+id/details_repeat_chipRow"
                 android:layout_width="match_parent"
                 android:layout_height="77dp"
                 android:layout_marginBottom="5dp"
@@ -181,7 +180,6 @@
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
-                    android:id="@+id/details_repeat_summary"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
@@ -262,7 +260,6 @@
 
                 <!-- C) AlbumArt Big-->
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/ll_albumArt_DetailsFrag"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
 

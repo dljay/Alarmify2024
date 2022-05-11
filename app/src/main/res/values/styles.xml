@@ -15,12 +15,6 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- 내가 만든 Action Bar Transparent 테스트 22/2/13 -->
-    <style name="JjTransParentActionBar" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-        <item name="android:background">@null</item>
-
-        <!-- Support library compatibility -->
-        <item name="background">@null</item>
-    </style>
 
     <!-- 1) DetailsFrag [요일] Chip style  -->
     <style name="customChipStyle" parent="Widget.MaterialComponents.Chip.Filter">
@@ -65,142 +59,18 @@
         <item name="android:background">@drawable/rounded_four_corners_btm_sheet</item>
     </style>
 
-    <style name="RoundTouchButton">
-        <item name="android:gravity">center</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@null</item>
-    </style>
-
     <style name="alarm_list_albumArt_Container">
         <item name="android:layout_width">68dip</item>
         <item name="android:layout_height">68dip</item>
     </style>
 
     <!-- For the TimePicker from JB 4.2 -->
-    <style name="small_bold">
-        <item name="android:textSize">@dimen/small_font_size</item>
-        <item name="android:textStyle">bold</item>
-        <!--   <item persistedString="android:fontFamily">sans-serif</item> -->
-    </style>
-
-    <style name="medium_bold">
-        <item name="android:textSize">@dimen/medium_font_size</item>
-        <item name="android:textStyle">bold</item>
-        <!--   <item persistedString="android:fontFamily">sans-serif</item> -->
-    </style>
-
-    <style name="widget_medium_bold" parent="medium_bold">
-        <item name="android:textSize">@dimen/widget_medium_font_size</item>
-    </style>
-
-    <style name="small_light">
-        <item name="android:textSize">@dimen/small_font_size</item>
-        <!--   <item persistedString="android:fontFamily">sans-serif-light</item> -->
-    </style>
-
-    <style name="medium_light">
-        <item name="android:textSize">@dimen/medium_font_size</item>
-        <!--    <item persistedString="android:fontFamily">sans-serif-light</item> -->
-    </style>
-
-    <style name="widget_medium_light" parent="medium_light">
-        <item name="android:textSize">@dimen/widget_medium_font_size</item>
-    </style>
 
     <style name="label">
         <item name="android:textSize">@dimen/label_font_size</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
         <!--    <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-    </style>
-
-    <style name="label_not_caps" parent="label">
-        <item name="android:textAllCaps">false</item>
-    </style>
-
-    <style name="header">
-        <item name="android:textSize">@dimen/header_font_size</item>
-        <item name="android:textAllCaps">true</item>
-        <!--   <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="header_not_caps" parent="header">
-        <item name="android:textAllCaps">false</item>
-    </style>
-
-    <style name="big_bold">
-        <item name="android:textSize">@dimen/big_font_size</item>
-        <item name="android:textStyle">bold</item>
-        <!--   <item persistedString="android:fontFamily">sans-serif</item> -->
-    </style>
-
-    <style name="widget_big_bold" parent="big_bold">
-        <item name="android:textSize">@dimen/widget_big_font_size</item>
-    </style>
-
-    <style name="big_thin">
-        <item name="android:textSize">@dimen/big_font_size</item>
-        <!--   <item persistedString="android:fontFamily">sans-serif-thin</item> -->
-    </style>
-
-    <style name="widget_big_thin" parent="big_thin">
-        <item name="android:textSize">@dimen/widget_big_font_size</item>
-    </style>
-
-    <style name="alarm_label">
-        <item name="android:textSize">@dimen/alarm_label_size</item>
-        <item name="android:textAllCaps">true</item>
-        <!--    <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-    </style>
-
-    <style name="alarm_label_not_caps" parent="alarm_label">
-        <item name="android:textAllCaps">false</item>
-    </style>
-
-    <style name="alarm_label_bold">
-        <item name="android:textSize">@dimen/alarm_label_size</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textStyle">bold</item>
-        <!--    <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-    </style>
-
-    <style name="body">
-        <item name="android:textSize">@dimen/body_font_size</item>
-        <item name="android:textAllCaps">true</item>
-        <!--    <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-    </style>
-
-    <style name="body_not_caps" parent="body">
-        <item name="android:textAllCaps">false</item>
-    </style>
-
-    <style name="body_bold">
-        <item name="android:textSize">@dimen/body_font_size</item>
-        <item name="android:textAllCaps">true</item>
-        <item name="android:textStyle">bold</item>
-        <!--    <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-    </style>
-
-    <style name="button">
-        <item name="android:textSize">@dimen/button_font_size</item>
-        <item name="android:textAllCaps">true</item>
-        <!--   <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-    </style>
-
-    <style name="timer_label">
-        <item name="android:textSize">@dimen/timer_label_font_size</item>
-        <!--    <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-    </style>
-
-    <style name="dialog_button">
-        <item name="android:textSize">@dimen/dialog_button_font_size</item>
-        <!--    <item persistedString="android:fontFamily">sans-serif</item> -->
-    </style>
-
-    <style name="bold_button" parent="button">
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="dialpad">
@@ -213,19 +83,6 @@
         <item name="android:textSize">@dimen/dialpad_font_size_ampm</item>
     </style>
 
-    <style name="city_name">
-        <item name="android:textSize">@dimen/city_name_font_size</item>
-        <item name="android:textAllCaps">true</item>
-        <!--    <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="city_time">
-        <item name="android:textSize">@dimen/city_time_font_size</item>
-        <item name="android:textAllCaps">true</item>
-        <!--    <item persistedString="android:fontFamily">sans-serif</item> -->
-    </style>
-
     <style name="tablet_dialpad">
         <item name="android:textSize">@dimen/tablet_dialpad_font_size</item>
         <item name="android:textAllCaps">true</item>
@@ -236,11 +93,6 @@
         <item name="android:textSize">@dimen/tablet_dialpad_font_size_ampm</item>
         <item name="android:textAllCaps">true</item>
         <!--    <item persistedString="android:fontFamily">sans-serif-condensed</item> -->
-    </style>
-
-    <style name="TextAppearance">
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">normal</item>
     </style>
 
     <!-- SecondFrag Album Art ImageView 에서 코너 동글뱅이 -->
@@ -264,14 +116,7 @@
             <item name="android:textStyle">bold</item>
         </style>
 
-        <style name="jjText_nav_drawer_logo_text">
-            <item name="fontFamily">@font/circular_std_bold</item>
-            <item name="android:textColor">@color/secondaryTextColor</item>
-            <item name="android:textSize">20sp</item>
-            <item name="android:textStyle">bold</item>
-        </style>
-
-        <style name="jjTextLarge2">
+    <style name="jjTextLarge2">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryTextColor</item>
             <item name="android:textSize">18sp</item>
@@ -308,13 +153,7 @@
             <item name="android:textSize">15sp</item>
         </style>
 
-        <style name="jjTextLarge_black_bold_24sp">
-            <item name="fontFamily">@font/circular_std_bold</item>
-            <item name="android:textColor">@color/primaryDarkTextColor</item>
-            <item name="android:textSize">24sp</item>
-        </style>
-
-        <style name="jjTextLarge_white_bold_24sp">
+    <style name="jjTextLarge_white_bold_24sp">
             <item name="fontFamily">@font/circular_std_bold</item>
             <item name="android:textColor">@color/primaryTextColor</item>
             <item name="android:textSize">24sp</item>
@@ -327,13 +166,7 @@
             <item name="android:textStyle">bold</item>
         </style>
 
-        <style name="jjTextLarge_other_font">
-            <item name="fontFamily">@font/circular_std_black</item>
-            <item name="android:textColor">@color/primaryTextColor</item>
-            <item name="android:textSize">15sp</item>
-        </style>
-
-        <style name="jjTextMedium">
+    <style name="jjTextMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryTextColor</item>
             <item name="android:textSize">12.5sp</item>
@@ -359,23 +192,8 @@
             <item name="android:textSize">12.5sp</item>
         </style>
 
-        <style name="jjTextMedium_tertiaryColor">
-            <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textColor">@color/tertiaryTextColor</item>
-            <item name="android:lineSpacingExtra">2sp</item>
-            <item name="android:textSize">12.5sp</item>
-        </style>
 
-        <style name="jjTextMedium_fourthColor">
-            <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textColor">@color/fourthTextColor</item>
-            <item name="android:lineSpacingExtra">2sp</item>
-            <item name="android:textSize">12.5sp</item>
-        </style>
-
-
-
-        <style name="jjTextMediumBold">
+    <style name="jjTextMediumBold">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/primaryTextColor</item>
             <item name="android:textStyle">bold</item>
@@ -392,19 +210,6 @@
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textColor">@color/secondaryTextColor</item>
             <item name="android:textSize">11sp</item>
-        </style>
-
-        <style name="jjTextSmall_Dark">
-            <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textColor">@color/tertiaryTextColor</item>
-            <item name="android:textSize">11sp</item>
-        </style>
-
-        <style name="jjTextSmall_PriceTag">
-            <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textColor">@color/primaryTextColor</item>
-            <item name="android:textSize">11sp</item>
-            <item name="background">@drawable/btn_round_corner_1</item>
         </style>
 
     <!-- Purchase History Text Font-->

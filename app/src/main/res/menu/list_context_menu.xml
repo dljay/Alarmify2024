@@ -24,7 +24,5 @@
     <item
         android:id="@+id/list_context_enable"
         android:title="@string/enable_alarm" />
-    <item
-        android:id="@+id/delete_alarm"
-        android:title="@string/delete_alarm" />
+    <item android:title="@string/delete_alarm" />
 </menu>

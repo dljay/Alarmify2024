@@ -7,7 +7,6 @@
         android:icon="@drawable/btmnav_setalarm_selector"/>
 
     <item
-        android:id="@+id/id_emptySpace"
         android:title=""
         android:icon="@drawable/transparent_opacity_0"
         android:enabled="false"/>

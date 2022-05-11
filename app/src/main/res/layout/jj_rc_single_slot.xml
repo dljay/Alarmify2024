@@ -114,7 +114,6 @@
         <!--Free/GET THIS -->
 
         <FrameLayout
-            android:id="@+id/id_cl_entire_Purchase"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

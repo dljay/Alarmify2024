@@ -141,7 +141,7 @@ class MyIAPHelperV3(val context: Context ) {
                 }
                 override fun onBillingServiceDisconnected() {
                     Log.d(TAG, "onBillingServiceDisconnected: xxxxxxxxxxxxxxxxxxxx 연결되었으나 이제 끊어짐.. called!")
-                    toastMessenger.showMyToast("Billing Service Disconnected. Reconnecting ..",isShort = false)
+                    //toastMessenger.showMyToast("Billing Service Disconnected. Reconnecting ..",isShort = false)
                     //_billingDisconnectAlert.tryEmit(BillingClient.BillingResponseCode.SERVICE_DISCONNECTED)
 
                     /**

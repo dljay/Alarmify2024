@@ -25,6 +25,7 @@
 
     <!-- bg_color_1 Btm Nav 색/DetailsFrag 하단 색 -->
 <!--            <color name="jj_bg_color_1">#2b3649</color>-->
+    <!-- jj_bg_color1 을 ICON Background 색으로 사용함!! 22.5.12!! -->
             <color name="jj_bg_color_1">#2d3e57</color>
             <color name="secondfrag_chipstroke_color">#979797</color>
 
@@ -60,7 +61,7 @@
     <color name="secondaryLightColor">#4f83cc</color>
     <!--여기저기 쓰일 BLUE/NAVY & 기타 색깔의 Variation -->
     <color name="blue_var_1">#7991BD</color>
-
+    <color name="icon_background_color1">#eddbc3</color>
     <!-- TEXT 관련 -->
 
     <!--primaryTextColor =   현재 a) Spinner TimePicker, b) BottomNav View, c) Preferences  에서 선택되었을 때 색(ex. SET ALARM 아이콘 포함) 결정-->

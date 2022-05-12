@@ -196,7 +196,7 @@ class RtPickerActivity : AppCompatActivity() {
 
                 //B-2-c) Sliding Panel -  Lower UI
                 tv_lowerUi_about.text = rtWithAlbumArt.rtDescription // Rt 설명
-                iv_lowerUi_bigThumbnail.setImageDrawable(iv_upperUi_thumbNail.drawable) // AlbumArt 현재 상단 UI 앨범아트 고대로 갖고와서 설정.
+                //iv_lowerUi_bigThumbnail.setImageDrawable(iv_upperUi_thumbNail.drawable) // AlbumArt 현재 상단 UI 앨범아트 고대로 갖고와서 설정.
                 //Badges
                 val badgeStrRaw =
                     rtWithAlbumArt.badgeStr // ex. "INT,NAT,POP" -> Intense, Nature, Popular 뭔 이런식.

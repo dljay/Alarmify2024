@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36e1 22/5/12 (Thu) 3:50pm [Tablet 으로 설치 한번 해봄. 수정 전.]
+// 30708V1.18e36e2 22/5/12 (Thu) 4:14pm [Tablet 으로 설치 한번 해봄. 수정 시작1.]
 
 //Achievement)
 // 2ndFrag> MiniPlayer> Bottom> Speaker (Rating) Horizontal Chain

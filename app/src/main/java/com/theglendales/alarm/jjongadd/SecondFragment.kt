@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
@@ -580,7 +581,16 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         }
 
         //d) Mini Player 사진 변경 (RcView 에 있는 사진 그대로 옮기기)
-        GlideApp.with(requireContext()).load(rtObj.imageURL).centerCrop().error(R.drawable.errordisplay)
+        val glideBuilder = GlideApp.with(requireContext()).load(rtObj.imageURL).centerCrop()
+            .error(R.drawable.errordisplay)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .placeholder(R.drawable.placeholder)
+
+        glideBuilder.into(iv_upperUi_thumbNail)
+        glideBuilder.into(iv_lowerUi_bigThumbnail)
+
+        // 다음 방법 사용시 Tablet SecondFrag>Miniplayer>Lower 에서 뿌옇게 나옴 (아마도 setImageDrawable 해서 그런듯..)
+        /*GlideApp.with(requireContext()).load(rtObj.imageURL).centerCrop().error(R.drawable.errordisplay)
             .placeholder(R.drawable.placeholder).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
                     Log.d(TAG, "onLoadFailed: failed ... ")
@@ -591,10 +601,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                                              isFirstResource: Boolean): Boolean {
                     iv_upperUi_thumbNail.setImageDrawable(resource) // Upper Ui -> 이거 삭제했음.
                     iv_lowerUi_bigThumbnail.setImageDrawable(resource) // Lower ui.
+
                     //
                     return false
                 }
-            }).into(iv_upperUi_thumbNail)
+            }).into(iv_upperUi_thumbNail)*/
 
         //e) Intensity 표시 (1-4 Str 으로 받음). 이게 이렇게 무식하게 코드 써야될 일인가 싶긴 하네..
         val intensity = rtObj.intensity

@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36e2 22/5/12 (Thu) 4:14pm [Tablet 으로 설치 한번 해봄. 수정 시작1.]
+// 30708V1.18e36e4 22/5/12 (Thu) 10:15pm [Tablet -> Orientation Portrait 으로 FIX!]
 
 //Achievement)
 // 2ndFrag> MiniPlayer> Bottom> Speaker (Rating) Horizontal Chain
@@ -77,7 +77,7 @@ import java.util.Calendar
 //Todos)
 //1> IMAGE DRAWABLE 관련
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피.
-// Albumart -> Tablet 테스트. (320 or)256 x (320 or)256 이면 충분할듯 (cover art 기준) -> p1001 만 256x256 으로 바꿔서 - firebase 업로드 테스트.
+
 // 왜 PNG IMPORT 뿌연 화면? (이건 그냥 떄려치고.) -> img-bak.in 쓰기.
 // 2> RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기.
 

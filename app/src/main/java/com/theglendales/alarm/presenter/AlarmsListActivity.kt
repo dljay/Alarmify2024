@@ -68,17 +68,20 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36e5 22/5/12 (Thu) 11:02pm [liactivity>appbarlayout - height 프로그램으로 27% 로 설정하기. 수정 전.]
+// 30708V1.18e36e5 22/5/12 (Thu) 11:40pm [liactivity>appbarlayout - height 프로그램으로 28% 로 설정하기. 수정 후.]
 
 //Achievement)
-// 2ndFrag> MiniPlayer> Bottom> Speaker (Rating) Horizontal Chain
-// 설명 칸은 4줄 기입도 가능하게끔(O) => 전체 Miniplayer 가 조금 더 올라와야 함.
+//-- Tablet 수정중.
+
+//Error)
+// 2ndFrag 에서 BtmAppBar 사라지기 전에 확! listfrag 로 이동 선택 -> ListFrag 도착 시 btmAppBAR 안보임. showList 에서 해결해주려는 중..
+// Tablet- text Size (Phillip Lackner)
 
 //Todos)
 //1> IMAGE DRAWABLE 관련
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피.
 
-// 왜 PNG IMPORT 뿌연 화면? (이건 그냥 떄려치고.) -> img-bak.in 쓰기.
+
 // 2> RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기.
 
 // Versioned Folders & Files -- Demystify..
@@ -368,11 +371,16 @@ class AlarmsListActivity : AppCompatActivity() {
         setSupportActionBar(toolBar)
         //supportActionBar?.setDisplayShowHomeEnabled(true)
         appBarLayout = findViewById(R.id.id_appBarLayout) // 늘였다 줄였다 관장하는 App Bar Layout
+    //appBarLayout 의 height 을 화면 세로의 1/3~1/4 사이로 설정 (CollapsingToolbar 위해) 이거 없으면 Tablet 에서 appbar>imageview 사진 x같이 나옴
+        val heightPercentage = resources.displayMetrics.heightPixels / 3.5f // (1/4(25%) ~ 1/3(33%) 사이로 height 설정.)
+        val appbarlayoutParam = appBarLayout.layoutParams
+        appbarlayoutParam.height = heightPercentage.toInt()
+        Log.d(TAG, "onCreate: heightPercentage=$heightPercentage ")
 
         collapsingTBLayout = findViewById(R.id.id_collapsingToolBarLayout)
         collapsingTBLayout.isTitleEnabled = false // 일단 화면에 제목 안 보여주고 시작 -> 추후 AppBarLayout 줄어들면 보여주기.
 
-        // xx 시간 후에 알람이 울립니다
+    // xx 시간 후에 알람이 울립니다
         alarmTimeReminder = findViewById(R.id.alarmTimeReminder) //FrameLayout
 
     // Drawer Layout (navigation view)
@@ -563,11 +571,17 @@ class AlarmsListActivity : AppCompatActivity() {
 // 알람 리스트를 보여주는 !! AlarmsListFragment 로 전환!! 중요!!
     private fun showList(isCreateNewClicked: Boolean) {
     //추가->
-        Log.d(TAG, "(Line531)showList: jj-called")
+        Log.d(TAG, "(Line531)showList: jj-called, btmAppBar.translationY=${btmAppBar.translationY}")
         //collapsingTBLayout.visibility = View.VISIBLE
 
         appBarLayout.setExpanded(true,true) // A) ToolBar 포함된 넓은 부분 Expand 시키기!
         btmAppBar.setBackgroundResource(R.drawable.btm_nav_bg_round_corner) // SecondFrag 에서 돌아왔을 때 Corner 가 직사각형 -> Round Corner 로 다시 변경.
+
+//        if(btmAppBar.transl < 1.0f) {
+//            Log.d(TAG, "showList: btmAppBar.transla.. called")
+//            btmAppBar.animate().translationY(0F).alpha(1.0f)
+//        }
+    // SecondFrag 에서 btmAppBar 가 아래로 사라지는 가운데 ListFrag 이동 클릭 누른 경우. 다시 btmAppBar 보여주기
 
         // 혹시나 Btm Nav> Set ALARM 의 메뉴 아이콘이 isChecked bool 값이 틀린 경우 바꿔주기(회색 -> 흰색)(Ex. SecondFrag 에서 (+) 누른 경우
         // Mystery..  : 여기서 if 문을 안해주고 그냥 .isChecked=true 해주면 오히려 결과값이 반대(false) 가 된다 .. ?? 그래서 if 문 붙여줬음.

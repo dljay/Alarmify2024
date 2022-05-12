@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36e4 22/5/12 (Thu) 10:15pm [Tablet -> Orientation Portrait 으로 FIX!]
+// 30708V1.18e36e5 22/5/12 (Thu) 11:02pm [liactivity>appbarlayout - height 프로그램으로 27% 로 설정하기. 수정 전.]
 
 //Achievement)
 // 2ndFrag> MiniPlayer> Bottom> Speaker (Rating) Horizontal Chain

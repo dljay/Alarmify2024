@@ -35,6 +35,8 @@
 
         android:orientation="vertical">
 
+        <!-- 이거 없으면 Tablet 에서 appbar>imageview 사진 x같이 나옴 -->
+
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/id_appBarLayout"
             android:layout_width="match_parent"

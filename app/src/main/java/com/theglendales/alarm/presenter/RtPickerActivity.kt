@@ -87,13 +87,19 @@ class RtPickerActivity : AppCompatActivity() {
         private val tv_lowerUi_about by lazy { allBtmSlideLayout.findViewById(R.id.id_lowerUi_tv_Description) as TextView }
         private val btn_buyThis by lazy { allBtmSlideLayout.findViewById(R.id.btn_buyThis) as TextView } // 가격+ DNDL 표시 있는 버튼.
 
-        // c) Badges
+        // b-2) Badges
         private val iv_badge1_Intense by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge1_Intense) as ImageView}
         private val iv_badge2_Gentle by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge2_Gentle) as ImageView}
         private val iv_badge3_Nature by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge3_Nature) as ImageView}
         private val iv_badge4_Location by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge_4_Location) as ImageView}
         private val iv_badge5_Popular by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge_5_Popular) as ImageView}
         private val iv_badge6_Misc by lazy {allBtmSlideLayout.findViewById(R.id.mPlayer_badge_6_Misc) as ImageView}
+        // b-3) Intensity (Speaker) 아이콘
+        private val mp_iv_lightning_1 by lazy { allBtmSlideLayout.findViewById(R.id.mp_iv_lightning_1) as ImageView }
+        private val mp_iv_lightning_2 by lazy { allBtmSlideLayout.findViewById(R.id.mp_iv_lightning_2) as ImageView }
+        private val mp_iv_lightning_3 by lazy { allBtmSlideLayout.findViewById(R.id.mp_iv_lightning_3) as ImageView }
+        private val mp_iv_lightning_4 by lazy { allBtmSlideLayout.findViewById(R.id.mp_iv_lightning_4) as ImageView }
+
 
 
 
@@ -153,13 +159,12 @@ class RtPickerActivity : AppCompatActivity() {
             //val rtPickerVModel = ViewModelProvider(this).get(JjRtPickerVModel::class.java)
 
             // B) Observe - RtPicker 로 User 가 RingTone 을 골랐을 때
-
-            rtPickerVModel.selectedRow.observe(this) { rtWithAlbumArt ->
-                Log.d(TAG,"onCreate: rtPickerVModel 옵저버!! rtTitle=${rtWithAlbumArt.rtTitle}, \n rtaPath= ${rtWithAlbumArt.audioFilePath}, artPath= ${rtWithAlbumArt.artFilePathStr}")
+            rtPickerVModel.selectedRow.observe(this) { rtOnThePhone ->
+                Log.d(TAG,"onCreate: rtPickerVModel 옵저버!! rtTitle=${rtOnThePhone.rtTitle}, \n rtaPath= ${rtOnThePhone.audioFilePath}, artPath= ${rtOnThePhone.artFilePathStr}")
                 //B-1) Intent 에 현재 선택된 RT 의 정보담기  (AlarDetailsFrag.kt 로 연결됨) .. RT 계속 바꿀때마다 Intent.putExtra 하는데 overWrite 되는듯.
-                resultIntent.putExtra(PICKER_RESULT_RT_TITLE, rtWithAlbumArt.rtTitle)
-                resultIntent.putExtra(PICKER_RESULT_AUDIO_PATH, rtWithAlbumArt.audioFilePath)
-                resultIntent.putExtra(PICKER_RESULT_ART_PATH, rtWithAlbumArt.artFilePathStr)
+                resultIntent.putExtra(PICKER_RESULT_RT_TITLE, rtOnThePhone.rtTitle)
+                resultIntent.putExtra(PICKER_RESULT_AUDIO_PATH, rtOnThePhone.audioFilePath)
+                resultIntent.putExtra(PICKER_RESULT_ART_PATH, rtOnThePhone.artFilePathStr)
                 setResult(RESULT_OK, resultIntent)
                 //B-2) 음악 Player 에 UI 업데이트
                 //B-2-a) Sliding Panel 전체
@@ -168,7 +173,7 @@ class RtPickerActivity : AppCompatActivity() {
                     slidingUpPanelLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
                 } // 이미 EXPAND/Collapsed 상태로 보이면 Panel 은 그냥 둠 [.COLLAPSED = (위만) 보이는 상태임!]
 
-                //B-2-b) Sliding Panel - Upper UI
+        //B-2-b) Sliding Panel - Upper UI
                 //제목
                 // 글자 크기 고려해서 공백 추가 (흐르는 효과 Marquee FX 위해)
                 var spaceFifteen = "               " // 15칸
@@ -176,17 +181,17 @@ class RtPickerActivity : AppCompatActivity() {
                 var spaceFifty = "                                                 " //50칸 (기존 사용)
                 var spaceSixty = "                                                           " //60칸
                 tv_upperUi_title.text =
-                    spaceFifteen + rtWithAlbumArt.rtTitle // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
-                if (rtWithAlbumArt.rtTitle!!.length < 6) {
+                    spaceFifteen + rtOnThePhone.rtTitle // miniPlayer(=Upper Ui) 의 Ringtone Title 변경 [제목 앞에 15칸 공백 더하기-흐르는 효과 위해]
+                if (rtOnThePhone.rtTitle!!.length < 6) {
                     tv_upperUi_title.append(spaceSixty)
                 } // [제목이 너무 짧으면 6글자 이하] -> [뒤에 공백 50칸 추가]
                 else {
                     tv_upperUi_title.append(spaceTwenty) // [뒤에 20칸 공백 추가] 흐르는 text 위해서. -> 좀 더 좋은 공백 채우는 방법이 있을지 고민..
                 }
 
-                //AlbumCover
+            //AlbumCover
                 val glideBuilder =
-                    GlideApp.with(this).load(rtWithAlbumArt.artFilePathStr).centerCrop()
+                    GlideApp.with(this).load(rtOnThePhone.artFilePathStr).centerCrop()
                         .error(R.drawable.errordisplay)
                         .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                         .placeholder(R.drawable.placeholder)
@@ -194,14 +199,37 @@ class RtPickerActivity : AppCompatActivity() {
                 glideBuilder.into(iv_upperUi_thumbNail)
                 glideBuilder.into(iv_lowerUi_bigThumbnail)
 
-                //B-2-c) Sliding Panel -  Lower UI
-                tv_lowerUi_about.text = rtWithAlbumArt.rtDescription // Rt 설명
+        //B-2-c) Sliding Panel -  Lower UI
+                tv_lowerUi_about.text = rtOnThePhone.rtDescription // Rt 설명
                 //iv_lowerUi_bigThumbnail.setImageDrawable(iv_upperUi_thumbNail.drawable) // AlbumArt 현재 상단 UI 앨범아트 고대로 갖고와서 설정.
-                //Badges
-                val badgeStrRaw =
-                    rtWithAlbumArt.badgeStr // ex. "INT,NAT,POP" -> Intense, Nature, Popular 뭔 이런식.
+            //Badges
+                val badgeStrRaw = rtOnThePhone.badgeStr // ex. "INT,NAT,POP" -> Intense, Nature, Popular 뭔 이런식.
                 val badgeStrList = BadgeSortHelper.getBadgesListFromStr(badgeStrRaw)
                 showOrHideBadges(badgeStrList)
+            //Intensity
+                val intensity = rtOnThePhone.intensity
+                when(intensity) {
+                    "1" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        mp_iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                        mp_iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                        mp_iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                    }
+                    "2" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        mp_iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        mp_iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                        mp_iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                    }
+                    "3" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        mp_iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        mp_iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        mp_iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_grayedout)
+                    }
+                    "4" -> { mp_iv_lightning_1.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        mp_iv_lightning_2.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        mp_iv_lightning_3.setImageResource(R.drawable.ic_speaker_1_yellow)
+                        mp_iv_lightning_4.setImageResource(R.drawable.ic_speaker_1_yellow)
+                    }
+                }
             }
         //(나) MediaPlayer ViewModel - 기존 SecondFrag 에서 사용했던 'JjMpViewModel' & ExoForLocal 그대로 사용 예정. [** 현재 SecondFrag 에서는 MpVModel X MainVModel 로 통합되었음**]
         // (음악 재생 상태에 따른 플레이어 UI 업데이트) (RT 선택시 음악 재생은 RtPickerAdapter 에서 바로함.)
@@ -248,8 +276,6 @@ class RtPickerActivity : AppCompatActivity() {
                         seekBar.progress = playbackPos.toInt() +200
                         Log.d(TAG, "onCreate: playbackPos=$playbackPos")
                     })
-
-
 
     // 5) Exo for Local Init
         exoForLocal.initExoForLocalPlay()

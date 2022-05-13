@@ -69,4 +69,6 @@
 
     <!-- Default distance from each snap target that GlowPadView considers a "hit" -->
 
+    <!-- 내가 만든 Custom dimension for tablet/phone -->
+    <dimen name="test_text_size">15.5sp</dimen>
 </resources>

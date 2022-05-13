@@ -68,19 +68,18 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36e5 22/5/12 (Thu) 11:40pm [liactivity>appbarlayout - height 프로그램으로 28% 로 설정하기. 수정 후.]
+// 30708V1.18e36F1 22/5/13 (FRI) 10:55pm [BtmNavView 메뉴 아이템 클리 수정.]
 
 //Achievement)
 //-- Tablet 수정중.
 
 //Error)
 // 2ndFrag 에서 BtmAppBar 사라지기 전에 확! listfrag 로 이동 선택 -> ListFrag 도착 시 btmAppBAR 안보임. showList 에서 해결해주려는 중..
-// Tablet- text Size (Phillip Lackner)
+// Tablet- text Size (Phillip Lackner) & RowHolder 세로 크기도? Details Frag 는 무조건 고쳐주기..(Yuriv App 깔고 참고해봅쉐.)
 
 //Todos)
 //1> IMAGE DRAWABLE 관련
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피.
-
 
 // 2> RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기.
 
@@ -324,6 +323,7 @@ class AlarmsListActivity : AppCompatActivity() {
                 R.id.id_BtmNav_SetAlarm -> {showList(isCreateNewClicked = false)
                     it.isChecked = true
                     btmNavView.menu.findItem(R.id.id_BtmNav_RingTone).isChecked = false
+
                 }
                 R.id.id_BtmNav_RingTone -> {
                     /*Log.d(TAG, "onCreate: hit btmnave_rt")

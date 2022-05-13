@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.fragment.app.Fragment // todo: Keep an eye on this guy..
 
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
@@ -112,6 +113,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var slidingUpPanelLayout: SlidingUpPanelLayout    //findViewById(R.id.id_slidingUpPanel)  }
     lateinit var btmNavViewFromActivity: BottomNavigationView // AlarmsListActivity 에서 넘어온것 받을 것.
     lateinit var btmAppBarFromActivity: BottomAppBar // AlarmsListActivity 에서 넘어온것 받을 것.
+    lateinit var listFragMenuItem: MenuItem
+
     lateinit var collapsingToolbarLayout: CollapsingToolbarLayout // AlarmsListActivity 에서 넘어온것 받을 것.
 
     //a) Sliding Panel: Upper Ui
@@ -836,6 +839,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
         //Activity 에서 받은 BottomNavView (추후 SlidingPanel 이 EXPAND/COLLAPSE 될 때 VISIBLE/INVISIBLE 해준다.)
         btmNavViewFromActivity = requireActivity().findViewById<BottomNavigationView>(R.id.id_bottomNavigationView) // todo: check
+        listFragMenuItem = btmNavViewFromActivity.menu.findItem(R.id.id_BtmNav_SetAlarm) // // btmNavView 안에 있는 menu. Siding Panel 이 Expand <- > Collapse 될 때 ListFrag 로 이동못하도록 할것임.
         btmAppBarFromActivity = requireActivity().findViewById(R.id.bottomAppBar2)
         //Activity 에서 받은 CollapsingToolBar -- 혹시나 펼쳐있을 수 있으니 접어주기.
         //collapsingToolbarLayout = requireActivity().findViewById()
@@ -936,23 +940,22 @@ class SecondFragment : androidx.fragment.app.Fragment() {
 
             @SuppressLint("ClickableViewAccessibility") // 아래 constLayout_entire.setxx... 이거 장애인 warning 없애기
             override fun onPanelStateChanged(panel: View?,previousState: SlidingUpPanelLayout.PanelState?,newState: SlidingUpPanelLayout.PanelState?) {
-                //Log.d(TAG, "onPanelStateChanged: previousState= $previousState -> newState=$newState, isActivated= ${slidingUpPanelLayout.isActivated}")
+                Log.d(TAG, "onPanelStateChanged: previousState= $previousState -> newState=$newState, isActivated= ${slidingUpPanelLayout.isActivated}")
                 Log.d(TAG, "onPanelStateChanged: btmNavView.height=${btmNavViewFromActivity.height}, umanoHeight?인듯=${panel!!.height}")
 
-            //1) 접힌상태-> 완전히 열리는 상태로 전환중(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행 (대략 0.4 초 소요)
-            /*if(previousState== SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
-                btmAppBarFromActivity.animate().translationY(btmAppBarFromActivity.height.toFloat()).alpha(0.0f)
-            //btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f) // 어차피 BtmAppBar 가 BtmNavView 의 Parent 여서 이것까지 해줄 필요 없음.
-            }*/
+
 
             //1) Bottom App Bar 코너 Round -> Rectangle 로. (최초 트랙 클릭 으로 Hidden -> Dragging 상태) 이후 Collapsed 가 되는것임
             if(previousState== SlidingUpPanelLayout.PanelState.HIDDEN && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
                 btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_rectangle_corner)
-
-
             }
 
-            //2) Drag 해서 -> 완전히 열렸을 때(Dragging -> Expanded)
+            //2-a) 접힌상태-> 완전히 열리는 상태로 전환중(COLLAPSED -> DRAGGING) // 추후 DRAGGING -> EXPANDED 로 진행 (대략 0.4 초 소요)
+            if(previousState== SlidingUpPanelLayout.PanelState.COLLAPSED && newState == SlidingUpPanelLayout.PanelState.DRAGGING) {
+                listFragMenuItem.isEnabled = false
+            }
+
+            //2-b) Drag 해서 -> 완전히 열렸을 때(Dragging -> Expanded)
             if(previousState== SlidingUpPanelLayout.PanelState.DRAGGING && newState == SlidingUpPanelLayout.PanelState.EXPANDED) {
                 btmAppBarFromActivity.animate().translationY(btmAppBarFromActivity.height.toFloat()).alpha(0.0f)
                 //btmNavViewFromActivity.animate().translationY(btmNavViewFromActivity.height.toFloat()).alpha(0.0f) // 어차피 BtmAppBar 가 BtmNavView 의 Parent 여서 이것까지 해줄 필요 없음.
@@ -971,19 +974,21 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     SlidingUpPanelLayout.PanelState.EXPANDED -> {
                         Log.d(TAG, "onPanelStateChanged: Sliding Panel= EXPANDED")
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.arrow_down_white)// ↓ arrow 전환 visibility }
-
+                        listFragMenuItem.isEnabled = true
                         // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
                         constLayout_entire.setOnTouchListener { _, _ -> true }
                         flRcView.setPadding(0,0,0,0)
                     }
                     SlidingUpPanelLayout.PanelState.COLLAPSED -> {
                         Log.d(TAG, "onPanelStateChanged: Sliding Panel= COLLAPSED")
+                        listFragMenuItem.isEnabled = true
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.arrow_up_white)// ↑ arrow 전환 visibility }
                         slidingUpPanelLayout.isOverlayed = false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
                         flRcView.setPadding(0,0,0,0)
 
                     }
                     SlidingUpPanelLayout.PanelState.HIDDEN -> {
+                        listFragMenuItem.isEnabled = true
                         Log.d(TAG, "onPanelStateChanged: Sliding Panel = HIDDEN")
                         flRcView.setPadding(0,0,0,140)
                     }

@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36F1 22/5/13 (FRI) 10:55pm [BtmNavView 메뉴 아이템 클리 수정.]
+// 30708V1.18e36F1 22/5/13 (FRI) 11:21pm [BtmNavView 메뉴 아이템 클리 수정(O). TextSize 수정 전.]
 
 //Achievement)
 //-- Tablet 수정중.
@@ -76,6 +76,7 @@ import java.util.Calendar
 //Error)
 // 2ndFrag 에서 BtmAppBar 사라지기 전에 확! listfrag 로 이동 선택 -> ListFrag 도착 시 btmAppBAR 안보임. showList 에서 해결해주려는 중..
 // Tablet- text Size (Phillip Lackner) & RowHolder 세로 크기도? Details Frag 는 무조건 고쳐주기..(Yuriv App 깔고 참고해봅쉐.)
+// Tablet -> 인스톨 알람 AlbumArt 안 뜨는 문제. [SnackBar - Rebuilding DB 는 떴음]
 
 //Todos)
 //1> IMAGE DRAWABLE 관련

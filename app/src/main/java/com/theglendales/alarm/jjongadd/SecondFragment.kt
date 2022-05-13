@@ -974,7 +974,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     SlidingUpPanelLayout.PanelState.EXPANDED -> {
                         Log.d(TAG, "onPanelStateChanged: Sliding Panel= EXPANDED")
                         iv_upperUi_ClickArrow.setImageResource(R.drawable.arrow_down_white)// ↓ arrow 전환 visibility }
-                        listFragMenuItem.isEnabled = true
+                        listFragMenuItem.isEnabled = true // Sliding Panel 확장되었으니 이제 BtmNav 메뉴 클릭 가능!
                         // 계속 click 이 투과되는 문제(뒤에 recyclerView 의 버튼 클릭을 함)를 다음과같이 해결. 위에 나온 lowerUi 의 constraint layout 에 touch를 허용.
                         constLayout_entire.setOnTouchListener { _, _ -> true }
                         flRcView.setPadding(0,0,0,0)

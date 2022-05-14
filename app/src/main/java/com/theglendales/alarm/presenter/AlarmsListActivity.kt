@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36G1 22/5/13 (Sat) 2:23pm [BtmNavView 메뉴 아이템 클리 수정(O). TextSize 수정중 2-Dimen 등록, 변경중]
+// 30708V1.18e36G2 22/5/13 (Sat) 10:28pm [Tablet 호환<-> TextSize 수정중 3-Dimen 등록, 변경 완료]
 //==> test-textdimens 로 글자 크기 기기 크기별 사용중 (sw720dp..) => RtPicker>MiniPlayer_Btm - Information 글자크기 변경 성공. 이제 제대로 넣기.
 //Achievement)
 //-- Tablet 수정중.

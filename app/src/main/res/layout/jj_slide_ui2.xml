@@ -272,8 +272,7 @@
             android:theme="@style/jjText_S_circularLight"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_1"
-            app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"
-            app:layout_constraintBottom_toTopOf="@id/ll_badgeHolder"/>
+            app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"/>
 
         <!-- badges-->
 

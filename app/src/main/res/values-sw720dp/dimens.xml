@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="var_jjText_XS_circularMedium">15sp</dimen>
+    <dimen name="var_jjText_S_circularMedium">19sp</dimen>
+    <dimen name="var_jjText_S_circularLight">19sp</dimen>
     <dimen name="var_jjText_M_CircularMedium">22sp</dimen>
+    <dimen name="var_jjText_M_CircularBlack">22sp</dimen>
+    <dimen name="var_jjText_L_circularBlack">23sp</dimen>
+    <dimen name="var_jjText_L_CircularMedium">23sp</dimen>
+    <dimen name="var_jjText_XL_CircularMedium">27sp</dimen>
+    <dimen name="var_jjText_2XL_CircularBold">32sp</dimen>
+    <dimen name="var_jjText_3XL_TimePicker_Spinner">46sp</dimen>
 </resources>

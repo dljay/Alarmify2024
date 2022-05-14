@@ -93,7 +93,7 @@
             <!--Description text -->
             <TextView
                 android:id="@+id/id_tvTags"
-                style="@style/jjText_S_circularMedium"
+                style="@style/jjText_S_circularLight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/id_tvTitle"

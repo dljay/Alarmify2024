@@ -119,12 +119,12 @@
 
         <style name="jjText_S_circularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">13sp</item>
+            <item name="android:textSize">@dimen/var_jjText_S_circularMedium</item>
         </style>
 
         <style name="jjText_S_circularLight">
             <item name="fontFamily">@font/circular_std_light</item>
-            <item name="android:textSize">13sp</item>
+            <item name="android:textSize">@dimen/var_jjText_S_circularLight</item>
         </style>
 
     <!-- Medium  -->
@@ -135,38 +135,38 @@
 
         <style name="jjText_M_CircularBlack">
             <item name="fontFamily">@font/circular_std_black</item>
-            <item name="android:textSize">14sp</item>
+            <item name="android:textSize">@dimen/var_jjText_M_CircularBlack</item>
         </style>
 
     <!-- L 15sp -->
         <style name="jjText_L_circularBlack">
             <item name="fontFamily">@font/circular_std_black</item>
-            <item name="android:textSize">15sp</item>
+            <item name="android:textSize">@dimen/var_jjText_L_circularBlack</item>
         </style>
 
         <style name="jjText_L_CircularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">15sp</item>
+            <item name="android:textSize">@dimen/var_jjText_L_CircularMedium</item>
         </style>
 
 
     <!-- XXL 18sp -->
         <style name="jjText_XL_CircularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">18sp</item>
+            <item name="android:textSize">@dimen/var_jjText_XL_CircularMedium</item>
         </style>
 
 
     <!-- XXXL 24sp -->
         <style name="jjText_2XL_CircularBold">
             <item name="fontFamily">@font/circular_std_bold</item>
-            <item name="android:textSize">24sp</item>
+            <item name="android:textSize">@dimen/var_jjText_2XL_CircularBold</item>
         </style>
 
         <style name="jjText_3XL_TimePicker_Spinner">
             <item name="fontFamily">@font/circular_std_bold</item>
             <item name="android:textColor">@color/secondaryTextColor</item>
-            <item name="android:textSize">35sp</item>
+            <item name="android:textSize">@dimen/var_jjText_3XL_TimePicker_Spinner</item>
             <item name="android:textStyle">bold</item>
         </style>
 

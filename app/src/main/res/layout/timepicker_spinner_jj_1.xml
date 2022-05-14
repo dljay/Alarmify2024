@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:theme="@style/jjText_TimePicker_Spinner"
+        android:theme="@style/jjText_3XL_TimePicker_Spinner"
 
         android:timePickerMode="spinner"
 

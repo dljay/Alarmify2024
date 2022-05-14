@@ -69,10 +69,9 @@
 
     <!-- Default distance from each snap target that GlowPadView considers a "hit" -->
 
-    <!-- ** [TEXT SIZE] 내가 만든 Custom dimension for tablet/phone **-->
-    <dimen name="var_jjtext_XL_CircularB_primary_Bold">15sp</dimen>
-    <dimen name="varying_size_jjtext_medium_secondary_color">12.5sp</dimen>
-    <dimen name="varying_size_jjtext_small">11sp</dimen>
-    <dimen name="varying_size_jjTextLarge2">15sp</dimen>
+    <!-- ** [TEXT SIZE] 내가 만든 Custom dimension for Phone **-->
+    <dimen name="var_jjText_XS_circularMedium">11sp</dimen>
+    <dimen name="var_jjText_M_CircularMedium">14sp</dimen>
+
 
 </resources>

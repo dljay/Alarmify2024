@@ -95,7 +95,7 @@
 
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:textAppearance="@style/jjText_XS_circularMedium"
+                    android:textAppearance="@style/jjText_M_CircularMedium"
                     android:gravity="center_horizontal"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:paddingLeft="5dp"
@@ -106,9 +106,7 @@
 
                     android:singleLine="true"
                     android:text="Always a long title for marquee fx but will be replaced from Firebase!"
-                    android:textColor="@color/white"
-
-                    android:textSize="15sp">
+                    android:textColor="@color/white">
 
                 </TextView>
 
@@ -245,7 +243,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="10dp"
             android:text="Information"
-            android:theme="@style/jjText_XL_circularBlack"
+            android:theme="@style/jjText_L_circularBlack"
             android:textStyle="bold"
             android:textColor="@color/primaryTextColor"
             android:maxLines="1"
@@ -271,7 +269,7 @@
             android:lineSpacingExtra="2sp"
             android:maxLines="4"
             android:ellipsize="end"
-            android:theme="@style/jjText_S_circularMedium"
+            android:theme="@style/jjText_S_circularLight"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_1"
             app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"

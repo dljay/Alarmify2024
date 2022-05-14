@@ -74,19 +74,19 @@
             <TextView
                 android:id="@+id/id_tvTitle"
                 style="@style/jjText_S_circularMedium"
-                android:textColor="@color/primaryTextColor"
-                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="4dp"
-
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
                 android:ellipsize="end"
+
                 android:maxLines="1"
-                android:text="Flight Announcement">
+                android:text="Flight Announcement"
+                android:textColor="@color/primaryTextColor"
+                android:textStyle="bold">
 
             </TextView>
 

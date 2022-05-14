@@ -111,75 +111,59 @@
     <!-- Font Style [TEST] attr.. textAppearance 넘 짜증나서 그냥 이걸로 쓰기. sp 사이즈로 정렬 -->
 
 
-    <!-- XXS - S 11 - 12.5 -->
+    <!-- XS - SMALL -->
         <style name="jjText_XS_circularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">11sp</item>
-        </style>
-
-        <style name="jjText_S_circularLight">
-            <item name="fontFamily">@font/circular_std_light</item>
-            <item name="android:textSize">12.5sp</item>
+            <item name="android:textSize">@dimen/var_jjText_XS_circularMedium</item>
         </style>
 
         <style name="jjText_S_circularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">12.5sp</item>
-        </style>
-
-    <!-- Medium 13sp -->
-        <style name="jjText_M_CircularMedium">
-            <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textStyle">normal</item>
             <item name="android:textSize">13sp</item>
         </style>
 
-        <style name="jjText_M_CircularLight">
+        <style name="jjText_S_circularLight">
             <item name="fontFamily">@font/circular_std_light</item>
             <item name="android:textSize">13sp</item>
-            <item name="android:textStyle">normal</item>
         </style>
 
-
-
-    <!-- Large 14sp -->
-        <style name="jjText_L_CircularMedium">
+    <!-- Medium  -->
+        <style name="jjText_M_CircularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">14sp</item>
+            <item name="android:textSize">@dimen/var_jjText_M_CircularMedium</item>
         </style>
 
-        <style name="jjText_L_CircularBlack_primaryDark">
+        <style name="jjText_M_CircularBlack">
             <item name="fontFamily">@font/circular_std_black</item>
-            <item name="android:textStyle">bold</item>
             <item name="android:textSize">14sp</item>
         </style>
 
-    <!-- XL 15sp -->
-        <style name="jjText_XL_circularBlack">
+    <!-- L 15sp -->
+        <style name="jjText_L_circularBlack">
             <item name="fontFamily">@font/circular_std_black</item>
             <item name="android:textSize">15sp</item>
         </style>
 
-        <style name="jjText_XL_CircularMedium">
+        <style name="jjText_L_CircularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textSize">15sp</item>
         </style>
 
 
     <!-- XXL 18sp -->
-        <style name="jjText_XXL_CircularMedium">
+        <style name="jjText_XL_CircularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
             <item name="android:textSize">18sp</item>
         </style>
 
 
     <!-- XXXL 24sp -->
-        <style name="jjText_3XL_CircularBold">
+        <style name="jjText_2XL_CircularBold">
             <item name="fontFamily">@font/circular_std_bold</item>
             <item name="android:textSize">24sp</item>
         </style>
 
-        <style name="jjText_TimePicker_Spinner">
+        <style name="jjText_3XL_TimePicker_Spinner">
             <item name="fontFamily">@font/circular_std_bold</item>
             <item name="android:textColor">@color/secondaryTextColor</item>
             <item name="android:textSize">35sp</item>

@@ -162,7 +162,7 @@
 
                             android:clickable="false"
                             android:text="NOW PLAYING"
-                            android:theme="@style/jjText_XXL_CircularMedium"
+                            android:theme="@style/jjText_XL_CircularMedium"
                             android:textColor="@color/primaryDarkTextColor"
                             android:textStyle="bold"
                             android:visibility="visible"/>
@@ -184,7 +184,7 @@
                             android:marqueeRepeatLimit="marquee_forever"
                             android:singleLine="true"
                             android:textColor="@color/primaryDarkTextColor"
-                            android:theme="@style/jjText_XL_CircularMedium"
+                            android:theme="@style/jjText_L_CircularMedium"
                             android:maxLines="1"/>
 
                     </LinearLayout>
@@ -217,7 +217,7 @@
             android:layout_height="0dp"
 
             android:alpha="0.9"
-            android:theme="@style/jjText_3XL_CircularBold"
+            android:theme="@style/jjText_2XL_CircularBold"
 
             android:background="@drawable/btn_round_corner_1"
             android:layout_weight="1"
@@ -246,7 +246,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/circular_std_black"
             android:textColor="@color/primaryTextColor"
-            android:theme="@style/jjText_3XL_CircularBold"
+            android:theme="@style/jjText_2XL_CircularBold"
             app:backgroundTint="@color/jj_bg_color_1"
             android:background="@drawable/btn_round_corner_1"
             app:icon="@drawable/ic_baseline_accessibility_new_24"

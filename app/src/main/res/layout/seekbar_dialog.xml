@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:layout_marginStart="16dp"
-        android:textAppearance="@style/jjText_M_CircularMedium"
+        android:textAppearance="@style/jjText_S_circularMedium"
         android:textColor="@color/primaryDarkTextColor"
         android:text="@string/alarm_volume_title" />
 

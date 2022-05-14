@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="var_jjtext_XL_CircularB_primary_Bold">35sp</dimen>
-    <dimen name="varying_size_jjtext_medium_secondary_color">20sp</dimen>
+    <dimen name="var_jjText_XS_circularMedium">15sp</dimen>
+    <dimen name="var_jjText_M_CircularMedium">22sp</dimen>
 </resources>

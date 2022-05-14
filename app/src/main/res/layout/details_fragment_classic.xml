@@ -26,6 +26,7 @@
         android:gravity="center">
        <include layout="@layout/timepicker_spinner_jj_1">
        </include>
+
     </LinearLayout>
 
     <!--아래 LinearLayout Visibility 를 아예 없애버림! => 눈에는 안보이지만. 기능은 사용! -->

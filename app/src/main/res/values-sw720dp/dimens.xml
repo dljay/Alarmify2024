@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="var_jjText_XS">15sp</dimen>
-    <dimen name="var_jjText_S">19sp</dimen>
-    <dimen name="var_jjText_M">22sp</dimen>
-    <dimen name="var_jjText_L">23sp</dimen>
-    <dimen name="var_jjText_XL">27sp</dimen>
-    <dimen name="var_jjText_2XL">32sp</dimen>
+    <dimen name="var_jjText_S">20sp</dimen>
+    <dimen name="var_jjText_M">23sp</dimen>
+    <dimen name="var_jjText_L">24sp</dimen>
+    <dimen name="var_jjText_XL">29sp</dimen>
+    <dimen name="var_jjText_2XL">33sp</dimen>
     <dimen name="var_jjText_3XL">46sp</dimen>
+
+    <dimen name="var_jjChip_text_size">32sp</dimen>
+    <dimen name="var_jjChip_Hor_Space">8dp</dimen>
 </resources>

@@ -79,6 +79,7 @@
     18 => 24, 27
     24 => 30, 32
     35 => 42, 46    -->
+    <!-- General Text Size -->
     <dimen name="var_jjText_XS">11sp</dimen>
     <dimen name="var_jjText_S">12.5sp</dimen>
     <dimen name="var_jjText_M">14sp</dimen>
@@ -86,6 +87,10 @@
     <dimen name="var_jjText_XL">18sp</dimen>
     <dimen name="var_jjText_2XL">24sp</dimen>
     <dimen name="var_jjText_3XL">35sp</dimen>
+
+    <!-- Chip Text Size, Space between chips-->
+    <dimen name="var_jjChip_text_size">13sp</dimen>
+    <dimen name="var_jjChip_Hor_Space">0dp</dimen>
 
 
 

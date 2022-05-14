@@ -27,5 +27,8 @@
     <dimen name="var_jjText_2XL">30sp</dimen>
     <dimen name="var_jjText_3XL">42sp</dimen>
 
+    <dimen name="var_jjChip_text_size">24sp</dimen>
+    <dimen name="var_jjChip_Hor_Space">5dp</dimen>
+
 
 </resources>

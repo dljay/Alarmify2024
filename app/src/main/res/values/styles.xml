@@ -39,7 +39,7 @@
     <style name="rtTagChipTextStyle" parent="TextAppearance.MaterialComponents.Chip">
 
         <item name="fontFamily">@font/circular_std_medium</item>
-<!--        <item name="android:textStyle">bold</item>-->
+        <item name="android:textSize">@dimen/var_jjChip_text_size</item>
     </style>
 
 

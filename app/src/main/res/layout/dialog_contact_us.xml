@@ -16,7 +16,9 @@
 
         android:scrollbars="vertical"
         android:autoLink="email"
-        android:theme="@style/jjTextMedium_Black_bigger"
+        android:theme="@style/jjText_L_CircularMedium"
+        android:lineSpacingExtra="4sp"
+        android:textColor="@color/secondaryDarkTextColor"
         android:text="@string/dialog_contact_us" />
 
 </LinearLayout>

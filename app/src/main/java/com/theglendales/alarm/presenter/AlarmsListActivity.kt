@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e3631 22/5/13 (FRI) 11:45pm [BtmNavView 메뉴 아이템 클리 수정(O). TextSize 수정 전.]
+// 30708V1.18e36G1 22/5/13 (Sat) 2:23pm [BtmNavView 메뉴 아이템 클리 수정(O). TextSize 수정중 1.]
 //==> test-textdimens 로 글자 크기 기기 크기별 사용중 (sw720dp..) => RtPicker>MiniPlayer_Btm - Information 글자크기 변경 성공. 이제 제대로 넣기.
 //Achievement)
 //-- Tablet 수정중.
@@ -79,7 +79,7 @@ import java.util.Calendar
 // Tablet -> 인스톨 알람 AlbumArt 안 뜨는 문제. [SnackBar - Rebuilding DB 는 떴음]
 
 //Todos)
-// Firebase Security Rules
+// Firebase Security Rules <-> FB APP 만 되는것 해도 설정해줘야겠지?
 //1> IMAGE DRAWABLE 관련
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피.
 

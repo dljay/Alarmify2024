@@ -162,8 +162,9 @@
 
                             android:clickable="false"
                             android:text="NOW PLAYING"
-                            android:fontFamily="@font/circular_std_medium"
-                            android:theme="@style/jjTextLarge_black_18sp"
+                            android:theme="@style/jjText_XXL_CircularMedium"
+                            android:textColor="@color/primaryDarkTextColor"
+                            android:textStyle="bold"
                             android:visibility="visible"/>
 
                         <TextView
@@ -182,7 +183,8 @@
 
                             android:marqueeRepeatLimit="marquee_forever"
                             android:singleLine="true"
-                            android:theme="@style/jjTextLarge_black"
+                            android:textColor="@color/primaryDarkTextColor"
+                            android:theme="@style/jjText_XL_CircularMedium"
                             android:maxLines="1"/>
 
                     </LinearLayout>
@@ -215,7 +217,7 @@
             android:layout_height="0dp"
 
             android:alpha="0.9"
-            android:theme="@style/jjTextLarge_white_bold_24sp"
+            android:theme="@style/jjText_3XL_CircularBold"
 
             android:background="@drawable/btn_round_corner_1"
             android:layout_weight="1"
@@ -244,7 +246,7 @@
             android:layout_weight="1"
             android:fontFamily="@font/circular_std_black"
             android:textColor="@color/primaryTextColor"
-            android:theme="@style/jjTextLarge_white_bold_24sp"
+            android:theme="@style/jjText_3XL_CircularBold"
             app:backgroundTint="@color/jj_bg_color_1"
             android:background="@drawable/btn_round_corner_1"
             app:icon="@drawable/ic_baseline_accessibility_new_24"

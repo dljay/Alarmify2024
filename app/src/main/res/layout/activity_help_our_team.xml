@@ -176,7 +176,9 @@
                             android:paddingStart="20dp"
                             android:paddingEnd="20dp"
                             android:text="@string/donation_thankyou_text"
-                            android:theme="@style/jjDonationThankyouText"
+                            android:theme="@style/jjText_L_CircularMedium"
+                            android:textColor="@color/primaryDarkTextColor"
+                            android:lineSpacingExtra="4sp"
                             app:layout_constraintTop_toBottomOf="@id/chipgroup_scroll_view"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"/>
@@ -189,7 +191,9 @@
 
                             android:paddingStart="20dp"
                             android:paddingEnd="20dp"
-                            android:theme="@style/jjDonationGoogleCommissionText"
+                            android:textColor="@color/tertiaryTextColor"
+                            android:textStyle="italic"
+                            android:theme="@style/jjText_S_circularLight"
                             android:text="@string/donation_googletakes_thirty"
                             app:layout_constraintTop_toBottomOf="@id/tv_donation_thanks_msg"
                             app:layout_constraintEnd_toEndOf="parent"

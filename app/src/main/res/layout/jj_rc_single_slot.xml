@@ -73,7 +73,9 @@
             <!-- 아래 textAppearance 는 오직 색 때문에 사용..그냥 color 해도 된다. -->
             <TextView
                 android:id="@+id/id_tvTitle"
-                style="@style/jjTextMediumBold"
+                style="@style/jjText_S_circularMedium"
+                android:textColor="@color/primaryTextColor"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -91,7 +93,7 @@
             <!--Description text -->
             <TextView
                 android:id="@+id/id_tvTags"
-                style="@style/jjTextMedium_Dark"
+                style="@style/jjText_S_circularMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/id_tvTitle"
@@ -101,9 +103,8 @@
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
                 android:ellipsize="end"
                 android:maxLines="1"
-
-
                 android:text="#Travel #Flight"
+                android:textColor="@color/tertiaryTextColor"
                 android:textStyle="normal">
 
             </TextView>

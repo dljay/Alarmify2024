@@ -95,7 +95,7 @@
 
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:textAppearance="@style/jjTextSmall"
+                    android:textAppearance="@style/jjText_XS_circularMedium"
                     android:gravity="center_horizontal"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:paddingLeft="5dp"
@@ -245,10 +245,13 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="10dp"
             android:text="Information"
+            android:theme="@style/jjText_XL_circularBlack"
+            android:textStyle="bold"
+            android:textColor="@color/primaryTextColor"
             android:maxLines="1"
             android:ellipsize="end"
 
-            android:theme="@style/jjTextMiniplayer_Bottom"
+
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_1"/>
@@ -264,9 +267,11 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="8dp"
             android:text="This is a placeholder text. I wish this holder text lives forever is holder text lives foreveris holder text lives forever. Now heading to our fourth line"
+            android:textColor="@color/secondaryTextColor"
+            android:lineSpacingExtra="2sp"
             android:maxLines="4"
             android:ellipsize="end"
-            android:theme="@style/jjTextMedium_secondaryColor"
+            android:theme="@style/jjText_S_circularMedium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_1"
             app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"

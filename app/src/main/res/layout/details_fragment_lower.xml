@@ -47,7 +47,8 @@
                     android:layout_weight="1"
                     android:layout_marginBottom="3dp"
                     android:text="@string/alarm_repeat"
-                    android:theme="@style/jjTextLarge2"/>
+                    android:textColor="@color/primaryTextColor"
+                    android:theme="@style/jjText_XXL_CircularMedium"/>
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/_chipGroupDays"
@@ -209,7 +210,8 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="5dp"
                     android:text="@string/alertAndIntensity"
-                    android:theme="@style/jjTextLarge2"
+                    android:textColor="@color/primaryTextColor"
+                    android:theme="@style/jjText_XXL_CircularMedium"
                     app:layout_constraintBottom_toTopOf="@+id/id_ll_Wrapping_Spinner"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -244,8 +246,8 @@
                         android:layout_height="wrap_content"
                         android:text="N/A"
                         android:layout_gravity="center_vertical"
-                        android:textColor="@color/primaryTextColor"
-                        android:textAppearance="?android:attr/textAppearanceSmall">
+                        style="@style/jjText_L_CircularMedium"
+                        android:textColor="@color/primaryTextColor">
                     </TextView>
 
                 </LinearLayout>
@@ -359,7 +361,8 @@
                     android:layout_marginBottom="3dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/jjTextLarge2"
+                    android:textColor="@color/primaryTextColor"
+                    android:theme="@style/jjText_XXL_CircularMedium"
                     android:text="@string/alert_about"/>
 
             <!-- 박학 사탕 색으로 이놈만 예외적으로 적용해봤음!! 테스트! -->
@@ -369,8 +372,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="6dp"
+                    style="@style/jjText_L_CircularMedium"
                     android:textColor="@color/primaryTextColor"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="N/A"/>
 
             </LinearLayout>
@@ -396,7 +399,8 @@
                     android:layout_marginBottom="9dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/jjTextLarge2"
+                    android:textColor="@color/primaryTextColor"
+                    android:theme="@style/jjText_XXL_CircularMedium"
                     android:text="@string/alert_information"/>
 
                 <!--[Badges] ImageViews-->

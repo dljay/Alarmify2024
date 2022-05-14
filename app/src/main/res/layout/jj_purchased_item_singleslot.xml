@@ -26,7 +26,8 @@
             android:layout_height="wrap_content"
 
             android:layout_marginBottom="3dp"
-            android:theme="@style/jjPurchHistoryDate"
+            android:theme="@style/jjText_L_CircularBlack_primaryDark"
+            android:textColor="@color/primaryDarkTextColor"
             app:layout_constraintBottom_toTopOf="@id/purch_item_guideline_horizontal_1"
             app:layout_constraintStart_toStartOf="@id/purch_item_guideline_vertical_1"
             app:layout_constraintTop_toTopOf="parent"
@@ -58,7 +59,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="Ringtone Title P1001"
-            android:theme="@style/jjPurchHistoryTitle"
+            android:theme="@style/jjText_L_CircularMedium"
+            android:textColor="@color/primaryDarkTextColor"
             android:ellipsize="end"
             android:maxLines="1"
             app:layout_constraintBottom_toTopOf="@+id/tv_purchased_orderId"
@@ -75,7 +77,8 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:text="FakeOrderId-12345657689"
-            android:theme="@style/jjPurchHistoryOrderId"
+            android:theme="@style/jjText_M_CircularLight"
+            android:textColor="@color/fourthTextColor"
             app:layout_constraintStart_toEndOf="@id/purch_item_guideline_vertical_2"
             app:layout_constraintEnd_toStartOf="@id/purch_item_guideline_vertical_3"
             app:layout_constraintTop_toBottomOf="@+id/tv_purchased_rtTitle" />
@@ -88,11 +91,12 @@
             android:layout_marginEnd="10dp"
             android:text="$19.99"
             android:textSize="13sp"
-            android:theme="@style/jjPurchHistoryPrice"
-
+            android:theme="@style/jjText_M_CircularMedium"
+            android:textColor="@color/primaryDarkTextColor"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/purch_item_guideline_vertical_3"
-            app:layout_constraintTop_toTopOf="@id/purch_item_guideline_horizontal_1"/>
+            app:layout_constraintBottom_toBottomOf="@+id/tv_purchased_orderId"/>
 
         <View
             android:layout_width="0dp"

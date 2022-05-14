@@ -31,8 +31,7 @@
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="10dp"
-            android:theme="@style/jjDonationThankyouText">
+            app:cardCornerRadius="10dp">
 
             <ScrollView
                 android:layout_width="match_parent"

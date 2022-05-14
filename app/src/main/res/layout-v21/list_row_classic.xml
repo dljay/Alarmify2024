@@ -159,7 +159,8 @@
 
                 <TextView
                     android:id="@+id/digital_clock_time"
-                    style="@style/jjTextLarge"
+                    android:textColor="@color/primaryTextColor"
+                    style="@style/jjText_XL_CircularMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"

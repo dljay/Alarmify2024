@@ -16,16 +16,18 @@
 
         <TextView
             android:id="@android:id/title"
-            android:theme="@style/jjPrefBigTitle"
+            android:theme="@style/jjText_M_CircularMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
+            android:textColor="@color/primaryDarkTextColor"
             android:textAllCaps="false"/>
 
         <TextView
             android:id="@android:id/summary"
             android:layout_below="@android:id/title"
-            android:theme="@style/jjPrefSmallTitle"
+            android:theme="@style/jjText_S_circularLight"
+            android:textColor="@color/fourthTextColor"
+            android:textStyle="italic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
 

@@ -114,67 +114,65 @@
     <!-- XS - SMALL -->
         <style name="jjText_XS_circularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">@dimen/var_jjText_XS_circularMedium</item>
+            <item name="android:textSize">@dimen/var_jjText_XS</item>
         </style>
 
         <style name="jjText_S_circularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">@dimen/var_jjText_S_circularMedium</item>
+            <item name="android:textSize">@dimen/var_jjText_S</item>
         </style>
 
         <style name="jjText_S_circularLight">
             <item name="fontFamily">@font/circular_std_light</item>
-            <item name="android:textSize">@dimen/var_jjText_S_circularLight</item>
+            <item name="android:textSize">@dimen/var_jjText_S</item>
         </style>
 
     <!-- Medium  -->
         <style name="jjText_M_CircularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">@dimen/var_jjText_M_CircularMedium</item>
+            <item name="android:textSize">@dimen/var_jjText_M</item>
         </style>
 
+        <style name="jjText_M_CircularLight">
+            <item name="fontFamily">@font/circular_std_light</item>
+            <item name="android:textSize">@dimen/var_jjText_M</item>
+        </style>
         <style name="jjText_M_CircularBlack">
             <item name="fontFamily">@font/circular_std_black</item>
-            <item name="android:textSize">@dimen/var_jjText_M_CircularBlack</item>
+            <item name="android:textSize">@dimen/var_jjText_M</item>
         </style>
 
     <!-- L 15sp -->
         <style name="jjText_L_circularBlack">
             <item name="fontFamily">@font/circular_std_black</item>
-            <item name="android:textSize">@dimen/var_jjText_L_circularBlack</item>
+            <item name="android:textSize">@dimen/var_jjText_L</item>
         </style>
 
         <style name="jjText_L_CircularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">@dimen/var_jjText_L_CircularMedium</item>
+            <item name="android:textSize">@dimen/var_jjText_L</item>
         </style>
 
 
     <!-- XXL 18sp -->
         <style name="jjText_XL_CircularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">@dimen/var_jjText_XL_CircularMedium</item>
+            <item name="android:textSize">@dimen/var_jjText_XL</item>
         </style>
 
 
     <!-- XXXL 24sp -->
         <style name="jjText_2XL_CircularBold">
             <item name="fontFamily">@font/circular_std_bold</item>
-            <item name="android:textSize">@dimen/var_jjText_2XL_CircularBold</item>
+            <item name="android:textSize">@dimen/var_jjText_2XL</item>
         </style>
 
         <style name="jjText_3XL_TimePicker_Spinner">
             <item name="fontFamily">@font/circular_std_bold</item>
             <item name="android:textColor">@color/secondaryTextColor</item>
-            <item name="android:textSize">@dimen/var_jjText_3XL_TimePicker_Spinner</item>
+            <item name="android:textSize">@dimen/var_jjText_3XL</item>
             <item name="android:textStyle">bold</item>
         </style>
-
-
-
-
-
-
 
 
     <!-- Contact US(Alert Dialog Text Color)-->

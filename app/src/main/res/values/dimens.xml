@@ -79,16 +79,13 @@
     18 => 24, 27
     24 => 30, 32
     35 => 42, 46    -->
-    <dimen name="var_jjText_XS_circularMedium">11sp</dimen>
-    <dimen name="var_jjText_S_circularMedium">13sp</dimen>
-    <dimen name="var_jjText_S_circularLight">13sp</dimen>
-    <dimen name="var_jjText_M_CircularMedium">14sp</dimen>
-    <dimen name="var_jjText_M_CircularBlack">14sp</dimen>
-    <dimen name="var_jjText_L_circularBlack">15sp</dimen>
-    <dimen name="var_jjText_L_CircularMedium">15sp</dimen>
-    <dimen name="var_jjText_XL_CircularMedium">18sp</dimen>
-    <dimen name="var_jjText_2XL_CircularBold">24sp</dimen>
-    <dimen name="var_jjText_3XL_TimePicker_Spinner">35sp</dimen>
+    <dimen name="var_jjText_XS">11sp</dimen>
+    <dimen name="var_jjText_S">12.5sp</dimen>
+    <dimen name="var_jjText_M">14sp</dimen>
+    <dimen name="var_jjText_L">15sp</dimen>
+    <dimen name="var_jjText_XL">18sp</dimen>
+    <dimen name="var_jjText_2XL">24sp</dimen>
+    <dimen name="var_jjText_3XL">35sp</dimen>
 
 
 

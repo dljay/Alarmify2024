@@ -34,7 +34,7 @@
             <!--Repeat(요일선택) 칩으로 >>>>>> -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="77dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_marginTop="12dp"
                 android:orientation="vertical">
@@ -42,7 +42,7 @@
                 <TextView
                     android:id="@+id/details_repeat_sum_jj"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center|left"
                     android:layout_weight="1"
                     android:layout_marginBottom="3dp"
@@ -52,8 +52,8 @@
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/_chipGroupDays"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="2"
                     android:layout_gravity="center|left"
 
@@ -244,10 +244,10 @@
                         android:id="@+id/tv_RtPicker_DetailsFrag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="N/A"
                         android:layout_gravity="center_vertical"
-                        style="@style/jjText_M_CircularMedium"
-                        android:textColor="@color/primaryTextColor">
+                        style="@style/jjText_M_CircularLight"
+                        android:textColor="@color/secondaryTextColor"
+                        android:text="N/A">
                     </TextView>
 
                 </LinearLayout>
@@ -372,8 +372,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="6dp"
-                    style="@style/jjText_M_CircularMedium"
-                    android:textColor="@color/primaryTextColor"
+                    style="@style/jjText_S_circularLight"
+                    android:textColor="@color/secondaryTextColor"
                     android:text="N/A"/>
 
             </LinearLayout>

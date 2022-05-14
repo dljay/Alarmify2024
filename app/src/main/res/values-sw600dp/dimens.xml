@@ -19,16 +19,13 @@
 <!-- These resources are around just to allow their values to be customized
      for different hardware and product builds. -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <dimen name="var_jjText_XS_circularMedium">14sp</dimen>
-    <dimen name="var_jjText_S_circularMedium">17sp</dimen>
-    <dimen name="var_jjText_S_circularLight">17sp</dimen>
-    <dimen name="var_jjText_M_CircularMedium">19sp</dimen>
-    <dimen name="var_jjText_M_CircularBlack">19sp</dimen>
-    <dimen name="var_jjText_L_circularBlack">20sp</dimen>
-    <dimen name="var_jjText_L_CircularMedium">20sp</dimen>
-    <dimen name="var_jjText_XL_CircularMedium">24sp</dimen>
-    <dimen name="var_jjText_2XL_CircularBold">30sp</dimen>
-    <dimen name="var_jjText_3XL_TimePicker_Spinner">42sp</dimen>
+    <dimen name="var_jjText_XS">14sp</dimen>
+    <dimen name="var_jjText_S">17sp</dimen>
+    <dimen name="var_jjText_M">19sp</dimen>
+    <dimen name="var_jjText_L">20sp</dimen>
+    <dimen name="var_jjText_XL">24sp</dimen>
+    <dimen name="var_jjText_2XL">30sp</dimen>
+    <dimen name="var_jjText_3XL">42sp</dimen>
 
 
 </resources>

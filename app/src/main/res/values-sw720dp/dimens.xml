@@ -26,4 +26,10 @@
         <dimen name="margin_2XL">20dp</dimen>
         <dimen name="margin_3XL">22dp</dimen>
         <dimen name="margin_4XL">26dp</dimen>
+
+    <!-- ** [Width & Height] 이렇게 수치로 적는건 바람직하지 않지만 어쩔수없는 경우가 있음.. **-->
+
+    <dimen name="badge_width_detail_frag">110dp</dimen>
+    <dimen name="badge_height_detail_frag">110dp</dimen>
+
 </resources>

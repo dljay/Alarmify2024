@@ -201,7 +201,6 @@
                 android:layout_height="wrap_content">
                 <!-- A) Ringtone Text + Spinner-->
 
-
                 <TextView
                     android:id="@+id/tv_title_intensity"
                     android:layout_width="wrap_content"
@@ -215,15 +214,6 @@
                     app:layout_constraintBottom_toTopOf="@+id/id_ll_Wrapping_Spinner"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-
-               <!-- <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/music_note_black_24"
-                    app:layout_constraintBottom_toTopOf="@+id/id_ll_Wrapping_Spinner"
-                    app:layout_constraintStart_toEndOf="@+id/textView3"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginStart="3dp"/>-->
 
                 <LinearLayout
 

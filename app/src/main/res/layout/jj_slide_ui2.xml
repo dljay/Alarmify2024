@@ -275,8 +275,7 @@
             android:theme="@style/jjText_S_circularLight"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="@id/minip_btmUi_vert_guide_1"
-            app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"
-            app:layout_constraintBottom_toTopOf="@id/ll_badgeHolder"/>
+            app:layout_constraintTop_toBottomOf="@+id/tv_AboutTheRingTone"/>
 
         <!-- badges-->
 
@@ -298,7 +297,7 @@
             android:id="@+id/ll_badgeHolder"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="@dimen/margin_M"
             android:layout_marginEnd="0dp"
             android:orientation="horizontal"
             android:weightSum="6"
@@ -312,7 +311,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="2dp"
+                android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
                 android:src="@drawable/badge_1_intense_2" />
 
@@ -322,7 +321,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="2dp"
+                android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
                 android:src="@drawable/badge_2_gentle_2" />
 
@@ -332,7 +331,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="2dp"
+                android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
                 android:src="@drawable/badge_3_nature_2" />
 
@@ -342,7 +341,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="2dp"
+                android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
                 android:src="@drawable/badge_4_locations_2" />
 
@@ -352,7 +351,7 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="2dp"
+                android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
                 android:src="@drawable/badge_5_popular_2" />
 
@@ -393,7 +392,7 @@
             android:id="@+id/intensity_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="@dimen/margin_S"
 
             app:layout_constraintBottom_toTopOf="@id/fl_buy_or_purchased"
             app:layout_constraintEnd_toEndOf="@id/id_lowerUi_iv_bigThumbnail"

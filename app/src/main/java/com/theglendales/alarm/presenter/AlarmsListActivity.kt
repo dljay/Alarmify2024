@@ -68,17 +68,21 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g12 22/5/15 (Sun) 10:19pm [Tablet 호환 UI 수정중 - Details Frag. Badge 완료 12]
-//==> test-textdimens 로 글자 크기 기기 크기별 사용중 (sw720dp..) => RtPicker>MiniPlayer_Btm - Information 글자크기 변경 성공. 이제 제대로 넣기.
+// 30708V1.18e36g14 22/5/15 (Sun) 11:32pm [Tablet 호환 UI 수정중 - Details Frag. Badge 완료 13]
+
 //Achievement)
 //-- Tablet 수정중.
 
 //Error)
-// 2ndFrag 에서 BtmAppBar 사라지기 전에 확! listfrag 로 이동 선택 -> ListFrag 도착 시 btmAppBAR 안보임. showList 에서 해결해주려는 중..
-// Tablet- text Size (Phillip Lackner) & RowHolder 세로 크기도? Details Frag 는 무조건 고쳐주기..(Yuriv App 깔고 참고해봅쉐.)
 // Tablet -> 인스톨 알람 AlbumArt 안 뜨는 문제. [SnackBar - Rebuilding DB 는 떴음]
 
 //Todos)
+// 갑자기 지금 하는것 -->
+// [Tablet UI 수정]
+// a) DetailsFrag>RtPicker 수정중 - MiniPlayer- Speaker 크기 (Vector Drawable 이 넘 작아서 Tablet 에서는 작게 뜸.) => sw600,720 용 vector 만들어서 자동으로 적용되게끔? (배워보자..)
+// b) List Frag, NavDrawer -> Text Font Size. 기타 등등..
+
+// 원래 하려던것 -->
 // Firebase Security Rules <-> FB APP 만 되는것 해도 설정해줘야겠지?
 //1> IMAGE DRAWABLE 관련
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피.

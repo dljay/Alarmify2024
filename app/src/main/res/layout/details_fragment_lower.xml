@@ -402,8 +402,8 @@
 
                     <ImageView
                         android:id="@+id/iv_badge1_intense"
-                        android:layout_width="@dimen/badge_width_detail_frag"
-                        android:layout_height="@dimen/badge_height_detail_frag"
+                        android:layout_width="@dimen/var_fifty_dp"
+                        android:layout_height="@dimen/var_fifty_dp"
                         android:layout_marginTop="@dimen/margin_S"
                         android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_1_intense_2"
@@ -412,8 +412,8 @@
 
                     <ImageView
                         android:id="@+id/iv_badge2_gentle"
-                        android:layout_width="@dimen/badge_width_detail_frag"
-                        android:layout_height="@dimen/badge_height_detail_frag"
+                        android:layout_width="@dimen/var_fifty_dp"
+                        android:layout_height="@dimen/var_fifty_dp"
                         android:layout_marginTop="@dimen/margin_S"
                         android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_2_gentle_2"
@@ -421,8 +421,8 @@
 
                     <ImageView
                         android:id="@+id/iv_badge3_nature"
-                        android:layout_width="@dimen/badge_width_detail_frag"
-                        android:layout_height="@dimen/badge_height_detail_frag"
+                        android:layout_width="@dimen/var_fifty_dp"
+                        android:layout_height="@dimen/var_fifty_dp"
                         android:layout_marginTop="@dimen/margin_S"
                         android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_3_nature_2"
@@ -430,8 +430,8 @@
 
                     <ImageView
                         android:id="@+id/iv_badge4_location"
-                        android:layout_width="@dimen/badge_width_detail_frag"
-                        android:layout_height="@dimen/badge_height_detail_frag"
+                        android:layout_width="@dimen/var_fifty_dp"
+                        android:layout_height="@dimen/var_fifty_dp"
                         android:layout_marginTop="@dimen/margin_S"
                         android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_4_locations_2"
@@ -439,8 +439,8 @@
 
                     <ImageView
                         android:id="@+id/iv_badge5_popular"
-                        android:layout_width="@dimen/badge_width_detail_frag"
-                        android:layout_height="@dimen/badge_height_detail_frag"
+                        android:layout_width="@dimen/var_fifty_dp"
+                        android:layout_height="@dimen/var_fifty_dp"
                         android:layout_marginTop="@dimen/margin_S"
                         android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_5_popular_2"
@@ -448,8 +448,8 @@
 
                     <ImageView
                         android:id="@+id/iv_badge6_misc"
-                        android:layout_width="@dimen/badge_width_detail_frag"
-                        android:layout_height="@dimen/badge_height_detail_frag"
+                        android:layout_width="@dimen/var_fifty_dp"
+                        android:layout_height="@dimen/var_fifty_dp"
                         android:layout_marginTop="@dimen/margin_S"
                         android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_6_misc_2"

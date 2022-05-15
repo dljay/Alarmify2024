@@ -35,8 +35,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginBottom="@dimen/margin_S"
+                android:layout_marginTop="@dimen/margin_2XL"
                 android:orientation="vertical">
 
                 <TextView
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|left"
                     android:layout_weight="1"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="@dimen/margin_S"
                     android:text="@string/alarm_repeat"
                     android:textColor="@color/primaryTextColor"
                     android:theme="@style/jjText_XL_CircularMedium"/>
@@ -166,7 +166,7 @@
                 android:id="@+id/details_repeat_row"
                 android:layout_width="match_parent"
                 android:layout_height="68dip"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/margin_2XL"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -191,7 +191,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
-                android:layout_marginBottom="3dp"
+                android:layout_marginBottom="@dimen/margin_XS"
                 android:background="?android:attr/dividerHorizontal" />
 
         <!-- Ringtone 메뉴 ******* -->
@@ -207,8 +207,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|left"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="@dimen/margin_L"
+                    android:layout_marginBottom="@dimen/margin_S"
                     android:text="@string/alertAndIntensity"
                     android:textColor="@color/primaryTextColor"
                     android:theme="@style/jjText_XL_CircularMedium"
@@ -232,9 +232,9 @@
                     android:layout_height="0dp"
                     android:layout_gravity="center|start"
 
-                    android:layout_marginTop="8dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="@dimen/margin_L"
+                    android:layout_marginEnd="@dimen/margin_L"
+                    android:layout_marginBottom="@dimen/margin_L"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/guideline2"
                     app:layout_constraintStart_toStartOf="parent"
@@ -283,8 +283,8 @@
                         android:id="@+id/iv_ringtoneArtBig"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginBottom="6dp"
+                        android:layout_marginTop="@dimen/margin_2XL"
+                        android:layout_marginBottom="@dimen/margin_M"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintBottom_toTopOf="@id/intensity_guide_hor_1"
@@ -294,7 +294,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="@dimen/margin_S"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="@id/intensity_guide_hor_1">
 
@@ -346,8 +346,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp"
+                android:layout_marginTop="@dimen/margin_XS"
+                android:layout_marginBottom="@dimen/margin_XS"
                 android:background="?android:attr/dividerHorizontal" />
             <!--About the Ringtone -->
             <LinearLayout
@@ -357,8 +357,8 @@
 
                 <TextView
                     android:layout_gravity="center|left"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginTop="@dimen/margin_L"
+                    android:layout_marginBottom="@dimen/margin_XS"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/primaryTextColor"
@@ -370,8 +370,8 @@
                     android:id="@+id/tv_rt_description_detailsFrag"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="6dp"
+                    android:layout_marginTop="@dimen/margin_M"
+                    android:layout_marginBottom="@dimen/margin_M"
                     style="@style/jjText_S_circularLight"
                     android:textColor="@color/secondaryTextColor"
                     android:text="N/A"/>
@@ -381,8 +381,8 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dip"
-                android:layout_marginTop="6dp"
-                android:layout_marginBottom="3dp"
+                android:layout_marginTop="@dimen/margin_M"
+                android:layout_marginBottom="@dimen/margin_XS"
                 android:background="?android:attr/dividerHorizontal" />
 
             <!--Information [TextView] -->
@@ -390,13 +390,13 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/margin_XL"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_gravity="center|left"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="9dp"
+                    android:layout_marginTop="@dimen/margin_L"
+                    android:layout_marginBottom="@dimen/margin_XL"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/primaryTextColor"
@@ -414,8 +414,8 @@
                         android:id="@+id/iv_badge1_intense"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="@dimen/margin_S"
+                        android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_1_intense_2"
 
                         android:visibility="gone"/>
@@ -424,8 +424,8 @@
                         android:id="@+id/iv_badge2_gentle"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="@dimen/margin_S"
+                        android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_2_gentle_2"
                         android:visibility="gone"/>
 
@@ -433,8 +433,8 @@
                         android:id="@+id/iv_badge3_nature"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="@dimen/margin_S"
+                        android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_3_nature_2"
                         android:visibility="gone"/>
 
@@ -442,8 +442,8 @@
                         android:id="@+id/iv_badge4_location"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="@dimen/margin_S"
+                        android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_4_locations_2"
                         android:visibility="gone"/>
 
@@ -451,8 +451,8 @@
                         android:id="@+id/iv_badge5_popular"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="@dimen/margin_S"
+                        android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_5_popular_2"
                         android:visibility="gone"/>
 
@@ -460,8 +460,8 @@
                         android:id="@+id/iv_badge6_misc"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="@dimen/margin_S"
+                        android:layout_marginEnd="@dimen/margin_S"
                         android:src="@drawable/badge_6_misc_2"
                         android:visibility="gone"/>
 
@@ -474,8 +474,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:layout_marginLeft="16dip"
-        android:layout_marginRight="16dip"
+        android:layout_marginLeft="@dimen/margin_4XL"
+        android:layout_marginRight="@dimen/margin_4XL"
         android:background="?android:attr/dividerHorizontal" />
 
     <LinearLayout

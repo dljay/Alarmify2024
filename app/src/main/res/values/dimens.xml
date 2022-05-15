@@ -69,30 +69,32 @@
 
     <!-- Default distance from each snap target that GlowPadView considers a "hit" -->
 
-    <!-- ** [TEXT SIZE] 내가 만든 Custom dimension for Phone **-->
 
-<!--dimens => 600dp, 720dp
-    11 => 14, 15
-    13 => 17 , 20
-    14 => 19, 22
-    15 => 20, 23
-    18 => 24, 27
-    24 => 30, 32
-    35 => 42, 46    -->
-    <!-- General Text Size -->
-    <dimen name="var_jjText_XS">11sp</dimen>
-    <dimen name="var_jjText_S">12.5sp</dimen>
-    <dimen name="var_jjText_M">14sp</dimen>
-    <dimen name="var_jjText_L">15sp</dimen>
-    <dimen name="var_jjText_XL">18sp</dimen>
-    <dimen name="var_jjText_2XL">24sp</dimen>
-    <dimen name="var_jjText_3XL">35sp</dimen>
+    <!-- ** [TEXT SIZE] Custom dimension **-->
 
-    <!-- Chip Text Size, Space between chips-->
-    <dimen name="var_jjChip_text_size">13sp</dimen>
-    <dimen name="var_jjChip_Hor_Space">0dp</dimen>
+        <!-- General Text Size -->
+        <dimen name="var_jjText_XS">11sp</dimen>
+        <dimen name="var_jjText_S">12.5sp</dimen>
+        <dimen name="var_jjText_M">14sp</dimen>
+        <dimen name="var_jjText_L">15sp</dimen>
+        <dimen name="var_jjText_XL">18sp</dimen>
+        <dimen name="var_jjText_2XL">24sp</dimen>
+        <dimen name="var_jjText_3XL">35sp</dimen>
 
+        <!-- Chip Text Size, Space between chips-->
+        <dimen name="var_jjChip_text_size">13sp</dimen>
+        <dimen name="var_jjChip_Hor_Space">0dp</dimen>
 
+    <!-- ** [Margin SIZE] Custom dimension **-->
 
+        <dimen name="margin_XXS">2dp</dimen>
+        <dimen name="margin_XS">3dp</dimen>
+        <dimen name="margin_S">5dp</dimen>
+        <dimen name="margin_M">6dp</dimen>
+        <dimen name="margin_L">8dp</dimen>
+        <dimen name="margin_XL">10dp</dimen>
+        <dimen name="margin_2XL">12dp</dimen>
+        <dimen name="margin_3XL">14dp</dimen>
+        <dimen name="margin_4XL">16dp</dimen>
 
 </resources>

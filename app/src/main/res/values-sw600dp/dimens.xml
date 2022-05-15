@@ -16,19 +16,34 @@
 */
 -->
 
+<!-- 7 인치 테블릿 용 (Nexus10) -->
+
 <!-- These resources are around just to allow their values to be customized
      for different hardware and product builds. -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <dimen name="var_jjText_XS">14sp</dimen>
-    <dimen name="var_jjText_S">17sp</dimen>
-    <dimen name="var_jjText_M">19sp</dimen>
-    <dimen name="var_jjText_L">20sp</dimen>
-    <dimen name="var_jjText_XL">24sp</dimen>
-    <dimen name="var_jjText_2XL">30sp</dimen>
-    <dimen name="var_jjText_3XL">42sp</dimen>
+    <!-- ** [TEXT SIZE] Custom dimension **-->
+        <dimen name="var_jjText_XS">14sp</dimen>
+        <dimen name="var_jjText_S">17sp</dimen>
+        <dimen name="var_jjText_M">19sp</dimen>
+        <dimen name="var_jjText_L">20sp</dimen>
+        <dimen name="var_jjText_XL">24sp</dimen>
+        <dimen name="var_jjText_2XL">30sp</dimen>
+        <dimen name="var_jjText_3XL">42sp</dimen>
 
-    <dimen name="var_jjChip_text_size">24sp</dimen>
-    <dimen name="var_jjChip_Hor_Space">5dp</dimen>
+        <dimen name="var_jjChip_text_size">24sp</dimen>
+        <dimen name="var_jjChip_Hor_Space">8dp</dimen>
+
+    <!-- ** [Margin SIZE] Custom dimension **-->
+
+        <dimen name="margin_XXS">4dp</dimen>
+        <dimen name="margin_XS">6dp</dimen>
+        <dimen name="margin_S">8dp</dimen>
+        <dimen name="margin_M">10dp</dimen>
+        <dimen name="margin_L">12dp</dimen>
+        <dimen name="margin_XL">14dp</dimen>
+        <dimen name="margin_2XL">16dp</dimen>
+        <dimen name="margin_3XL">19dp</dimen>
+        <dimen name="margin_4XL">21dp</dimen>
 
 
 </resources>

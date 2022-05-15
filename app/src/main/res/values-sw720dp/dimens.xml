@@ -1,13 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 10 인치 테블릿 용 (Nexus10) -->
 <resources>
-    <dimen name="var_jjText_XS">15sp</dimen>
-    <dimen name="var_jjText_S">20sp</dimen>
-    <dimen name="var_jjText_M">23sp</dimen>
-    <dimen name="var_jjText_L">24sp</dimen>
-    <dimen name="var_jjText_XL">29sp</dimen>
-    <dimen name="var_jjText_2XL">33sp</dimen>
-    <dimen name="var_jjText_3XL">46sp</dimen>
 
-    <dimen name="var_jjChip_text_size">32sp</dimen>
-    <dimen name="var_jjChip_Hor_Space">8dp</dimen>
+    <!-- ** [TEXT SIZE] Custom dimension **-->
+        <dimen name="var_jjText_XS">15sp</dimen>
+        <dimen name="var_jjText_S">20sp</dimen>
+        <dimen name="var_jjText_M">23sp</dimen>
+        <dimen name="var_jjText_L">24sp</dimen>
+        <dimen name="var_jjText_XL">29sp</dimen>
+        <dimen name="var_jjText_2XL">33sp</dimen>
+        <dimen name="var_jjText_3XL">46sp</dimen>
+
+        <dimen name="var_jjChip_text_size">28sp</dimen>
+        <dimen name="var_jjChip_Hor_Space">12dp</dimen>
+
+
+    <!-- ** [Margin SIZE] Custom dimension **-->
+
+        <dimen name="margin_XXS">6dp</dimen>
+        <dimen name="margin_XS">8dp</dimen>
+        <dimen name="margin_S">9dp</dimen>
+        <dimen name="margin_M">12dp</dimen>
+        <dimen name="margin_L">15dp</dimen>
+        <dimen name="margin_XL">18dp</dimen>
+        <dimen name="margin_2XL">20dp</dimen>
+        <dimen name="margin_3XL">22dp</dimen>
+        <dimen name="margin_4XL">26dp</dimen>
 </resources>

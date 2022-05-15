@@ -101,5 +101,6 @@
 
         <dimen name="badge_width_detail_frag">50dp</dimen>
         <dimen name="badge_height_detail_frag">50dp</dimen>
+        <dimen name="rowHolder_for_secondFrag_RtPicker">63dp</dimen>
 
 </resources>

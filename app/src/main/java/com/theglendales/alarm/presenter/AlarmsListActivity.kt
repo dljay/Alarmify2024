@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g11 22/5/15 (Sun) 2:31pm [Tablet 호환 UI 수정중 - Details Frag. Badge 완료 10]
+// 30708V1.18e36g12 22/5/15 (Sun) 10:19pm [Tablet 호환 UI 수정중 - Details Frag. Badge 완료 12]
 //==> test-textdimens 로 글자 크기 기기 크기별 사용중 (sw720dp..) => RtPicker>MiniPlayer_Btm - Information 글자크기 변경 성공. 이제 제대로 넣기.
 //Achievement)
 //-- Tablet 수정중.

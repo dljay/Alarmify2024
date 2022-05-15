@@ -481,7 +481,8 @@
             android:layout_weight="1"
             android:focusable="true"
             android:text="@android:string/cancel"
-            android:textColor="@color/primaryTextColor"/>
+            android:textColor="@color/primaryTextColor"
+            android:textSize="@dimen/var_jjText_M"/>
 
         <Button
             android:id="@+id/details_activity_button_save"
@@ -491,7 +492,8 @@
             android:layout_weight="1"
             android:focusable="true"
             android:text="@android:string/ok"
-            android:textColor="@color/primaryTextColor"/>
+            android:textColor="@color/primaryTextColor"
+            android:textSize="@dimen/var_jjText_M"/>
     </LinearLayout>
 
 </LinearLayout>

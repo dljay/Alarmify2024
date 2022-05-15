@@ -5,14 +5,14 @@
     <!-- ** [TEXT SIZE] Custom dimension **-->
         <dimen name="var_jjText_XS">15sp</dimen>
         <dimen name="var_jjText_S">20sp</dimen>
-        <dimen name="var_jjText_M">23sp</dimen>
-        <dimen name="var_jjText_L">24sp</dimen>
+        <dimen name="var_jjText_M">24sp</dimen>
+        <dimen name="var_jjText_L">26sp</dimen>
         <dimen name="var_jjText_XL">29sp</dimen>
         <dimen name="var_jjText_2XL">33sp</dimen>
         <dimen name="var_jjText_3XL">46sp</dimen>
 
         <dimen name="var_jjChip_text_size">28sp</dimen>
-        <dimen name="var_jjChip_Hor_Space">12dp</dimen>
+        <dimen name="var_jjChip_Hor_Space">14dp</dimen>
 
 
     <!-- ** [Margin SIZE] Custom dimension **-->
@@ -31,5 +31,6 @@
 
     <dimen name="badge_width_detail_frag">105dp</dimen>
     <dimen name="badge_height_detail_frag">105dp</dimen>
+    <dimen name="rowHolder_for_secondFrag_RtPicker">95dp</dimen>
 
 </resources>

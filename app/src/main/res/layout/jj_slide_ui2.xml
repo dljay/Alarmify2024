@@ -12,7 +12,7 @@
     <LinearLayout
         android:id="@+id/id_upperUi_ll"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="wrap_content"
 
         android:background="@drawable/btm_nav_bg_round_and_gradient_1"
         android:clickable="true"
@@ -25,7 +25,7 @@
             android:id="@+id/id_upperUi_ConsLayout"
             android:background="@color/transparent"
             android:layout_width="match_parent"
-            android:layout_height="63dp">
+            android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/upperUi_guide_ver_1"
@@ -39,9 +39,9 @@
                 android:id="@+id/id_upperUi_iv_clickarrowUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginStart="@dimen/margin_XL"
+                android:layout_marginTop="@dimen/margin_S"
+                android:layout_marginBottom="@dimen/margin_S"
 
                 android:padding="5dp"
                 android:src="@drawable/arrow_up_white"
@@ -54,14 +54,15 @@
             <!-- RingTone Cover Image -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/id_upperUi_iv_coverImage"
-                android:layout_width="58dp"
-                android:layout_height="58dp"
+                android:layout_width="@dimen/iv_albumart_upper_miniplayer"
+                android:layout_height="@dimen/iv_albumart_upper_miniplayer"
                 android:visibility="visible"
 
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginStart="@dimen/margin_S"
+                android:layout_marginTop="@dimen/margin_S"
+                android:layout_marginBottom="@dimen/margin_S"
                 android:padding="6dp"
+                app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/id_upperUi_iv_clickarrowUp"
                 app:layout_constraintTop_toTopOf="parent"
@@ -73,12 +74,13 @@
 
             <!-- SeekBar & RingTone Title_Loop1 -->
             <LinearLayout
+                android:id="@+id/ll_title_seekbar_container"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="2dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginStart="@dimen/margin_L"
+                android:layout_marginEnd="@dimen/margin_XXS"
+                android:layout_marginTop="@dimen/margin_S"
+                android:layout_marginBottom="@dimen/margin_S"
                 android:baselineAligned="false"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -131,11 +133,11 @@
 
             <!-- Play/Stop Button From Here>>>>> -->
             <LinearLayout
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:layout_marginTop="7dp"
-                android:layout_marginEnd="14dp"
-                android:layout_marginBottom="7dp"
+                android:layout_width="@dimen/var_fifty_dp"
+                android:layout_height="0dp"
+
+                android:layout_marginEnd="@dimen/margin_3XL"
+
                 android:gravity="center"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -150,7 +152,9 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="6dp"
-                    android:scaleType="fitCenter"
+                    android:scaleType="centerCrop"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
                     android:src="@drawable/play_circle_filled_24" />
 
                 <ImageButton
@@ -161,7 +165,9 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:padding="6dp"
-                    android:scaleType="fitCenter"
+                    android:scaleX="0.5"
+                    android:scaleY="0.5"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/pause_circle_filled_24"
                     android:visibility="gone" />
 
@@ -230,10 +236,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-
             app:layout_constraintGuide_percent="0.93"/>
-
-
 
         <TextView
             android:id="@+id/tv_AboutTheRingTone"
@@ -307,7 +310,7 @@
                 android:id="@+id/mPlayer_badge1_Intense"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
                 android:scaleType="fitEnd"
@@ -317,7 +320,7 @@
                 android:id="@+id/mPlayer_badge2_Gentle"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
                 android:scaleType="fitEnd"
@@ -327,7 +330,7 @@
                 android:id="@+id/mPlayer_badge3_Nature"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
                 android:scaleType="fitEnd"
@@ -337,7 +340,7 @@
                 android:id="@+id/mPlayer_badge_4_Location"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
                 android:scaleType="fitEnd"
@@ -347,7 +350,7 @@
                 android:id="@+id/mPlayer_badge_5_Popular"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/var_sixty_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="2dp"
                 android:scaleType="fitEnd"
@@ -357,7 +360,7 @@
                 android:id="@+id/mPlayer_badge_6_Misc"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/var_sixty_dp"
                 android:scaleType="fitEnd"
                 android:src="@drawable/badge_6_misc_2" />
 

@@ -28,9 +28,14 @@
         <dimen name="margin_4XL">26dp</dimen>
 
     <!-- ** [Width & Height] 이렇게 수치로 적는건 바람직하지 않지만 어쩔수없는 경우가 있음.. **-->
+    <!-- 차라리 50 60 70 80.. 하는게 나을듯.. -->
 
     <dimen name="badge_width_detail_frag">105dp</dimen>
     <dimen name="badge_height_detail_frag">105dp</dimen>
     <dimen name="rowHolder_for_secondFrag_RtPicker">95dp</dimen>
+    <dimen name="iv_albumart_upper_miniplayer">80dp</dimen>
+    <dimen name="var_fifty_dp">80dp</dimen>
+    <dimen name="var_sixty_dp">88dp</dimen>
+    <dimen name="umano_panel_height_rtpicker">99dp</dimen>
 
 </resources>

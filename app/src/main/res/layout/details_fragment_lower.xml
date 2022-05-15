@@ -241,11 +241,11 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_title_intensity">
 
                     <TextView
-                        android:id="@+id/tv_RtPicker_DetailsFrag"
+                        android:id="@+id/tv_rt_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        style="@style/jjText_M_CircularLight"
+                        style="@style/jjText_L_circularLight"
                         android:textColor="@color/secondaryTextColor"
                         android:text="N/A">
                     </TextView>
@@ -258,7 +258,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.7" />
+                    app:layout_constraintGuide_percent="0.73" />
 
                 <!-- C) AlbumArt Big-->
                 <androidx.constraintlayout.widget.ConstraintLayout

@@ -143,6 +143,11 @@
         </style>
 
     <!-- L 15sp -->
+        <style name="jjText_L_circularLight">
+            <item name="fontFamily">@font/circular_std_light</item>
+            <item name="android:textSize">@dimen/var_jjText_L</item>
+        </style>
+
         <style name="jjText_L_circularBlack">
             <item name="fontFamily">@font/circular_std_black</item>
             <item name="android:textSize">@dimen/var_jjText_L</item>

@@ -7,8 +7,8 @@
         <dimen name="var_jjText_XS">17sp</dimen>
         <dimen name="var_jjText_S">22sp</dimen>
         <dimen name="var_jjText_M">24sp</dimen>
-        <dimen name="var_jjText_L">26sp</dimen>
-        <dimen name="var_jjText_XL">29sp</dimen>
+        <dimen name="var_jjText_L">28sp</dimen>
+        <dimen name="var_jjText_XL">30sp</dimen>
         <dimen name="var_jjText_2XL">33sp</dimen>
         <dimen name="var_jjText_3XL">46sp</dimen>
 

@@ -5,7 +5,7 @@
     <!-- ** [TEXT SIZE] Custom dimension **-->
         <dimen name="var_jjText_2XS">15sp</dimen>
         <dimen name="var_jjText_XS">17sp</dimen>
-        <dimen name="var_jjText_S">20sp</dimen>
+        <dimen name="var_jjText_S">22sp</dimen>
         <dimen name="var_jjText_M">24sp</dimen>
         <dimen name="var_jjText_L">26sp</dimen>
         <dimen name="var_jjText_XL">29sp</dimen>

@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g14 22/5/16 (Mon) 10:49pm [Tablet 호환 UI 수정중 - Details Frag. Badge 완료 15]
+// 30708V1.18e36G15 22/5/16 (Mon) 11:19pm [Tablet 호환 UI 수정중 - Details Frag. Badge 완료 16]
 
 //Achievement)
 //-- Tablet 수정중.

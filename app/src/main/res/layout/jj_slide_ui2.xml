@@ -263,10 +263,10 @@
             android:id="@+id/id_lowerUi_tv_Description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="7dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginStart="@dimen/margin_L"
+            android:layout_marginTop="@dimen/margin_L"
+            android:layout_marginEnd="@dimen/margin_XL"
+            android:layout_marginBottom="@dimen/margin_S"
             android:text="This is a placeholder text. I wish this holder text lives forever is holder text lives foreveris holder text lives forever. Now heading to our fourth line"
             android:textColor="@color/secondaryTextColor"
 
@@ -373,9 +373,9 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
 
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="9dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginStart="@dimen/margin_XL"
+            android:layout_marginEnd="@dimen/margin_XL"
+            android:layout_marginBottom="@dimen/margin_XL"
             android:scaleType="centerCrop"
 
             app:layout_constraintDimensionRatio="1:1"

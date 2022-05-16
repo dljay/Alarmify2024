@@ -78,8 +78,8 @@ import java.util.Calendar
 
 //Todos)
 // 갑자기 지금 하는것 -->
-// [Tablet UI 수정]
-// a) DetailsFrag>RtPicker 수정중 - MiniPlayer- Speaker 크기 (Vector Drawable 이 넘 작아서 Tablet 에서는 작게 뜸.) => sw600,720 용 vector 만들어서 자동으로 적용되게끔? (배워보자..)
+// [Tablet UI 수정] -- 추후 내 Tablet 실제로 테스트 하기.
+// a) DetailsFrag>RtPicker 수정중 - MiniPlayer- 1) 제목이 넘 밑으로 흐르네.. 2)Speaker 크기 (Vector Drawable 이 넘 작아서 Tablet 에서는 작게 뜸.) => sw600,720 용 vector 만들어서 자동으로 적용되게끔? (배워보자..)
 // b) List Frag, NavDrawer -> Text Font Size. 기타 등등..
 
 // 원래 하려던것 -->

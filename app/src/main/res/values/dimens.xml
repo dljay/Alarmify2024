@@ -103,9 +103,10 @@
         <dimen name="rowHolder_for_secondFrag_RtPicker">63dp</dimen>
         <dimen name="iv_albumart_upper_miniplayer">58dp</dimen>
 
-        <dimen name="var_ten_dp">10dp</dimen>
-        <dimen name="var_fifty_dp">50dp</dimen>
-        <dimen name="var_sixty_dp">60dp</dimen>
+        <dimen name="var_10_dp">10dp</dimen>
+        <dimen name="var_16_dp">16dp</dimen>
+        <dimen name="var_50_dp">50dp</dimen>
+        <dimen name="var_60_dp">60dp</dimen>
         <dimen name="umano_panel_height_rtpicker">71dp</dimen>
 
     <!-- 기타 수치 -->

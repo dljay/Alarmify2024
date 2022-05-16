@@ -52,9 +52,10 @@
         <dimen name="iv_albumart_upper_miniplayer">72dp</dimen>
 
 
-        <dimen name="var_ten_dp">18dp</dimen>
-        <dimen name="var_fifty_dp">65dp</dimen>
-        <dimen name="var_sixty_dp">72dp</dimen>
+        <dimen name="var_10_dp">18dp</dimen>
+        <dimen name="var_16_dp">20dp</dimen>
+        <dimen name="var_50_dp">65dp</dimen>
+        <dimen name="var_60_dp">72dp</dimen>
         <dimen name="umano_panel_height_rtpicker">82dp</dimen>
 
 

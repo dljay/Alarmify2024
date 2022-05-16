@@ -54,8 +54,8 @@
             <!-- RingTone Cover Image -->
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/id_upperUi_iv_coverImage"
-                android:layout_width="@dimen/iv_albumart_upper_miniplayer"
-                android:layout_height="@dimen/iv_albumart_upper_miniplayer"
+                android:layout_width="@dimen/var_60_dp"
+                android:layout_height="@dimen/var_60_dp"
                 android:visibility="visible"
 
                 android:layout_marginStart="@dimen/margin_S"
@@ -115,7 +115,7 @@
                 <SeekBar
                     android:id="@+id/id_upperUi_Seekbar"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/var_ten_dp"
+                    android:layout_height="@dimen/var_10_dp"
                     android:layout_gravity="bottom"
                     android:layout_weight="1"
                     android:max="0"
@@ -132,7 +132,7 @@
 
             <!-- Play/Stop Button From Here>>>>> -->
             <LinearLayout
-                android:layout_width="@dimen/var_fifty_dp"
+                android:layout_width="@dimen/var_50_dp"
                 android:layout_height="0dp"
 
                 android:layout_marginEnd="@dimen/margin_3XL"
@@ -309,7 +309,7 @@
                 android:id="@+id/mPlayer_badge1_Intense"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/var_sixty_dp"
+                android:layout_height="@dimen/var_60_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
@@ -319,7 +319,7 @@
                 android:id="@+id/mPlayer_badge2_Gentle"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/var_sixty_dp"
+                android:layout_height="@dimen/var_60_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
@@ -329,7 +329,7 @@
                 android:id="@+id/mPlayer_badge3_Nature"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/var_sixty_dp"
+                android:layout_height="@dimen/var_60_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
@@ -339,7 +339,7 @@
                 android:id="@+id/mPlayer_badge_4_Location"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/var_sixty_dp"
+                android:layout_height="@dimen/var_60_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
@@ -349,7 +349,7 @@
                 android:id="@+id/mPlayer_badge_5_Popular"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/var_sixty_dp"
+                android:layout_height="@dimen/var_60_dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="@dimen/margin_XXS"
                 android:scaleType="fitEnd"
@@ -359,7 +359,7 @@
                 android:id="@+id/mPlayer_badge_6_Misc"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/var_sixty_dp"
+                android:layout_height="@dimen/var_60_dp"
                 android:scaleType="fitEnd"
                 android:src="@drawable/badge_6_misc_2" />
 

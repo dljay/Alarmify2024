@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g14 22/5/15 (Sun) 11:32pm [Tablet 호환 UI 수정중 - Details Frag. Badge 완료 13]
+// 30708V1.18e36g14 22/5/16 (Mon) 10:49pm [Tablet 호환 UI 수정중 - Details Frag. Badge 완료 15]
 
 //Achievement)
 //-- Tablet 수정중.
@@ -79,7 +79,6 @@ import java.util.Calendar
 //Todos)
 // 갑자기 지금 하는것 -->
 // [Tablet UI 수정] -- 추후 내 Tablet 실제로 테스트 하기.
-// a) DetailsFrag>RtPicker 수정중 - MiniPlayer- 1) 제목이 넘 밑으로 흐르네.. 2)Speaker 크기 (Vector Drawable 이 넘 작아서 Tablet 에서는 작게 뜸.) => sw600,720 용 vector 만들어서 자동으로 적용되게끔? (배워보자..)
 // b) List Frag, NavDrawer -> Text Font Size. 기타 등등..
 
 // 원래 하려던것 -->

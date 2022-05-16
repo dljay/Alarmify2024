@@ -73,7 +73,8 @@
     <!-- ** [TEXT SIZE] Custom dimension **-->
 
         <!-- General Text Size -->
-        <dimen name="var_jjText_XS">11sp</dimen>
+        <dimen name="var_jjText_2XS">11sp</dimen>
+        <dimen name="var_jjText_XS">12sp</dimen>
         <dimen name="var_jjText_S">12.5sp</dimen>
         <dimen name="var_jjText_M">14sp</dimen>
         <dimen name="var_jjText_L">15sp</dimen>

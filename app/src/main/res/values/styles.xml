@@ -114,7 +114,7 @@
     <!-- XS - SMALL -->
         <style name="jjText_XS_circularMedium">
             <item name="fontFamily">@font/circular_std_medium</item>
-            <item name="android:textSize">@dimen/var_jjText_XS</item>
+            <item name="android:textSize">@dimen/var_jjText_2XS</item>
         </style>
 
         <style name="jjText_S_circularMedium">

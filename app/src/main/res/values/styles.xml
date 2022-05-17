@@ -107,8 +107,8 @@
     </style>
 
     <style name="navDrawerStyle">
-        <item name="android:textSize">@dimen/var_jjNav_Drawer_Text_Size</item>
-        <item name="fontFamily">@font/circular_std_light</item>
+        <item name="android:textSize">@dimen/var_jjText_M</item>
+        <item name="fontFamily">@font/circular_std_medium</item>
         <item name="android:textColor">@color/primaryTextColor</item>
     </style>
 

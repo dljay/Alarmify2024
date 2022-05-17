@@ -139,7 +139,7 @@
                 app:menu="@menu/bottom_nav_menu"
                 android:clipChildren="false">
 
-<!--  아래에 포함되어있던 내용  app:tint="@color/tertiaryTextColor"-->
+<!--  Bell 아이콘은 width/height 을 dimen 사용시 에러. sw720dp_xhdpi 폴더에 새 사이즈 벡터로 넣어줌 -->
                 <ImageButton
                     android:id="@+id/imgBtn_Add_BtmNav"
                     android:background="@color/transparent"

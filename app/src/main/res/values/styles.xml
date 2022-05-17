@@ -169,7 +169,7 @@
     <!-- XXXL 24sp -->
         <style name="jjText_2XL_CircularBold">
             <item name="fontFamily">@font/circular_std_bold</item>
-            <item name="android:textSize">@dimen/var_jjText_2XL</item>
+            <item name="android:textSize">@dimen/var_jjText_2XL_a</item>
         </style>
 
         <style name="jjText_3XL_TimePicker_Spinner">

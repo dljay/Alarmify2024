@@ -29,7 +29,8 @@
         <dimen name="var_jjText_M">19sp</dimen>
         <dimen name="var_jjText_L">21sp</dimen>
         <dimen name="var_jjText_XL">24sp</dimen>
-        <dimen name="var_jjText_2XL">30sp</dimen>
+        <dimen name="var_jjText_2XL_a">30sp</dimen>
+        <dimen name="var_jjText_2XL_b">36sp</dimen>
         <dimen name="var_jjText_3XL">42sp</dimen>
 
         <dimen name="var_jjChip_text_size">24sp</dimen>
@@ -46,6 +47,7 @@
         <dimen name="margin_2XL">16dp</dimen>
         <dimen name="margin_3XL">19dp</dimen>
         <dimen name="margin_4XL">21dp</dimen>
+        <dimen name="margin_5XL">25dp</dimen>
 
     <!-- ** [Width & Height] 이렇게 수치로 적는건 바람직하지 않지만 어쩔수없는 경우가 있음.. **-->
 
@@ -62,6 +64,8 @@
         <dimen name="var_50_dp">65dp</dimen>
         <dimen name="var_60_dp">72dp</dimen>
         <dimen name="var_64_dp">76dp</dimen>
+        <dimen name="var_68_dp">80dp</dimen>
+        <dimen name="var_76_dp">100dp</dimen>
         <dimen name="var_200_dp">270dp</dimen>
         <dimen name="umano_panel_height_rtpicker">82dp</dimen>
 

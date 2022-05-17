@@ -80,7 +80,8 @@
         <dimen name="var_jjText_M">14sp</dimen>
         <dimen name="var_jjText_L">15sp</dimen>
         <dimen name="var_jjText_XL">18sp</dimen>
-        <dimen name="var_jjText_2XL">24sp</dimen>
+        <dimen name="var_jjText_2XL_a">24sp</dimen>
+        <dimen name="var_jjText_2XL_b">30sp</dimen>
         <dimen name="var_jjText_3XL">35sp</dimen>
 
         <!-- Chip Text Size, Space between chips-->
@@ -98,6 +99,8 @@
         <dimen name="margin_2XL">12dp</dimen>
         <dimen name="margin_3XL">14dp</dimen>
         <dimen name="margin_4XL">16dp</dimen>
+        <dimen name="margin_5XL">18dp</dimen>
+
 
     <!-- ** [Width & Height] 이렇게 수치로 적는건 바람직하지 않지만 어쩔수없는 경우가 있음.. **-->
 
@@ -115,6 +118,8 @@
         <dimen name="var_50_dp">50dp</dimen>
         <dimen name="var_60_dp">60dp</dimen>
         <dimen name="var_64_dp">64dp</dimen>
+        <dimen name="var_68_dp">68dp</dimen>
+        <dimen name="var_76_dp">76dp</dimen>
         <dimen name="var_200_dp">200dp</dimen>
         <dimen name="umano_panel_height_rtpicker">71dp</dimen>
 

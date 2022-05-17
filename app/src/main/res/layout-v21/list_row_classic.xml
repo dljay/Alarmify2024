@@ -18,14 +18,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="76dp"
+    android:layout_height="@dimen/var_76_dp"
     android:id="@+id/swipeReveal_listrow"
 
     app:mode="normal"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_marginStart="@dimen/margin_L"
+    android:layout_marginEnd="@dimen/margin_L"
+    android:layout_marginTop="@dimen/margin_L"
+    android:layout_marginBottom="@dimen/margin_L"
     app:dragFromEdge="right">
 
     <FrameLayout
@@ -40,8 +40,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical|end"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp"
+            android:paddingStart="@dimen/margin_S"
+            android:paddingEnd="@dimen/margin_S"
             android:orientation="horizontal"
 
             android:weightSum="3">
@@ -49,20 +49,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textSize="14sp"
+                android:textSize="@dimen/var_jjText_M"
                 android:text="DELETE"
                 android:gravity="center"
-                android:layout_margin="3dp"
+                android:layout_margin="@dimen/margin_XS"
                 android:layout_weight="2"/>
 
             <ImageView
                 android:id="@+id/iv_swipe_deleteIcon"
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/var_60_dp"
                 android:layout_gravity="center_vertical"
 
                 android:src="@drawable/delete_swipe_v1_24"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/margin_S"
                 android:layout_weight="1"
                 android:text="Edit"/>
 
@@ -83,11 +83,11 @@
         <!-- 원래 DontPressWithParentLayout 였음 -->
         <LinearLayout
             android:id="@+id/list_row_on_off_checkbox_container"
-            android:layout_width="68dp"
+            android:layout_width="@dimen/var_68_dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="@dimen/margin_5XL"
 
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="@dimen/margin_5XL"
 
 
             android:gravity="center"
@@ -130,9 +130,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/var_10_dp"
 
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="@dimen/var_10_dp"
             android:layout_weight="1"
             android:longClickable="false"
             android:orientation="vertical"
@@ -148,7 +148,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
 
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="@dimen/margin_4XL"
                 android:gravity="center"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -162,10 +162,10 @@
                     style="@style/jjText_L_CircularMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:layout_marginTop="@dimen/margin_XXS"
 
-                    android:layout_marginBottom="2dp"
-                    android:textSize="30sp" />
+                    android:layout_marginBottom="@dimen/margin_XXS"
+                    android:textSize="@dimen/var_jjText_2XL_b" />
 
 
                 <TextView
@@ -173,8 +173,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="@dimen/margin_XXS"
+                    android:layout_marginBottom="@dimen/margin_XXS"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </com.theglendales.alarm.view.DigitalClock>
 
@@ -187,7 +187,7 @@
                 android:layout_gravity="center_horizontal"
 
 
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="@dimen/margin_2XL"
                 android:orientation="horizontal"
                 android:weightSum="14"
                 app:layout_constraintBottom_toBottomOf="@id/list_row_digital_clock_container"
@@ -198,110 +198,110 @@
 
                 <TextView
                     android:id="@+id/_tvSun"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/var_20_dp"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/circular_std"
                     android:gravity="center"
                     android:text="S"
                     android:textColor="@color/fourthTextColor"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/var_jjText_M" />
 
                 <View
-                    android:layout_width="2dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/margin_XXS"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/_tvMon"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/var_20_dp"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/circular_std"
                     android:gravity="center"
                     android:text="M"
                     android:textColor="@color/fourthTextColor"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/var_jjText_M" />
 
                 <View
                     android:layout_width="2dp"
-                    android:layout_height="20dp"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/_tvTue"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/var_20_dp"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/circular_std"
                     android:gravity="center"
                     android:text="T"
                     android:textColor="@color/fourthTextColor"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/var_jjText_M" />
 
                 <View
-                    android:layout_width="2dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/margin_XXS"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/_tvWed"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/var_20_dp"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/circular_std"
                     android:gravity="center"
                     android:text="W"
                     android:textColor="@color/fourthTextColor"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/var_jjText_M" />
 
                 <View
-                    android:layout_width="2dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/margin_XXS"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/_tvThu"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/var_20_dp"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/circular_std"
                     android:gravity="center"
                     android:text="T"
                     android:textColor="@color/fourthTextColor"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/var_jjText_M" />
 
                 <View
-                    android:layout_width="2dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/margin_XXS"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/_tvFri"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/var_20_dp"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/circular_std"
                     android:gravity="center"
                     android:text="F"
                     android:textColor="@color/fourthTextColor"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/var_jjText_M" />
 
                 <View
-                    android:layout_width="2dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/margin_XXS"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1" />
 
                 <TextView
                     android:id="@+id/_tvSat"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/var_20_dp"
+                    android:layout_height="@dimen/var_20_dp"
                     android:layout_weight="1"
                     android:fontFamily="@font/circular_std"
                     android:gravity="center"
                     android:text="S"
                     android:textColor="@color/fourthTextColor"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/var_jjText_M" />
 
             </LinearLayout>
 
@@ -313,10 +313,10 @@
             android:id="@+id/ll_albumArt_Container"
             style="@style/alarm_list_albumArt_Container"
             android:layout_height="match_parent"
-            android:layout_marginStart="18dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="26dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="@dimen/var_20_dp"
+            android:layout_marginTop="@dimen/margin_L"
+            android:layout_marginEnd="@dimen/var_24_dp"
+            android:layout_marginBottom="@dimen/margin_L"
             android:layout_weight="1"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -334,9 +334,9 @@
                 <!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/id_row_albumArt"
-                    android:layout_width="63dp"
-                    android:layout_height="63dp"
-                    android:layout_marginStart="2dp"
+                    android:layout_width="@dimen/var_64_dp"
+                    android:layout_height="@dimen/var_64_dp"
+                    android:layout_marginStart="@dimen/margin_XXS"
                     android:clickable="false"
                     android:focusable="false"
                     android:padding="8dp"

@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g21 22/5/16 (Tue) 3:36pm [Tablet 호환 UI 수정중 - BtmNav Bell 아이콘(O) Height 수정(O). 21]
+// 30708V1.18e36g22 22/5/16 (Tue) 10:24pm [Tablet 호환 UI 수정중 - BtmNav Bell 아이콘(O) Height 수정(O). 22]
 
 //Achievement)
 //-- Tablet 수정중.

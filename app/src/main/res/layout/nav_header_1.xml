@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="@dimen/var_200_dp"
     android:background="@drawable/bg_drawer_header_1">
 
     <!-- 사진  -->
@@ -13,10 +13,10 @@
         android:src="@drawable/dark_city_generated" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginTop="15dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginTop="@dimen/margin_3XL"
+            android:layout_marginStart="@dimen/margin_S"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/var_50_dp"
             android:background="@color/transparent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -27,10 +27,10 @@
 
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="4dp"
+                android:layout_marginStart="@dimen/margin_XL"
+                android:layout_marginTop="@dimen/margin_S"
+                android:layout_marginBottom="@dimen/margin_S"
+                android:layout_marginEnd="@dimen/margin_S"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/ic_main2"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -43,10 +43,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:gravity="center_vertical"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="@dimen/margin_XL"
                 android:text="ALARM PLANET"
 
-                android:textSize="18sp"
+                android:textSize="@dimen/var_jjText_XL"
                 android:fontFamily="@font/circular_std_black"
                 android:textColor="@color/primaryTextColor"
                 app:layout_constraintBottom_toBottomOf="@+id/nav_drawer_logo_img"

@@ -35,8 +35,6 @@
 
         android:orientation="vertical">
 
-
-
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/id_appBarLayout"
             android:layout_width="match_parent"
@@ -161,6 +159,8 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/id_nav_view"
+        app:itemTextAppearance="@style/navDrawerStyle"
+
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
@@ -169,6 +169,7 @@
         android:backgroundTint="@color/jj_bg_color_5"
         app:headerLayout="@layout/nav_header_1"
         app:itemTextColor="@color/primaryTextColor"
+
         app:menu="@menu/menu_nav_drawer">
 
 

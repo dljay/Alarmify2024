@@ -33,8 +33,10 @@
         <dimen name="var_jjText_2XL_b">36sp</dimen>
         <dimen name="var_jjText_3XL">42sp</dimen>
 
+    <!-- 예외적으로 지정한 Text Size: Chip Text Size, Space between chips-->
         <dimen name="var_jjChip_text_size">24sp</dimen>
         <dimen name="var_jjChip_Hor_Space">9dp</dimen>
+        <dimen name="var_jjNav_Drawer_Text_Size">16sp</dimen>
 
     <!-- ** [Margin SIZE] Custom dimension **-->
 

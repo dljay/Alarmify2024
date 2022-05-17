@@ -106,6 +106,12 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="navDrawerStyle">
+        <item name="android:textSize">@dimen/var_jjNav_Drawer_Text_Size</item>
+        <item name="fontFamily">@font/circular_std_light</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+    </style>
+
 
 
     <!-- Font Style [TEST] attr.. textAppearance 넘 짜증나서 그냥 이걸로 쓰기. sp 사이즈로 정렬 -->

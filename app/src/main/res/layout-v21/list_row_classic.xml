@@ -308,8 +308,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
-
-
             android:id="@+id/ll_albumArt_Container"
             style="@style/alarm_list_albumArt_Container"
             android:layout_height="match_parent"
@@ -340,6 +338,7 @@
                     android:clickable="false"
                     android:focusable="false"
                     android:padding="8dp"
+
                     app:shapeAppearanceOverlay="@style/roundedCornersImageView" />
 
 

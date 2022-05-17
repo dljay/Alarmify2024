@@ -68,27 +68,25 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g24 22/5/17 (Tue) 10:52pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 24]
+// 30708V1.18e36g25 22/5/17 (Tue) 11:29pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 25]
 
 //Achievement)
 //-- Tablet 수정중.
 
 //Error)
-// Tablet -> 인스톨 알람 AlbumArt 안 뜨는 문제. [SnackBar - Rebuilding DB 는 떴음]
+//[1] Tablet -> 인스톨 알람 AlbumArt 안 뜨는 문제 + 정사각형으로 안뜸 [SnackBar - Rebuilding DB 는 떴음]
+// a) 감싸는 Container Tablet 에서는 너무 작음. 그냥 Constraint 로 그리고 imageView 를 1:1 로 되게끔? 하드코딩 안 썼으면 왠만하면.. b) ListFrag> DELETE 가급적 열렸을때만 반응하는것으로 변경?
+//
 
 //Todos)
-//
-// [Tablet UI 수정] -- 추후 내 Tablet 실제로 테스트 하기.
-// a) List Frag, NavDrawer -> Text Font Size. 기타 등등.. - 우선 ListFrag> BtmNav 아이콘/텍스트 사이즈 조화가 문제. 겹쳐서 나옴. (+) 아이콘 사이즈 dimens 로 했을 때 에러.
-// 다른것들 row Holder 등 먼저 해보고 할것? or .. layout 파일을 아예 따로 만드는것이 속편할수도..
+// d1.jpg, d2.jpg 를 그냥 drawable 폴더에 넣었는데 일단 뜨기는 함.
 
 // 원래 하려던것 -->
-// Firebase Security Rules <-> FB APP 만 되는것 해도 설정해줘야겠지?
 //1> IMAGE DRAWABLE 관련
-// drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피.
-
-// 2> [최적화 기초작업] RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기.
-
+// drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피. // 테스트 필요.
+// 2> Firebase Security Rules <-> FB APP 만 되는것 해도 설정해줘야겠지?
+// 3> [최적화 기초작업] RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기.
+// 4> 정식 release build + fb app security 로 이제부터는 테스팅 준비.
 // Versioned Folders & Files -- Demystify..
 // ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]
 

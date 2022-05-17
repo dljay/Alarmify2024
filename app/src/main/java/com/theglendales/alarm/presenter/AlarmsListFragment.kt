@@ -207,7 +207,8 @@ class AlarmsListFragment : Fragment() {
                     .placeholder(R.drawable.placeholder).listener(object :
                         RequestListener<Drawable> {
                         override fun onLoadFailed(e: GlideException?,model: Any?,target: Target<Drawable>?,isFirstResource: Boolean): Boolean {
-                            Log.d(TAG, "onLoadFailed: Glide load failed!. Message: $e")
+                            Log.d(TAG, "onLoadFailed: [ALBUM ART] Glide load failed!. Message: $e")
+                            Log.d(TAG, "onLoadFailed: artPathFromAlarmValue= $artPathFromAlarmValue")
                             return false
                         }
                         override fun onResourceReady(resource: Drawable?,model: Any?,target: Target<Drawable>?,dataSource: DataSource?,isFirstResource: Boolean): Boolean {

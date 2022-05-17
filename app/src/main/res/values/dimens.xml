@@ -18,7 +18,8 @@
 
 <!-- These resources are around just to allow their values to be customized
      for different hardware and product builds. -->
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- For Timer Picker -->
     <dimen name="timer_padding_left">16dip</dimen>
@@ -105,11 +106,22 @@
 
         <dimen name="var_10_dp">10dp</dimen>
         <dimen name="var_16_dp">16dp</dimen>
+
+        <dimen name="var_20_dp">20dp</dimen>
+        <dimen name="var_24_dp">24dp</dimen>
+        <dimen name="var_35_dp">35dp</dimen>
+        <dimen name="var_40_dp">40dp</dimen>
+
         <dimen name="var_50_dp">50dp</dimen>
         <dimen name="var_60_dp">60dp</dimen>
+        <dimen name="var_64_dp">64dp</dimen>
+        <dimen name="var_200_dp">200dp</dimen>
         <dimen name="umano_panel_height_rtpicker">71dp</dimen>
 
-    <!-- 기타 수치 -->
+    <!-- Bottom Nav 태블릿에서 icon 과 text 겹쳐보이는 것 해결용도 -->
+        <dimen name="design_bottom_navigation_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
+        <dimen name="design_bottom_navigation_active_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
+        <dimen name="design_bottom_navigation_height" tools:override="true">56dp</dimen>
 
 
 </resources>

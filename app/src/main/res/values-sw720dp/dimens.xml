@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- 10 인치 테블릿 용 (Nexus10) -->
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- ** [TEXT SIZE] Custom dimension **-->
         <dimen name="var_jjText_2XS">15sp</dimen>
@@ -37,8 +38,19 @@
 
     <dimen name="var_10_dp">25dp</dimen>
     <dimen name="var_16_dp">30dp</dimen>
+    <dimen name="var_20_dp">30dp</dimen>
+    <dimen name="var_24_dp">36dp</dimen>
+    <dimen name="var_35_dp">50dp</dimen>
+    <dimen name="var_40_dp">60dp</dimen>
     <dimen name="var_50_dp">80dp</dimen>
     <dimen name="var_60_dp">90dp</dimen>
+    <dimen name="var_64_dp">98dp</dimen>
+    <dimen name="var_200_dp">350dp</dimen>
     <dimen name="umano_panel_height_rtpicker">99dp</dimen>
+
+    <!-- Bottom Nav 태블릿에서 icon 과 text 겹쳐보이는 것 해결용도 -->
+    <dimen name="design_bottom_navigation_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
+    <dimen name="design_bottom_navigation_active_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
+    <dimen name="design_bottom_navigation_height" tools:override="true">70dp</dimen>
 
 </resources>

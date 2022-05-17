@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36G18 22/5/16 (Mon) 11:25pm [Tablet 호환 UI 수정중 - Details Frag. Badge 완료 18]
+// 30708V1.18e36G19 22/5/16 (Tue) 11:04am [Tablet 호환 UI 수정중 - BtmNav Height 수정(O). 19]
 
 //Achievement)
 //-- Tablet 수정중.
@@ -77,16 +77,17 @@ import java.util.Calendar
 // Tablet -> 인스톨 알람 AlbumArt 안 뜨는 문제. [SnackBar - Rebuilding DB 는 떴음]
 
 //Todos)
-// 갑자기 지금 하는것 -->
+//
 // [Tablet UI 수정] -- 추후 내 Tablet 실제로 테스트 하기.
-// b) List Frag, NavDrawer -> Text Font Size. 기타 등등..
+// a) List Frag, NavDrawer -> Text Font Size. 기타 등등.. - 우선 ListFrag> BtmNav 아이콘/텍스트 사이즈 조화가 문제. 겹쳐서 나옴. (+) 아이콘 사이즈 dimens 로 했을 때 에러.
+// 다른것들 row Holder 등 먼저 해보고 할것? or .. layout 파일을 아예 따로 만드는것이 속편할수도..
 
 // 원래 하려던것 -->
 // Firebase Security Rules <-> FB APP 만 되는것 해도 설정해줘야겠지?
 //1> IMAGE DRAWABLE 관련
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피.
 
-// 2> RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기.
+// 2> [최적화 기초작업] RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기.
 
 // Versioned Folders & Files -- Demystify..
 // ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]

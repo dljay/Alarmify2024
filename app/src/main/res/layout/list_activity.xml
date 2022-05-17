@@ -40,7 +40,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/id_appBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="@dimen/var_200_dp"
             android:background="@color/transparent">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
@@ -49,8 +49,7 @@
                 android:layout_height="match_parent"
                 app:contentScrim="@color/transparent"
                 app:title="Alarmify"
-
-                app:expandedTitleMarginStart="64dp"
+                app:expandedTitleMarginStart="@dimen/var_64_dp"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
                 <ImageView
@@ -113,7 +112,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_weight="1"
 
             app:contentInsetStart="0dp"
             app:contentInsetEnd="0dp"
@@ -126,15 +124,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
+                android:paddingStart="@dimen/var_20_dp"
+                android:paddingEnd="@dimen/var_20_dp"
                 android:background="@drawable/btm_nav_bg_round_and_gradient_1"
 
                 app:itemTextColor="@drawable/btm_nav_text_color_selector"
                 app:itemIconTint="@drawable/btm_nav_icon_color_selector"
-                app:itemIconSize="24dp"
+                app:itemIconSize="@dimen/var_24_dp"
+                app:itemTextAppearanceActive="@dimen/var_jjText_XS"
+                app:itemTextAppearanceInactive="@dimen/var_jjText_XS"
+
                 app:labelVisibilityMode="labeled"
-                android:layout_gravity="bottom"
+                android:layout_gravity="center"
                 app:menu="@menu/bottom_nav_menu"
                 android:clipChildren="false">
 
@@ -146,23 +147,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
 
-                    app:maxImageSize="35dp"
+                    app:maxImageSize="@dimen/var_35_dp"
 
                     android:src="@drawable/ic_bell_pink_selected_export_2"/>
-
-            <!-- 기존 (+) 흑백 스타일 -->
-                <!--<ImageButton
-                    android:id="@+id/imgBtn_Add_BtmNav"
-                    android:background="@drawable/plus_btn_background_selector"
-
-                    android:padding="2dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:foreground="?attr/selectableItemBackgroundBorderless"
-                    app:maxImageSize="35dp"
-                    app:tint="@color/plus_btn_click_selector"
-                    android:src="@drawable/imgbtn_ripple_with_source_drawable"/>-->
 
             </com.google.android.material.bottomnavigation.BottomNavigationView>
 

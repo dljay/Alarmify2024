@@ -20,7 +20,8 @@
 
 <!-- These resources are around just to allow their values to be customized
      for different hardware and product builds. -->
-<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- ** [TEXT SIZE] Custom dimension **-->
         <dimen name="var_jjText_2XS">14sp</dimen>
         <dimen name="var_jjText_XS">15sp</dimen>
@@ -54,9 +55,19 @@
 
         <dimen name="var_10_dp">18dp</dimen>
         <dimen name="var_16_dp">20dp</dimen>
+        <dimen name="var_20_dp">25dp</dimen>
+        <dimen name="var_24_dp">32dp</dimen>
+        <dimen name="var_35_dp">45dp</dimen>
+        <dimen name="var_40_dp">50dp</dimen>
         <dimen name="var_50_dp">65dp</dimen>
         <dimen name="var_60_dp">72dp</dimen>
+        <dimen name="var_64_dp">76dp</dimen>
+        <dimen name="var_200_dp">270dp</dimen>
         <dimen name="umano_panel_height_rtpicker">82dp</dimen>
 
+    <!-- Bottom Nav 태블릿에서 icon 과 text 겹쳐보이는 것 해결용도 -->
+    <dimen name="design_bottom_navigation_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
+    <dimen name="design_bottom_navigation_active_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
+    <dimen name="design_bottom_navigation_height" tools:override="true">60dp</dimen>
 
 </resources>

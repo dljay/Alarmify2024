@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g23 22/5/16 (Tue) 10:45pm [Tablet 호환 UI 수정중 - BtmNav Bell 아이콘(O) Height 수정(O). 23]
+// 30708V1.18e36g24 22/5/17 (Tue) 10:52pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 24]
 
 //Achievement)
 //-- Tablet 수정중.

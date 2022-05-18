@@ -68,23 +68,22 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g30 22/5/18 (Wed) 10:56pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 30]
+// 30708V1.18e36g31 22/5/18 (Wed) 11:20pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 31]
 
 //Achievement)
 //-- Tablet 수정중.
-
+// Play, Pause 감싸는 놈으로 Click 전달.
 //Error)
 
-
-
 //Todos)
+// Tablet SecondFrag 수정 (레노보로?)
 // d1.jpg, d2.jpg 를 그냥 drawable 폴더에 넣었는데 일단 뜨기는 함.
 
 // 원래 하려던것 -->
-//1> IMAGE DRAWABLE 관련
+//1> IMAGE DRAWABLE 관련 [이거 안 넣었을 때 어떻게 되는지 가급적 확인 시도..]
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피. // 테스트 필요.
 // 2> Firebase Security Rules <-> FB APP 만 되는것 해도 설정해줘야겠지?
-// 3> [최적화 기초작업] RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기.
+// 3> [최적화 기초작업] RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기. Firebase Performance..
 // 4> 정식 release build + fb app security 로 이제부터는 테스팅 준비.
 // Versioned Folders & Files -- Demystify..
 // ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]

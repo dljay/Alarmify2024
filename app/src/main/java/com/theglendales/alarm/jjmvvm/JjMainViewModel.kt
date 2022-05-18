@@ -296,7 +296,7 @@ class JjMainViewModel : ViewModel() {
         
 
     //2-B) 구입 유료 건 Purchase Process -> [Sequential] & 최종적으로 Returns RtObj! (만약 구입 취소의 경우에는....)
-        if(rtObj.iapName.contains("f")) {
+        if(rtObj.iapName.contains("p")) {
             // [**SEQUENTIAL**] // 기존 구입 과정을 Coroutine 으로 blocking+순차적 라인으로 보기 쉽게 했음.
             val handler = CoroutineExceptionHandler { _, _ ->} // CoroutineExceptionHandler - 원래 logd 넣어줬으나 그냥 뺴줌.
             val purchaseParentJob = viewModelScope.launch(handler) {

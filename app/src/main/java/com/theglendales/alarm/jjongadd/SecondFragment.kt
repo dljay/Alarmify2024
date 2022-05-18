@@ -124,6 +124,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     lateinit var iv_upperUi_thumbNail: ImageView //  { findViewById<ImageView>(R.id.id_upperUi_iv_coverImage)  }
     lateinit var iv_upperUi_ClickArrow: ImageView //  { findViewById<ImageView>(R.id.id_upperUi_iv_clickarrowUp) }
     lateinit var cl_upperUi_entireWindow: ConstraintLayout //  {findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)}
+    lateinit var ll_play_pause_container: LinearLayout
     lateinit var imgbtn_Play: ImageButton
     lateinit var imgbtn_Pause: ImageButton
     lateinit var seekBar: SeekBar
@@ -805,15 +806,22 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         cl_upperUi_entireWindow = v.findViewById<ConstraintLayout>(R.id.id_upperUi_ConsLayout)
 
         // mini player 에 장착된 play/pause 버튼 찾기 및 listener 등록
+            ll_play_pause_container = v.findViewById(R.id.ll_playPause_btn_container)
             imgbtn_Play = v.findViewById(R.id.id_imgbtn_upperUi_play)
             imgbtn_Pause = v.findViewById(R.id.id_imgbtn_upperUi_pause)
-
-                imgbtn_Play.setOnClickListener {
-                    onMiniPlayerPlayClicked()
+                ll_play_pause_container.setOnClickListener {
+                    when(imgbtn_Play.visibility) {
+                        View.VISIBLE -> {onMiniPlayerPlayClicked()}
+                        View.GONE -> {onMiniPlayerPauseClicked()}
+                    }
                 }
-                imgbtn_Pause.setOnClickListener {
-                    onMiniPlayerPauseClicked()
-                }
+        // 아래 Play(>)/Pause(||) 실제로 누르기는 너무 작아서. 감싸고 있는 ll_play_pause_container 로 대체했음.
+//                imgbtn_Play.setOnClickListener {
+//                    onMiniPlayerPlayClicked()
+//                }
+//                imgbtn_Pause.setOnClickListener {
+//                    onMiniPlayerPauseClicked()
+//                }
         //Seekbar Related
             seekBar = v.findViewById(R.id.id_upperUi_Seekbar)
             seekbarListenerSetUp()

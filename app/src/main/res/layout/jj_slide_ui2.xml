@@ -132,6 +132,7 @@
 
             <!-- Play/Stop Button From Here>>>>> -->
             <LinearLayout
+                android:id="@+id/ll_playPause_btn_container"
                 android:layout_width="@dimen/var_50_dp"
                 android:layout_height="0dp"
 
@@ -149,8 +150,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
+                    android:clickable="false"
+                    android:focusable="false"
                     android:padding="6dp"
                     android:scaleType="centerCrop"
                     android:scaleX="0.5"
@@ -162,8 +163,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"
+                    android:clickable="false"
+                    android:focusable="false"
                     android:padding="6dp"
                     android:scaleX="0.5"
                     android:scaleY="0.5"

@@ -68,15 +68,14 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g29 22/5/18 (Wed) 10:46pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 29]
+// 30708V1.18e36g30 22/5/18 (Wed) 10:56pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 30]
 
 //Achievement)
 //-- Tablet 수정중.
 
 //Error)
-//[1] Tablet -> 인스톨 알람 AlbumArt 안 뜨는 문제 + 정사각형으로 안뜸 [SnackBar - Rebuilding DB 는 떴음]
-// a) 감싸는 Container Tablet 에서는 너무 작음. 그냥 Constraint 로 그리고 imageView 를 1:1 로 되게끔? 하드코딩 안 썼으면 왠만하면.. b) ListFrag> DELETE 가급적 열렸을때만 반응하는것으로 변경?
-//
+
+
 
 //Todos)
 // d1.jpg, d2.jpg 를 그냥 drawable 폴더에 넣었는데 일단 뜨기는 함.

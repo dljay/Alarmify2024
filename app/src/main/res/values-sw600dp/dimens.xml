@@ -76,4 +76,6 @@
     <dimen name="design_bottom_navigation_active_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
     <dimen name="design_bottom_navigation_height" tools:override="true">60dp</dimen>
 
+    <!-- 기타 -->
+    <dimen name="padding_12dp">18dp</dimen>
 </resources>

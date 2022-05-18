@@ -198,7 +198,7 @@ class AlarmDetailsFragment : Fragment() {
             lollipop {
                 this.digitalClock.transitionName = "clock$alarmId"
                 this.container.transitionName = "onOff$alarmId"
-                this.detailsButton.transitionName = "detailsButton$alarmId"
+                //this.detailsButton.transitionName = "detailsButton$alarmId"
             }
 
             digitalClock.setLive(false)

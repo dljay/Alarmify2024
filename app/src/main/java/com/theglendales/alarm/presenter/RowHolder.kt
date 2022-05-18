@@ -2,6 +2,7 @@ package com.theglendales.alarm.presenter
 
 import android.view.View
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.theglendales.alarm.R
 import com.theglendales.alarm.configuration.Layout
@@ -22,12 +23,12 @@ class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : Recycler
 
     val container: View
     val alarmId: Int = alarmIdReceived
-    val detailsButton: View
+    //val detailsButton: View
     val idHasChanged: Boolean
 // 내가 추가->
     val parentSwipeRevealLayout: SwipeRevealLayout
     val swipeDeleteContainer: LinearLayout
-    val albumArtContainer: LinearLayout//Album Art container (LinearLayout)
+    val albumArtContainer: ConstraintLayout//Album Art container (LinearLayout)
     val albumArt: ImageView// Album Art 추가 (detailsButton 대체 <== '...' 요렇게 생긴 놈.)
     val swipeDeleteIcon: ImageView // Swipe 했을 때  Delete 하는 버튼
     val tvSun: TextView
@@ -49,7 +50,7 @@ class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : Recycler
 
 
         container = find(R.id.list_row_on_off_checkbox_container)
-        detailsButton = find(R.id.details_button_container) // ' ... ' 이렇게 생긴 놈. -> 지금은 album art 로 대체되어 있음.
+        //detailsButton = find(R.id.details_button_container) // ' ... ' 이렇게 생긴 놈. -> 지금은 album art 로 대체되어 있음.
         val prev: RowHolder? = rowView.tag as RowHolder?
         idHasChanged = prev?.alarmId != alarmIdReceived
         rowView.tag = this
@@ -58,7 +59,7 @@ class RowHolder(view: View, alarmIdReceived: Int, val layout: Layout) : Recycler
         parentSwipeRevealLayout = find(R.id.swipeReveal_listrow) as SwipeRevealLayout
         swipeDeleteContainer = find(R.id.ll_swipeDeleteContainer) as LinearLayout
         digitalClockContainer.tag = this
-        albumArtContainer = find(R.id.ll_albumArt_Container) as LinearLayout
+        albumArtContainer = find(R.id.cl_albumArt_Container) as ConstraintLayout
         albumArtContainer.tag = this
         albumArt = find(R.id.id_row_albumArt) as ImageView
         swipeDeleteIcon = find(R.id.iv_swipe_deleteIcon) as ImageView

@@ -29,8 +29,6 @@
     app:dragFromEdge="right">
 
     <FrameLayout
-
-
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/swipe_reveal_round_corner_and_color">
@@ -307,43 +305,34 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_albumArt_Container"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_albumArt_Container"
             style="@style/alarm_list_albumArt_Container"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/var_20_dp"
-            android:layout_marginTop="@dimen/margin_L"
-            android:layout_marginEnd="@dimen/var_24_dp"
-            android:layout_marginBottom="@dimen/margin_L"
-            android:layout_weight="1"
+            android:layout_width="0dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/list_row_digital_clock_container"
             app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
-                android:id="@+id/details_button_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-
-                android:gravity="center">
-
                 <!--            원래 ... 있던 자리 => Image View 로 (Album Art 보여주기)-->
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/id_row_albumArt"
-                    android:layout_width="@dimen/var_64_dp"
-                    android:layout_height="@dimen/var_64_dp"
-                    android:layout_marginStart="@dimen/margin_XXS"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:clickable="false"
                     android:focusable="false"
-                    android:padding="8dp"
-
+                    android:padding="@dimen/padding_12dp"
+                    tools:src="@drawable/avocado"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toStartOf="@id/cl_albumArt_Container"
+                    app:layout_constraintEnd_toEndOf="@id/cl_albumArt_Container"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:shapeAppearanceOverlay="@style/roundedCornersImageView" />
 
-
-            </LinearLayout>
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

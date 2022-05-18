@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g25 22/5/17 (Tue) 11:29pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 25]
+// 30708V1.18e36g26 22/5/18 (Wed) 9:45pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 26]
 
 //Achievement)
 //-- Tablet 수정중.
@@ -699,8 +699,7 @@ private fun moveTransition(): TransitionSet {
 private fun RowHolder.addSharedElementsToTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction) {
     fragmentTransaction.addSharedElement(digitalClock, "clock" + alarmId)
     fragmentTransaction.addSharedElement(container, "onOff" + alarmId)
-    fragmentTransaction.addSharedElement(detailsButton, "detailsButton" + alarmId)
-
+    //fragmentTransaction.addSharedElement(detailsButton, "detailsButton" + alarmId)
 }
 
 /**

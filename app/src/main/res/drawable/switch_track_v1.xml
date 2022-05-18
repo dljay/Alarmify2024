@@ -12,6 +12,9 @@
             <stroke android:width="10dp"
                 android:color="@color/jj_main_bg_color"/>
 
+            <size android:height="3dp"/>
+
+
         </shape>
     </item>
 

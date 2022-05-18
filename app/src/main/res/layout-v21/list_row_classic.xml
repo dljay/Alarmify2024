@@ -83,9 +83,9 @@
             android:id="@+id/list_row_on_off_checkbox_container"
             android:layout_width="@dimen/var_68_dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/margin_5XL"
 
-            android:layout_marginEnd="@dimen/margin_5XL"
+
+
 
 
             android:gravity="center"
@@ -101,14 +101,13 @@
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/list_row_on_off_switch"
+                app:switchMinWidth="@dimen/switch_min_width"
 
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
 
                 android:clickable="false"
                 android:focusable="false"
-
-
                 android:scaleX="0.8"
                 android:scaleY="0.8"
                 android:thumb="@drawable/switch_thumb"
@@ -128,9 +127,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/var_10_dp"
 
-            android:layout_marginBottom="@dimen/var_10_dp"
+
+
             android:layout_weight="1"
             android:longClickable="false"
             android:orientation="vertical"
@@ -145,7 +144,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-
+                android:layout_marginTop="@dimen/var_10_dp"
                 android:layout_marginStart="@dimen/margin_4XL"
                 android:gravity="center"
                 android:orientation="horizontal"
@@ -178,13 +177,11 @@
 
             <LinearLayout
 
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
                 android:layout_gravity="center_horizontal"
-
-
+                android:layout_marginBottom="@dimen/var_10_dp"
                 android:layout_marginStart="@dimen/margin_2XL"
                 android:orientation="horizontal"
                 android:weightSum="14"
@@ -323,7 +320,7 @@
                     android:layout_height="match_parent"
                     android:clickable="false"
                     android:focusable="false"
-                    android:padding="@dimen/padding_12dp"
+                    android:padding="@dimen/padding_13dp"
                     tools:src="@drawable/avocado"
                     app:layout_constraintDimensionRatio="1:1"
                     app:layout_constraintStart_toStartOf="@id/cl_albumArt_Container"

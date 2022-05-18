@@ -56,7 +56,7 @@
         <dimen name="rowHolder_for_secondFrag_RtPicker">80dp</dimen>
         <dimen name="iv_albumart_upper_miniplayer">72dp</dimen>
 
-
+        <dimen name="var_8_dp">13dp</dimen>
         <dimen name="var_10_dp">18dp</dimen>
         <dimen name="var_16_dp">20dp</dimen>
         <dimen name="var_20_dp">25dp</dimen>
@@ -77,5 +77,8 @@
     <dimen name="design_bottom_navigation_height" tools:override="true">60dp</dimen>
 
     <!-- 기타 -->
-    <dimen name="padding_12dp">18dp</dimen>
+    <dimen name="padding_13dp">19dp</dimen>
+    <dimen name="switch_min_width">70dp</dimen>
+    <dimen name="switch_thumb_size">10dp</dimen>
+
 </resources>

@@ -3,8 +3,8 @@
     <item >
         <shape android:shape="oval">
             <solid android:color="@color/jj_bg_color_1"/>
-            <size android:height="4dp"
-                android:width="4dp"/>
+            <size android:height="@dimen/switch_thumb_size"
+                android:width="@dimen/switch_thumb_size"/>
             <stroke android:width="1sp"
                 android:color="@color/transparent"
                 />

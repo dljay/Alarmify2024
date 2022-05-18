@@ -98,7 +98,7 @@
     <!-- SecondFrag Album Art ImageView 에서 코너 동글뱅이 -->
     <style name="roundedCornersImageView" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">8dp</item>
+        <item name="cornerSize">@dimen/var_8_dp</item>
     </style>
 
     <style name="CircleImageView" parent="">

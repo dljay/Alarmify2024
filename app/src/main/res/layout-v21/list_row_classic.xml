@@ -83,11 +83,6 @@
             android:id="@+id/list_row_on_off_checkbox_container"
             android:layout_width="@dimen/var_68_dp"
             android:layout_height="match_parent"
-
-
-
-
-
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/list_row_digital_clock_container"
@@ -121,7 +116,6 @@
         </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-
 
             android:id="@+id/list_row_digital_clock_container"
             android:layout_width="wrap_content"

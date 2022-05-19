@@ -131,6 +131,9 @@
         <dimen name="design_bottom_navigation_active_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
         <dimen name="design_bottom_navigation_height" tools:override="true">56dp</dimen>
 
+    <!-- Navigation Drawer 메뉴간 줄 간격 -->
+        <dimen name="design_navigation_separator_vertical_padding" tools:override="true">0dp</dimen>
+
     <!-- 기타 -->
         <dimen name="padding_13dp">13dp</dimen>
         <dimen name="switch_min_width">51dp</dimen>

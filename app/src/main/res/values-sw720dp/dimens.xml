@@ -44,7 +44,7 @@
     <dimen name="var_10_dp">25dp</dimen>
     <dimen name="var_16_dp">30dp</dimen>
     <dimen name="var_20_dp">30dp</dimen>
-    <dimen name="var_24_dp">36dp</dimen>
+    <dimen name="var_24_dp">33dp</dimen>
     <dimen name="var_35_dp">50dp</dimen>
     <dimen name="var_40_dp">60dp</dimen>
     <dimen name="var_50_dp">80dp</dimen>
@@ -60,6 +60,9 @@
     <dimen name="design_bottom_navigation_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
     <dimen name="design_bottom_navigation_active_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
     <dimen name="design_bottom_navigation_height" tools:override="true">70dp</dimen>
+
+    <!-- Navigation Drawer 메뉴간 줄 간격 -->
+    <dimen name="design_navigation_separator_vertical_padding" tools:override="true">16dp</dimen>
 
     <!-- 기타 -->
     <dimen name="padding_13dp">26dp</dimen>

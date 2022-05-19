@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g32 22/5/19 (Thu) 11:20pm [Tablet 호환 수정중 #32]
+// 30708V1.18e36g33 22/5/19 (Thu) 11:33am [Tablet 호환 수정중 #33]
 
 //Achievement)
 //-- Tablet 수정중.

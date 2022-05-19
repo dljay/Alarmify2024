@@ -904,6 +904,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             Log.d(TAG, "setUpSlidingPanel: HEY isInitialPanelSetup=$shouldPanelBeVisible")
             btmAppBarFromActivity.setBackgroundResource(R.drawable.btm_nav_bg_rectangle_corner)
 
+
             //collapseSlidingPanel()
 
             // 만약 확장된 상태였다면 초기화가 안되어있어서 모퉁이 허옇고 & arrow(↑)가 위로 가있음. 아래에서 해결.

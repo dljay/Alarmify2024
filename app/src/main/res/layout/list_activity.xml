@@ -171,6 +171,7 @@
 
         app:headerLayout="@layout/nav_header_1"
         app:itemTextColor="@color/primaryTextColor"
+        app:itemVerticalPadding="@dimen/margin_2XL"
 
         app:menu="@menu/menu_nav_drawer">
 

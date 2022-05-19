@@ -124,6 +124,7 @@
         <dimen name="var_76_dp">76dp</dimen>
         <dimen name="var_200_dp">200dp</dimen>
         <dimen name="umano_panel_height_rtpicker">71dp</dimen>
+        <dimen name="umano_panel_height_SecondFrag">127dp</dimen>
 
     <!-- Bottom Nav 태블릿에서 icon 과 text 겹쳐보이는 것 해결용도 -->
         <dimen name="design_bottom_navigation_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>

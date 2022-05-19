@@ -14,8 +14,8 @@
 
         android:gravity="bottom"
         app:umanoOverlay="false"
-        app:umanoPanelHeight="127dp"
-        app:umanoShadowHeight="2dp">
+        app:umanoPanelHeight="@dimen/umano_panel_height_SecondFrag"
+        app:umanoShadowHeight="@dimen/margin_XXS">
 
         <!--1st child - Chips+ 리싸이클뷰임!  -->
         <LinearLayout
@@ -29,10 +29,10 @@
                 android:id="@+id/id_ll_ChipGroupWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="@dimen/margin_S"
                 android:background="@drawable/chipgroup_round_corner"
                 android:orientation="vertical"
-                android:paddingTop="2dp"
+                android:paddingTop="@dimen/margin_XXS"
                 android:scrollbars="none"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +46,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="0dp"
                     android:layout_marginEnd="0dp"
-                    app:chipSpacingHorizontal="2dp"
+                    app:chipSpacingHorizontal="@dimen/margin_XXS"
                     app:chipSpacingVertical="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -60,8 +60,8 @@
                         app:chipStrokeWidth="0dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="@dimen/margin_4XL"
+                        android:layout_marginTop="@dimen/margin_L"
                         android:checkable="true"
                         android:checked="false"
                         android:text="@string/chip1_intense"
@@ -79,8 +79,8 @@
                         app:chipStrokeWidth="0dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="@dimen/margin_4XL"
+                        android:layout_marginTop="@dimen/margin_L"
                         android:checkable="true"
                         android:checked="false"
                         android:text="@string/chip2_gentle"
@@ -101,8 +101,8 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="@dimen/margin_4XL"
+                        android:layout_marginTop="@dimen/margin_L"
                         android:checkable="true"
                         android:checked="false"
                         android:text="@string/chip3_nature"
@@ -122,8 +122,8 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="@dimen/margin_4XL"
+                        android:layout_marginTop="@dimen/margin_L"
                         android:checkable="true"
                         android:checked="false"
                         android:text="@string/chip4_Locations"
@@ -142,8 +142,8 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="@dimen/margin_4XL"
+                        android:layout_marginTop="@dimen/margin_L"
                         android:checkable="true"
                         android:checked="false"
                         android:text="@string/chip5_Popular"
@@ -162,8 +162,8 @@
 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginStart="@dimen/margin_4XL"
+                        android:layout_marginTop="@dimen/margin_L"
                         android:checkable="true"
                         android:checked="false"
                         android:text="@string/chip6_Misc"
@@ -176,7 +176,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="3dp"
+                    android:layout_height="@dimen/margin_XS"
                     android:background="@color/border_secondFrag_Top">
                 </View>
 
@@ -190,9 +190,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:layout_marginStart="50dp"
-                android:layout_marginEnd="50dp"
-                android:layout_marginBottom="60dp"
+                android:layout_marginStart="@dimen/var_50_dp"
+                android:layout_marginEnd="@dimen/var_50_dp"
+                android:layout_marginBottom="@dimen/var_60_dp"
                 android:layout_marginTop="0dp"
                 android:scaleType="centerInside"
                 app:lottie_autoPlay="true"

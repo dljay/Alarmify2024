@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g31 22/5/18 (Wed) 11:20pm [Tablet 호환 수정중 - Install 알람 albumArt 안뜨는 문제. 수정 전. 31]
+// 30708V1.18e36g32 22/5/19 (Thu) 11:20pm [Tablet 호환 수정중 #32]
 
 //Achievement)
 //-- Tablet 수정중.

@@ -15,7 +15,7 @@
         <dimen name="var_jjText_3XL">46sp</dimen>
 
     <!-- 예외적으로 지정한 Text Size: Chip Text Size, Space between chips-->
-        <dimen name="var_jjChip_text_size">28sp</dimen>
+        <dimen name="var_jjChip_text_size">20sp</dimen>
         <dimen name="var_jjChip_Hor_Space">14dp</dimen>
         <dimen name="var_jjNav_Drawer_Text_Size">20sp</dimen>
 
@@ -54,6 +54,7 @@
     <dimen name="var_76_dp">140dp</dimen>
     <dimen name="var_200_dp">350dp</dimen>
     <dimen name="umano_panel_height_rtpicker">99dp</dimen>
+    <dimen name="umano_panel_height_SecondFrag">180dp</dimen>
 
     <!-- Bottom Nav 태블릿에서 icon 과 text 겹쳐보이는 것 해결용도 -->
     <dimen name="design_bottom_navigation_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>

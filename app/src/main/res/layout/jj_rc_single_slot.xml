@@ -7,11 +7,11 @@
 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp">
+    android:padding="@dimen/margin_S">
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="@dimen/margin_S"
         app:layout_constraintBottom_toTopOf="@+id/id_singleSlot_ll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,10 +21,10 @@
         android:id="@+id/id_singleSlot_ll"
         android:layout_width="match_parent"
         android:layout_height="@dimen/rowHolder_for_secondFrag_RtPicker"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginStart="@dimen/margin_S"
+        android:layout_marginTop="@dimen/margin_S"
+        android:layout_marginEnd="@dimen/margin_S"
+        android:layout_marginBottom="@dimen/margin_S"
         android:background="@drawable/background_selector_2"
         android:baselineAligned="false"
         android:orientation="horizontal"
@@ -44,9 +44,9 @@
             <!--thumbnail -->
             <FrameLayout
                 android:id="@+id/id_frameL_thumbnail"
-                android:layout_width="63dp"
+                android:layout_width="@dimen/rowHolder_for_secondFrag_RtPicker"
                 android:layout_height="match_parent"
-                android:layout_marginStart="6dp"
+                android:layout_marginStart="@dimen/margin_M"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -54,9 +54,9 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:id="@+id/id_ivThumbnail"
-                    android:layout_width="63dp"
+                    android:layout_width="@dimen/rowHolder_for_secondFrag_RtPicker"
                     android:layout_height="match_parent"
-                    android:padding="7dp"
+                    android:padding="@dimen/margin_M"
                     android:scaleType="fitCenter"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -76,10 +76,10 @@
                 style="@style/jjText_S_circularMedium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="4dp"
+                android:layout_marginStart="@dimen/margin_L"
+                android:layout_marginTop="@dimen/margin_2XL"
+                android:layout_marginEnd="@dimen/margin_L"
+                android:layout_marginBottom="@dimen/margin_S"
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
                 android:ellipsize="end"
 
@@ -97,9 +97,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/id_tvTitle"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="2dp"
+                android:layout_marginStart="@dimen/margin_L"
+                android:layout_marginTop="@dimen/margin_XXS"
+                android:layout_marginEnd="@dimen/margin_XXS"
                 android:layout_toRightOf="@+id/id_frameL_thumbnail"
                 android:ellipsize="end"
                 android:maxLines="1"
@@ -128,11 +128,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone"
-                android:padding="13dp"
+                android:padding="@dimen/margin_2XL"
                 android:src="@drawable/free_icon_4"/>
 
             <ImageView
-                android:padding="12dp"
+                android:padding="@dimen/margin_2XL"
                 android:id="@+id/iv_singleSlot_purchased_check"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -143,7 +143,7 @@
 
             <!--Progress Circle -->
             <ProgressBar
-               android:padding="15dp"
+               android:padding="@dimen/margin_3XL"
                 android:id="@+id/id_progressCircle"
 
                 style="?android:attr/progressBarStyle"
@@ -168,9 +168,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="2"
-                    android:paddingStart="15dp"
-                    android:paddingEnd="15dp"
-                    android:paddingBottom="2dp"
+                    android:paddingStart="@dimen/margin_3XL"
+                    android:paddingEnd="@dimen/margin_3XL"
+                    android:paddingBottom="@dimen/margin_XXS"
                     android:id="@+id/id_vumeter"
                     android:scaleX="0.5"
                     android:scaleY="0.3"
@@ -178,10 +178,10 @@
                     android:visibility="visible"
                     vumeter:vumeter_backgroundColor="@color/jj_accentColor_1"
                     vumeter:vumeter_blockNumber="3"
-                    vumeter:vumeter_blockSpacing="5dp"
+                    vumeter:vumeter_blockSpacing="@dimen/margin_S"
                     vumeter:vumeter_speed="10"
                     vumeter:vumeter_startOff="false"
-                    vumeter:vumeter_stopSize="5dp"/>
+                    vumeter:vumeter_stopSize="@dimen/margin_S"/>
 
             </LinearLayout>
 
@@ -193,7 +193,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="5dp"
+        android:layout_height="@dimen/margin_S"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

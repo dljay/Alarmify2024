@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.18e36g33 22/5/19 (Thu) 11:33am [Tablet 호환 수정중 #33]
+// 30708V1.18e36g35 22/5/19 (Thu) 2:49pm [Tablet 호환 수정중 #35 - 어지간히 했음. Chip Padding 수정좀 해주고 싶긴한데..]
 
 //Achievement)
 //-- Tablet 수정중.
@@ -76,9 +76,7 @@ import java.util.Calendar
 //Error)
 
 //Todos)
-// Tablet SecondFrag 수정 (레노보로?)
-// d1.jpg, d2.jpg 를 그냥 drawable 폴더에 넣었는데 일단 뜨기는 함.
-
+// [Tablet 7인치 DP 수정 - Umano Height 포함.]
 // 원래 하려던것 -->
 //1> IMAGE DRAWABLE 관련 [이거 안 넣었을 때 어떻게 되는지 가급적 확인 시도..]
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피. // 테스트 필요.

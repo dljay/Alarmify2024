@@ -70,6 +70,8 @@ class RtPickerActivity : AppCompatActivity() {
 
     //SlidingUp Panel [음악재생 mini player]
         // a) 상단 Uis
+
+        private val ll_play_pause_container by lazy {allBtmSlideLayout.findViewById(R.id.ll_playPause_btn_container) as LinearLayout}
         private val imgbtn_Play by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_play) as ImageButton }
         private val imgbtn_Pause by lazy { allBtmSlideLayout.findViewById(R.id.id_imgbtn_upperUi_pause) as ImageButton }
         private val seekBar by lazy { allBtmSlideLayout.findViewById(R.id.id_upperUi_Seekbar) as SeekBar }
@@ -139,10 +141,15 @@ class RtPickerActivity : AppCompatActivity() {
         }
 
         //c) ListenerSetup: Play & Pause Button onClickListener (mini player 상단 돌출부)
-
-        imgbtn_Play.setOnClickListener {onMiniPlayerPlayClicked()}
-        imgbtn_Pause.setOnClickListener {onMiniPlayerPauseClicked()}
-
+        ll_play_pause_container.setOnClickListener {
+            when(imgbtn_Play.visibility) {
+                View.VISIBLE -> {onMiniPlayerPlayClicked()}
+                View.GONE -> {onMiniPlayerPauseClicked()}
+            }
+        }
+        // 아래 Play(>)/Pause(||) 실제로 누르기는 너무 작아서. 감싸고 있는 ll_play_pause_container 로 대체했음.
+//        imgbtn_Play.setOnClickListener {onMiniPlayerPlayClicked()}
+//        imgbtn_Pause.setOnClickListener {onMiniPlayerPauseClicked()}
         seekbarListenerSetUp()
 
 

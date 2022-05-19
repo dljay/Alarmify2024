@@ -53,13 +53,13 @@
     <dimen name="var_68_dp">86dp</dimen>
     <dimen name="var_76_dp">140dp</dimen>
     <dimen name="var_200_dp">350dp</dimen>
-    <dimen name="umano_panel_height_rtpicker">99dp</dimen>
-    <dimen name="umano_panel_height_SecondFrag">180dp</dimen>
+    <dimen name="umano_panel_height_rtpicker">111dp</dimen>
+    <dimen name="umano_panel_height_SecondFrag">182dp</dimen>
 
     <!-- Bottom Nav 태블릿에서 icon 과 text 겹쳐보이는 것 해결용도 -->
     <dimen name="design_bottom_navigation_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
     <dimen name="design_bottom_navigation_active_text_size" tools:override="true">@dimen/var_jjText_XS</dimen>
-    <dimen name="design_bottom_navigation_height" tools:override="true">70dp</dimen>
+    <dimen name="design_bottom_navigation_height" tools:override="true">72dp</dimen>
 
     <!-- Navigation Drawer 메뉴간 줄 간격 -->
     <dimen name="design_navigation_separator_vertical_padding" tools:override="true">16dp</dimen>

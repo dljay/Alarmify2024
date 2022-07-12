@@ -480,6 +480,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:focusable="true"
+            android:fontFamily="@font/circular_std"
             android:text="@android:string/cancel"
             android:textColor="@color/primaryTextColor"
             android:textSize="@dimen/var_jjText_M"/>
@@ -492,6 +493,7 @@
             android:layout_weight="1"
             android:focusable="true"
             android:text="@android:string/ok"
+            android:fontFamily="@font/circular_std"
             android:textColor="@color/primaryTextColor"
             android:textSize="@dimen/var_jjText_M"/>
     </LinearLayout>

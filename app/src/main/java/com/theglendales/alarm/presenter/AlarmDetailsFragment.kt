@@ -171,6 +171,7 @@ class AlarmDetailsFragment : Fragment() {
         logger.debug { "$this with ${store.editing().value}" }
 
     //View Initializing ->
+        Log.d(TAG, "onCreateView: [TIMING] #1-a INFLATE 시작")
         val view = inflater.inflate(R.layout.details_fragment_classic
                 /* [JJLAY] 기존 코드.
                 when (prefs.layout()) {
@@ -179,6 +180,7 @@ class AlarmDetailsFragment : Fragment() {
                     else -> R.layout.details_fragment_bold
                 }*/,container,false)
         this.fragmentView = view
+        Log.d(TAG, "onCreateView: [TIMING] #1-b INFLATE 종료!!")
     //View Initializing <-
 
     // RTPicker onClickListener 셋업-- > 설정시 '현재 설정된 RT 의 File 이름' 이 필요하기에 밑에 line 5xx 'selectedRtFileName' 을 받을때 -> setRtPickerClickListener() 로 해줌.
@@ -188,6 +190,7 @@ class AlarmDetailsFragment : Fragment() {
             startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
         }
     // RtPicker onClickListener 셋업 <--
+
         rowHolder.run {
             this.container.setOnClickListener {
                 modify("onOff") { editor ->
@@ -233,7 +236,7 @@ class AlarmDetailsFragment : Fragment() {
             modify("OkBtn-Clicked") {alarmValue -> alarmValue.copy(isSaved = true) } // 추후 ListFrag 에서 .isSaved 값이 False 면 삭제! [신규 알람 생성중 강제 종료시 자동Save 방지 위해]
             saveAlarm()
         }
-        view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() }
+        view.findViewById<View>(R.id.details_activity_button_revert).setOnClickListener { revert() } //Cancel 버튼
 
     //** 신규 알람 생성할때 TimePicker 보여주는 것. (기존에는 TimePickerDialogFragment.showxx() 였지만 -> myTimePickerJjong.. 으로 바꿈.)
         store.transitioningToNewAlarmDetails().firstOrError().subscribe { isNewAlarm ->
@@ -469,7 +472,8 @@ class AlarmDetailsFragment : Fragment() {
                         timePickerSpinner.hour = editor.hour
                         timePickerSpinner.minute = editor.minutes
                     })
-                rowHolder.onOff.isChecked = editor.isEnabled //todo: 여기부터 22/4/4 11:07
+
+            rowHolder.onOff.isChecked = editor.isEnabled //todo: 여기부터 22/4/4 11:07
 
 
 

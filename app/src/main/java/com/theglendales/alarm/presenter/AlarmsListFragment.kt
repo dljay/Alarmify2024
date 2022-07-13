@@ -266,14 +266,14 @@ class AlarmsListFragment : Fragment() {
             // Option A-1) 만약 ListFrag 에서 시간 눌렀을 때 => 바로 Details Frag 로 가고 싶다면 아래를 넣으면 된다!
             rowHolder.digitalClockContainer.setOnClickListener {
                 val id = mAdapter.getItem(position)?.id
-                //Log.d(TAG, "getView: clicked ++CLOCK CONTAINER++. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
+                Log.d(TAG, "getView: clicked ++CLOCK CONTAINER++. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
                 uiStore.edit(alarm.id, it.tag as RowHolder)
             }
 
             // Option A-2) AlbumArt 쪽 클릭햇을 때 위와 동일!!하게 DetailsFrag 로 감!
             rowHolder.albumArtContainer.setOnClickListener {
                 val id = mAdapter.getItem(position)?.id
-                //Log.d(TAG, "getView: clicked **ALBUM ART CONTAINER**. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
+                Log.d(TAG, "getView: clicked **ALBUM ART CONTAINER**. ID=$id, alarmId= ${alarm.id}, view.tag= ${it.tag}") // 여기서 tag 설정은 RowHolder - init 에서 해줌!!!!
                 uiStore.edit(alarm.id, it.tag as RowHolder)
             }
         // g) Swipe 했을 때 imgBtn 과 DELETE (textView) 담고 있는 LinearLayout
@@ -329,6 +329,7 @@ class AlarmsListFragment : Fragment() {
 
             val diffResult: DiffUtil.DiffResult = DiffUtil.calculateDiff(AlarmDiffUtilCallback(oldAlarmList,newAlarmList))
             alarmValuesList = newAlarmList
+
             Log.d(TAG, "refreshAlarmList: @@@@@@@@ AlarmList.size: (OLD)=${oldAlarmList.size}, (NEW): ${newAlarmList.size}")
             diffResult.dispatchUpdatesTo(this)
         }
@@ -416,7 +417,7 @@ class AlarmsListFragment : Fragment() {
 //[2] 위 [1] 과 무관하게 UnSavedAlarm "제외한 리스트"로 일단 rcV 업데이트 -- 아래 onResume() 에서 이제 UnSavedAlarmsList 에 있던 놈들 삭제 처리!
                             val alarmListWithoutUnSaved = sorted.filter { alarmValue -> alarmValue.isSaved }
                             mAdapter.refreshAlarmList(alarmListWithoutUnSaved)
-                            //mAdapter.notifyDataSetChanged() // 이거 넣으면 훨씬 빠르지만 일단은 안 쓰는것으로..
+                            //mAdapter.notifyDataSetChanged() // 이거 넣어도 별 차이 없네.
             }
         return view
     }

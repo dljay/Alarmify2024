@@ -76,13 +76,14 @@ import java.util.Calendar
 //Error)
 
 //Todos)
-// [Tablet 7인치 DP 수정 - Umano Height 포함.]
 // 원래 하려던것 -->
-//1> IMAGE DRAWABLE 관련 [이거 안 넣었을 때 어떻게 되는지 가급적 확인 시도..]
-// drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피. // 테스트 필요.
+// 1> [최적화 기초작업] RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기. Firebase Performance..
 // 2> Firebase Security Rules <-> FB APP 만 되는것 해도 설정해줘야겠지?
-// 3> [최적화 기초작업] RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기. Firebase Performance..
-// 4> 정식 release build + fb app security 로 이제부터는 테스팅 준비.
+// 3> 정식 release build + fb app security 로 이제부터는 테스팅 준비.
+//4> IMAGE DRAWABLE 관련 [이거 안 넣었을 때 어떻게 되는지 가급적 확인 시도..]
+// drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피. // 테스트 필요.
+
+
 // Versioned Folders & Files -- Demystify..
 // ** Splash 스크린 [FIVER or 내가 Illustrator 로 Text Design- Youtube 보고 108dp?]
 

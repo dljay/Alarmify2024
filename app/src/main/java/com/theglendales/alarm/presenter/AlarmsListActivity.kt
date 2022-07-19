@@ -238,6 +238,7 @@ class AlarmsListActivity : AppCompatActivity() {
 
                 override fun hideDetails(holder: RowHolder) {
                     Log.d(TAG, "hideDetails2: [DetailFrag 에서 cancel/OK 누름] ")
+
                     editing.onNext(EditedAlarm(
                             isNew = false,
                             value = Optional.absent(),
@@ -554,12 +555,15 @@ class AlarmsListActivity : AppCompatActivity() {
 
         subscriptions = uiStore.editing().distinctUntilChanged { editedAlarm -> editedAlarm.isEdited } //distinctUntilChanged= 중복 filtering (ex. 1,2,2,3,1,1,2 => 1,2,3,1,2 만 받음) +  .isEdited=true 인 놈만 걸름.
                 .subscribe(Consumer { editedAlarm ->
+
                     Log.d(TAG, "[SUB] (line516!)configureTransactions: jj- editedAlarm.isEdited= ${editedAlarm.isEdited}, editedAlarm.hashCode= ${editedAlarm.hashCode()}") // editedAlarm 는 (type) EditedAlarm
 
                     when {
                         lollipop() && isDestroyed -> return@Consumer
                         editedAlarm.isEdited -> showDetails(editedAlarm) // Fab btn or [ListFrag] RowHolder 클릭했을 때 -> DetailsFrag 로 넘어감.
-                        else -> { // 일반 A) ListFrag 로딩 상황 or B) SecondFrag 에서 Background 갔다 다시 들어왓을 때 (기존 존재하던 subscribe 가 dispose 된 상태에서 -> onStart() -> configureTransactions()
+                        else -> { // 일반 A) ListFrag 로딩 상황 or
+                            // B) SecondFrag 에서 Background 갔다 다시 들어왓을 때 (기존 존재하던 subscribe 가 dispose 된 상태에서 -> onStart() -> configureTransactions()
+                            // C) DetailsFrag 에서 Cancel/Ok 때림 -> AlarmsListActivity- hideDetails(holder) -> configureTransactions() 여기로 옴.
                             val currentFragment = supportFragmentManager.findFragmentById(R.id.main_fragment_container)
                             if(currentFragment is SecondFragment && wasAtSecondFrag) { // DetailsFrag 에서 신규 알람 설정을 마치고 OK 눌렀을 때 currentFrag check 안해주면 showList() 가 안되고 화면 멈춤.
                                 Log.d(TAG, "[SUB] configureTransactions: [SecondFrag->Background-> 재진입 예상] subscriptions.isDisposed=${subscriptions.isDisposed}, \n editedAlarm=$editedAlarm")

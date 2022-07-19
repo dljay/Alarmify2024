@@ -190,7 +190,7 @@ class AlarmDetailsFragment : Fragment() {
             startActivityForResult(intent, REQ_CODE_FOR_RTPICKER)
         }
     // RtPicker onClickListener 셋업 <--
-
+        // 생략가능. (DetailsFrag 에서는 특별히 on/off 해주지 않으니깐..)
         rowHolder.run {
             this.container.setOnClickListener {
                 modify("onOff") { editor ->
@@ -472,7 +472,8 @@ class AlarmDetailsFragment : Fragment() {
                         timePickerSpinner.hour = editor.hour
                         timePickerSpinner.minute = editor.minutes
                     })
-
+            
+            // 생략가능한듯. DetailsFrag 에서는 on/off 기능을 별도로 쓰지 않으므로 
             rowHolder.onOff.isChecked = editor.isEnabled //todo: 여기부터 22/4/4 11:07
 
 

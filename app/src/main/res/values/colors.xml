@@ -78,7 +78,10 @@
         <color name="secondaryDarkTextColor">#2B2B2B</color>
 
 
+
+
     <!-- JJONG added-->
+    <color name="snooze_btn_color">#2B2B2B</color>
 
     <color name="myDividerColor">#CFCDCD</color>
     <!--<color name="jj_background_DarkNavy_1">#0E2646</color>-->

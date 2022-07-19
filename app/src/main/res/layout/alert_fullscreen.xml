@@ -221,7 +221,7 @@
 
             android:background="@drawable/btn_round_corner_1"
             android:layout_weight="1"
-            app:backgroundTint="@color/jj_bg_color_1"
+            app:backgroundTint="@color/secondaryDarkTextColor"
             app:icon="@drawable/ic_baseline_airline_seat_individual_suite_30"
             app:iconGravity="textEnd"
             app:iconTint="@null"
@@ -247,7 +247,7 @@
             android:fontFamily="@font/circular_std_black"
             android:textColor="@color/primaryTextColor"
             android:theme="@style/jjText_XL_CircularMedium"
-            app:backgroundTint="@color/jj_bg_color_1"
+            app:backgroundTint="@color/mat_red"
             android:background="@drawable/btn_round_corner_1"
             app:icon="@drawable/ic_baseline_accessibility_new_24"
             app:iconGravity="textEnd"

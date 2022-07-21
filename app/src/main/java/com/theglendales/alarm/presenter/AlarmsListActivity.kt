@@ -68,14 +68,16 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.200  22/7/13 (Wed) 11:55am [Performance 수정- #1 Details Frag 손보기.]
+// 30708V1.201  22/7/21 (Thu) 11:09pm [Splash Screen 밑에 Branding 넣기 전- ]
+// RayWenderlich 참고: https://www.raywenderlich.com/32555180-splash-screen-tutorial-for-android
 
 //Achievement)
 
 
 //Todos)
-//Details Frag - 시간 걸리는 것 손보는중
-// Alert Full Screen 디자인 수정
+// Splash Screen - 밑 Branding STyle-v31 테스트 전.
+//Details Frag - 시간 걸리는 것 손보기
+// Localize 한글은 사용하기. 나머지는 안 쓰고..? 흐음..
 
 //Todos)
 // 원래 하려던것 -->

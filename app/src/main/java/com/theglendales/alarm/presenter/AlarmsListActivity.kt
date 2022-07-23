@@ -75,12 +75,14 @@ import java.util.Calendar
 //1) Splash Screen- Branding Image (O)
 
 //Todos)
-// 원래 하려던것 -->
-// 1> 정식 release build + fb app security 로 이제부터는 테스팅 준비.
-// 1> [최적화 기초작업] RcV adapter: Notify vs DiffUtil .. 최적화. version 등 계획세우기. Firebase Performance..
-// 2> Firebase Security Rules <-> FB APP 만 되는것 해도 설정해줘야겠지?
+// 1) Firebase Security Rules
+// 2) Firebase Performance
+// 3)Firebase App Check --> Emulator 에서 쓸려면 debug 깔아야됨.
+// https://firebase.google.com/docs/app-check/android/debug-provider
 
-//4> IMAGE DRAWABLE 관련 [이거 안 넣었을 때 어떻게 되는지 가급적 확인 시도..]
+//4) Release Build -> Internal Testing. jjbot 이런놈들까지..
+//5) Performance.. Memory Leak 잡기.
+//6) IMAGE DRAWABLE 관련 [이거 안 넣었을 때 어떻게 되는지 가급적 확인 시도..]
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피. // 테스트 필요.
 
 

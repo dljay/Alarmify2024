@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.21a  22/7/23 (Sat) 11:13pm [정식 release build + fb app security 로 이제부터는 테스팅 준비 전!!]
+// 30708V1.21a  22/7/24 (Sun) 00:24am [정식 release build + fb app security 로 이제부터는 테스팅 준비 전!!]
 
 
 //Achievement)

@@ -75,7 +75,10 @@ class JjMainViewModel : ViewModel() {
                 val handler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
                     Log.d(TAG, "handler: Exception thrown in one of the children: $throwable") // Handler 가 있어야 에러나도 Crash 되지 않는다.
 
-                    if(throwable !is JjPlayStoreUnAvailableException) { // BillingUnAvailable(ResponseCode=3) - (typically) PlayStore 로그인 안되서 생기는 에러가 아니라면 Toast 메시지 보여주기.
+                    if(throwable !is JjPlayStoreUnAvailableException && throwable !is JjServiceUnAvailableException) {
+                        // BillingUnAvailable(ResponseCode=3) - (typically) PlayStore 로그인 안되서 생기는 에러가 아니거나,
+                        // JjServiceUnAvailableException (Response Code=2) 인터넷 안되거나 오랜만에 열어서 Play Store Authentication + Sign in 필요한 경우.
+                            // 이 두가지 경우가 아니라면(and) Toast 로 Message 보여줌. 이 두가지 경우일때는 아래에서 다르게 대처함.
                         toastMessenger.showMyToast("Failed to fetch IAP information. Error=$throwable",isShort = false)
                     }
                 }
@@ -117,9 +120,9 @@ class JjMainViewModel : ViewModel() {
                         Log.d(TAG, "refreshFbAndIAPInfo: ERROR (3-a) (个_个) iapParentJob Failed: $throwable")
 
                         when(throwable) {
-                            // Billing Unavailable (Typically Play Store 로그인 안됐을 때 발생.) -> Alert 창으로 PlayStore 이동하게 만들고. 그냥 빈 깡통 리스트 보여주기.
-                            is JjPlayStoreUnAvailableException -> {
-                                //Log.d(TAG, "refreshFbAndIAPInfo: PlayStore 안될때: (typically) Play Store 로그인 안되어있는 경우 발생") //responsedCode= 3 번.
+                            // Billing Unavailable (RESPONSE CODE =3) (Typically Play Store 로그인 안됐을 때 발생.) -> Alert 창으로 PlayStore 이동하게 만들고. 그냥 빈 깡통 리스트 보여주기.
+                            is JjPlayStoreUnAvailableException, is JjServiceUnAvailableException -> { // Respone Code 3번 or 2번인경우!
+                                Log.d(TAG, "refreshFbAndIAPInfo: PlayStore 안될때: (typically) Play Store 로그인, authenticate 안되어있는 경우 발생 (Respone Code 2번 혹은 3번)")
                                 _errorIntLiveData.value = 0 // 0 번:  Observe 중인 ErrorInt 보내서 -> PlayStore 로긴하라는 Alert 창 보여주기.
                                 _rtInTheCloudList.value = ArrayList() // 공갈 RTList 보내서 -> Error Lottie 뜨게끔.
                                 return@invokeOnCompletion

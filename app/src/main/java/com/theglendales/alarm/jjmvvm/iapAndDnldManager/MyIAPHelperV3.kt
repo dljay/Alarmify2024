@@ -321,10 +321,12 @@ class MyIAPHelperV3(val context: Context ) {
                 if(queryResult.responseCode == BillingClient.BillingResponseCode.OK && skuDetailsList!=null)
                 {
                     continuation.resume(skuDetailsList)
-                } else {
+                } else if (queryResult.responseCode == BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE) { // Response Code = 2
+                    continuation.resumeWithException(JjServiceUnAvailableException("Service Unavailable."))
+                }
+                else { // 그 외 에러..
                     Log.d(TAG, "d2_A_addPriceToList: <D2-A> Finished(X) - Error! XXX loading price for items \n\n queryResult=$queryResult, skuDetailsList=$skuDetailsList")
                     continuation.resumeWithException(Exception("<D2-A> Error. responseCode= ${queryResult.responseCode} "))
-
                 }
 
             }
@@ -373,7 +375,8 @@ class MyIAPHelperV3(val context: Context ) {
             billingClient!!.querySkuDetailsAsync(myParams) {billingResult, skuDetailsList ->
                 if(billingResult.responseCode == BillingClient.BillingResponseCode.OK && !skuDetailsList.isNullOrEmpty()) { // 정상
                     continuation.resume(skuDetailsList)
-                } else if(billingResult.responseCode == BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE) { // Response Code =2, Service Unavailable (인터넷 연결불가일 때.)
+                } else if(billingResult.responseCode == BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE) {
+                    // Response Code =2, Service Unavailable (인터넷 연결불가 혹은 Play Store 에 오랜만에 접속해서 Authentication + Sign In 필요할 때.)
                     continuation.resumeWithException(JjServiceUnAvailableException("Service Unavailable."))
                 } else { // 그 외 에러
                     continuation.resumeWithException(Exception("billingResult-ResponseCode=${billingResult.responseCode}"))

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- C. SPLASH SCREEN (Android 12+) -->
+    <!-- C. SPLASH SCREEN (Android 12+ API31 ) -->
     <style name="Theme.JJMan.Splash" parent="Theme.SplashScreen">
         <!-- Background 색 -->
-        <item name="windowSplashScreenBackground">@color/icon_background_color1</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_icon_splash_test_export</item>
+        <item name="windowSplashScreenBackground">@color/jj_bg_color_1</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_icon2_recolored</item>
         <!-- 밑에 Branding Image -->
-        <item name="android:windowSplashScreenBrandingImage">@drawable/avocado</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/splash_brdimg_3_800x320</item>
+<!--        <item name="android:windowSplashScreenBrandingImage">@drawable/splash_brdimg_1_800x320</item>-->
         <!-- Splash 보여주고 나서 적용하는 Theme-->
         <item name="postSplashScreenTheme">@style/DefaultDarkTheme</item>
     </style>

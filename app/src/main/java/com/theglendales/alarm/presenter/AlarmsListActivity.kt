@@ -68,19 +68,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.202  22/7/21 (Thu) 11:20pm [Splash Screen 밑에 Branding 넣기 성공.인듯.. ]
-// RayWenderlich 참고: https://www.raywenderlich.com/32555180-splash-screen-tutorial-for-android
+// 30708V1.203  22/7/23 (Sat) 11:13pm [정식 release build + fb app security 로 이제부터는 테스팅 준비 전!!]
+
 
 //Achievement)
-//1) Splash Screen
-// a) 밑에 Branding Image - Style-v31 로 넣기 성공.
-// b) styles.xml 에 있는 것 다 넣지 않고 오직 C.Splash Screen 부분만 values-v31>styles.xml 에 복붙했는데도 일단은 API31 에서 잘 뜸.
-// c) API30 테스트에서도 브랜딩 이미지 없이 잘 나옴. 조금 더 관찰하고 문제 없으며 아보카도 사진 옮길것.
-
-//Todos)
-// Splash -> Avocado 대신 다른 텍스트/IMAGE 넣기. (싸이즈 알아보기)
-//Details Frag - 시간 걸리는 것 손보기
-// Localize 한글은 사용하기. 나머지는 안 쓰고..? 흐음..
+//1) Splash Screen- Branding Image (O)
 
 //Todos)
 // 원래 하려던것 -->

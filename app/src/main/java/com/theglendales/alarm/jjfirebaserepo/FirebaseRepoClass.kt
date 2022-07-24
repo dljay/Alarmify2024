@@ -9,6 +9,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.ktx.Firebase
 
 private const val TAG ="FBRepoClass"
 private const val FB_COLLECTION_NAME="ringtones"
@@ -16,6 +17,8 @@ class FirebaseRepoClass(val context: Context)
 {
     private val firebaseFSInstance : FirebaseFirestore = FirebaseFirestore.getInstance()
     lateinit var dbCollectionReference: CollectionReference
+
+
 
     //1) Get all data from Firebase . 2) 코루틴 사용 안하고 callback 사용 3) google.
     fun getPostList(): Task<QuerySnapshot> { // return type: Task snapshot!
@@ -31,14 +34,14 @@ class FirebaseRepoClass(val context: Context)
 
         // B) 자료 받기.
         dbCollectionReference = firebaseFSInstance.collection(FB_COLLECTION_NAME)
+
 //        dbCollectionReference.whereArrayContains(badgeStrArray, "A, B")
         
         return dbCollectionReference.orderBy("id", Query.Direction.ASCENDING).get()
 
     }
     // 이건 whereArrayContains 는 두번 이상 못 써서 ..망침.. 의미가 없음..
-
-
+/*
     fun sortSingleOrMultipleTags(tagsList: MutableList<String>): Task<QuerySnapshot> {
         Log.d(TAG, "sortSingleOrMultipleTags: tagsList = $tagsList")
         // 약간 멍청해보이지만 this is the only way..?
@@ -67,7 +70,13 @@ class FirebaseRepoClass(val context: Context)
             else-> return dbCollectionReference.whereEqualTo(tagsList[0], true).get() // 이건 그냥 혹시몰라서 when(1) 그대로 복붙!
         }
 
-    }
+    }*/
+
+    //0) WRITE TEST -> DEL LATER!! **** -> 이걸로 했을 때 Firebase 안에 Document 잘 Write 됐고, Security Rules 바꾼 다음에는 안 써졌음. 정상.
+//    fun writeOnFbTest() {
+//        val city = hashMapOf("name" to "Los Angeles","state" to "CA","country" to "USA")
+//        dbCollectionReference.document("TestDeltaForce").set(city).addOnSuccessListener {Log.d(TAG, "writePost: Test Write Success")}.addOnFailureListener { e -> Log.d(TAG, "writePost: failed. e=$e") }
+//    }
 
 
 

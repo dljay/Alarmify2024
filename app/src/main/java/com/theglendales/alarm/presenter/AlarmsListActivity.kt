@@ -68,13 +68,11 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.21a  22/7/24 (Sun) 00:44am [정식 release build + fb app security 로 이제부터는 테스팅 준비 전!!]
+// 30708V1.21b  22/7/25 (Mon) 00:20am [정식 release build + fb app security 로 이제부터는 테스팅]
 
 
 //Achievement)
-//1) 오랜만에 접속했을 때 Play Store 에서 Authenticate + Sign in 해라는 에러가 뜰때가 있음. 이때도 Failed to fetch IAP 가 토스트 메시지가 떴는데.
-// 사실은 BillingService.ServiceUnAvailable 에러 (Response Code=2번) 였음. 이때는 JjPlayStoreUnAvailableException 에러를 thrwoable 로 보내고
-// Toast 메시지 대신 'Google Play' 에 Sign in 하라는 Lottie Animation 을 보여주게끔 변경했음. 잘되는듯..
+// Firebase 에다 Write 테스트 (O) -> Security Rules 바꾼 뒤-> Write(X) . 정상.. 이제는 Read 에 어떤 제한 줄 수 있는지 알아볼것. 이 후 AppCheck..
 //
 //Todos)
 // 1) Firebase Security Rules

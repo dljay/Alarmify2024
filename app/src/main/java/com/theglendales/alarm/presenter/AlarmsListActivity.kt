@@ -68,7 +68,7 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.21b  22/7/25 (Mon) 00:20am [정식 release build + fb app security 로 이제부터는 테스팅]
+// 30708V1.22a  22/7/26 (Tue) 11:02pm [정식 release build + fb app check - build.gradle(app) flavor 없앴음.]
 
 
 //Achievement)

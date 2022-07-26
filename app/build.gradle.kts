@@ -93,14 +93,14 @@ android {
         }
     }
     flavorDimensions("default")
-    productFlavors {
-        create("develop") {
-            applicationId = "com.theglendales.alarm"
-        }
-        create("premium") {
-            applicationId = "com.premium.alarm"
-        }
-    }
+//    productFlavors {
+//        create("develop") {
+//            applicationId = "com.theglendales.alarm"
+//        }
+//        create("premium") {
+//            applicationId = "com.premium.alarm"
+//        }
+//    }
 
     lintOptions {
         isAbortOnError = false
@@ -165,7 +165,7 @@ dependencies {
     implementation("com.google.firebase:firebase-crashlytics-ktx:18.2.10")// Crashlytics 를 위해 넣음.
     implementation("com.google.firebase:firebase-analytics-ktx:20.1.2")
 
-    //implementation("com.google.firebase:firebase-appcheck-safetynet:16.0.0-beta06") //todo: 추후 입력 예정 //Firebase AppCheck
+    implementation("com.google.firebase:firebase-appcheck-safetynet:16.0.0") //todo: 추후 입력 예정 //Firebase AppCheck
     //SlidingUpPanel
     implementation("com.sothree.slidinguppanel:library:3.4.0")
     //Lottie

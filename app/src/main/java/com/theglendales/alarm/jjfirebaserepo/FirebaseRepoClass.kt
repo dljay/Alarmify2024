@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.safetynet.SafetyNetAppCheckProviderFactory
 
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,13 +26,13 @@ class FirebaseRepoClass(val context: Context)
     fun getPostList(): Task<QuerySnapshot> { // return type: Task snapshot!
         // A) APP CHECK todo: '22 5.1 일단은 Debug Build 와 기타 빌드 Variant 안쓰게 설정하고 넣어보기.
         // App check Debug: https://firebase.google.com/docs/app-check/web/debug-provider
-     /*   try {
+        try {
             FirebaseApp.initializeApp(context) // Init FB
             val fbAppCheck = FirebaseAppCheck.getInstance()
             fbAppCheck.installAppCheckProviderFactory (SafetyNetAppCheckProviderFactory.getInstance())
         }catch (e: Exception) {
             Log.d(TAG, "getPostList: Unable to app Check! ㅆㅂ! e=$e")
-        }*/
+        }
 
         // B) 자료 받기.
         dbCollectionReference = firebaseFSInstance.collection(FB_COLLECTION_NAME)

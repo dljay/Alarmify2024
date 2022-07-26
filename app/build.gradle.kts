@@ -90,6 +90,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.txt")
             buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     flavorDimensions("default")

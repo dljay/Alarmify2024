@@ -68,16 +68,18 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.22a  22/7/26 (Tue) 11:02pm [정식 release build + fb app check - build.gradle(app) flavor 없앴음.]
+// 30708V1.22b  22/7/26 (Tue) 11:46pm [정식 release build + fb app check -일단은 성공적인듯.]
 
 
 //Achievement)
-// Firebase 에다 Write 테스트 (O) -> Security Rules 바꾼 뒤-> Write(X) . 정상.. 이제는 Read 에 어떤 제한 줄 수 있는지 알아볼것. 이 후 AppCheck..
+// Firebase Security Rules (O) - 왠간히 된듯. Collection 에서만 Read 가능(O), Write(X)
+// Flavor 없앴고 Release/Debug 빌드로 나눴음.
+// App Check - Emulator 에서는 못 읽어오고 Gal S8 에서는 된다. App Check- monitoring 보면 verified 로 뜬다.
 //
 //Todos)
-// 1) Firebase Security Rules
+// Signing. Config 이게 다 뭔가..?
+// Emul 에서 안될 때 Connection Time out -> Lottie 애님 보여주기? Read 숫자가 너무 많은듯.. digging 필요.
 // 2) Firebase Performance
-// 3)Firebase App Check --> Emulator 에서 쓸려면 debug 깔아야됨.
 // https://firebase.google.com/docs/app-check/android/debug-provider
 
 //4) Release Build -> Internal Testing. jjbot 이런놈들까지..

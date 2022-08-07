@@ -210,7 +210,7 @@ dependencies {
 dependencies {
 
 
-    implementation("androidx.constraintlayout:constraintlayout:2.1.3")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")//    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     androidTestImplementation("com.squareup.assertj:assertj-android:1.1.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")

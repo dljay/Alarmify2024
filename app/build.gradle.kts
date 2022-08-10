@@ -67,11 +67,20 @@ val acraEmail = project.rootProject.file("local.properties")
     ?: ""
 
 android {
+    signingConfigs {
+        create("release") {
+            storeFile =
+                file("G:\\AndroidStudio\\MyShitz\\AlarmPrj2021\\AlarmClock_develop_myEdit\\keystorejj\\keystore_alarmify.jks")
+            storePassword = "891489"
+            keyAlias = "key0"
+            keyPassword = "891489"
+        }
+    }
     compileSdk =31
 
     defaultConfig {
-        versionCode = 30708 // Version Code = 지속적으로 increment 해야 Google Play Console 에서 받아줌.
-        versionName = "0.01.01A" // User 에게 보여지는 Version Number.
+        versionCode = 30709 // Version Code = 지속적으로 increment 해야 Google Play Console 에서 받아줌.
+        versionName = "0.01.02" // User 에게 보여지는 Version Number.
         applicationId = "com.theglendales.alarm"
         minSdk = 23
         targetSdk = 31
@@ -90,7 +99,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.txt")
             buildConfigField("String", "ACRA_EMAIL", "\"$acraEmail\"")
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     flavorDimensions("default")

@@ -331,7 +331,11 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //B) false && true (기존에 X 지금은 O)
                 else if(!jjMainVModel.prevNT && isNetworkWorking) {
                     Log.d(TAG, "[MainVModel <2> - NT] Network Working Again! Remove Error Lottie and Relaunch FB!!")
-                    lottieAnimHandler.animController(LottieENUM.STOP_ALL)
+                // 기존 애니메이션 없애고
+                    lottieAnimHandler.animController(LottieENUM.STOP_ALL) //(안됐다가 되는거니 LottieENUM.ERROR_GENERAL 이 보여지고 있었을것임)
+                // 로딩 애니메이션 틀기
+                    lottieAnimHandler.animController(LottieENUM.INIT_LOADING)
+                // refresh 요청.
                     jjMainVModel.refreshFbAndIAPInfo() // Relaunch FB! -> 사실 lottie 가 사라지면서 기존 RcView 가 보여서 상관없긴 하지만.애초 Network 불가상태로 접속해 있을 수 있음.
                 }
                 jjMainVModel.prevNT = isNetworkWorking // 여기서 ViewModel 안의 값을 바꿔줌에 따라 위에서처럼 Bool 값 prev&now 변화를 감지 할 수 있음.
@@ -436,8 +440,6 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         //setNetworkAvailabilityListener() // 처음 SecondFrag 를 열면 여기서 network 확인 -> 이후 connectivity yes/no 상황에 따라 -> lottie anim 보여주기 + re-connect.
         registerSwipeRefreshListener()
 
-
-
     }
 
     override fun onStart() {
@@ -466,7 +468,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
         // <2> GooglePlayStore 로그인 하라는 btmSheet 을 보여준뒤 복귀했을때! -> refreshFbIAp() 해줌 -> 완료되면 -> 여기서 observe 중이던곳에서 new 리스트 확인 후 -> BtmSheet 삭제됨!
         if(BtmSheetPlayStoreError.isAdded) { //todo: .isAdded | 혹은 다른 에러로 나갔따 왔을 때 refreshFB() 필요한 경우..
 
-        lottieAnimHandler.animController(LottieENUM.INIT_LOADING) //우선  빙글빙글 Init Loading 작동 -> (추후) Fb 에서 리스트 받는대로 없애줌.
+        lottieAnimHandler.animController(LottieENUM.INIT_LOADING) //우선  ... 로딩 애니메이션 작동 -> (추후) Fb 에서 리스트 받는대로 없애줌.
         jjMainVModel.refreshFbAndIAPInfo() // refreshFbIAP 해서 GooglePlay 에 이제는 로긴 되어있다면) -> Fb 에서 공갈 아닌 리스트 받아서 lottieAnim 과 BtmSheetPsError 둘 다 없애줄것임.
         }
     // C) CollapsingToolbarLayout 이 혹시라도 확장되서 보여지는것을 방지위해 (위에 onViewCreated 에도 있으나 대책없이 일단 여기 넣어놨음..)
@@ -748,7 +750,9 @@ class SecondFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun registerSwipeRefreshListener() {
-        swipeRefreshLayout.setOnRefreshListener { //setOnRefreshListener 는  function! (SwipeRefreshLayout.OnRefreshListener 인터페이스를 받는) .. 결국 아래는 이름없는 function..?
+        // SwipeRefresh (밑으로 땡겨서 새로고침) Trigger 되었을 때 어떻게 할지를 아래에서 정의.
+        swipeRefreshLayout.setOnRefreshListener { //setOnRefreshListener 는  function! (SwipeRefreshLayout.OnRefreshListener 인터페이스를 받는)
+            // .. 결국 아래는 이름없는 function..?
             Log.d(TAG, "+++++++++++++ inside setOnRefreshListener+++++++++")
             swipeRefreshLayout.isRefreshing = true
             jjMainVModel.refreshFbAndIAPInfo()

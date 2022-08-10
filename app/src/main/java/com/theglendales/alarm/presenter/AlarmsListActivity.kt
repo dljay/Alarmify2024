@@ -68,21 +68,26 @@ import org.koin.dsl.module
 import java.util.Calendar
 
 
-// 30708V1.22b  22/7/26 (Tue) 11:46pm [정식 release build + fb app check -일단은 성공적인듯.]
-
+// 22/8/10 (WED) 11:46pm [Google Play Internal Test 시작- App Check 때문에 음원 play 안되는 것 support center 에 문의중]
+// Build Variant: [RELEASE BUILD] / [DEBUG BUILD] 둘 다 잘 되는 듯..
+// 30709 [Version CODE]
+// 0.01.02b [Version Name] [** 알파벳 붙은 경우 자체 업뎃중임. Play Console 에 올릴때만 번호 하나씩 올리자!**]
 
 //Achievement)
-// Firebase Security Rules (O) - 왠간히 된듯. Collection 에서만 Read 가능(O), Write(X)
-// Flavor 없앴고 Release/Debug 빌드로 나눴음.
+// [잡에러 수리]
+// 1) 인터넷 없다가 다시 있을 때 Loading Lottie 보여주기. (O)
+// 2) Lottie 자체 바꾸기 일꾼 말고 -> Oops Something went wrong? 이걸로?
+// 3) Fbase AppCheck Permission 실패- > Lottie 보여주기. (O)
+// 4) Exception -> Lottie Anim 띄우기.. -> Stop connecting!! (O) => 프로파일러로 network 활동 없는것 확인햇음.
+// [중요]
 // App Check - Emulator 에서는 못 읽어오고 Gal S8 에서는 된다. App Check- monitoring 보면 verified 로 뜬다.
 //
 //Todos)
-// Signing. Config 이게 다 뭔가..?
-// Emul 에서 안될 때 Connection Time out -> Lottie 애님 보여주기? Read 숫자가 너무 많은듯.. digging 필요.
+
 // 2) Firebase Performance
 // https://firebase.google.com/docs/app-check/android/debug-provider
 
-//4) Release Build -> Internal Testing. jjbot 이런놈들까지..
+//1) Release Build -> Internal Testing[RELEASE BUILD]. jjbot 이런놈들까지..
 //5) Performance.. Memory Leak 잡기.
 //6) IMAGE DRAWABLE 관련 [이거 안 넣었을 때 어떻게 되는지 가급적 확인 시도..]
 // drawable-mdpi.xdpi. . 등등 다 넣어줄것 (폰에서 현재 사용되는 asset 만.) <- https://www.img-bak.in/ 수동 카피. // 테스트 필요.

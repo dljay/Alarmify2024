@@ -80,7 +80,7 @@ android {
 
     defaultConfig {
         versionCode = 30709 // Version Code = 지속적으로 increment 해야 Google Play Console 에서 받아줌.
-        versionName = "0.01.02" // User 에게 보여지는 Version Number.
+        versionName = "0.01.02b" // User 에게 보여지는 Version Number. // [** 알파벳 붙은 경우 자체 업뎃중임. Play Console 에 올릴때만 번호 하나씩 올리자!**]
         applicationId = "com.theglendales.alarm"
         minSdk = 23
         targetSdk = 31

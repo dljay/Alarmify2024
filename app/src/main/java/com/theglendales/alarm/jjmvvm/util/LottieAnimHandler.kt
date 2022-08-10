@@ -15,9 +15,10 @@ class LottieAnimHandler(private val receivedActivity: Activity, private val lott
         //최초 app launch->read.. auto play 기 때문에
             LottieENUM.INIT_LOADING -> {
                 Log.d(TAG, "animController: initialLoading")
+
+                lottieAnimationView.visibility = LottieAnimationView.VISIBLE
                 lottieAnimationView.setAnimation(R.raw.lottie_loading_threedot_accent_color)
-
-
+                lottieAnimationView.resumeAnimation()
             }
         // 인터넷 안되는 에러
             LottieENUM.ERROR_GENERAL -> {
@@ -25,7 +26,8 @@ class LottieAnimHandler(private val receivedActivity: Activity, private val lott
                 {
                     Log.d(TAG, "animController: GENERAL ERROR!!")
                     lottieAnimationView.visibility = LottieAnimationView.VISIBLE
-                    lottieAnimationView.setAnimation(R.raw.lottie_error1)
+                    lottieAnimationView.setAnimation(R.raw.lottie_error_2_robot)
+                    lottieAnimationView.resumeAnimation()
                     //snackBarDeliverer(lottieAnimationView,"Please kindly check your network connection status",false)
                     //여기 SnackBar 에서 View 가 불안정할수 있음=>try this? -> Snackbar.make(requireActivity().findViewById(android.R.id.content), "..", Snackbar.LENGTH_LONG).show()
                 })

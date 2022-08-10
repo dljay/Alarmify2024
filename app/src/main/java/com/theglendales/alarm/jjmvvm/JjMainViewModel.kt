@@ -59,7 +59,7 @@ class JjMainViewModel : ViewModel() {
     fun refreshFbAndIAPInfo() {
         Log.d(TAG, "refreshFbAndIAPInfo: (0) called")
         firebaseRepoInstance.getPostList().addOnCompleteListener {
-            if(it.isSuccessful)
+            if(it.isSuccessful) // 일단 자료 받는데 문제가 없음 (Firebase AppCheck 등에서 Permission Ok 된경우)
             {
             //1)Fb 에서 RtList를 받아옴 [유료+무료]
                 val rtFromFireBase = it.result!!.toObjects(RtInTheCloud::class.java) // [전체리스트= 유료+무료]
@@ -203,8 +203,8 @@ class JjMainViewModel : ViewModel() {
                 }
             }else { // 문제는 인터넷이 없어도 이쪽으로 오지 않음. always 위에 if(it.isSuccess) 로 감.
                 Log.d(TAG, "<<<<<<<refreshFbAndIAPInfo: ERROR!! (个_个) Exception message: ${it.exception!!.message}")
-                //lottieAnimController(1) // this is useless at the moment..
-                toastMessenger.showMyToast("Unable to fetch data from host. Please check your connection.", isShort = false)
+                _rtInTheCloudList.value = ArrayList() // 공갈 RTList 보내서 -> 기존 로딩 애니메이션 없애고 -> Error Lottie 뜨게끔.
+                toastMessenger.showMyToast("Unable to fetch data from host. Possible permission error.", isShort = false)
             }
         }
 

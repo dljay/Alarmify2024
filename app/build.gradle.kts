@@ -76,14 +76,14 @@ android {
             keyPassword = "891489"
         }
     }
-    compileSdk =31
+    compileSdk =33
 
     defaultConfig {
-        versionCode = 30709 // Version Code = 지속적으로 increment 해야 Google Play Console 에서 받아줌.
-        versionName = "0.01.02b" // User 에게 보여지는 Version Number. // [** 알파벳 붙은 경우 자체 업뎃중임. Play Console 에 올릴때만 번호 하나씩 올리자!**]
+        versionCode = 30710 // Version Code = 지속적으로 increment 해야 Google Play Console 에서 받아줌.
+        versionName = "0.01.02c" // User 에게 보여지는 Version Number. // [** 알파벳 붙은 경우 자체 업뎃중임. Play Console 에 올릴때만 번호 하나씩 올리자!**]
         applicationId = "com.theglendales.alarm"
         minSdk = 23
-        targetSdk = 31
+        targetSdk = 33
         testApplicationId = "com.theglendales.alarm.test"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
@@ -158,8 +158,8 @@ dependencies {
     //implementation("org.koin:koin-android-architecture:2.1.5") // sharedViewModel 쓰기 위해서 이거..?
 // <--
 
-    implementation("androidx.fragment:fragment:1.4.1")
-    implementation("androidx.preference:preference:1.2.0")
+    implementation("androidx.fragment:fragment:1.5.5")
+    implementation("androidx.preference:preference:1.2.1")
 //jjong added
     implementation("com.google.android.material:material:1.5.0")
     implementation("androidx.appcompat:appcompat:1.4.1")
@@ -181,27 +181,27 @@ dependencies {
     //Lottie
     implementation("com.airbnb.android:lottie:3.7.0")
     //Coroutine
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0") // **이 버전 올릴 때 위애-core 도 같이 올려줄것! 안그러면 난리남!
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3") // **이 버전 올릴 때 위애-core 도 같이 올려줄것! 안그러면 난리남!
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     //Flow 사용 위해 넣음 (22.1.5)
 
-    implementation("androidx.activity:activity-ktx:1.4.0")
-    implementation("androidx.fragment:fragment-ktx:1.4.1") //(Secondfrag.kt 에서 by viewmodels 로 쉽게 inject 하는것 이거 사용)
+    implementation("androidx.activity:activity-ktx:1.7.2")
+    implementation("androidx.fragment:fragment-ktx:1.5.7") //(Secondfrag.kt 에서 by viewmodels 로 쉽게 inject 하는것 이거 사용)
     //Flow 사용 위해 넣음 2 (repeatOnLifecycle() 사용위해)
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     //ExoPlayer
     implementation("com.google.android.exoplayer:exoplayer:2.14.0")
     //GSON (SharedPref 에 Object 저장용)
-    implementation("com.google.code.gson:gson:2.8.8")
+    implementation("com.google.code.gson:gson:2.10.1")
     // ImageView 에 넣을 GMAIl 스타일 Circle Text Builder https://github.com/amulyakhare/TextDrawable
     implementation("com.amulyakhare:com.amulyakhare.textdrawable:1.0.1")
     // Swipe Reveal Layout (ListView 에서 Swipe 할 수 있게 하는 3rd party)
     implementation("com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.1")
     //Billing Client (IAP related!)
-    implementation ("com.android.billingclient:billing-ktx:4.1.0")
+    implementation ("com.android.billingclient:billing-ktx:6.0.0")
     // Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.0-beta02")
 

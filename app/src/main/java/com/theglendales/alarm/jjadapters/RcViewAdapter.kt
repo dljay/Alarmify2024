@@ -167,6 +167,8 @@ class RcViewAdapter(
                         clickedHolder!!.vuMeterView.visibility = VuMeterView.VISIBLE
                         clickedHolder!!.vuMeterView.resume(true)
                     }
+
+                    else -> {}
                 }
             }
         }

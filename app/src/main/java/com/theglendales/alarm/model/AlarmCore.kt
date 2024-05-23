@@ -344,6 +344,8 @@ class AlarmCore(
                         is Dismiss, is Snooze, is Change -> {
                             broadcastAlarmSetWithNormalTime(calculateNextTime().timeInMillis)
                         }
+
+                        else -> {}
                     }
                 }
 
@@ -370,6 +372,8 @@ class AlarmCore(
                         is Dismiss, is Snooze, is Change -> {
                             broadcastAlarmSetWithNormalTime(calculateNextPrealarmTime().timeInMillis)
                         }
+
+                        else -> {}
                     }
 
                     updateListInStore()
@@ -736,6 +740,7 @@ class AlarmCore(
                 is InexactFired -> onInexactFired()
                 is RequestSkip -> onRequestSkip()
                 is Delete -> onDelete()
+                else -> {}
             }
             return handled
         }

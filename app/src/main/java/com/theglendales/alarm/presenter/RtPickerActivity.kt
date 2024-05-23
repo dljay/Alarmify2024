@@ -264,6 +264,8 @@ class RtPickerActivity : AppCompatActivity() {
                 StatusMp.PAUSED -> {
                     showMiniPlayerPlayBtn()
                 }
+
+                else -> {}
             }
             // b) VuMeter 컨트롤? 여기서는 필요없을듯..
             rtPickerRcvAdapter.vumeterControl(statusEnum)
@@ -394,7 +396,9 @@ private fun setUpSlidingPanel() {
                     iv_upperUi_ClickArrow.setImageResource(R.drawable.arrow_up_white)// ↑ arrow 전환 visibility }
                     slidingUpPanelLayout.isOverlayed =false // 이렇게해야 rcView contents 와 안겹침 = (마지막 칸)이 자동으로 panel 위로 올라가서 보임.
                     }
-                }
+
+                else -> {}
+            }
             }
         })
     }

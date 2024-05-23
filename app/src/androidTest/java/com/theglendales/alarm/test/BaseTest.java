@@ -62,7 +62,7 @@ public class BaseTest {
     }
 
     protected void deleteAlarm(int position) {
-        onData(anything()).onChildView(withId(R.id.details_button_container)).atPosition(position).perform(longClick());
+      //  onData(anything()).onChildView(withId(R.id.details_button_container)).atPosition(position).perform(longClick());
         sleep(200);
         onView(withText("Delete alarm")).perform(click());
         sleep(200);

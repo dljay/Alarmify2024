@@ -6,7 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
+import com.android.billingclient.api.QueryProductDetailsParams
 import com.android.billingclient.api.SkuDetails
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.jjdata.RtInTheCloud
@@ -108,8 +110,8 @@ class JjHelpUsVModel : ViewModel() {
             triggerPurchaseLoadingCircle(0)
 
         //b) SkuDetailsList 받기.
-            val donationIapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
-            val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(donationIapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
+            val donationIapNameAsList: List<QueryProductDetailsParams.Product> = listOf(rtObj.iapName) as List<QueryProductDetailsParams.Product>  // iap 이름을 String List 로 만들어서 ->
+            val skuDetailsList: List<ProductDetails> = iapV3.h_getSkuDetails(donationIapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
         //c) 구매창 보여주기 + User 가 구매한 결과(Yes or No - purchaseResult) 받기
             triggerPurchaseLoadingCircle(2)
             val donationPurchaseResult: Purchase = iapV3.i_launchBillingFlow(receivedActivity, skuDetailsList)

@@ -40,7 +40,7 @@ public class PickerTest extends BaseTest {
     @Before
     public void setUp() {
         ContainerKt.overrideIs24hoursFormatOverride(true);
-        onView(withId(R.id.fab)).perform(click());
+//        onView(withId(R.id.fab)).perform(click());
         //sleep();
     }
 

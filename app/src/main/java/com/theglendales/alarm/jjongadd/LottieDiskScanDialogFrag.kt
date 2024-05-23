@@ -46,19 +46,19 @@ class LottieDiskScanDialogFrag: DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         lottieView = view.findViewById(R.id.id_lottie_rebuild_rt)
         lottieView.addAnimatorListener(object : Animator.AnimatorListener{
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
                 Log.d(TAG, "onAnimationStart: started..")
             }
 
-            override fun onAnimationRepeat(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {
                 Log.d(TAG, "onAnimationRepeat: Repeated..")
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
                 Log.d(TAG, "onAnimationCancel: Canceled..")
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 Log.d(TAG, "onAnimationEnd: 끝! 이 Frag 닫는다!")
                 if(activity!=null) {
                     Snackbar.make(requireActivity().findViewById(android.R.id.content), "DISK SCAN- REBUILDING DATABASE COMPLETED", Snackbar.LENGTH_LONG).show()

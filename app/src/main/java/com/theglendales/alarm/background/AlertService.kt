@@ -111,6 +111,7 @@ class AlertService(
                 is Event.DismissEvent -> remove(event.id)
                 is Event.SnoozedEvent -> remove(event.id)
                 is Event.Autosilenced -> remove(event.id)
+                else -> {}
             }
 
             activeAlarms.requireValue().isNotEmpty()

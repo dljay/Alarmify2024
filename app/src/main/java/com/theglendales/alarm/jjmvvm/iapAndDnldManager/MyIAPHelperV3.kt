@@ -165,7 +165,9 @@ class MyIAPHelperV3(val context: Context ) {
 
         return suspendCoroutine { continuation ->
 
-            billingClient!!.queryPurchasesAsync(BillingClient.SkuType.INAPP) { _, listOfPurchases ->
+            billingClient!!.queryPurchasesAsync(QueryPurchasesParams.newBuilder()
+                .setProductType(BillingClient.ProductType.SUBS)
+                .build()) { _, listOfPurchases ->
                 Log.d(TAG, "d1_A_addPurchaseBoolToList: <D1-A> called. listOfPurchases=$listOfPurchases")
                 continuation.resume(listOfPurchases)
             }
@@ -178,10 +180,10 @@ class MyIAPHelperV3(val context: Context ) {
         if (listOfPurchases.isNotEmpty()) // [유효한 모든 구매건. Refund 된 경우 현 리스트에서 사라짐!]
         {
             for (purchase in listOfPurchases){
-                val indexOfRtObj: Int =rtPaidWithIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
+                val indexOfRtObj: Int =rtPaidWithIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.products[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
                 if(indexOfRtObj!=-1 && purchase.purchaseState == Purchase.PurchaseState.PURCHASED && !purchase.isAcknowledged){
-                    Log.d(TAG, "d1_B_checkUnacknowledged: $#%#$%@$#@@%@#%%#% iapName= ${purchase.skus[0]}, 이럴수가!!!! acknowledge 를 부여할 대상이 있따니!!@$# @4# @#%@#%@#%#@")
+                    Log.d(TAG, "d1_B_checkUnacknowledged: $#%#$%@$#@@%@#%%#% iapName= ${purchase.products[0]}, 이럴수가!!!! acknowledge 를 부여할 대상이 있따니!!@$# @4# @#%@#%@#%#@")
                     return suspendCoroutine { continuation ->
                         val acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
                         billingClient!!.acknowledgePurchase(acknowledgePurchaseParams) // [후속] 구매인정 요청!!
@@ -226,7 +228,7 @@ class MyIAPHelperV3(val context: Context ) {
                  */
 
                 ///** .indexOfFirst (람다식을 충족하는 '첫번째' 대상의 위치를 반환. 없을때는 -1 반환) */
-                val indexOfRtObj: Int =rtPaidWithIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.skus[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
+                val indexOfRtObj: Int =rtPaidWithIAPInfo.indexOfFirst { rtObj -> rtObj.iapName == purchase.products[0] } //조건을 만족시키는 가장 첫 Obj 의 'index' 를 리턴. 없으면 -1 리턴.
 
                 // 우리가 구매한 물품이 현재 rtListPlusIAPInfo 에 없는 물품이면 (ex. p1,p7 등 아예 PlayConsole 카탈로그에서 Deactivate 시킨 물품인 경우) -> 다음 for loop 으로 넘어가기
                 if (purchase.quantity != 1 || indexOfRtObj < 0) { // 갯수가 1개 초과 or rtListPlusIAPInfo 리스트에 우리가 찾는 rtObj 이 없는 경우
@@ -236,7 +238,7 @@ class MyIAPHelperV3(val context: Context ) {
 
                     }
                     if (indexOfRtObj < 0) {
-                        Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-1> List 에서 현재 purchase.sku(=${purchase.skus[0]}) 에 매칭하는 rtObject 를 찾을 수 없음.")
+                        Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-1> List 에서 현재 purchase.sku(=${purchase.products[0]}) 에 매칭하는 rtObject 를 찾을 수 없음.")
                     }
                     continue // 다음 for loop 의 iteration (purchase) 로 이동(?)
                 }
@@ -245,7 +247,7 @@ class MyIAPHelperV3(val context: Context ) {
                 val trackID = rtObject.id
                 val iapName = rtObject.iapName//purchase.skus[0]
                 val fileSupposedToBeAt =context.getExternalFilesDir(null)!!.absolutePath + "/.AlarmRingTones" + File.separator + iapName + ".rta" // 구매해서 다운로드 했다면 저장되있을 위치
-                Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-1> [PURCHASED ITEM=${purchase.skus[0]}] purchaseState=${purchase.purchaseState}, purchase=$purchase") // todo: 여기서 acknowledged 확인 가능!
+                Log.d(TAG, "d1_C_addPurchaseBoolToList: <D1-C-1> [PURCHASED ITEM=${purchase.products[0]}] purchaseState=${purchase.purchaseState}, purchase=$purchase") // todo: 여기서 acknowledged 확인 가능!
                 // 첫 purchaseState=1 로 뜨고, 바로 옆 purchase= 에서는 purchaseState 가 0으로 뜨는 희한..
 
                 //purchaseFound.add(trackID) //For items that are found(purchased), add them to purchaseFound
@@ -255,7 +257,7 @@ class MyIAPHelperV3(val context: Context ) {
                 {
                     Log.d(TAG,"d1_C_addPurchaseBoolToList: <D1-C-2> ☺ PurchaseState is PURCHASED for trackID=$trackID, itemName=$iapName")
                     rtPaidWithIAPInfo[indexOfRtObj].purchaseBool =true// [!!Bool 값 변경!!] default 값은 어차피 false ..rtObject 의 purchaseBool 값을 false -> true 로 변경
-                    rtPaidWithIAPInfo[indexOfRtObj].orderID = purchase.orderId
+                    rtPaidWithIAPInfo[indexOfRtObj].orderID = purchase.orderId.toString()
                     rtPaidWithIAPInfo[indexOfRtObj].purchaseTime = purchase.purchaseTime
                     //*******구매는 확인되었으나 item(ex p1001.rta 등) 이 phone 에 없다 (삭제 혹은 재설치?)
                     if (!myDiskSearcher.isSameFileOnThePhone(fileSupposedToBeAt)) {
@@ -307,17 +309,25 @@ class MyIAPHelperV3(val context: Context ) {
     }
 
     //<D2> 현재 리스트에 상품별 가격 적어주기 (ex. $1,000)
-    suspend fun d2_A_addPriceToList(): List<SkuDetails> {
+    suspend fun d2_A_addPriceToList(): List<ProductDetails> {
         Log.d(TAG, "d2_A_addPriceToList: <D2-A> called. ThreadName=${Thread.currentThread().name}")
         val itemNameList = ArrayList<String>()
         rtPaidWithIAPInfo.forEach { rtObject -> itemNameList.add(rtObject.iapName)}
     // rtObj 의 IAPName 으로 구성된 itemNameList 를 만들고 -> PlayConsole 에 등록된 동일한 iapName 으로 확인 후 -> 아래 skuDetailsList 가 만들어짐!
         // 즉, 현재 제공하는 iapName 과 매칭하는 PlayConsole Product 가 없으면 -> skuDetailsList 는 null 이 된다.
-        val myParams = SkuDetailsParams.newBuilder()
-        myParams.setSkusList(itemNameList).setType(BillingClient.SkuType.INAPP)
+
+        val productList = itemNameList.map { itemName ->
+            QueryProductDetailsParams.Product.newBuilder()
+                .setProductId(itemName)
+                .setProductType(BillingClient.ProductType.INAPP)
+                .build()
+        }
+
+        val myParams = QueryProductDetailsParams.newBuilder().setProductList(productList).build() // SkuDetailsParams.newBuilder()
+       // myParams.setSkusList(itemNameList).setType(BillingClient.SkuType.INAPP)
         //여기서 잠시 JJMainViewModel 코루틴스코프 정지! (suspend!)
         return suspendCoroutine { continuation ->
-            billingClient!!.querySkuDetailsAsync(myParams.build()) {queryResult, skuDetailsList ->
+            billingClient!!.queryProductDetailsAsync(myParams) {queryResult, skuDetailsList ->
                 if(queryResult.responseCode == BillingClient.BillingResponseCode.OK && skuDetailsList!=null)
                 {
                     continuation.resume(skuDetailsList)
@@ -333,14 +343,18 @@ class MyIAPHelperV3(val context: Context ) {
         }
     }
 
-    fun d2_B_addPriceToList(skuDetailsList: List<SkuDetails>) {
+    fun d2_B_addPriceToList(skuDetailsList: List<ProductDetails>) {
         Log.d(TAG, "d2_B_addPriceToList: skuDetailsList = $skuDetailsList")
         for(skuDetails in skuDetailsList)
         {
             //something better than .single? -> 근데 실제 연산 속도가 개당 .001 초니깐
-            rtPaidWithIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
-            Log.d(TAG,"d2_B_addPriceToList : <D2-B> item title=${skuDetails.title} b)item price= ${skuDetails.price}," +
-                    " c)item sku= ${skuDetails.sku}")
+            //rtPaidWithIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.sku }.itemPrice = skuDetails.price
+           // Log.d(TAG,"d2_B_addPriceToList : <D2-B> item title=${skuDetails.title} b)item price= ${skuDetails.price}," +
+           //         " c)item sku= ${skuDetails.sku}")
+
+            rtPaidWithIAPInfo.single { rtObj -> rtObj.iapName == skuDetails.productId }.itemPrice = skuDetails.oneTimePurchaseOfferDetails!!.formattedPrice
+            Log.d(TAG,"d2_B_addPriceToList : <D2-B> item title=${skuDetails.title} b)item price= ${skuDetails.oneTimePurchaseOfferDetails!!.formattedPrice}," +
+                    " c)item sku= ${skuDetails.productId}")
         }
         Log.d(TAG, "d2_B_addPriceToList: <D2-B> Finished (O)")
 
@@ -366,13 +380,14 @@ class MyIAPHelperV3(val context: Context ) {
 
 // ************************************************** <2> Clicked to buy
 //****** h) SkuDetail 받기
-    suspend fun h_getSkuDetails(iapNameAsList: List<String>): List<SkuDetails> {
+    suspend fun h_getSkuDetails(iapNameAsList: List<QueryProductDetailsParams.Product>): List<ProductDetails> {
         Log.d(TAG, "h_getSkuDetails: called")
         //delay(2000L) // Loading Circle  테스트 용도로 심음.
-        val myParams = SkuDetailsParams.newBuilder().apply {setSkusList(iapNameAsList).setType(BillingClient.SkuType.INAPP)}.build()
+        //val myParams = SkuDetailsParams.newBuilder().apply {setSkusList(iapNameAsList).setType(BillingClient.ProductType.INAPP)}.build()
+        val myParams = QueryProductDetailsParams.newBuilder().setProductList(iapNameAsList).build()
 
-        return suspendCoroutine { continuation ->
-            billingClient!!.querySkuDetailsAsync(myParams) {billingResult, skuDetailsList ->
+    return suspendCoroutine { continuation ->
+            billingClient!!.queryProductDetailsAsync(myParams) {billingResult, skuDetailsList  ->
                 if(billingResult.responseCode == BillingClient.BillingResponseCode.OK && !skuDetailsList.isNullOrEmpty()) { // 정상
                     continuation.resume(skuDetailsList)
                 } else if(billingResult.responseCode == BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE) {
@@ -389,19 +404,26 @@ class MyIAPHelperV3(val context: Context ) {
 // SharedFlow(replay=1) 도 대안이었으나 아직 생경하여 CompletableDeferred 로 해결. (특히 ListFrag 돌아왓을 때 복원 지랄 문제)
 
     //i-2) 구매창 띄워주기
-    suspend fun i_launchBillingFlow(receivedActivity: Activity, skuDetailsList: List<SkuDetails>): Purchase  {
+    suspend fun i_launchBillingFlow(receivedActivity: Activity, skuDetailsList: List<ProductDetails>): Purchase  {
         Log.d(TAG, "i_launchBillingFlow: called")
         // 여기서 if 썼을 때 error throw catch 확인?
         val oldDeferredPurchase = CompletableDeferred<Purchase>() // 나중에 값을 받는 놈!
         if(skuDetailsList.size != 1) {
             emptyMapAndThrowExceptionToDeferred("skuDetailsList size !=1 ")
         }
+
+        val productDetailsParamsList = listOf(
+            BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(skuDetailsList[0])
+                .build()
+        )
+
     /**
      * [*** purchaseMap 에 해당 'CompletableDeferred<Purchase>' 를 등록**]
      */
-        purchaseMap[skuDetailsList[0].sku] = oldDeferredPurchase //  <K,V> = <p1001, CompletableDeferred<Purchase>> //todo: test... actual purchase
+        purchaseMap[skuDetailsList[0].productId] = oldDeferredPurchase //  <K,V> = <p1001, CompletableDeferred<Purchase>> //todo: test... actual purchase
 
-        val flowParams: BillingFlowParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetailsList[0]).build()
+        val flowParams: BillingFlowParams = BillingFlowParams.newBuilder().setProductDetailsParamsList(productDetailsParamsList).build()
         billingClient!!.launchBillingFlow(receivedActivity, flowParams) // ->결제창 열기 -> User 인풋 받으면 -> a_initBillingClient() 안에 있는 Listener 에서 반응
         return oldDeferredPurchase.await() // oldDeferredPurchase 가 값을 받을때까지 ViewModel 에서 시작된 코루틴 대기(suspend) -> 값을 받는대로 return + 코루틴 재개
     }

@@ -2,13 +2,17 @@
 
 package com.theglendales.alarm.presenter
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.AlarmManager
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
 import android.transition.ChangeBounds
 import android.transition.ChangeTransform
 import android.transition.TransitionSet
@@ -23,9 +27,9 @@ import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.drawerlayout.widget.DrawerLayout
@@ -33,33 +37,30 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
+import com.theglendales.alarm.*
 import com.theglendales.alarm.configuration.EditedAlarm
 import com.theglendales.alarm.configuration.Store
 import com.theglendales.alarm.configuration.globalGet
 import com.theglendales.alarm.configuration.globalInject
 import com.theglendales.alarm.configuration.globalLogger
 import com.theglendales.alarm.interfaces.IAlarmsManager
+import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
+import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
+import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
+import com.theglendales.alarm.jjmvvm.util.DiskSearcher
+import com.theglendales.alarm.jjmvvm.util.showAlertIfRtIsMissing
 import com.theglendales.alarm.jjongadd.SecondFragment
 import com.theglendales.alarm.logger.Logger
 import com.theglendales.alarm.model.AlarmValue
 import com.theglendales.alarm.model.Alarmtone
 import com.theglendales.alarm.model.DaysOfWeek
 import com.theglendales.alarm.util.Optional
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
-
-import com.theglendales.alarm.*
-import com.theglendales.alarm.jjmvvm.helper.MySharedPrefManager
-import com.theglendales.alarm.jjmvvm.mediaplayer.ExoForUrl
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.BtmSheetPermission
-
-import com.theglendales.alarm.jjmvvm.permissionAndDownload.MyPermissionHandler
-import com.theglendales.alarm.jjmvvm.util.DiskSearcher
-import com.theglendales.alarm.jjmvvm.util.showAlertIfRtIsMissing
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposables
 import io.reactivex.functions.Consumer
-
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
@@ -313,6 +314,17 @@ class AlarmsListActivity : AppCompatActivity() {
 
         setContentView(R.layout.list_activity)
 
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (alarmManager.canScheduleExactAlarms() == false) {
+                Intent().apply {
+                    action = ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                }.also {
+                    startActivity(it)
+                }
+            }
+        }
+
         store.alarms().take(1).subscribe { alarms ->
 
                 Log.d(TAG, "onCreate: here before checkRtMissing from phone!!")
@@ -453,6 +465,14 @@ class AlarmsListActivity : AppCompatActivity() {
         }
 // <--추가 1-B)
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun checkNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(POST_NOTIFICATIONS), 1000)
+        } else {
+            NotificationSettings().checkSettings(this)
+        }
+    }
 
 
     override fun onStart() {
@@ -476,7 +496,12 @@ class AlarmsListActivity : AppCompatActivity() {
         Log.d(TAG, "onResume: jj-called. subscriptions.toString=${subscriptions.toString()}")
         super.onResume()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
-        NotificationSettings().checkSettings(this)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            checkNotificationPermission()
+        } else {
+            NotificationSettings().checkSettings(this)
+        }
 
         // A) Permission 을 허용하라는 btmSheet 을 보여준뒤 복귀했을때! [READ_PHONE_STATE]
         if(BtmSheetPermission.isAdded) {

@@ -227,6 +227,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 StatusMp.PAUSED -> {
                     showMiniPlayerPlayBtn()
                 }
+
+                else -> {}
             }
             // b) VuMeter/MP Loading Circle 등 UI 컨트롤
             rcvAdapterInstance.lcVmIvController(StatusEnum) // 원복후 불러도 Prev/CurrentHolder 는 어차피 null 이기에 상관없음.
@@ -358,6 +360,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                 //A) Prgrs 를 받는순간 isPreparingToDNLD -> false -> Lottie Loading Circle (X), ProgressBar(O)
                 when(dnldInfo.isBufferingToDNLD) { // isBufferingToDNLD(X)
                     false -> {btmSht_SingleDNLDV.showLPIAndHideLottieCircle()} // 계속 불리게 되지만 showLPIAndHideLottieCircle() 안에서 자체적으로 중복 call 확인 후 return.
+                    else -> {}
                 }
                 //B) STATUS 에 따라서 BtmSheet 열기 & 닫기 (모든 Status 는 한번씩만 받는다)
                 when(dnldInfo.status) { // 참고** -1= IDLE 암것도 안한 상태, 0= Download 준비 시작!, Pending=1 , Running=2, Paused=4, Successful=8, Failed=16
@@ -462,6 +465,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
             SlidingUpPanelLayout.PanelState.EXPANDED -> {expandSlidingPanel()
                 flRcView.setPadding(0,0,0,0)
             }
+
+            else -> {}
         }
 
     // B) <1> 어떤 이유로 에러가 나서 RtIAPList 받지 못한 상태에서 나갔다 다시 복귀
@@ -817,6 +822,7 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                     when(imgbtn_Play.visibility) {
                         View.VISIBLE -> {onMiniPlayerPlayClicked()}
                         View.GONE -> {onMiniPlayerPauseClicked()}
+                        else ->{}
                     }
                 }
         // 아래 Play(>)/Pause(||) 실제로 누르기는 너무 작아서. 감싸고 있는 ll_play_pause_container 로 대체했음.
@@ -1005,6 +1011,8 @@ class SecondFragment : androidx.fragment.app.Fragment() {
                         Log.d(TAG, "onPanelStateChanged: Sliding Panel = HIDDEN")
                         flRcView.setPadding(0,0,0,140)
                     }
+
+                    else -> {}
                 }
             }
         })

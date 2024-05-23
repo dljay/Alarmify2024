@@ -308,7 +308,16 @@ class JjMainViewModel : ViewModel() {
 
                 //2-h) Get the list of SkuDetails [SuspendCoroutine 사용] =>
                 val iapNameAsList: List<String> = listOf(rtObj.iapName) // iap 이름을 String List 로 만들어서 ->
-                val skuDetailsList: List<SkuDetails> = iapV3.h_getSkuDetails(iapNameAsList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
+
+                val productList = mutableListOf<QueryProductDetailsParams.Product>()
+                for (itemName in iapNameAsList) {
+                    val product = QueryProductDetailsParams.Product.newBuilder()
+                        .setProductId(itemName)
+                        .setProductType(BillingClient.ProductType.INAPP)
+                        .build()
+                    productList.add(product)
+                }
+                val skuDetailsList: List<ProductDetails> = iapV3.h_getSkuDetails(productList) // skuDetailsList 대충 이렇게 생김: [SkuDetails: {"productId":"p1002","type":"inapp","title":"p1002 name (Glendale Alarmify IAP Test)","name":"p1002 name","price":"₩2,000","price_amount_micros":2000000000,"price_currency_code":"KRW","description":"p1002 Desc","skuDetailsToken":"AEuhp4JNNfXu9iUBBdo26Rk-au0JBzRSWLYD63F77PIa1VxyOeVGMjKCFyrrFvITC2M="}]
                 //2-i) 구매창 보여주기 + User 가 구매한 결과 (Yes or No- purchaseResult) 받기
 
                 //_centerLoadingCircleSwitch.value = 2 // 어두운 화면 그대로 두고 Circle 만 안보이게 없애기 (LaunchBilling Flow 에도 Circle 같이 떠서 신경쓰임)

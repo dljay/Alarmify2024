@@ -62,7 +62,7 @@ class PickerAmTest : BaseTest() {
     @Before
     fun setUp() {
         overrideIs24hoursFormatOverride(false)
-        onView().with(id = R.id.fab).click()
+      //  onView().with(id = R.id.fab).click()
         //sleep();
     }
 
